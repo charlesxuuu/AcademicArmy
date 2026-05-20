@@ -16,6 +16,10 @@ The central principle of AcademicArmy is: build according to the blueprint.
 
 The blueprint produced by ProductManager should be specific enough for each role to start working without needing to redesign the project. AcademicArmy then follows that standardized plan to complete the paper and its supporting artifacts.
 
+## Design Tips
+
+Parts that require fine-grained research should mainly be handled by skills that know how to call Deep Research through APIs. This avoids saving large amounts of local data only for retrieval, keeping the project lighter and making research updates easier to refresh.
+
 ## Project Structure
 
 See `AcademicArmy/README.md` for the agent and team structure.

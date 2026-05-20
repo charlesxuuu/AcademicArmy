@@ -16,6 +16,10 @@ AcademicArmy 的主体核心可以概括为一句话：按图施工。
 
 ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”，具体到各岗位可以直接上手执行，而不是在执行阶段重新设计项目。AcademicArmy 按照这份图纸完成一篇论文及其支撑材料。
 
+## 设计 Tips
+
+需要精细调研的部分，主要通过会使用 API 的 skill 调用 Deep Research 来完成。这样可以避免为了检索而在本地保存大量数据，让项目更轻量，也方便后续刷新调研结果。
+
 ## 项目结构
 
 Agent 和团队结构见 `AcademicArmy/README.zh-CN.md`。
