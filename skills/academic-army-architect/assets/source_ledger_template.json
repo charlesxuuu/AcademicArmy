@@ -11,12 +11,15 @@
       "summary": "TBD"
     }
   ],
-  "searches": [
+  "deepresearch_runs": [
     {
-      "search_id": "S1",
-      "purpose": "related_paper_search",
-      "query": "TBD",
+      "run_id": "DR1",
+      "purpose": "initial_blueprint_research",
+      "question_type": "general_blueprint_judgment",
+      "brief_summary": "TBD",
       "date": "TBD",
+      "model": "gpt-5.5-pro",
+      "report_path": "TBD",
       "sources_consulted": [
         {
           "source_id": "R1",
@@ -29,6 +32,13 @@
           "used_in_blueprint_sections": [
             "13. Related Work Positioning"
           ]
+        }
+      ],
+      "recommended_blueprint_decisions": [
+        {
+          "blueprint_section": "TBD",
+          "decision": "TBD",
+          "confidence": "low"
         }
       ]
     }
@@ -47,7 +57,10 @@
       "change_request": "Created initial blueprint.",
       "sections_changed": [],
       "new_sources_added": [],
-      "old_sources_removed": []
+      "old_sources_removed": [],
+      "deepresearch_run_ids": [
+        "DR1"
+      ]
     }
   ]
 }

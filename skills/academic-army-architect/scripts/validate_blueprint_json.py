@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Academic Army blueprint, analysis, or source-ledger JSON shape."""
+"""Validate Academic Army blueprint, analysis, ledger, or DeepResearch JSON shape."""
 
 import argparse
 import json
@@ -28,16 +28,50 @@ BLUEPRINT_TOP_LEVEL = [
 ANALYSIS_TOP_LEVEL = [
     "analysis_summary",
     "user_provided_inputs",
-    "search_process",
+    "deepresearch_brief",
+    "deepresearch_process_summary",
     "referenced_papers",
-    "referenced_code_datasets_or_artifacts",
+    "referenced_code_datasets_benchmarks_or_artifacts",
     "venue_or_journal_considerations",
     "problem_framing_rationale",
     "central_claim_rationale",
     "contribution_structure_rationale",
     "evaluation_plan_rationale",
     "assumptions_uncertainties_and_missing_information",
+    "how_deepresearch_influenced_the_blueprint",
     "change_log",
+]
+
+DEEPRESEARCH_BRIEF_TOP_LEVEL = [
+    "task_mode",
+    "conversation_language",
+    "user_goal",
+    "deepresearch_question_type",
+    "user_idea_summary",
+    "known_information",
+    "existing_blueprint",
+    "revision_request",
+    "missing_information",
+    "blueprint_sections_under_review",
+    "deepresearch_questions",
+    "required_source_types",
+    "codex_integration_instructions",
+    "output_format",
+]
+
+DEEPRESEARCH_REPORT_TOP_LEVEL = [
+    "research_summary",
+    "user_idea_interpretation",
+    "referenced_papers",
+    "closest_existing_work",
+    "code_datasets_benchmarks_artifacts",
+    "venue_or_journal_implications",
+    "gap_analysis",
+    "contribution_framing_advice",
+    "claim_strength_recommendation",
+    "evaluation_recommendation",
+    "recommended_blueprint_decisions",
+    "uncertainties_and_tbd",
 ]
 
 LEDGER_TOP_LEVEL = [
@@ -48,7 +82,7 @@ LEDGER_TOP_LEVEL = [
     "conversation_language",
     "mode",
     "user_inputs",
-    "searches",
+    "deepresearch_runs",
     "assumptions",
     "changes",
 ]
@@ -151,10 +185,10 @@ def validate_analysis(data) -> str | None:
 
     list_fields = [
         "user_provided_inputs",
-        "search_process",
         "referenced_papers",
-        "referenced_code_datasets_or_artifacts",
+        "referenced_code_datasets_benchmarks_or_artifacts",
         "assumptions_uncertainties_and_missing_information",
+        "how_deepresearch_influenced_the_blueprint",
         "change_log",
     ]
     for key in list_fields:
@@ -167,12 +201,59 @@ def validate_analysis(data) -> str | None:
     return None
 
 
+def validate_deepresearch_brief(data) -> str | None:
+    missing = missing_keys(data, DEEPRESEARCH_BRIEF_TOP_LEVEL)
+    if missing:
+        return f"DeepResearch brief missing required key(s): {', '.join(missing)}"
+
+    if not isinstance(data.get("known_information"), dict):
+        return "known_information must be an object"
+    for key in (
+        "missing_information",
+        "blueprint_sections_under_review",
+        "deepresearch_questions",
+        "required_source_types",
+        "codex_integration_instructions",
+    ):
+        if not isinstance(data.get(key), list):
+            return f"{key} must be an array"
+    return None
+
+
+def validate_deepresearch_report(data) -> str | None:
+    missing = missing_keys(data, DEEPRESEARCH_REPORT_TOP_LEVEL)
+    if missing:
+        return f"DeepResearch report missing required key(s): {', '.join(missing)}"
+
+    for key in (
+        "referenced_papers",
+        "closest_existing_work",
+        "code_datasets_benchmarks_artifacts",
+        "recommended_blueprint_decisions",
+        "uncertainties_and_tbd",
+    ):
+        if not isinstance(data.get(key), list):
+            return f"{key} must be an array"
+
+    for key in (
+        "user_idea_interpretation",
+        "venue_or_journal_implications",
+        "gap_analysis",
+        "contribution_framing_advice",
+        "claim_strength_recommendation",
+        "evaluation_recommendation",
+    ):
+        if not isinstance(data.get(key), dict):
+            return f"{key} must be an object"
+    return None
+
+
 def validate_ledger(data) -> str | None:
     missing = missing_keys(data, LEDGER_TOP_LEVEL)
     if missing:
         return f"Ledger missing required key(s): {', '.join(missing)}"
 
-    for key in ("user_inputs", "searches", "assumptions", "changes"):
+    for key in ("user_inputs", "deepresearch_runs", "assumptions", "changes"):
         if not isinstance(data.get(key), list):
             return f"{key} must be an array"
     return None
@@ -183,6 +264,10 @@ def infer_kind(data) -> str | None:
         return "blueprint"
     if all(key in data for key in ANALYSIS_TOP_LEVEL[:5]):
         return "analysis"
+    if all(key in data for key in DEEPRESEARCH_BRIEF_TOP_LEVEL[:5]):
+        return "deepresearch-brief"
+    if all(key in data for key in DEEPRESEARCH_REPORT_TOP_LEVEL[:5]):
+        return "deepresearch-report"
     if all(key in data for key in LEDGER_TOP_LEVEL[:5]):
         return "ledger"
     return None
@@ -193,7 +278,7 @@ def main() -> int:
     parser.add_argument("file", help="JSON file to validate")
     parser.add_argument(
         "--kind",
-        choices=["auto", "blueprint", "analysis", "ledger"],
+        choices=["auto", "blueprint", "analysis", "ledger", "deepresearch-brief", "deepresearch-report"],
         default="auto",
         help="Artifact kind. Defaults to auto-detection.",
     )
@@ -213,12 +298,17 @@ def main() -> int:
 
     kind = infer_kind(data) if args.kind == "auto" else args.kind
     if not kind:
-        return fail("Could not infer kind. Pass --kind blueprint, --kind analysis, or --kind ledger.")
+        return fail(
+            "Could not infer kind. Pass --kind blueprint, --kind analysis, --kind ledger, "
+            "--kind deepresearch-brief, or --kind deepresearch-report."
+        )
 
     validators = {
         "blueprint": validate_blueprint,
         "analysis": validate_analysis,
         "ledger": validate_ledger,
+        "deepresearch-brief": validate_deepresearch_brief,
+        "deepresearch-report": validate_deepresearch_report,
     }
     error = validators[kind](data)
     if error:

@@ -11,7 +11,7 @@
     "conversation_language",
     "mode",
     "user_inputs",
-    "searches",
+    "deepresearch_runs",
     "assumptions",
     "changes"
   ],
@@ -43,17 +43,44 @@
         }
       }
     },
-    "searches": {
+    "deepresearch_runs": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["search_id", "purpose", "query", "date", "sources_consulted"],
+        "required": [
+          "run_id",
+          "purpose",
+          "question_type",
+          "brief_summary",
+          "date",
+          "model",
+          "report_path",
+          "sources_consulted",
+          "recommended_blueprint_decisions"
+        ],
         "properties": {
-          "search_id": { "type": "string" },
+          "run_id": { "type": "string" },
           "purpose": { "type": "string" },
-          "query": { "type": "string" },
+          "question_type": {
+            "type": "string",
+            "enum": [
+              "general_blueprint_judgment",
+              "venue_style_analysis",
+              "related_direction_synthesis",
+              "closest_work_comparison",
+              "contribution_boundary",
+              "claim_strength",
+              "method_evaluation_design",
+              "artifact_landscape",
+              "paper_structure_strategy",
+              "revision_impact_analysis"
+            ]
+          },
+          "brief_summary": { "type": "string" },
           "date": { "type": "string" },
+          "model": { "type": "string" },
+          "report_path": { "type": "string" },
           "sources_consulted": {
             "type": "array",
             "items": {
@@ -91,6 +118,19 @@
                 "used_in_blueprint_sections": { "type": "array", "items": { "type": "string" } }
               }
             }
+          },
+          "recommended_blueprint_decisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["blueprint_section", "decision", "confidence"],
+              "properties": {
+                "blueprint_section": { "type": "string" },
+                "decision": { "type": "string" },
+                "confidence": { "type": "string", "enum": ["low", "medium", "high"] }
+              }
+            }
           }
         }
       }
@@ -119,14 +159,16 @@
           "change_request",
           "sections_changed",
           "new_sources_added",
-          "old_sources_removed"
+          "old_sources_removed",
+          "deepresearch_run_ids"
         ],
         "properties": {
           "version": { "type": "string" },
           "change_request": { "type": "string" },
           "sections_changed": { "type": "array", "items": { "type": "string" } },
           "new_sources_added": { "type": "array", "items": { "type": "string" } },
-          "old_sources_removed": { "type": "array", "items": { "type": "string" } }
+          "old_sources_removed": { "type": "array", "items": { "type": "string" } },
+          "deepresearch_run_ids": { "type": "array", "items": { "type": "string" } }
         }
       }
     }

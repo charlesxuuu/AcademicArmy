@@ -6,15 +6,17 @@
   "required": [
     "analysis_summary",
     "user_provided_inputs",
-    "search_process",
+    "deepresearch_brief",
+    "deepresearch_process_summary",
     "referenced_papers",
-    "referenced_code_datasets_or_artifacts",
+    "referenced_code_datasets_benchmarks_or_artifacts",
     "venue_or_journal_considerations",
     "problem_framing_rationale",
     "central_claim_rationale",
     "contribution_structure_rationale",
     "evaluation_plan_rationale",
     "assumptions_uncertainties_and_missing_information",
+    "how_deepresearch_influenced_the_blueprint",
     "change_log"
   ],
   "properties": {
@@ -31,20 +33,11 @@
         }
       }
     },
-    "search_process": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["search_id", "purpose", "query", "result_summary"],
-        "properties": {
-          "search_id": { "type": "string" },
-          "purpose": { "type": "string" },
-          "query": { "type": "string" },
-          "result_summary": { "type": "string" }
-        }
-      }
+    "deepresearch_brief": {
+      "type": "object",
+      "additionalProperties": true
     },
+    "deepresearch_process_summary": { "type": "string" },
     "referenced_papers": {
       "type": "array",
       "items": {
@@ -76,7 +69,7 @@
         }
       }
     },
-    "referenced_code_datasets_or_artifacts": {
+    "referenced_code_datasets_benchmarks_or_artifacts": {
       "type": "array",
       "items": {
         "type": "object",
@@ -123,6 +116,10 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "how_deepresearch_influenced_the_blueprint": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "change_log": {
       "type": "array",
       "items": {
@@ -133,6 +130,7 @@
           "change_type",
           "user_request",
           "sections_changed",
+          "deepresearch_brief",
           "new_sources_added",
           "sources_removed_or_deprioritized",
           "rationale"
@@ -142,6 +140,7 @@
           "change_type": { "type": "string", "enum": ["created", "revised"] },
           "user_request": { "type": "string" },
           "sections_changed": { "type": "array", "items": { "type": "string" } },
+          "deepresearch_brief": { "type": "string" },
           "new_sources_added": { "type": "array", "items": { "type": "string" } },
           "sources_removed_or_deprioritized": { "type": "array", "items": { "type": "string" } },
           "rationale": { "type": "string" }
