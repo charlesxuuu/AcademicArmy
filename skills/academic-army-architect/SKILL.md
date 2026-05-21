@@ -68,6 +68,20 @@ Substantive blueprint content follows this process:
 5. Call DeepResearch with `scripts/call_deepresearch.py` or the product's equivalent API layer.
 6. Integrate the returned `DeepResearch Report` into the blueprint, analysis file, and source ledger.
 
+## DeepResearch Gate
+
+DeepResearch is a hard gate for every step that requires scholarly judgment. There is no fallback path where the orchestration layer substitutes its own scholarly judgment after DeepResearch fails.
+
+`scripts/call_deepresearch.py` retries a failed DeepResearch call up to 3 attempts by default. If all attempts fail, the workflow stops immediately:
+
+- do not generate `paper_blueprint.md`;
+- do not generate `paper_blueprint_analysis.md`;
+- do not update `source_ledger.json` as though research succeeded;
+- report the DeepResearch failure to the user or product layer;
+- wait for the API, credential, model, schema, or network issue to be fixed before continuing.
+
+Only mechanical edits that did not require DeepResearch may proceed without a DeepResearch report.
+
 Focused question types:
 
 - `venue_style_analysis`
@@ -100,7 +114,7 @@ Every source used in the blueprint or analysis is recorded. Unrecorded papers, c
 
 `paper_blueprint.md` is rendered from `assets/blueprint_template.md`; its 15 top-level sections are preserved unless the user requests a custom export.
 
-`paper_blueprint_analysis.md` is rendered from `assets/analysis_template.md`; its 14 top-level sections are preserved. The analysis uses the user's conversation language unless they request another language.
+`paper_blueprint_analysis.md` is rendered from `assets/analysis_template.md`; its 14 top-level sections are preserved. The analysis uses the user's conversation language unless they request another language. Keep `Referenced Papers` as the final section so long paper metadata does not pull later rationale sections away from the conversation language.
 
 The blueprint stays concise and executable. Rationale, source influence, assumptions, and change history belong in the analysis file.
 
@@ -153,6 +167,7 @@ Finalization checks:
 - Keep DeepResearch recommendations traceable to user input, cited evidence, or explicit assumptions.
 - Mark missing information as `TBD`.
 - Validate generated JSON with `scripts/validate_blueprint_json.py`.
+- Treat a nonzero exit from `scripts/call_deepresearch.py` as a blocking failure. Do not proceed to rendering, ledger update, or blueprint generation after that failure.
 
 ## Resource Guide
 

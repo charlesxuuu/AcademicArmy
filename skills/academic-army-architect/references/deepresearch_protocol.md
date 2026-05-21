@@ -114,3 +114,16 @@ Every recommendation used in the blueprint is traceable to user input, DeepResea
 ## Integration Boundary
 
 DeepResearch answers research questions. The orchestration layer assembles files, preserves fixed section order, marks `TBD`, writes change logs, updates `source_ledger.json`, and keeps unaffected sections stable.
+
+## Failure Policy
+
+DeepResearch is mandatory for every scholarly-judgment step. If DeepResearch fails, the orchestration layer must not replace it with its own research judgment.
+
+The API wrapper retries a failed DeepResearch call 3 times. If all attempts fail, the workflow stops:
+
+- no formal blueprint is generated;
+- no analysis file is generated from incomplete research;
+- no source ledger is updated as though the run succeeded;
+- the user or product layer is told that DeepResearch failed and must be rerun after fixing the cause.
+
+Purely mechanical edits may proceed only when the task did not require DeepResearch in the first place.

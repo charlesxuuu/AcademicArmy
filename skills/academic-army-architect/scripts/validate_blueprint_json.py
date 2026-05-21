@@ -30,7 +30,6 @@ ANALYSIS_TOP_LEVEL = [
     "user_provided_inputs",
     "deepresearch_brief",
     "deepresearch_process_summary",
-    "referenced_papers",
     "referenced_code_datasets_benchmarks_or_artifacts",
     "venue_or_journal_considerations",
     "problem_framing_rationale",
@@ -40,6 +39,7 @@ ANALYSIS_TOP_LEVEL = [
     "assumptions_uncertainties_and_missing_information",
     "how_deepresearch_influenced_the_blueprint",
     "change_log",
+    "referenced_papers",
 ]
 
 DEEPRESEARCH_BRIEF_TOP_LEVEL = [

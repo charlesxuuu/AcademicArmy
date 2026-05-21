@@ -8,7 +8,6 @@
     "user_provided_inputs",
     "deepresearch_brief",
     "deepresearch_process_summary",
-    "referenced_papers",
     "referenced_code_datasets_benchmarks_or_artifacts",
     "venue_or_journal_considerations",
     "problem_framing_rationale",
@@ -17,7 +16,8 @@
     "evaluation_plan_rationale",
     "assumptions_uncertainties_and_missing_information",
     "how_deepresearch_influenced_the_blueprint",
-    "change_log"
+    "change_log",
+    "referenced_papers"
   ],
   "properties": {
     "analysis_summary": { "type": "string" },
@@ -38,37 +38,6 @@
       "additionalProperties": true
     },
     "deepresearch_process_summary": { "type": "string" },
-    "referenced_papers": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "reference_id",
-          "title",
-          "authors",
-          "year",
-          "venue_or_source",
-          "url_or_doi",
-          "citation_signal",
-          "why_referenced",
-          "blueprint_sections_influenced",
-          "limitations"
-        ],
-        "properties": {
-          "reference_id": { "type": "string" },
-          "title": { "type": "string" },
-          "authors": { "type": "string" },
-          "year": { "type": "string" },
-          "venue_or_source": { "type": "string" },
-          "url_or_doi": { "type": "string" },
-          "citation_signal": { "type": "string" },
-          "why_referenced": { "type": "string" },
-          "blueprint_sections_influenced": { "type": "array", "items": { "type": "string" } },
-          "limitations": { "type": "string" }
-        }
-      }
-    },
     "referenced_code_datasets_benchmarks_or_artifacts": {
       "type": "array",
       "items": {
@@ -144,6 +113,37 @@
           "new_sources_added": { "type": "array", "items": { "type": "string" } },
           "sources_removed_or_deprioritized": { "type": "array", "items": { "type": "string" } },
           "rationale": { "type": "string" }
+        }
+      }
+    },
+    "referenced_papers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reference_id",
+          "title",
+          "authors",
+          "year",
+          "venue_or_source",
+          "url_or_doi",
+          "citation_signal",
+          "why_referenced",
+          "blueprint_sections_influenced",
+          "limitations"
+        ],
+        "properties": {
+          "reference_id": { "type": "string" },
+          "title": { "type": "string" },
+          "authors": { "type": "string" },
+          "year": { "type": "string" },
+          "venue_or_source": { "type": "string" },
+          "url_or_doi": { "type": "string" },
+          "citation_signal": { "type": "string" },
+          "why_referenced": { "type": "string" },
+          "blueprint_sections_influenced": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "string" }
         }
       }
     }
