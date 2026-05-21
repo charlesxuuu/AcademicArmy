@@ -39,7 +39,7 @@ URL: TBD
 Owner / Maintainer: TBD
 Relevance: TBD
 Used in Blueprint Section: TBD
-Caution: Repository activity, license compatibility, and availability not verified unless explicitly checked.
+Verification Notes: Repository activity, license compatibility, and availability.
 
 ## 7. Venue / Journal Considerations
 

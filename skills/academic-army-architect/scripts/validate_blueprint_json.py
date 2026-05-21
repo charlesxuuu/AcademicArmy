@@ -55,7 +55,7 @@ DEEPRESEARCH_BRIEF_TOP_LEVEL = [
     "blueprint_sections_under_review",
     "deepresearch_questions",
     "required_source_types",
-    "codex_integration_instructions",
+    "integration_instructions",
     "output_format",
 ]
 
@@ -213,7 +213,7 @@ def validate_deepresearch_brief(data) -> str | None:
         "blueprint_sections_under_review",
         "deepresearch_questions",
         "required_source_types",
-        "codex_integration_instructions",
+        "integration_instructions",
     ):
         if not isinstance(data.get(key), list):
             return f"{key} must be an array"

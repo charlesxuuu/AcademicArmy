@@ -13,8 +13,10 @@
     "existing_blueprint",
     "revision_request",
     "missing_information",
+    "blueprint_sections_under_review",
     "deepresearch_questions",
     "required_source_types",
+    "integration_instructions",
     "output_format"
   ],
   "properties": {
@@ -84,7 +86,7 @@
         "enum": ["papers", "code", "datasets", "benchmarks", "venue_guidelines", "artifacts"]
       }
     },
-    "codex_integration_instructions": { "type": "array", "items": { "type": "string" } },
+    "integration_instructions": { "type": "array", "items": { "type": "string" } },
     "output_format": { "type": "string" }
   }
 }

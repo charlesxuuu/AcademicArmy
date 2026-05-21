@@ -27,10 +27,10 @@
     "benchmarks",
     "venue_guidelines"
   ],
-  "codex_integration_instructions": [
-    "Answer only the focused research question.",
-    "Recommend blueprint decisions only for sections under review.",
-    "Mark unsupported or uncertain items as TBD or needs_user_confirmation."
+  "integration_instructions": [
+    "Answer the focused research question.",
+    "Recommend blueprint decisions for sections under review.",
+    "Mark open items as TBD or needs_user_confirmation."
   ],
   "output_format": "deepresearch_report_schema"
 }

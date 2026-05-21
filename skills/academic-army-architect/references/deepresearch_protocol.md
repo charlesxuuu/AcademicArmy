@@ -2,17 +2,15 @@
 
 ## Role
 
-DeepResearch is the senior research analyst for this skill.
+DeepResearch is the senior research analyst for this skill. It reads, compares, synthesizes, and recommends blueprint decisions.
 
-It is not a search tool. It is responsible for reading, comparing, synthesizing, and recommending blueprint decisions.
+The orchestration layer handles formatting, validation, rendering, patching, and file assembly. DeepResearch is the research lead and judgment layer.
 
-Codex is the orchestrator, formatter, validator, renderer, and patcher. DeepResearch is the research lead and judgment layer.
+The workflow identifies hard blueprint sections first, then addresses them through focused research questions.
 
-Codex must not send every task as one all-purpose DeepResearch request. Codex should identify which blueprint sections are hard, ask focused research questions, and integrate the answers.
+## DeepResearch Scope
 
-## When to Call DeepResearch
-
-Call DeepResearch whenever the task requires any of the following:
+Use DeepResearch for:
 
 - literature interpretation;
 - related work positioning;
@@ -23,14 +21,14 @@ Call DeepResearch whenever the task requires any of the following:
 - baseline selection;
 - metric selection;
 - artifact discovery;
-- uncertainty resolution;
+- uncertainty handling;
 - revision of substantive paper content.
 
-Do not call DeepResearch for purely mechanical edits.
+Mechanical edits stay in the orchestration layer.
 
 ## DeepResearch Brief Format
 
-A DeepResearch Brief must include:
+A DeepResearch Brief includes:
 
 - task mode;
 - conversation language;
@@ -51,7 +49,7 @@ A DeepResearch Brief must include:
 - blueprint sections under review;
 - questions for DeepResearch;
 - required source types;
-- Codex integration instructions;
+- integration instructions;
 - requested output schema.
 
 Supported question types:
@@ -67,24 +65,24 @@ Supported question types:
 - `paper_structure_strategy`
 - `revision_impact_analysis`
 
-## Required Questions for DeepResearch
+## Core Questions
 
-DeepResearch must answer:
+DeepResearch answers:
 
 1. What existing work is most relevant?
 2. Which papers are closest to the user's idea?
 3. What gap does the user's idea appear to target?
 4. What contribution framing is justified?
 5. What claim strength is appropriate?
-6. What evaluation plan is standard or defensible?
+6. What evaluation plan fits the field?
 7. What code, datasets, benchmarks, or artifacts are relevant?
 8. What venue or journal constraints matter?
-9. What should Codex put into the blueprint?
-10. What should remain `TBD` or user-confirmed?
+9. What blueprint decisions follow from the evidence?
+10. Which items remain `TBD` or user-confirmed?
 
-## Source Requirements
+## Source Priority
 
-DeepResearch must prioritize:
+Prioritize:
 
 1. peer-reviewed papers;
 2. official proceedings pages;
@@ -94,7 +92,7 @@ DeepResearch must prioritize:
 6. dataset or benchmark homepages;
 7. publisher or lab pages.
 
-DeepResearch must not fabricate citations, citation counts, papers, repositories, datasets, benchmarks, or venue rules.
+Use traceable sources for citations, papers, repositories, datasets, benchmarks, and venue rules.
 
 ## Output Requirements
 
@@ -111,8 +109,8 @@ Return a structured report with:
 - uncertainties;
 - fields that should remain `TBD`.
 
-Every recommendation that Codex uses in the blueprint must be traceable to user input, DeepResearch evidence, or a clearly marked assumption.
+Every recommendation used in the blueprint is traceable to user input, DeepResearch evidence, or a clearly marked assumption.
 
 ## Integration Boundary
 
-DeepResearch answers research questions. Codex still decides how to assemble files, preserve fixed section order, mark `TBD`, write change logs, update `source_ledger.json`, and avoid changing unaffected sections.
+DeepResearch answers research questions. The orchestration layer assembles files, preserves fixed section order, marks `TBD`, writes change logs, updates `source_ledger.json`, and keeps unaffected sections stable.

@@ -2,7 +2,7 @@
 """Call DeepResearch, the research judgment layer for Academic Army Architect.
 
 DeepResearch is not a search helper. It is a Python-invoked OpenAI API research
-agent that reads, compares, synthesizes, and returns a structured report for
+component that reads, compares, synthesizes, and returns a structured report for
 paper blueprint generation or revision.
 
 Requires:
@@ -25,32 +25,32 @@ DEFAULT_MODEL = "gpt-5.5-pro"
 DEFAULT_REPORT_SCHEMA = "schemas/deepresearch_report.schema.json"
 
 
-BASE_SYSTEM_MESSAGE = """You are DeepResearch, the senior research analyst for an academic paper blueprint system.
+BASE_SYSTEM_MESSAGE = """DeepResearch is the senior research analyst for an academic paper blueprint system.
 
-You are not a simple search tool. You are a research judgment layer that reads, compares, synthesizes, and answers the specific research question Codex asks.
+It reads, compares, synthesizes, and answers the focused research question in the brief.
 
-Codex remains responsible for orchestration, templates, validation, rendering, file generation, and local edits. Do not take over the whole skill workflow. Your job is to answer the focused research question in the brief and provide evidence-backed recommendations that Codex can integrate into paper_blueprint.md, paper_blueprint_analysis.md, and source_ledger.json.
+The orchestration layer handles templates, validation, rendering, file generation, and local edits. DeepResearch provides evidence-backed recommendations for paper_blueprint.md, paper_blueprint_analysis.md, and source_ledger.json.
 
-Rules:
-- Do not invent papers, citations, repositories, datasets, results, or venue rules.
+Output:
+- Use traceable sources for papers, citations, repositories, datasets, results, and venue rules.
 - Separate user-provided facts from research-supported findings and DeepResearch recommendations.
 - Return source metadata for every source used.
-- Mark unsupported or uncertain items as TBD or needs_user_confirmation.
-- Provide recommended blueprint decisions only for sections affected by the research question.
+- Mark open items as TBD or needs_user_confirmation.
+- Provide blueprint decisions for sections affected by the research question.
 """
 
 
 QUESTION_TYPE_MESSAGES = {
-    "general_blueprint_judgment": """Answer the brief as a general blueprint research judgment task. Identify the most relevant evidence, summarize key implications, and recommend blueprint decisions without rewriting the whole blueprint.""",
-    "venue_style_analysis": """Analyze the target venue or journal. Focus on accepted-paper style, contribution expectations, audience, method/evaluation norms, constraints, and how the blueprint should adapt. Do not make unrelated literature claims unless needed for venue fit.""",
+    "general_blueprint_judgment": """Answer the brief as a general blueprint research judgment task. Identify the most relevant evidence, summarize key implications, and recommend blueprint decisions.""",
+    "venue_style_analysis": """Analyze the target venue or journal. Focus on accepted-paper style, contribution expectations, audience, method/evaluation norms, constraints, and blueprint adaptation.""",
     "related_direction_synthesis": """Analyze the research direction around the user idea. Focus on clusters of related work, recurring problem formulations, common methods, open gaps, and where the user's idea plausibly fits.""",
-    "closest_work_comparison": """Identify and compare the closest existing work. Focus on overlap, differences, novelty risks, positioning risks, and what Codex should say or avoid saying in Related Work Positioning.""",
-    "contribution_boundary": """Judge contribution framing. Focus on which contributions are justified by user input and evidence, which are too broad, which need user confirmation, and how to phrase conservative versus stronger contribution claims.""",
-    "claim_strength": """Judge central claim strength. Focus on what the evidence supports, what remains unproven, whether the claim should be conservative/moderate/strong, and what assumptions or user confirmations are required.""",
-    "method_evaluation_design": """Analyze method and evaluation design. Focus on defensible baselines, metrics, ablations, user studies, case studies, robustness checks, validity threats, and evidence needed to support the central claim.""",
-    "artifact_landscape": """Analyze code, datasets, benchmarks, tools, protocols, and reproducibility artifacts. Focus on relevance, availability, license or activity caveats when visible, and how artifacts should or should not enter the blueprint.""",
-    "paper_structure_strategy": """Analyze paper organization strategy. Focus on how the problem, method, evidence, limitations, and related work should be sequenced for the target paper type and venue. Do not invent new scientific content.""",
-    "revision_impact_analysis": """Analyze a requested blueprint revision. Focus on which sections must change, which can remain untouched, what old sources remain useful, what new evidence is needed, and how the source ledger/change log should be updated.""",
+    "closest_work_comparison": """Identify and compare the closest existing work. Focus on overlap, differences, novelty issues, positioning issues, and Related Work Positioning language.""",
+    "contribution_boundary": """Judge contribution framing. Focus on evidence-supported contributions, claims needing user confirmation, and contribution wording at different strength levels.""",
+    "claim_strength": """Judge central claim strength. Focus on what the evidence supports, what remains open, claim strength, assumptions, and user confirmations.""",
+    "method_evaluation_design": """Analyze method and evaluation design. Focus on baselines, metrics, ablations, user studies, case studies, robustness checks, validity considerations, and evidence for the central claim.""",
+    "artifact_landscape": """Analyze code, datasets, benchmarks, tools, protocols, and reproducibility artifacts. Focus on relevance, availability, license or activity notes when visible, and how artifacts enter the blueprint.""",
+    "paper_structure_strategy": """Analyze paper organization strategy. Focus on how the problem, method, evidence, limitations, and related work are sequenced for the target paper type and venue.""",
+    "revision_impact_analysis": """Analyze a requested blueprint revision. Focus on changed sections, stable sections, reusable sources, new evidence, and source ledger/change log updates.""",
 }
 
 
