@@ -184,7 +184,7 @@ For a product implementation, prefer this call chain:
 1. `classify_request`
 2. `intake_or_revision_parser`
 3. `search_plan_generator`
-4. `web_search_research`
+4. `web_search_research` with `scripts/openai_web_search.py` by default
 5. `blueprint_json_generator`
 6. `analysis_json_generator`
 7. `markdown_renderer`
@@ -217,4 +217,6 @@ Before finalizing, verify:
 - Use `references/blueprint_schema.json` for structured blueprint output.
 - Use `references/analysis_schema.json` for structured analysis output.
 - Use `references/source_ledger_schema.json` for structured ledger output.
+- Use `scripts/openai_web_search.py` to execute mandatory OpenAI API web-search passes and produce structured source records.
+- Read `references/openai_api_search.md` for CLI usage, domain-filter guidance, and output contract.
 - Run `scripts/validate_blueprint_json.py --kind blueprint <file>`, `--kind analysis <file>`, or `--kind ledger <file>` for quick structural checks.
