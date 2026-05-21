@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PaperBlueprintAnalysis",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "analysis_summary",
+    "user_provided_inputs",
+    "search_process",
+    "referenced_papers",
+    "referenced_code_datasets_or_artifacts",
+    "venue_or_journal_considerations",
+    "problem_framing_rationale",
+    "central_claim_rationale",
+    "contribution_structure_rationale",
+    "evaluation_plan_rationale",
+    "assumptions_uncertainties_and_missing_information",
+    "change_log"
+  ],
+  "properties": {
+    "analysis_summary": { "type": "string" },
+    "user_provided_inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["input", "used_in_sections"],
+        "properties": {
+          "input": { "type": "string" },
+          "used_in_sections": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "search_process": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["search_id", "purpose", "query", "result_summary"],
+        "properties": {
+          "search_id": { "type": "string" },
+          "purpose": { "type": "string" },
+          "query": { "type": "string" },
+          "result_summary": { "type": "string" }
+        }
+      }
+    },
+    "referenced_papers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reference_id",
+          "title",
+          "authors",
+          "year",
+          "venue_or_source",
+          "url_or_doi",
+          "citation_signal",
+          "why_referenced",
+          "blueprint_sections_influenced",
+          "limitations"
+        ],
+        "properties": {
+          "reference_id": { "type": "string" },
+          "title": { "type": "string" },
+          "authors": { "type": "string" },
+          "year": { "type": "string" },
+          "venue_or_source": { "type": "string" },
+          "url_or_doi": { "type": "string" },
+          "citation_signal": { "type": "string" },
+          "why_referenced": { "type": "string" },
+          "blueprint_sections_influenced": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "string" }
+        }
+      }
+    },
+    "referenced_code_datasets_or_artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "artifact_id",
+          "name",
+          "type",
+          "url",
+          "owner_or_maintainer",
+          "relevance",
+          "blueprint_sections_influenced",
+          "caution"
+        ],
+        "properties": {
+          "artifact_id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["code", "dataset", "benchmark", "tool", "protocol", "other"]
+          },
+          "url": { "type": "string" },
+          "owner_or_maintainer": { "type": "string" },
+          "relevance": { "type": "string" },
+          "blueprint_sections_influenced": { "type": "array", "items": { "type": "string" } },
+          "caution": { "type": "string" }
+        }
+      }
+    },
+    "venue_or_journal_considerations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "implications_for_blueprint"],
+      "properties": {
+        "sources": { "type": "array", "items": { "type": "string" } },
+        "implications_for_blueprint": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "problem_framing_rationale": { "type": "string" },
+    "central_claim_rationale": { "type": "string" },
+    "contribution_structure_rationale": { "type": "string" },
+    "evaluation_plan_rationale": { "type": "string" },
+    "assumptions_uncertainties_and_missing_information": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "change_log": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "change_type",
+          "user_request",
+          "sections_changed",
+          "new_sources_added",
+          "sources_removed_or_deprioritized",
+          "rationale"
+        ],
+        "properties": {
+          "version": { "type": "string" },
+          "change_type": { "type": "string", "enum": ["created", "revised"] },
+          "user_request": { "type": "string" },
+          "sections_changed": { "type": "array", "items": { "type": "string" } },
+          "new_sources_added": { "type": "array", "items": { "type": "string" } },
+          "sources_removed_or_deprioritized": { "type": "array", "items": { "type": "string" } },
+          "rationale": { "type": "string" }
+        }
+      }
+    }
+  }
+}

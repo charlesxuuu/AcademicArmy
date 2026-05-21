@@ -1,0 +1,53 @@
+{
+  "blueprint_id": "TBD",
+  "version": "v1",
+  "created_at": "TBD",
+  "updated_at": "TBD",
+  "conversation_language": "TBD",
+  "mode": "new_blueprint_from_incomplete_idea",
+  "user_inputs": [
+    {
+      "turn_id": "TBD",
+      "summary": "TBD"
+    }
+  ],
+  "searches": [
+    {
+      "search_id": "S1",
+      "purpose": "related_paper_search",
+      "query": "TBD",
+      "date": "TBD",
+      "sources_consulted": [
+        {
+          "source_id": "R1",
+          "type": "paper",
+          "title": "TBD",
+          "url": "TBD",
+          "year": "TBD",
+          "venue": "TBD",
+          "citation_signal": "Not verified",
+          "used_in_blueprint_sections": [
+            "13. Related Work Positioning"
+          ]
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "A1",
+      "content": "TBD",
+      "confidence": "low",
+      "where_used": "TBD"
+    }
+  ],
+  "changes": [
+    {
+      "version": "v1",
+      "change_request": "Created initial blueprint.",
+      "sections_changed": [],
+      "new_sources_added": [],
+      "old_sources_removed": []
+    }
+  ]
+}

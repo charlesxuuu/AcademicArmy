@@ -5,66 +5,111 @@
 - Field: TBD
 - Subfield: TBD
 - Paper Type: TBD
-- Target Venue: TBD
+- Target Venue / Journal: TBD
 - Target Readers: TBD
 - Current Stage: TBD
-- Existing Materials: TBD
+- Blueprint Version: v1
+
+## 2. Research Idea Summary
+
+- One-Sentence Summary: TBD
+- Expanded Summary: TBD
+
+## 3. Target Paper Type
+
+- Primary Paper Type: TBD
+- Secondary Paper Type: TBD
+- Reason: TBD
+
+## 4. Target Venue / Journal
+
+- Target Venue / Journal: TBD
+- Venue Expectations: TBD
+- Fit Considerations: TBD
 - Constraints: TBD
 
-## 2. One-Sentence Paper Idea
+## 5. Research Problem
 
-TBD
+- Problem: TBD
+- Context: TBD
+- Existing Difficulty: TBD
+- Why This Problem Matters: TBD
 
-## 3. Research Problem
+## 6. Motivation
 
-TBD
+- Academic Motivation: TBD
+- Practical Motivation: TBD
+- Why Now: TBD
 
-## 4. Motivation and Importance
+## 7. Central Claim
 
-TBD
+- Main Claim: TBD
+- Conservative Version: TBD
+- Strong Version: TBD
+- Claim Scope: TBD
 
-## 5. Central Claim
+## 8. Research Questions
 
-TBD
+1. RQ1: TBD
+2. RQ2: TBD
+3. RQ3: TBD
 
-## 6. Proposed Contribution
+## 9. Proposed Contribution
 
-1. TBD
+1. Contribution 1: TBD
+2. Contribution 2: TBD
+3. Contribution 3: TBD
 
-## 7. Method / Approach
+## 10. Method / Approach
 
-TBD
+- Core Method: TBD
+- Key Mechanism: TBD
+- Input: TBD
+- Output: TBD
+- Assumptions: TBD
+- Scope: TBD
+- Non-Goals: TBD
 
-## 8. Expected Evidence
+## 11. Data, Materials, or Artifacts
 
-- Evidence Type: TBD
-- Existing Evidence: TBD
-- Missing Evidence: TBD
-- Evidence-to-Claim Fit: TBD
+- Dataset / Corpus / Case: TBD
+- Code / System / Tool: TBD
+- Benchmark: TBD
+- External Resources: TBD
+- Availability: TBD
+- Risks: TBD
 
-## 9. Evaluation or Validation Plan
+## 12. Evaluation / Validation Plan
 
-TBD
+- Evaluation Goal: TBD
+- Baselines or Comparisons: TBD
+- Metrics: TBD
+- Quantitative Evaluation: TBD
+- Qualitative Evaluation: TBD
+- Ablation / Sensitivity Analysis: TBD
+- Robustness / Generalization Check: TBD
 
-## 10. Paper Structure
+## 13. Related Work Positioning
 
-1. Introduction: TBD
-2. Related Work: TBD
-3. Method / Approach: TBD
-4. Experiments / Analysis / Case Study: TBD
-5. Results: TBD
-6. Discussion: TBD
-7. Limitations: TBD
-8. Conclusion: TBD
+- Reference Anchors: TBD
+- Closest Existing Work: TBD
+- Differentiation: TBD
+- Gap: TBD
+- Positioning Statement: TBD
 
-## 11. Missing Information
+## 14. Paper Structure
 
-- TBD
+1. Introduction
+2. Related Work
+3. Problem Formulation / Background
+4. Method / Framework
+5. Experiments / Analysis / Case Study
+6. Discussion
+7. Limitations
+8. Conclusion
 
-## 12. Next Writing Actions
+## 15. Missing Information and Next Actions
 
-1. Clarify all `TBD` fields.
-2. Draft the one-sentence paper idea.
-3. Draft the central claim.
-4. Draft the contribution paragraph.
-5. Draft the introduction outline.
+- Missing Information: TBD
+- User Decisions Needed: TBD
+- Next Writing Actions: TBD
