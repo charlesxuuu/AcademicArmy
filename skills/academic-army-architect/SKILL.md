@@ -132,7 +132,22 @@ The blueprint should be concise and executable. Put detailed reasoning in the an
 
 ## Fixed Analysis Output
 
-Always output `paper_blueprint_analysis.md` with the exact 12-section order in `assets/analysis_template.md`.
+Always output `paper_blueprint_analysis.md` with the exact 12-section order in `assets/analysis_template.md`. Keep explanatory/rationale sections before reference inventory sections. Put `Referenced Papers` last so the source list does not pull the rest of the analysis into English or citation-record style.
+
+Required analysis section order:
+
+1. Analysis Summary
+2. User-Provided Inputs
+3. Search Process
+4. Venue / Journal Considerations
+5. Why the Research Problem Was Framed This Way
+6. Why the Central Claim Was Written This Way
+7. Why the Contributions Were Structured This Way
+8. Why the Evaluation Plan Was Chosen
+9. Assumptions, Uncertainties, and Missing Information
+10. Change Log
+11. Referenced Code, Datasets, or Artifacts
+12. Referenced Papers
 
 The analysis file explains why the blueprint was written that way, what sources were used, what changed, and what remains uncertain. Use the language used in the user conversation unless the user requests another language.
 
