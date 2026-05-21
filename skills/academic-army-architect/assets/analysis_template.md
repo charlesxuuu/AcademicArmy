@@ -25,7 +25,7 @@ URL: TBD
 Owner / Maintainer: TBD
 Relevance: TBD
 Used in Blueprint Section: TBD
-Verification Notes: Repository activity, license compatibility, and availability.
+Artifact Notes: Repository activity, license compatibility, and availability.
 
 ## 6. Venue / Journal Considerations
 
@@ -80,7 +80,7 @@ Authors: TBD
 Year: TBD
 Venue / Source: TBD
 URL / DOI: TBD
-Citation Signal: Not verified
+Citation Signal: TBD
 Why It Was Referenced: TBD
 Which Blueprint Section It Influenced: TBD
 How It Influenced the Blueprint: TBD

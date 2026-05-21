@@ -2,55 +2,49 @@
 
 ## Role
 
-DeepResearch is the senior research analyst for this skill. It reads, compares, synthesizes, and recommends blueprint decisions.
+DeepResearch is the research judgment layer for the paper blueprint workflow. It reads sources, compares related work, synthesizes evidence, and recommends blueprint decisions.
 
-The orchestration layer handles formatting, validation, rendering, patching, and file assembly. DeepResearch is the research lead and judgment layer.
+Orchestration handles formatting, validation, rendering, patching, and file assembly.
 
-The workflow identifies hard blueprint sections first, then addresses them through focused research questions.
-
-## DeepResearch Scope
+## Scope
 
 Use DeepResearch for:
 
-- literature interpretation;
-- related work positioning;
-- venue or journal adaptation;
-- contribution framing;
-- claim-strength judgment;
-- evaluation planning;
-- baseline selection;
-- metric selection;
-- artifact discovery;
-- uncertainty handling;
-- revision of substantive paper content.
+- literature interpretation
+- related-work positioning
+- venue or journal adaptation
+- contribution framing
+- claim-strength judgment
+- evaluation planning
+- baseline and metric selection
+- code, dataset, benchmark, and artifact discovery
+- substantive paper revisions
 
-Mechanical edits stay in the orchestration layer.
+Mechanical edits stay in orchestration.
 
-## DeepResearch Brief Format
+## Brief Format
 
 A DeepResearch Brief includes:
 
-- task mode;
-- conversation language;
-- user goal;
-- DeepResearch question type;
-- user idea summary;
-- known field;
-- known subfield;
-- target venue or journal;
-- known paper type;
-- known method;
-- known evidence;
-- known data, code, or artifacts;
-- known constraints;
-- existing blueprint if any;
-- user revision request if any;
-- missing information;
-- blueprint sections under review;
-- questions for DeepResearch;
-- required source types;
-- integration instructions;
-- requested output schema.
+- task mode
+- conversation language
+- user goal
+- question type
+- user idea summary
+- known field and subfield
+- target venue or journal
+- paper type
+- method
+- evidence
+- data, code, or artifacts
+- constraints
+- existing blueprint or revision request
+- missing information
+- blueprint sections under review
+- research questions
+- source types
+- integration instructions
+- requested output schema
 
 Supported question types:
 
@@ -67,63 +61,52 @@ Supported question types:
 
 ## Core Questions
 
-DeepResearch answers:
+DeepResearch answers the relevant subset:
 
 1. What existing work is most relevant?
 2. Which papers are closest to the user's idea?
-3. What gap does the user's idea appear to target?
+3. What gap does the user's idea target?
 4. What contribution framing is justified?
-5. What claim strength is appropriate?
+5. What claim strength fits the evidence?
 6. What evaluation plan fits the field?
-7. What code, datasets, benchmarks, or artifacts are relevant?
+7. What code, datasets, benchmarks, or artifacts matter?
 8. What venue or journal constraints matter?
-9. What blueprint decisions follow from the evidence?
-10. Which items remain `TBD` or user-confirmed?
+9. What blueprint decisions follow?
+10. What information remains missing?
 
 ## Source Priority
 
 Prioritize:
 
-1. peer-reviewed papers;
-2. official proceedings pages;
-3. official venue or journal pages;
-4. arXiv or preprint pages when appropriate;
-5. official GitHub repositories;
-6. dataset or benchmark homepages;
-7. publisher or lab pages.
+1. peer-reviewed papers
+2. official proceedings pages
+3. official venue or journal pages
+4. arXiv or preprint pages when appropriate
+5. official GitHub repositories
+6. dataset or benchmark homepages
+7. publisher or lab pages
 
-Use traceable sources for citations, papers, repositories, datasets, benchmarks, and venue rules.
+Use traceable sources for citations, repositories, datasets, benchmarks, artifacts, and venue rules.
 
-## Output Requirements
+## Output
 
 Return a structured report with:
 
-- cited sources;
-- source metadata;
-- relevance explanation;
-- closest-work analysis;
-- contribution framing advice;
-- claim strength recommendation;
-- evaluation recommendations;
-- blueprint decision recommendations;
-- uncertainties;
-- fields that should remain `TBD`.
+- cited sources and metadata
+- relevance notes
+- closest-work analysis
+- contribution framing advice
+- claim strength recommendation
+- evaluation recommendations
+- blueprint decision recommendations
+- material gaps
 
-Every recommendation used in the blueprint is traceable to user input, DeepResearch evidence, or a clearly marked assumption.
+Every recommendation used in the blueprint is traceable to user input, DeepResearch evidence, or an explicit assumption.
 
 ## Integration Boundary
 
-DeepResearch answers research questions. The orchestration layer assembles files, preserves fixed section order, marks `TBD`, writes change logs, updates `source_ledger.json`, and keeps unaffected sections stable.
+DeepResearch answers research questions. Orchestration assembles files, preserves fixed section order, marks `TBD`, writes change logs, updates `source_ledger.json`, and keeps unaffected sections stable.
 
-## Failure Policy
+## Failure Handling
 
-DeepResearch is mandatory for every scholarly-judgment step. If DeepResearch fails, the orchestration layer must not replace it with its own research judgment.
-
-The API wrapper retries a failed DeepResearch call 3 times. If all attempts fail, the workflow stops:
-
-- no formal blueprint is generated;
-- no analysis file is generated from incomplete research;
-- no source ledger is updated as though the run succeeded;
-- the user or product layer is told that DeepResearch failed and must be rerun after fixing the cause.
-
-Purely mechanical edits may proceed only when the task did not require DeepResearch in the first place.
+The API wrapper retries a failed DeepResearch call 3 times. If all attempts fail, research-dependent outputs stay unchanged and the failure is returned for retry. Mechanical edits may proceed when the task does not require DeepResearch.

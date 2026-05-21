@@ -25,7 +25,7 @@ DEFAULT_MODEL = "gpt-5.5-pro"
 DEFAULT_REPORT_SCHEMA = "schemas/deepresearch_report.schema.json"
 
 
-BASE_SYSTEM_MESSAGE = """DeepResearch is the senior research analyst for an academic paper blueprint system.
+BASE_SYSTEM_MESSAGE = """DeepResearch is the research judgment layer for an academic paper blueprint system.
 
 It reads, compares, synthesizes, and answers the focused research question in the brief.
 
@@ -35,7 +35,7 @@ Output:
 - Use traceable sources for papers, citations, repositories, datasets, results, and venue rules.
 - Separate user-provided facts from research-supported findings and DeepResearch recommendations.
 - Return source metadata for every source used.
-- Mark open items as TBD or needs_user_confirmation.
+- Mark material gaps as TBD or user_input_needed.
 - Provide blueprint decisions for sections affected by the research question.
 """
 
@@ -45,8 +45,8 @@ QUESTION_TYPE_MESSAGES = {
     "venue_style_analysis": """Analyze the target venue or journal. Focus on accepted-paper style, contribution expectations, audience, method/evaluation norms, constraints, and blueprint adaptation.""",
     "related_direction_synthesis": """Analyze the research direction around the user idea. Focus on clusters of related work, recurring problem formulations, common methods, open gaps, and where the user's idea plausibly fits.""",
     "closest_work_comparison": """Identify and compare the closest existing work. Focus on overlap, differences, novelty issues, positioning issues, and Related Work Positioning language.""",
-    "contribution_boundary": """Judge contribution framing. Focus on evidence-supported contributions, claims needing user confirmation, and contribution wording at different strength levels.""",
-    "claim_strength": """Judge central claim strength. Focus on what the evidence supports, what remains open, claim strength, assumptions, and user confirmations.""",
+    "contribution_boundary": """Judge contribution framing. Focus on evidence-supported contributions, claims needing confirmation, and contribution wording at different strength levels.""",
+    "claim_strength": """Judge central claim strength. Focus on what the evidence supports, remaining gaps, claim strength, assumptions, and confirmations.""",
     "method_evaluation_design": """Analyze method and evaluation design. Focus on baselines, metrics, ablations, user studies, case studies, robustness checks, validity considerations, and evidence for the central claim.""",
     "artifact_landscape": """Analyze code, datasets, benchmarks, tools, protocols, and reproducibility artifacts. Focus on relevance, availability, license or activity notes when visible, and how artifacts enter the blueprint.""",
     "paper_structure_strategy": """Analyze paper organization strategy. Focus on how the problem, method, evidence, limitations, and related work are sequenced for the target paper type and venue.""",
@@ -110,7 +110,7 @@ def parse_args() -> argparse.Namespace:
         "--max-attempts",
         type=int,
         default=3,
-        help="Maximum DeepResearch attempts before failing hard. Defaults to 3.",
+        help="Maximum DeepResearch attempts before returning failure. Defaults to 3.",
     )
     parser.add_argument(
         "--retry-delay",
@@ -261,7 +261,7 @@ def run_deepresearch_with_retries(client: Any, args: argparse.Namespace, brief: 
         try:
             print(f"[INFO] DeepResearch attempt {attempt}/{args.max_attempts}", file=sys.stderr)
             return run_deepresearch_once(client, args, brief, schema)
-        except Exception as exc:  # noqa: BLE001 - this is a hard gate with final re-raise.
+        except Exception as exc:  # noqa: BLE001 - retry boundary with final re-raise.
             last_error = exc
             print(f"[ERROR] DeepResearch attempt {attempt}/{args.max_attempts} failed: {exc}", file=sys.stderr)
             if attempt < args.max_attempts:
@@ -269,7 +269,7 @@ def run_deepresearch_with_retries(client: Any, args: argparse.Namespace, brief: 
 
     raise RuntimeError(
         f"DeepResearch failed after {args.max_attempts} attempts. "
-        "No report was written and the blueprint workflow must stop."
+        "No report was written; research-dependent outputs stay unchanged."
     ) from last_error
 
 
@@ -292,7 +292,7 @@ def main() -> int:
     client = OpenAI()
     try:
         report, raw = run_deepresearch_with_retries(client, args, brief, schema)
-    except Exception as exc:  # noqa: BLE001 - CLI boundary must produce a clear blocking error.
+    except Exception as exc:  # noqa: BLE001 - CLI boundary returns a clear error.
         print(f"[FATAL] {exc}", file=sys.stderr)
         return 1
 

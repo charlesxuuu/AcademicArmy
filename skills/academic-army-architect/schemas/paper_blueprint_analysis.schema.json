@@ -51,7 +51,7 @@
           "owner_or_maintainer",
           "relevance",
           "blueprint_sections_influenced",
-          "caution"
+          "notes"
         ],
         "properties": {
           "artifact_id": { "type": "string" },
@@ -64,7 +64,7 @@
           "owner_or_maintainer": { "type": "string" },
           "relevance": { "type": "string" },
           "blueprint_sections_influenced": { "type": "array", "items": { "type": "string" } },
-          "caution": { "type": "string" }
+          "notes": { "type": "string" }
         }
       }
     },

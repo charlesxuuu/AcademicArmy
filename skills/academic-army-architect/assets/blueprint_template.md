@@ -77,7 +77,7 @@
 - Benchmark: TBD
 - External Resources: TBD
 - Availability: TBD
-- Risks: TBD
+- Constraints: TBD
 
 ## 12. Evaluation / Validation Plan
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "Academic Army Architect"
   short_description: "DeepResearch-first paper blueprint builder"
-  default_prompt: "Use $academic-army-architect to build or revise a DeepResearch-first paper blueprint."
+  default_prompt: "Build or revise a DeepResearch-first paper blueprint with $academic-army-architect."

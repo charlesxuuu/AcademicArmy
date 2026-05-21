@@ -30,7 +30,7 @@
   "integration_instructions": [
     "Answer the focused research question.",
     "Recommend blueprint decisions for sections under review.",
-    "Mark open items as TBD or needs_user_confirmation."
+    "List material gaps as TBD or user_input_needed."
   ],
   "output_format": "deepresearch_report_schema"
 }

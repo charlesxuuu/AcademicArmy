@@ -71,12 +71,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["reference_id", "why_close", "how_user_idea_differs", "risk_if_not_addressed"],
+        "required": ["reference_id", "why_close", "how_user_idea_differs", "positioning_note"],
         "properties": {
           "reference_id": { "type": "string" },
           "why_close": { "type": "string" },
           "how_user_idea_differs": { "type": "string" },
-          "risk_if_not_addressed": { "type": "string" }
+          "positioning_note": { "type": "string" }
         }
       }
     },
@@ -93,7 +93,7 @@
           "owner_or_maintainer",
           "relevance",
           "license_or_availability",
-          "caution"
+          "notes"
         ],
         "properties": {
           "artifact_id": { "type": "string" },
@@ -103,7 +103,7 @@
           "owner_or_maintainer": { "type": "string" },
           "relevance": { "type": "string" },
           "license_or_availability": { "type": "string" },
-          "caution": { "type": "string" }
+          "notes": { "type": "string" }
         }
       }
     },
@@ -133,26 +133,26 @@
     "contribution_framing_advice": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["recommended_contributions", "contributions_to_avoid"],
+      "required": ["recommended_contributions", "unsupported_contributions"],
       "properties": {
         "recommended_contributions": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["claim", "basis", "rationale", "risk"],
+            "required": ["claim", "basis", "rationale", "boundary_note"],
             "properties": {
               "claim": { "type": "string" },
               "basis": {
                 "type": "string",
-                "enum": ["user_provided", "deepresearch_supported", "needs_user_confirmation"]
+                "enum": ["user_provided", "deepresearch_supported", "user_input_needed"]
               },
               "rationale": { "type": "string" },
-              "risk": { "type": "string" }
+              "boundary_note": { "type": "string" }
             }
           }
         },
-        "contributions_to_avoid": { "type": "array", "items": { "type": "string" } }
+        "unsupported_contributions": { "type": "array", "items": { "type": "string" } }
       }
     },
     "claim_strength_recommendation": {
@@ -183,7 +183,7 @@
         "quantitative_checks",
         "qualitative_checks",
         "ablation_or_sensitivity_checks",
-        "risks"
+        "validity_notes"
       ],
       "properties": {
         "evaluation_goal": { "type": "string" },
@@ -192,7 +192,7 @@
         "quantitative_checks": { "type": "array", "items": { "type": "string" } },
         "qualitative_checks": { "type": "array", "items": { "type": "string" } },
         "ablation_or_sensitivity_checks": { "type": "array", "items": { "type": "string" } },
-        "risks": { "type": "array", "items": { "type": "string" } }
+        "validity_notes": { "type": "array", "items": { "type": "string" } }
       }
     },
     "recommended_blueprint_decisions": {

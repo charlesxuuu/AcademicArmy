@@ -134,14 +134,14 @@
     "data_materials_or_artifacts": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["dataset_corpus_or_case", "code_system_or_tool", "benchmark", "external_resources", "availability", "risks"],
+      "required": ["dataset_corpus_or_case", "code_system_or_tool", "benchmark", "external_resources", "availability", "constraints"],
       "properties": {
         "dataset_corpus_or_case": { "type": "string" },
         "code_system_or_tool": { "type": "string" },
         "benchmark": { "type": "string" },
         "external_resources": { "type": "array", "items": { "type": "string" } },
         "availability": { "type": "string" },
-        "risks": { "type": "array", "items": { "type": "string" } }
+        "constraints": { "type": "array", "items": { "type": "string" } }
       }
     },
     "evaluation_or_validation_plan": {

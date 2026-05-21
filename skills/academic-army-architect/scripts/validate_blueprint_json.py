@@ -110,7 +110,7 @@ BLUEPRINT_REQUIRED_NESTED = {
         "benchmark",
         "external_resources",
         "availability",
-        "risks",
+        "constraints",
     ],
     "evaluation_or_validation_plan": [
         "evaluation_goal",
