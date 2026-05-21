@@ -1,0 +1,4 @@
+interface:
+  display_name: "Academic Army Architect"
+  short_description: "Standardize paper ideas into blueprints"
+  default_prompt: "Use $academic-army-architect to turn my paper idea into a fixed-format blueprint."

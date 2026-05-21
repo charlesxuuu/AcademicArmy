@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PaperBlueprint",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "basic_information",
+    "one_sentence_paper_idea",
+    "research_problem",
+    "motivation_and_importance",
+    "central_claim",
+    "proposed_contribution",
+    "method_or_approach",
+    "expected_evidence",
+    "evaluation_or_validation_plan",
+    "paper_structure",
+    "missing_information",
+    "next_writing_actions"
+  ],
+  "properties": {
+    "basic_information": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "subfield",
+        "paper_type",
+        "target_venue",
+        "target_readers",
+        "current_stage",
+        "existing_materials",
+        "constraints"
+      ],
+      "properties": {
+        "field": { "type": "string" },
+        "subfield": { "type": "string" },
+        "paper_type": { "type": "string" },
+        "target_venue": { "type": "string" },
+        "target_readers": { "type": "string" },
+        "current_stage": { "type": "string" },
+        "existing_materials": { "type": "string" },
+        "constraints": { "type": "string" }
+      }
+    },
+    "one_sentence_paper_idea": { "type": "string" },
+    "research_problem": { "type": "string" },
+    "motivation_and_importance": { "type": "string" },
+    "central_claim": { "type": "string" },
+    "proposed_contribution": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "method_or_approach": { "type": "string" },
+    "expected_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_type",
+        "existing_evidence",
+        "missing_evidence",
+        "evidence_to_claim_fit"
+      ],
+      "properties": {
+        "evidence_type": { "type": "string" },
+        "existing_evidence": { "type": "string" },
+        "missing_evidence": { "type": "string" },
+        "evidence_to_claim_fit": { "type": "string" }
+      }
+    },
+    "evaluation_or_validation_plan": { "type": "string" },
+    "paper_structure": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section", "purpose"],
+        "properties": {
+          "section": { "type": "string" },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "missing_information": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "next_writing_actions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
