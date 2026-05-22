@@ -1,4 +1,11 @@
 interface:
   display_name: "Academic Army Architect"
-  short_description: "DeepResearch-first paper blueprint builder"
-  default_prompt: "Build or revise a DeepResearch-first paper blueprint with $academic-army-architect."
+  short_description: "Evidence-grounded paper blueprint builder"
+  default_prompt: "Build or revise an evidence-grounded paper blueprint with $academic-army-architect."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "academic_army_mcp_tools"
+      description: "Prompt-only DeepResearch tool for scholarly synthesis."
+      transport: "stdio"

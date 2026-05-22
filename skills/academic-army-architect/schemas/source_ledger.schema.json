@@ -54,7 +54,6 @@
           "question_type",
           "brief_summary",
           "date",
-          "model",
           "report_path",
           "sources_consulted",
           "recommended_blueprint_decisions"
@@ -79,7 +78,6 @@
           },
           "brief_summary": { "type": "string" },
           "date": { "type": "string" },
-          "model": { "type": "string" },
           "report_path": { "type": "string" },
           "sources_consulted": {
             "type": "array",

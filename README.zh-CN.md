@@ -20,6 +20,47 @@ ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”�
 
 需要精细调研的部分，主要通过会使用 API 的 skill 调用 Deep Research 来完成。这样可以避免为了检索而在本地保存大量数据，让项目更轻量，也方便后续刷新调研结果。
 
+## DeepResearch MCP
+
+AcademicArmy 在 `mcp-server` 目录下提供了一个本地 stdio MCP server。它只暴露一个工具：
+
+- `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5-pro`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
+
+注册前，先在仓库根目录创建 `.env`：
+
+```env
+OPENAI_API_KEY=your_api_key_here
+```
+
+如有需要，安装虚拟环境依赖：
+
+```powershell
+cd <repo>
+python -m pip install -r ./mcp-server/requirements.txt
+```
+
+在 Codex 或其它 MCP client 中把它注册成 stdio server：
+
+- 名称：`academic_army_mcp_tools`
+- 命令：`python`
+- 参数：`-m mcp-server`
+- 工作目录：`<repo>`
+
+如果使用 Codex CLI，通常可以执行：
+
+```powershell
+codex mcp add academic_army_mcp_tools -- python -m mcp-server
+```
+
+注意 MCP client 的工作目录必须是仓库根目录，因为 server 会从当前目录加载 `.env`。
+
+注册后重启 MCP client。使用时只需要给 `deepresearch` 传入一个自包含 prompt，例如：
+
+```text
+Use deepresearch with prompt:
+Find the closest papers to this research idea, compare their methods, and return a cited structured report.
+```
+
 ## 项目结构
 
 Agent 和团队结构见 `AcademicArmy/README.zh-CN.md`。

@@ -97,10 +97,10 @@
     "central_claim": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["main_claim", "conservative_version", "strong_version", "claim_scope"],
+      "required": ["main_claim", "scoped_version", "strong_version", "claim_scope"],
       "properties": {
         "main_claim": { "type": "string" },
-        "conservative_version": { "type": "string" },
+        "scoped_version": { "type": "string" },
         "strong_version": { "type": "string" },
         "claim_scope": { "type": "string" }
       }

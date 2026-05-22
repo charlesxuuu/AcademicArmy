@@ -44,7 +44,7 @@
 ## 7. Central Claim
 
 - Main Claim: TBD
-- Conservative Version: TBD
+- Scoped Version: TBD
 - Strong Version: TBD
 - Claim Scope: TBD
 

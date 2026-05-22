@@ -20,6 +20,47 @@ The blueprint produced by ProductManager should be specific enough for each role
 
 Parts that require fine-grained research should mainly be handled by skills that know how to call Deep Research through APIs. This avoids saving large amounts of local data only for retrieval, keeping the project lighter and making research updates easier to refresh.
 
+## DeepResearch MCP
+
+AcademicArmy includes a local stdio MCP server at `mcp-server`. It exposes one tool:
+
+- `deepresearch(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5-pro`, high reasoning, web search, background mode, and source inclusion.
+
+Before registering it, create `.env` in the repository root:
+
+```env
+OPENAI_API_KEY=your_api_key_here
+```
+
+Install dependencies in the bundled virtual environment if needed:
+
+```powershell
+cd <repo>
+python -m pip install -r ./mcp-server/requirements.txt
+```
+
+Register the MCP server in Codex or another MCP client as a stdio server:
+
+- Name: `academic_army_mcp_tools`
+- Command: `python`
+- Arguments: `-m mcp-server`
+- Working directory: `<repo>`
+
+For Codex CLI, this is typically:
+
+```powershell
+codex mcp add academic_army_mcp_tools -- python -m mcp-server
+```
+
+Make sure the MCP client's working directory is the repository root, because the server loads `.env` from the current directory.
+
+After registration, restart the MCP client. Then call the `deepresearch` tool with a single self-contained prompt. For example:
+
+```text
+Use deepresearch with prompt:
+Find the closest papers to this research idea, compare their methods, and return a cited structured report.
+```
+
 ## Project Structure
 
 See `AcademicArmy/README.md` for the agent and team structure.

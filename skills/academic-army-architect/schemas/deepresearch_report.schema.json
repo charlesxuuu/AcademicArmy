@@ -160,16 +160,16 @@
       "additionalProperties": false,
       "required": [
         "main_claim",
-        "conservative_version",
+        "scoped_version",
         "strong_version",
         "recommended_strength",
         "rationale"
       ],
       "properties": {
         "main_claim": { "type": "string" },
-        "conservative_version": { "type": "string" },
+        "scoped_version": { "type": "string" },
         "strong_version": { "type": "string" },
-        "recommended_strength": { "type": "string", "enum": ["conservative", "moderate", "strong"] },
+        "recommended_strength": { "type": "string", "enum": ["scoped", "moderate", "strong"] },
         "rationale": { "type": "string" }
       }
     },

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Validate Academic Army blueprint, analysis, ledger, or DeepResearch JSON shape."""
 
 import argparse
@@ -102,7 +101,7 @@ BLUEPRINT_REQUIRED_NESTED = {
     "target_venue_or_journal": ["name", "venue_expectations", "fit_considerations", "constraints"],
     "research_problem": ["problem", "context", "existing_difficulty", "why_this_problem_matters"],
     "motivation": ["academic_motivation", "practical_motivation", "why_now"],
-    "central_claim": ["main_claim", "conservative_version", "strong_version", "claim_scope"],
+    "central_claim": ["main_claim", "scoped_version", "strong_version", "claim_scope"],
     "method_or_approach": ["core_method", "key_mechanism", "input", "output", "assumptions", "scope", "non_goals"],
     "data_materials_or_artifacts": [
         "dataset_corpus_or_case",
