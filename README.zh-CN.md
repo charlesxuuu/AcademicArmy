@@ -52,7 +52,13 @@ python -m pip install -r ./mcp-server/requirements.txt
 codex mcp add academic_army_mcp_tools -- python -m mcp-server
 ```
 
-注意 MCP client 的工作目录必须是仓库根目录，因为 server 会从当前目录加载 `.env`。
+注意 MCP client 的工作目录必须是仓库根目录，因为 server 会从当前目录加载 `.env`。也可以通过 `-e/--env NAME=VALUE` 直接传入环境变量；这些值会在 `.env` 加载之后写入，因此会覆盖 `.env` 中同名配置。
+
+例如：
+
+```powershell
+codex mcp add academic_army_mcp_tools -- python -m mcp-server -e OPENAI_API_KEY=your_api_key_here
+```
 
 注册后重启 MCP client。使用时只需要给 `deepresearch` 传入一个自包含 prompt，例如：
 

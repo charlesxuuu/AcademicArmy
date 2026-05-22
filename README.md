@@ -52,7 +52,13 @@ For Codex CLI, this is typically:
 codex mcp add academic_army_mcp_tools -- python -m mcp-server
 ```
 
-Make sure the MCP client's working directory is the repository root, because the server loads `.env` from the current directory.
+Make sure the MCP client's working directory is the repository root, because the server loads `.env` from the current directory. You can also pass environment variables directly with `-e/--env NAME=VALUE`; these values are applied after `.env` is loaded, so they override matching values from `.env`.
+
+For example:
+
+```powershell
+codex mcp add academic_army_mcp_tools -- python -m mcp-server -e OPENAI_API_KEY=your_api_key_here
+```
 
 After registration, restart the MCP client. Then call the `deepresearch` tool with a single self-contained prompt. For example:
 

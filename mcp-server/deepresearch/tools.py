@@ -1,11 +1,7 @@
 import os
 import time
 
-from dotenv import load_dotenv
 from openai import OpenAI
-
-
-load_dotenv(".env")
 
 
 def deepresearch(prompt: str) -> dict:
