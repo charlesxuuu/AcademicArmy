@@ -6,6 +6,6 @@ interface:
 dependencies:
   tools:
     - type: "mcp"
-      value: "mcp-server"
+      value: "academic_army_mcp_tools"
       description: "DeepResearch tool for live venue, literature, benchmark, artifact, and reviewer evidence."
       transport: "stdio"

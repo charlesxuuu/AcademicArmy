@@ -22,7 +22,7 @@ ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”�
 
 ## DeepResearch MCP
 
-AcademicArmy 在 `mcp-server` 目录下提供了一个本地 stdio MCP server。它只暴露一个工具：
+AcademicArmy 在 `mcp-server` 目录下提供了本地 stdio MCP 实现。它只暴露一个工具：
 
 - `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5-pro`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
 
@@ -39,26 +39,28 @@ cd <repo>
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-在 Codex 或其它 MCP client 中把它注册成 stdio server：
+注册到 Codex：
+
+```powershell
+python install_mcp.py
+```
+
+安装脚本会刷新 Codex 中的 `academic_army_mcp_tools` 配置项，然后用运行脚本的 Python 可执行文件注册它。它还会从仓库根目录读取 `.env`，并通过 Codex `--env` 把这些值传给 MCP server。
+
+如果需要覆盖或补充环境变量，可以重复使用 `-e/--env NAME=VALUE`：
+
+```powershell
+python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
+```
+
+在其它 MCP client 中把它注册成 stdio server：
 
 - 名称：`academic_army_mcp_tools`
 - 命令：`python`
 - 参数：`-m mcp-server`
 - 工作目录：`<repo>`
 
-如果使用 Codex CLI，通常可以执行：
-
-```powershell
-codex mcp add academic_army_mcp_tools -- python -m mcp-server
-```
-
 注意 MCP client 的工作目录必须是仓库根目录，因为 server 会从当前目录加载 `.env`。也可以通过 `-e/--env NAME=VALUE` 直接传入环境变量；这些值会在 `.env` 加载之后写入，因此会覆盖 `.env` 中同名配置。
-
-例如：
-
-```powershell
-codex mcp add academic_army_mcp_tools -- python -m mcp-server -e OPENAI_API_KEY=your_api_key_here
-```
 
 注册后重启 MCP client。使用时只需要给 `deepresearch` 传入一个自包含 prompt，例如：
 
