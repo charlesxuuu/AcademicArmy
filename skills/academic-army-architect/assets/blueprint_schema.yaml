@@ -1,6 +1,9 @@
-paper_blueprint:
-  output_language: string
-  reasoning_summary_mode: decision_log
+paper_blueprint_summary:
+  output_files:
+    blueprint_markdown: paper_blueprint.md
+    explanation_markdown: paper_blueprint_explanation.<lang>.md
+    output_language: string
+    explanation_language_suffix: string
   title: string
   target_venue:
     primary: string
@@ -9,102 +12,86 @@ paper_blueprint:
     fit_rationale: string
   contribution_type: [string]
   exemplar_analysis:
-    enabled: boolean
-    target_venue_exemplars:
+    storytelling_exemplars:
+      - title: string
+        venue: string
+        year: integer_or_null
+        source: string
+        recency_basis: last_2_3_years_or_latest_3_cycles_or_expanded_last_5_years_or_needs_verification
+        why_current_storytelling_exemplar: string
+        transferable_storytelling_lesson: string
+        non_transferable_warning: string
+        verification_status: verified_or_tentative_or_needs_verification
+    technical_exemplars:
       - title: string
         venue: string
         year: integer_or_null
         source: string
         influence_signal: string
-        core_pattern: string
-        transferable_lesson: string
-        non_transferable_warning: string
+        core_technical_idea: string
+        technical_lesson_for_current_work: string
         verification_status: verified_or_tentative_or_needs_verification
-    field_exemplars:
+    evaluation_exemplars:
       - title: string
         venue: string
         year: integer_or_null
         source: string
-        influence_signal: string
-        core_pattern: string
-        transferable_lesson: string
-        non_transferable_warning: string
+        datasets_or_workloads: [string]
+        baselines: [string]
+        metrics: [string]
+        evaluation_lesson_for_current_work: string
         verification_status: verified_or_tentative_or_needs_verification
-    nearest_neighbor_exemplars:
-      - title: string
-        venue: string
-        year: integer_or_null
-        source: string
-        relation_to_current_work: string
-        reviewer_comparison_risk: string
-        transferable_lesson: string
-        non_transferable_warning: string
-        verification_status: verified_or_tentative_or_needs_verification
-  distilled_excellence_patterns:
-    - pattern: string
-      evidence_from_exemplars: [string]
-      implication_for_current_blueprint: string
-      used_in_blueprint: boolean
+  distilled_patterns:
+    storytelling_patterns: [string]
+    technical_patterns: [string]
+    evaluation_patterns: [string]
+  core_focus_items:
+    - id: K1
+      focus: string
+      purpose: string
+      primary_blueprint_sections: [string]
   acceptance_hypothesis: string
   claims:
     - id: string
       claim: string
-      why_it_matters: string
       evidence_required: [string]
-      dataset_workload_or_environment: string
       baselines: [string]
       baseline_gap_rationale: string
       metrics: [string]
-      ablations_or_controls: [string]
       figure_or_table: string
-      influenced_by_exemplar_patterns: [string]
+      related_experiments: [string]
+      related_risks: [string]
       failure_condition: string
-      confidence: low_or_medium_or_high
-      likely_reviewer_attack: string
       status: supported_or_unsupported_or_needs_experiment_or_needs_verification
   related_work:
     - title: string
       source: string
-      problem: string
-      method: string
-      evidence: string
-      limitation: string
-      delta: string
       role: required_baseline_or_required_citation_or_contextual
+      delta: string
       verification_status: verified_or_tentative_or_needs_verification
   figures_and_tables:
     - id: string
       message: string
       supports_claims: [string]
       data_source: string
-      influenced_by_exemplar_patterns: [string]
-  reviewer_risks:
-    - reviewer: supportive_expert_or_skeptical_related_work_expert_or_evaluation_focused_reviewer
-      objection: string
-      fix: string
-      severity: low_or_medium_or_high
-  reasoning_summary:
-    user_request_interpretation: string
-    assumptions: [string]
-    deepresearch_usage: string
-    evidence_used: [string]
-    exemplar_pattern_summary: [string]
-    key_decisions: [string]
-    promoted_claims: [string]
-    downgraded_claims: [string]
-    recommended_experiments_rationale: [string]
-    unresolved_uncertainties: [string]
-    evidence_that_would_change_blueprint: [string]
-  blueprint_decision_log:
+  section_traceability:
+    - blueprint_section: string
+      core_focus_ids: [string]
+      related_blueprint_ids: [string]
+      why_this_section_exists: string
+      downstream_impact: string
+  claim_traceability:
+    - claim_id: string
+      core_focus_ids: [string]
+      supporting_experiments: [string]
+      supporting_figures_or_tables: [string]
+      main_reviewer_risks: [string]
+      explanation: string
+  explanation_decision_log:
     - decision: string
+      blueprint_id: string
       reason: string
-      supporting_exemplar_pattern: string
+      evidence_or_pattern: string
       uncertainty: string
-  reproducibility:
-    code: string
-    data: string
-    environment: string
-    compute: string
-    release_constraints: string
-  missing_evidence: [string]
+  risks: [string]
   next_actions: [string]

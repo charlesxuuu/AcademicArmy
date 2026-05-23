@@ -1,19 +1,15 @@
 """Validate a minimal paper-blueprint summary JSON file."""
 
+from datetime import datetime
 import json
 import sys
 from pathlib import Path
 
 
-VALID_CLAIM_STATUS = {
-    "supported",
-    "unsupported",
-    "needs_experiment",
-    "needs_verification",
-}
+VALID_CLAIM_STATUS = {"supported", "unsupported", "needs_experiment", "needs_verification"}
 VALID_RELATED_STATUS = {"verified", "tentative", "needs_verification"}
 VALID_RELATED_ROLE = {"required_baseline", "required_citation", "contextual"}
-VALID_EXEMPLAR_STATUS = {"verified", "tentative", "needs_verification"}
+VALID_STORY_RECENCY = {"last_2_3_years", "latest_3_cycles", "expanded_last_5_years", "needs_verification"}
 
 
 def fail(message: str) -> int:
@@ -28,83 +24,160 @@ def require_keys(obj: dict, keys: list[str], path: str) -> str | None:
     return None
 
 
-def load_blueprint(path: Path) -> dict:
+def load_summary(path: Path) -> dict:
     data = json.loads(path.read_text(encoding="utf-8-sig"))
     if not isinstance(data, dict):
         raise ValueError("top-level JSON must be an object")
-    return data.get("paper_blueprint", data)
+    return data.get("paper_blueprint_summary", data.get("paper_blueprint", data))
+
+
+def validate_output_files(data: dict) -> str | None:
+    files = data["output_files"]
+    if not isinstance(files, dict):
+        return "output_files must be an object"
+    error = require_keys(files, ["blueprint_markdown", "explanation_markdown", "output_language", "explanation_language_suffix"], "output_files")
+    if error:
+        return error
+    if Path(files["blueprint_markdown"]).name != "paper_blueprint.md":
+        return "output_files.blueprint_markdown must end with paper_blueprint.md"
+    expected_suffix = f"paper_blueprint_explanation.{files['explanation_language_suffix']}.md"
+    if Path(files["explanation_markdown"]).name != expected_suffix:
+        return f"output_files.explanation_markdown must end with {expected_suffix}"
+    if not files["output_language"]:
+        return "output_files.output_language is required"
+    return None
 
 
 def validate_exemplar_analysis(exemplar_analysis: dict) -> str | None:
     if not isinstance(exemplar_analysis, dict):
         return "exemplar_analysis must be an object"
-    error = require_keys(
-        exemplar_analysis,
-        [
-            "enabled",
-            "target_venue_exemplars",
-            "field_exemplars",
-            "nearest_neighbor_exemplars",
-        ],
-        "exemplar_analysis",
-    )
+    error = require_keys(exemplar_analysis, ["storytelling_exemplars", "technical_exemplars", "evaluation_exemplars"], "exemplar_analysis")
     if error:
         return error
-    if not isinstance(exemplar_analysis["enabled"], bool):
-        return "exemplar_analysis.enabled must be a boolean"
 
-    group_requirements = {
-        "target_venue_exemplars": [
-            "title",
-            "venue",
-            "source",
-            "influence_signal",
-            "core_pattern",
-            "transferable_lesson",
-            "non_transferable_warning",
-            "verification_status",
-        ],
-        "field_exemplars": [
-            "title",
-            "venue",
-            "source",
-            "influence_signal",
-            "core_pattern",
-            "transferable_lesson",
-            "non_transferable_warning",
-            "verification_status",
-        ],
-        "nearest_neighbor_exemplars": [
-            "title",
-            "venue",
-            "source",
-            "relation_to_current_work",
-            "reviewer_comparison_risk",
-            "transferable_lesson",
-            "non_transferable_warning",
-            "verification_status",
-        ],
-    }
+    current_year = datetime.now().year
+    storytelling = exemplar_analysis["storytelling_exemplars"]
+    if not isinstance(storytelling, list) or not storytelling:
+        return "exemplar_analysis.storytelling_exemplars must be a non-empty array"
+    for index, exemplar in enumerate(storytelling, start=1):
+        if not isinstance(exemplar, dict):
+            return f"storytelling_exemplars[{index}] must be an object"
+        error = require_keys(
+            exemplar,
+            ["title", "venue", "year", "source", "recency_basis", "why_current_storytelling_exemplar", "transferable_storytelling_lesson", "non_transferable_warning", "verification_status"],
+            f"storytelling_exemplars[{index}]",
+        )
+        if error:
+            return error
+        if exemplar["recency_basis"] not in VALID_STORY_RECENCY:
+            return f"storytelling_exemplars[{index}].recency_basis must be one of {sorted(VALID_STORY_RECENCY)}"
+        if exemplar["verification_status"] not in VALID_RELATED_STATUS:
+            return f"storytelling_exemplars[{index}].verification_status must be one of {sorted(VALID_RELATED_STATUS)}"
+        year = exemplar["year"]
+        if year is None and exemplar["verification_status"] != "needs_verification":
+            return f"storytelling_exemplars[{index}].year can be null only when verification_status is needs_verification"
+        if isinstance(year, int) and year < current_year - 5:
+            return f"storytelling_exemplars[{index}] is too old for current storytelling style"
+        if not exemplar["non_transferable_warning"]:
+            return f"storytelling_exemplars[{index}] needs a non_transferable_warning"
 
-    for group, keys in group_requirements.items():
+    for group in ("technical_exemplars", "evaluation_exemplars"):
         exemplars = exemplar_analysis[group]
         if not isinstance(exemplars, list):
             return f"exemplar_analysis.{group} must be an array"
-        if exemplar_analysis["enabled"] and not exemplars:
-            return f"exemplar_analysis.{group} must not be empty when exemplar analysis is enabled"
         for index, exemplar in enumerate(exemplars, start=1):
             if not isinstance(exemplar, dict):
-                return f"exemplar_analysis.{group}[{index}] must be an object"
-            error = require_keys(exemplar, keys, f"exemplar_analysis.{group}[{index}]")
+                return f"{group}[{index}] must be an object"
+            error = require_keys(exemplar, ["title", "venue", "year", "source", "verification_status"], f"{group}[{index}]")
             if error:
                 return error
-            if exemplar["verification_status"] not in VALID_EXEMPLAR_STATUS:
-                return (
-                    f"exemplar_analysis.{group}[{index}].verification_status must be one of "
-                    f"{sorted(VALID_EXEMPLAR_STATUS)}"
-                )
-            if not exemplar["non_transferable_warning"]:
-                return f"exemplar_analysis.{group}[{index}] needs a non_transferable_warning"
+            if exemplar["verification_status"] not in VALID_RELATED_STATUS:
+                return f"{group}[{index}].verification_status must be one of {sorted(VALID_RELATED_STATUS)}"
+    return None
+
+
+def validate_core_focus_items(items: list) -> tuple[str | None, set[str]]:
+    if not isinstance(items, list) or not items:
+        return "core_focus_items must be a non-empty array", set()
+    ids = set()
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"core_focus_items[{index}] must be an object", set()
+        error = require_keys(item, ["id", "focus", "purpose", "primary_blueprint_sections"], f"core_focus_items[{index}]")
+        if error:
+            return error, set()
+        if not item["id"].startswith("K"):
+            return f"core_focus_items[{index}].id must start with K", set()
+        if item["id"] in ids:
+            return f"duplicate core focus id: {item['id']}", set()
+        ids.add(item["id"])
+        if not isinstance(item["primary_blueprint_sections"], list) or not item["primary_blueprint_sections"]:
+            return f"core_focus_items[{index}].primary_blueprint_sections must be a non-empty array", set()
+    return None, ids
+
+
+def validate_section_traceability(items: list, core_focus_ids: set[str]) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "section_traceability must be a non-empty array"
+    required_sections = {
+        "Metadata",
+        "Target Venue and Contribution Type",
+        "Acceptance Hypothesis",
+        "Core Claims",
+        "Related-Work Positioning",
+        "Method Blueprint",
+        "Evaluation Blueprint",
+        "Figure and Table Storyboard",
+        "Section-by-Section Outline",
+        "Reviewer Risk Register",
+        "Reproducibility and Artifact Plan",
+        "Missing Evidence",
+        "Next Actions",
+    }
+    covered = set()
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"section_traceability[{index}] must be an object"
+        error = require_keys(item, ["blueprint_section", "core_focus_ids", "related_blueprint_ids", "why_this_section_exists", "downstream_impact"], f"section_traceability[{index}]")
+        if error:
+            return error
+        covered.add(item["blueprint_section"])
+        if not item["core_focus_ids"]:
+            return f"section_traceability[{index}] needs core_focus_ids"
+        unknown = [focus_id for focus_id in item["core_focus_ids"] if focus_id not in core_focus_ids]
+        if unknown:
+            return f"section_traceability[{index}] references unknown core focus id(s): {', '.join(unknown)}"
+    missing = sorted(required_sections - covered)
+    if missing:
+        return f"section_traceability missing major section(s): {', '.join(missing)}"
+    return None
+
+
+def validate_claim_traceability(items: list, core_focus_ids: set[str], claim_ids: set[str]) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "claim_traceability must be a non-empty array"
+    covered = set()
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"claim_traceability[{index}] must be an object"
+        error = require_keys(item, ["claim_id", "core_focus_ids", "supporting_experiments", "supporting_figures_or_tables", "main_reviewer_risks", "explanation"], f"claim_traceability[{index}]")
+        if error:
+            return error
+        if item["claim_id"] not in claim_ids:
+            return f"claim_traceability[{index}] references unknown claim: {item['claim_id']}"
+        covered.add(item["claim_id"])
+        unknown = [focus_id for focus_id in item["core_focus_ids"] if focus_id not in core_focus_ids]
+        if unknown:
+            return f"claim_traceability[{index}] references unknown core focus id(s): {', '.join(unknown)}"
+        if not item["supporting_experiments"]:
+            return f"claim_traceability[{index}] needs supporting_experiments"
+        if not item["supporting_figures_or_tables"]:
+            return f"claim_traceability[{index}] needs supporting_figures_or_tables"
+        if not item["main_reviewer_risks"]:
+            return f"claim_traceability[{index}] needs main_reviewer_risks"
+    missing = sorted(claim_ids - covered)
+    if missing:
+        return f"claim_traceability missing claim(s): {', '.join(missing)}"
     return None
 
 
@@ -112,32 +185,36 @@ def validate(data: dict) -> str | None:
     top_error = require_keys(
         data,
         [
-            "output_language",
-            "reasoning_summary_mode",
+            "output_files",
             "title",
             "target_venue",
             "contribution_type",
             "exemplar_analysis",
-            "distilled_excellence_patterns",
+            "distilled_patterns",
+            "core_focus_items",
             "acceptance_hypothesis",
             "claims",
             "related_work",
             "figures_and_tables",
-            "reviewer_risks",
-            "reasoning_summary",
-            "blueprint_decision_log",
-            "reproducibility",
-            "missing_evidence",
+            "section_traceability",
+            "claim_traceability",
+            "explanation_decision_log",
+            "risks",
             "next_actions",
         ],
-        "paper_blueprint",
+        "paper_blueprint_summary",
     )
     if top_error:
         return top_error
-    if not data["output_language"]:
-        return "output_language is required"
-    if data["reasoning_summary_mode"] != "decision_log":
-        return "reasoning_summary_mode must be decision_log"
+
+    for validator in (validate_output_files, lambda d: validate_exemplar_analysis(d["exemplar_analysis"])):
+        error = validator(data)
+        if error:
+            return error
+
+    focus_error, core_focus_ids = validate_core_focus_items(data["core_focus_items"])
+    if focus_error:
+        return focus_error
 
     venue = data["target_venue"]
     if not isinstance(venue, dict):
@@ -149,55 +226,15 @@ def validate(data: dict) -> str | None:
         return "target_venue.fit_score must be an integer or null"
     if isinstance(venue["fit_score"], int) and not 1 <= venue["fit_score"] <= 5:
         return "target_venue.fit_score must be between 1 and 5"
-    if venue["fit_score"] is not None and not venue["fit_rationale"]:
-        return "target_venue.fit_rationale is required when fit_score is set"
-
-    exemplar_error = validate_exemplar_analysis(data["exemplar_analysis"])
-    if exemplar_error:
-        return exemplar_error
-
-    patterns = data["distilled_excellence_patterns"]
-    if not isinstance(patterns, list):
-        return "distilled_excellence_patterns must be an array"
-    pattern_names = set()
-    for index, pattern in enumerate(patterns, start=1):
-        if not isinstance(pattern, dict):
-            return f"distilled_excellence_patterns[{index}] must be an object"
-        error = require_keys(
-            pattern,
-            ["pattern", "evidence_from_exemplars", "implication_for_current_blueprint", "used_in_blueprint"],
-            f"distilled_excellence_patterns[{index}]",
-        )
-        if error:
-            return error
-        pattern_names.add(pattern["pattern"])
-        if not pattern["evidence_from_exemplars"]:
-            return f"distilled_excellence_patterns[{index}] needs evidence_from_exemplars"
 
     claims = data["claims"]
     if not isinstance(claims, list) or not claims:
         return "claims must be a non-empty array"
-
     claim_ids = set()
     for index, claim in enumerate(claims, start=1):
         if not isinstance(claim, dict):
             return f"claims[{index}] must be an object"
-        error = require_keys(
-            claim,
-            [
-                "id",
-                "claim",
-                "evidence_required",
-                "baselines",
-                "baseline_gap_rationale",
-                "metrics",
-                "figure_or_table",
-                "influenced_by_exemplar_patterns",
-                "failure_condition",
-                "status",
-            ],
-            f"claims[{index}]",
-        )
+        error = require_keys(claim, ["id", "claim", "evidence_required", "baselines", "baseline_gap_rationale", "metrics", "figure_or_table", "related_experiments", "related_risks", "failure_condition", "status"], f"claims[{index}]")
         if error:
             return error
         claim_ids.add(claim["id"])
@@ -209,11 +246,6 @@ def validate(data: dict) -> str | None:
             return f"claims[{index}] needs baselines or baseline_gap_rationale"
         if not claim["failure_condition"]:
             return f"claims[{index}] needs a failure_condition"
-        unknown_patterns = [
-            pattern for pattern in claim["influenced_by_exemplar_patterns"] if pattern not in pattern_names
-        ]
-        if unknown_patterns:
-            return f"claims[{index}] references unknown exemplar pattern(s): {', '.join(unknown_patterns)}"
 
     related_work = data["related_work"]
     if not isinstance(related_work, list):
@@ -238,68 +270,30 @@ def validate(data: dict) -> str | None:
         error = require_keys(item, ["id", "message", "supports_claims"], f"figures_and_tables[{index}]")
         if error:
             return error
-        if not item["supports_claims"]:
-            return f"figures_and_tables[{index}] must support at least one claim"
-        unknown_claims = [claim_id for claim_id in item["supports_claims"] if claim_id not in claim_ids]
-        if unknown_claims:
-            return f"figures_and_tables[{index}] references unknown claim(s): {', '.join(unknown_claims)}"
-        for pattern in item.get("influenced_by_exemplar_patterns", []):
-            if pattern not in pattern_names:
-                return f"figures_and_tables[{index}] references unknown exemplar pattern: {pattern}"
+        unknown = [claim_id for claim_id in item["supports_claims"] if claim_id not in claim_ids]
+        if unknown:
+            return f"figures_and_tables[{index}] references unknown claim(s): {', '.join(unknown)}"
+
+    section_error = validate_section_traceability(data["section_traceability"], core_focus_ids)
+    if section_error:
+        return section_error
+    claim_trace_error = validate_claim_traceability(data["claim_traceability"], core_focus_ids, claim_ids)
+    if claim_trace_error:
+        return claim_trace_error
+
+    decision_log = data["explanation_decision_log"]
+    if not isinstance(decision_log, list):
+        return "explanation_decision_log must be an array"
+    for index, entry in enumerate(decision_log, start=1):
+        if not isinstance(entry, dict):
+            return f"explanation_decision_log[{index}] must be an object"
+        error = require_keys(entry, ["decision", "blueprint_id", "reason", "evidence_or_pattern", "uncertainty"], f"explanation_decision_log[{index}]")
+        if error:
+            return error
 
     if any(claim["status"] == "unsupported" for claim in claims):
         unsupported_ids = [claim["id"] for claim in claims if claim["status"] == "unsupported"]
         print(f"[WARN] unsupported claims present: {', '.join(unsupported_ids)}")
-
-    summary = data["reasoning_summary"]
-    if not isinstance(summary, dict):
-        return "reasoning_summary must be an object"
-    summary_error = require_keys(
-        summary,
-        [
-            "user_request_interpretation",
-            "assumptions",
-            "deepresearch_usage",
-            "evidence_used",
-            "exemplar_pattern_summary",
-            "key_decisions",
-            "downgraded_claims",
-            "unresolved_uncertainties",
-            "evidence_that_would_change_blueprint",
-        ],
-        "reasoning_summary",
-    )
-    if summary_error:
-        return summary_error
-    for key in (
-        "assumptions",
-        "evidence_used",
-        "exemplar_pattern_summary",
-        "key_decisions",
-        "downgraded_claims",
-        "unresolved_uncertainties",
-        "evidence_that_would_change_blueprint",
-    ):
-        if not isinstance(summary[key], list):
-            return f"reasoning_summary.{key} must be an array"
-
-    decision_log = data["blueprint_decision_log"]
-    if not isinstance(decision_log, list):
-        return "blueprint_decision_log must be an array"
-    for index, entry in enumerate(decision_log, start=1):
-        if not isinstance(entry, dict):
-            return f"blueprint_decision_log[{index}] must be an object"
-        error = require_keys(
-            entry,
-            ["decision", "reason", "supporting_exemplar_pattern", "uncertainty"],
-            f"blueprint_decision_log[{index}]",
-        )
-        if error:
-            return error
-        pattern = entry["supporting_exemplar_pattern"]
-        if pattern and pattern != "none" and pattern not in pattern_names:
-            return f"blueprint_decision_log[{index}] references unknown exemplar pattern: {pattern}"
-
     return None
 
 
@@ -312,7 +306,7 @@ def main() -> int:
         return fail(f"File not found: {path}")
 
     try:
-        data = load_blueprint(path)
+        data = load_summary(path)
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         return fail(str(exc))
 
