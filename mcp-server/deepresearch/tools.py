@@ -7,7 +7,7 @@ from openai import OpenAI
 def deepresearch(prompt: str) -> dict:
     client = OpenAI()
     response = client.responses.create(
-        model="gpt-5.5-pro",
+        model="gpt-5.5",
         reasoning={"effort": "high"},
         tools=[{"type": "web_search"}],
         tool_choice="auto",
