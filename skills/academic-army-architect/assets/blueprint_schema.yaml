@@ -1,0 +1,110 @@
+paper_blueprint:
+  output_language: string
+  reasoning_summary_mode: decision_log
+  title: string
+  target_venue:
+    primary: string
+    alternatives: [string]
+    fit_score: integer_or_null
+    fit_rationale: string
+  contribution_type: [string]
+  exemplar_analysis:
+    enabled: boolean
+    target_venue_exemplars:
+      - title: string
+        venue: string
+        year: integer_or_null
+        source: string
+        influence_signal: string
+        core_pattern: string
+        transferable_lesson: string
+        non_transferable_warning: string
+        verification_status: verified_or_tentative_or_needs_verification
+    field_exemplars:
+      - title: string
+        venue: string
+        year: integer_or_null
+        source: string
+        influence_signal: string
+        core_pattern: string
+        transferable_lesson: string
+        non_transferable_warning: string
+        verification_status: verified_or_tentative_or_needs_verification
+    nearest_neighbor_exemplars:
+      - title: string
+        venue: string
+        year: integer_or_null
+        source: string
+        relation_to_current_work: string
+        reviewer_comparison_risk: string
+        transferable_lesson: string
+        non_transferable_warning: string
+        verification_status: verified_or_tentative_or_needs_verification
+  distilled_excellence_patterns:
+    - pattern: string
+      evidence_from_exemplars: [string]
+      implication_for_current_blueprint: string
+      used_in_blueprint: boolean
+  acceptance_hypothesis: string
+  claims:
+    - id: string
+      claim: string
+      why_it_matters: string
+      evidence_required: [string]
+      dataset_workload_or_environment: string
+      baselines: [string]
+      baseline_gap_rationale: string
+      metrics: [string]
+      ablations_or_controls: [string]
+      figure_or_table: string
+      influenced_by_exemplar_patterns: [string]
+      failure_condition: string
+      confidence: low_or_medium_or_high
+      likely_reviewer_attack: string
+      status: supported_or_unsupported_or_needs_experiment_or_needs_verification
+  related_work:
+    - title: string
+      source: string
+      problem: string
+      method: string
+      evidence: string
+      limitation: string
+      delta: string
+      role: required_baseline_or_required_citation_or_contextual
+      verification_status: verified_or_tentative_or_needs_verification
+  figures_and_tables:
+    - id: string
+      message: string
+      supports_claims: [string]
+      data_source: string
+      influenced_by_exemplar_patterns: [string]
+  reviewer_risks:
+    - reviewer: supportive_expert_or_skeptical_related_work_expert_or_evaluation_focused_reviewer
+      objection: string
+      fix: string
+      severity: low_or_medium_or_high
+  reasoning_summary:
+    user_request_interpretation: string
+    assumptions: [string]
+    deepresearch_usage: string
+    evidence_used: [string]
+    exemplar_pattern_summary: [string]
+    key_decisions: [string]
+    promoted_claims: [string]
+    downgraded_claims: [string]
+    recommended_experiments_rationale: [string]
+    unresolved_uncertainties: [string]
+    evidence_that_would_change_blueprint: [string]
+  blueprint_decision_log:
+    - decision: string
+      reason: string
+      supporting_exemplar_pattern: string
+      uncertainty: string
+  reproducibility:
+    code: string
+    data: string
+    environment: string
+    compute: string
+    release_constraints: string
+  missing_evidence: [string]
+  next_actions: [string]
