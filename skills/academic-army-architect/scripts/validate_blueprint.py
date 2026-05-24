@@ -1,4 +1,4 @@
-"""Validate a minimal paper-blueprint summary JSON file."""
+"""Validate a core paper-blueprint summary JSON file."""
 
 from datetime import datetime
 import json
@@ -8,53 +8,52 @@ from pathlib import Path
 from typing import Any
 
 
-VALID_CLAIM_STATUS = {"supported", "unsupported", "needs_experiment", "needs_verification"}
+VALID_SUPPORT_STATUS = {"supported", "unsupported", "needs_evidence", "needs_verification"}
+VALID_CLAIM_ROLE = {"acceptance_critical", "supporting", "optional", "deferred"}
 VALID_RELATED_STATUS = {"verified", "tentative", "needs_verification"}
-VALID_RELATED_ROLE = {"required_baseline", "required_citation", "contextual"}
 VALID_STORY_RECENCY = {"last_2_3_years", "latest_3_cycles", "expanded_last_5_years", "needs_verification"}
+VALID_DELEGATED_AREAS = {"content_planning", "experiment_planning", "figure_planning", "method_planning", "writing", "review_risk"}
+DOWNSTREAM_INTERFACES = ["content_planning", "experiment_planning", "figure_planning", "writing", "review_risk"]
+
 OFF_SCOPE_BLUEPRINT_PATTERNS = {
+    "Main-result experiment:",
+    "Ablation experiment:",
+    "Figure 1:",
+    "Figure 2:",
+    "Experiment ID",
+    "Figure ID",
+    "Section-by-Section Outline",
+    "Manuscript Structure Specification",
+    "Figure and Table Specification",
+    "Evaluation Specification",
+    "Execution Task Graph",
     "Artifact cautions",
     "Assumptions to validate",
-    "Metadata and Input State",
-    "Review Risk Mitigation Plan",
-    "Evidence Gaps and Dependencies",
-    "Execution Plan",
     "Do not assume",
     "You should",
-    "Be careful",
-    "Remember",
-    "It is important to note",
     "Caution",
     "Warning",
     "Reasoning Summary",
-    "High-impact paper pattern analysis",
-    "why I chose",
 }
 OFF_SCOPE_EXPLANATION_PATTERNS = {
     "deepresearch",
     "MCP",
     "web search",
     "rate limit",
-    "probe",
     "PDF parsing",
     "output directory",
     "downstream agent",
     "implementation agent",
     "experiment agent",
     "writing agent",
-    "two files",
     "output format",
     "specification format",
     "implementation-plan format",
     "how to use the files",
-    "next steps",
     "TODO",
-    "Execution Plan",
-    "Evidence Gaps and Dependencies",
-    "Review Risk Mitigation Plan",
 }
 SYNTHETIC_ID_RE = re.compile(r"\b(?:C|E|R|A|B|K|D)[1-9]\d?\b|\b(?:F|T)[1-9]\d?\b(?!\s*[- ]?score)|\bAR[1-9]\d?\b")
-SECTION_REF_RE = re.compile(r"\bSection\s+(?:[1-9]|1[0-3])(?:\.\d+)?\b|第\s*(?:[1-9]|1[0-3])(?:\.\d+)?\s*节")
+SECTION_REF_RE = re.compile(r"\bSection\s+(?:[1-9]|1[0-5])(?:\.\d+)?\b|第\s*(?:[1-9]|1[0-5])(?:\.\d+)?\s*节")
 
 
 def fail(message: str) -> int:
@@ -66,6 +65,13 @@ def require_keys(obj: dict, keys: list[str], path: str) -> str | None:
     missing = [key for key in keys if key not in obj]
     if missing:
         return f"{path} missing required key(s): {', '.join(missing)}"
+    return None
+
+
+def require_nonempty_list(obj: dict, key: str, path: str) -> str | None:
+    value = obj.get(key)
+    if not isinstance(value, list) or not value:
+        return f"{path}.{key} must be a non-empty array"
     return None
 
 
@@ -148,21 +154,244 @@ def validate_exemplar_analysis(exemplar_analysis: dict) -> str | None:
             return f"storytelling_exemplars[{index}].year can be null only when verification_status is needs_verification"
         if isinstance(year, int) and year < current_year - 5:
             return f"storytelling_exemplars[{index}] is too old for current storytelling style"
-        if not exemplar["non_transferable_warning"]:
-            return f"storytelling_exemplars[{index}] needs a non_transferable_warning"
 
-    for group in ("technical_exemplars", "evaluation_exemplars"):
-        exemplars = exemplar_analysis[group]
-        if not isinstance(exemplars, list):
+    for group, keys in {
+        "technical_exemplars": ["title", "venue", "year", "source", "influence_signal", "core_technical_idea", "technical_lesson_for_current_work", "verification_status"],
+        "evaluation_exemplars": ["title", "venue", "year", "source", "evidence_class_lesson", "metric_family_lesson", "comparison_class_lesson", "verification_status"],
+    }.items():
+        items = exemplar_analysis[group]
+        if not isinstance(items, list):
             return f"exemplar_analysis.{group} must be an array"
-        for index, exemplar in enumerate(exemplars, start=1):
-            if not isinstance(exemplar, dict):
+        for index, item in enumerate(items, start=1):
+            if not isinstance(item, dict):
                 return f"{group}[{index}] must be an object"
-            error = require_keys(exemplar, ["title", "venue", "year", "source", "verification_status"], f"{group}[{index}]")
+            error = require_keys(item, keys, f"{group}[{index}]")
             if error:
                 return error
-            if exemplar["verification_status"] not in VALID_RELATED_STATUS:
+            if item["verification_status"] not in VALID_RELATED_STATUS:
                 return f"{group}[{index}].verification_status must be one of {sorted(VALID_RELATED_STATUS)}"
+    return None
+
+
+def validate_target_venue(data: dict) -> str | None:
+    venue = data["target_venue"]
+    if not isinstance(venue, dict):
+        return "target_venue must be an object"
+    error = require_keys(
+        venue,
+        ["primary", "alternatives", "reviewer_audience", "contribution_posture", "evidence_standard", "fit_score", "fit_rationale"],
+        "target_venue",
+    )
+    if error:
+        return error
+    if venue["fit_score"] is not None and not isinstance(venue["fit_score"], int):
+        return "target_venue.fit_score must be an integer or null"
+    if isinstance(venue["fit_score"], int) and not 1 <= venue["fit_score"] <= 5:
+        return "target_venue.fit_score must be between 1 and 5"
+    return None
+
+
+def validate_premises(premises: dict) -> str | None:
+    if not isinstance(premises, dict):
+        return "core_strategy_premises must be an object"
+    return require_keys(
+        premises,
+        [
+            "target_venue_premise",
+            "problem_premise",
+            "contribution_premise",
+            "novelty_premise",
+            "evidence_premise",
+            "storytelling_premise",
+            "scope_premise",
+        ],
+        "core_strategy_premises",
+    )
+
+
+def validate_claim_hierarchy(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "claim_hierarchy must be a non-empty array"
+    roles = set()
+    for index, claim in enumerate(items, start=1):
+        if not isinstance(claim, dict):
+            return f"claim_hierarchy[{index}] must be an object"
+        error = require_keys(
+            claim,
+            [
+                "title",
+                "statement",
+                "role",
+                "evidence_obligation",
+                "acceptable_proof_modes",
+                "required_comparison_class",
+                "metric_family",
+                "scope_boundary",
+                "current_support_status",
+                "failure_implication",
+            ],
+            f"claim_hierarchy[{index}]",
+        )
+        if error:
+            return error
+        if claim["role"] not in VALID_CLAIM_ROLE:
+            return f"claim_hierarchy[{index}].role must be one of {sorted(VALID_CLAIM_ROLE)}"
+        if claim["current_support_status"] not in VALID_SUPPORT_STATUS:
+            return f"claim_hierarchy[{index}].current_support_status must be one of {sorted(VALID_SUPPORT_STATUS)}"
+        for key in ("evidence_obligation", "failure_implication"):
+            if not claim[key]:
+                return f"claim_hierarchy[{index}].{key} is required"
+        roles.add(claim["role"])
+    if "acceptance_critical" not in roles:
+        return "claim_hierarchy must include at least one acceptance_critical claim"
+    return None
+
+
+def validate_related_work_boundary(boundary: dict) -> str | None:
+    if not isinstance(boundary, dict):
+        return "related_work_boundary must be an object"
+    error = require_keys(boundary, ["work_clusters", "required_differentiation_points", "highest_related_work_risks"], "related_work_boundary")
+    if error:
+        return error
+    clusters = boundary["work_clusters"]
+    if not isinstance(clusters, list) or not clusters:
+        return "related_work_boundary.work_clusters must be a non-empty array"
+    for index, cluster in enumerate(clusters, start=1):
+        if not isinstance(cluster, dict):
+            return f"work_clusters[{index}] must be an object"
+        error = require_keys(
+            cluster,
+            ["cluster_name", "already_solves", "blueprint_delta", "comparison_obligation", "overclaim_boundary", "verification_status"],
+            f"work_clusters[{index}]",
+        )
+        if error:
+            return error
+        if cluster["verification_status"] not in VALID_RELATED_STATUS:
+            return f"work_clusters[{index}].verification_status must be one of {sorted(VALID_RELATED_STATUS)}"
+    return require_nonempty_list(boundary, "required_differentiation_points", "related_work_boundary")
+
+
+def validate_method_abstraction(method: dict) -> str | None:
+    if not isinstance(method, dict):
+        return "method_abstraction must be an object"
+    error = require_keys(
+        method,
+        ["core_idea", "mechanism_class", "inputs", "outputs", "decision_variables", "constraints", "assumptions_and_invariants", "delegated_method_details"],
+        "method_abstraction",
+    )
+    if error:
+        return error
+    for key in ("inputs", "outputs", "decision_variables", "constraints"):
+        error = require_nonempty_list(method, key, "method_abstraction")
+        if error:
+            return error
+    return None
+
+
+def validate_evidence_obligations(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "evidence_obligations must be a non-empty array"
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"evidence_obligations[{index}] must be an object"
+        error = require_keys(
+            item,
+            [
+                "title",
+                "supported_claim",
+                "required_evidence_type",
+                "metric_family",
+                "baseline_or_comparison_class",
+                "data_or_workload_class",
+                "minimum_acceptable_support",
+                "planning_freedom",
+                "failure_implication",
+            ],
+            f"evidence_obligations[{index}]",
+        )
+        if error:
+            return error
+        for key in ("metric_family", "baseline_or_comparison_class", "data_or_workload_class"):
+            error = require_nonempty_list(item, key, f"evidence_obligations[{index}]")
+            if error:
+                return error
+    return None
+
+
+def validate_narrative_requirements(narrative: dict) -> str | None:
+    if not isinstance(narrative, dict):
+        return "narrative_requirements must be an object"
+    error = require_keys(
+        narrative,
+        ["opening_tension", "central_abstraction", "story_arc", "terms_to_foreground", "claims_to_avoid_foregrounding", "delegated_content_planning"],
+        "narrative_requirements",
+    )
+    if error:
+        return error
+    return require_nonempty_list(narrative, "story_arc", "narrative_requirements")
+
+
+def validate_visual_requirements(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "visual_argument_requirements must be a non-empty array"
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"visual_argument_requirements[{index}] must be an object"
+        error = require_keys(
+            item,
+            ["title", "message_that_must_be_visible", "why_it_matters", "related_thesis_or_claim", "planning_freedom"],
+            f"visual_argument_requirements[{index}]",
+        )
+        if error:
+            return error
+    return None
+
+
+def validate_scope_boundaries(scope: dict) -> str | None:
+    if not isinstance(scope, dict):
+        return "scope_boundaries must be an object"
+    required = ["in_scope_setting", "out_of_scope_setting", "accepted_assumptions", "allowed_claims", "deferred_claims", "claims_avoided_by_design"]
+    error = require_keys(scope, required, "scope_boundaries")
+    if error:
+        return error
+    for key in ("in_scope_setting", "allowed_claims", "claims_avoided_by_design"):
+        error = require_nonempty_list(scope, key, "scope_boundaries")
+        if error:
+            return error
+    return None
+
+
+def validate_open_variables(variables: dict) -> str | None:
+    if not isinstance(variables, dict):
+        return "open_planning_variables must be an object"
+    required = ["content_planning", "experiment_planning", "figure_planning", "method_planning", "related_work_planning", "review_risk_planning"]
+    error = require_keys(variables, required, "open_planning_variables")
+    if error:
+        return error
+    for key in required:
+        error = require_nonempty_list(variables, key, "open_planning_variables")
+        if error:
+            return error
+    return None
+
+
+def validate_downstream_interfaces(interfaces: dict) -> str | None:
+    if not isinstance(interfaces, dict):
+        return "downstream_planning_interfaces must be an object"
+    error = require_keys(interfaces, DOWNSTREAM_INTERFACES, "downstream_planning_interfaces")
+    if error:
+        return error
+    for name in DOWNSTREAM_INTERFACES:
+        interface = interfaces[name]
+        if not isinstance(interface, dict):
+            return f"downstream_planning_interfaces.{name} must be an object"
+        error = require_keys(interface, ["use", "preserve_constraints", "produce_later", "allowed_to_decide"], f"downstream_planning_interfaces.{name}")
+        if error:
+            return error
+        for key in ("use", "preserve_constraints", "produce_later", "allowed_to_decide"):
+            error = require_nonempty_list(interface, key, f"downstream_planning_interfaces.{name}")
+            if error:
+                return error
     return None
 
 
@@ -172,16 +401,10 @@ def validate_design_rationale(rationale: dict) -> str | None:
     error = require_keys(
         rationale,
         [
-            "core_judgment",
             "blueprint_overview",
             "validation_overview",
-            "core_strategy_premises",
-            "venue_storytelling_patterns",
-            "technical_anchor_rationale",
-            "claim_rationale",
-            "experiment_rationale",
-            "figure_rationale",
-            "scope_and_limitation_rationale",
+            "item_rationales",
+            "delegated_detail_rationale",
             "diagnostic_derivation_chains",
             "disagreement_diagnosis",
         ],
@@ -189,8 +412,6 @@ def validate_design_rationale(rationale: dict) -> str | None:
     )
     if error:
         return error
-    if not rationale["core_judgment"]:
-        return "design_rationale.core_judgment is required"
 
     overview = rationale["blueprint_overview"]
     if not isinstance(overview, dict):
@@ -202,11 +423,9 @@ def validate_design_rationale(rationale: dict) -> str | None:
             "central_thesis",
             "main_contribution",
             "primary_claim",
-            "method_direction",
-            "evaluation_main_line",
-            "most_important_limitation_or_risk",
-            "most_important_evidence_requirement",
-            "research_development_order",
+            "evidence_obligation_summary",
+            "most_important_boundary",
+            "open_planning_variable_summary",
         ],
         "design_rationale.blueprint_overview",
     )
@@ -219,58 +438,27 @@ def validate_design_rationale(rationale: dict) -> str | None:
     for index, item in enumerate(validation_overview, start=1):
         if not isinstance(item, dict):
             return f"validation_overview[{index}] must be an object"
-        error = require_keys(
-            item,
-            ["key_blueprint_content", "why_it_matters", "main_user_validation_question"],
-            f"validation_overview[{index}]",
-        )
+        error = require_keys(item, ["key_blueprint_content", "why_it_matters", "main_user_validation_question"], f"validation_overview[{index}]")
         if error:
             return error
 
-    premises = rationale["core_strategy_premises"]
-    if not isinstance(premises, dict):
-        return "design_rationale.core_strategy_premises must be an object"
-    error = require_keys(
-        premises,
-        [
-            "target_venue_premise",
-            "problem_premise",
-            "contribution_premise",
-            "novelty_premise",
-            "evidence_premise",
-            "storytelling_premise",
-            "research_strategy_premise",
-        ],
-        "design_rationale.core_strategy_premises",
-    )
-    if error:
-        return error
     for group, keys in {
-        "venue_storytelling_patterns": ["pattern", "influence_on_blueprint"],
-        "technical_anchor_rationale": ["anchor", "influence_on_method_or_evaluation"],
-        "claim_rationale": ["claim_section", "blueprint_content_digest", "why_scoped_this_way", "relation_to_thesis"],
-        "experiment_rationale": ["experiment_section", "blueprint_content_digest", "why_needed", "relation_to_claims"],
-        "figure_rationale": ["figure_section", "blueprint_content_digest", "narrative_role"],
+        "item_rationales": ["semantic_item_name", "blueprint_content_digest", "premise_source", "derivation", "downstream_connections", "user_validation_point"],
+        "delegated_detail_rationale": ["detail_area", "what_is_left_open", "why_left_open", "constraint_from_blueprint"],
         "diagnostic_derivation_chains": ["starting_premise", "derived_blueprint_choices", "evidence_needed", "likely_failure_point", "blueprint_revision_if_chain_fails"],
-        "disagreement_diagnosis": ["disagreement_type", "upstream_premise_to_inspect", "affected_blueprint_sections", "likely_revision_direction"],
+        "disagreement_diagnosis": ["disagreement_type", "upstream_premise_to_inspect", "affected_blueprint_objects", "likely_revision_direction"],
     }.items():
         items = rationale[group]
-        if not isinstance(items, list):
-            return f"design_rationale.{group} must be an array"
+        if not isinstance(items, list) or not items:
+            return f"design_rationale.{group} must be a non-empty array"
         for index, item in enumerate(items, start=1):
             if not isinstance(item, dict):
                 return f"{group}[{index}] must be an object"
             error = require_keys(item, keys, f"{group}[{index}]")
             if error:
                 return error
-    return None
-
-
-def validate_section_ref(value: str, path: str) -> str | None:
-    if not isinstance(value, str) or not value:
-        return f"{path} must be a non-empty string"
-    if not re.search(r"\b(?:[1-9]|1[0-3])(?:\.\d+)?\b", value):
-        return f"{path} should use a natural section reference such as 'Section 8.1'"
+            if group == "delegated_detail_rationale" and item["detail_area"] not in VALID_DELEGATED_AREAS:
+                return f"delegated_detail_rationale[{index}].detail_area must be one of {sorted(VALID_DELEGATED_AREAS)}"
     return None
 
 
@@ -278,11 +466,10 @@ def validate_style_checks(style_checks: dict) -> str | None:
     if not isinstance(style_checks, dict):
         return "explanation_style_checks must be an object"
     required = [
-        "paper_design_rationale_only",
-        "no_tool_process",
-        "no_file_format_rationale",
-        "no_downstream_agent_usage",
-        "no_project_todos",
+        "standalone_validation_companion",
+        "includes_blueprint_content_digest",
+        "uses_semantic_anchors",
+        "explains_delegated_details",
         "avoids_synthetic_ids",
     ]
     error = require_keys(style_checks, required, "explanation_style_checks")
@@ -300,22 +487,24 @@ def validate(data: dict) -> str | None:
         [
             "output_files",
             "title",
+            "paper_identity",
             "target_venue",
-            "contribution_type",
             "exemplar_analysis",
             "distilled_patterns",
-            "design_rationale",
+            "core_strategy_premises",
             "central_thesis",
-            "problem_framing",
-            "core_idea",
-            "method_design",
-            "claims",
-            "related_work",
-            "experiments",
-            "figures_and_tables",
-            "paper_structure",
-            "reproducibility_assets",
-            "limitations_and_scope",
+            "contribution_contract",
+            "claim_hierarchy",
+            "related_work_boundary",
+            "method_abstraction",
+            "evidence_obligations",
+            "narrative_requirements",
+            "visual_argument_requirements",
+            "scope_boundaries",
+            "research_risks_and_dependency_signals",
+            "open_planning_variables",
+            "downstream_planning_interfaces",
+            "design_rationale",
             "explanation_style_checks",
         ],
         "paper_blueprint_summary",
@@ -325,33 +514,35 @@ def validate(data: dict) -> str | None:
 
     synthetic_path = find_synthetic_id_path(data)
     if synthetic_path:
-        return f"synthetic object ID found in {synthetic_path}; use natural section references instead"
+        return f"synthetic object ID found in {synthetic_path}; use semantic names instead"
 
-    for validator in (
+    validators = (
         validate_output_files,
         lambda d: validate_exemplar_analysis(d["exemplar_analysis"]),
+        validate_target_venue,
+        lambda d: validate_premises(d["core_strategy_premises"]),
+        lambda d: validate_claim_hierarchy(d["claim_hierarchy"]),
+        lambda d: validate_related_work_boundary(d["related_work_boundary"]),
+        lambda d: validate_method_abstraction(d["method_abstraction"]),
+        lambda d: validate_evidence_obligations(d["evidence_obligations"]),
+        lambda d: validate_narrative_requirements(d["narrative_requirements"]),
+        lambda d: validate_visual_requirements(d["visual_argument_requirements"]),
+        lambda d: validate_scope_boundaries(d["scope_boundaries"]),
+        lambda d: validate_open_variables(d["open_planning_variables"]),
+        lambda d: validate_downstream_interfaces(d["downstream_planning_interfaces"]),
         lambda d: validate_design_rationale(d["design_rationale"]),
         lambda d: validate_style_checks(d["explanation_style_checks"]),
-    ):
+    )
+    for validator in validators:
         error = validator(data)
         if error:
             return error
 
-    venue = data["target_venue"]
-    if not isinstance(venue, dict):
-        return "target_venue must be an object"
-    venue_error = require_keys(venue, ["primary", "fit_score", "fit_rationale"], "target_venue")
-    if venue_error:
-        return venue_error
-    if venue["fit_score"] is not None and not isinstance(venue["fit_score"], int):
-        return "target_venue.fit_score must be an integer or null"
-    if isinstance(venue["fit_score"], int) and not 1 <= venue["fit_score"] <= 5:
-        return "target_venue.fit_score must be between 1 and 5"
-
     for path, keys in (
-        ("central_thesis", ["thesis", "acceptance_critical_statement", "contribution_boundary"]),
-        ("problem_framing", ["community_pain_point", "why_now", "existing_approach_gap"]),
-        ("core_idea", ["insight", "narrative_center_rationale", "tradeoff_changed"]),
+        ("paper_identity", ["working_title", "research_area", "target_venue_candidates", "paper_type", "research_artifact", "current_input_state"]),
+        ("central_thesis", ["one_sentence_thesis", "acceptance_critical_paper_bet", "downgrade_or_falsification_condition"]),
+        ("contribution_contract", ["primary_contribution", "secondary_contributions", "supporting_contributions", "non_contributions_and_boundaries"]),
+        ("research_risks_and_dependency_signals", ["highest_risk_premise", "highest_risk_claim", "highest_risk_related_work_boundary", "highest_risk_evidence_gap", "risk_materialization_changes"]),
     ):
         obj = data[path]
         if not isinstance(obj, dict):
@@ -359,176 +550,6 @@ def validate(data: dict) -> str | None:
         error = require_keys(obj, keys, path)
         if error:
             return error
-
-    method_error = validate_method_design(data["method_design"])
-    if method_error:
-        return method_error
-    claim_error = validate_claims(data["claims"])
-    if claim_error:
-        return claim_error
-    related_error = validate_related_work(data["related_work"])
-    if related_error:
-        return related_error
-    experiment_error = validate_experiments(data["experiments"])
-    if experiment_error:
-        return experiment_error
-    figure_error = validate_figures_and_tables(data["figures_and_tables"])
-    if figure_error:
-        return figure_error
-    structure_error = validate_paper_structure(data["paper_structure"])
-    if structure_error:
-        return structure_error
-    asset_error = validate_reproducibility_assets(data["reproducibility_assets"])
-    if asset_error:
-        return asset_error
-    limitation_error = validate_limitations(data["limitations_and_scope"])
-    if limitation_error:
-        return limitation_error
-
-    unsupported = [claim["title"] for claim in data["claims"] if claim["status"] == "unsupported"]
-    if unsupported:
-        print(f"[WARN] unsupported claims present: {', '.join(unsupported)}")
-    return None
-
-
-def validate_method_design(method_design: dict) -> str | None:
-    if not isinstance(method_design, dict):
-        return "method_design must be an object"
-    error = require_keys(method_design, ["components", "assumptions"], "method_design")
-    if error:
-        return error
-    if not isinstance(method_design["components"], list) or not method_design["components"]:
-        return "method_design.components must be a non-empty array"
-    for index, component in enumerate(method_design["components"], start=1):
-        error = require_keys(component, ["title", "function", "relation_to_thesis"], f"method_design.components[{index}]")
-        if error:
-            return error
-    return None
-
-
-def validate_claims(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "claims must be a non-empty array"
-    for index, claim in enumerate(items, start=1):
-        if not isinstance(claim, dict):
-            return f"claims[{index}] must be an object"
-        error = require_keys(
-            claim,
-            [
-                "section_reference",
-                "title",
-                "claim",
-                "why_it_matters_to_thesis",
-                "evidence_required",
-                "baselines",
-                "baseline_gap_rationale",
-                "metrics",
-                "connected_experiment_sections",
-                "connected_figure_sections",
-                "connected_scope_sections",
-                "failure_condition",
-                "status",
-            ],
-            f"claims[{index}]",
-        )
-        if error:
-            return error
-        section_error = validate_section_ref(claim["section_reference"], f"claims[{index}].section_reference")
-        if section_error:
-            return section_error
-        if claim["status"] not in VALID_CLAIM_STATUS:
-            return f"claims[{index}].status must be one of {sorted(VALID_CLAIM_STATUS)}"
-        if not claim["evidence_required"]:
-            return f"claims[{index}] must include evidence_required"
-        if not claim["baselines"] and not claim["baseline_gap_rationale"]:
-            return f"claims[{index}] needs baselines or baseline_gap_rationale"
-        if not claim["failure_condition"]:
-            return f"claims[{index}] needs a failure_condition"
-    return None
-
-
-def validate_related_work(items: list) -> str | None:
-    if not isinstance(items, list):
-        return "related_work must be an array"
-    for index, work in enumerate(items, start=1):
-        if not isinstance(work, dict):
-            return f"related_work[{index}] must be an object"
-        error = require_keys(work, ["title", "source", "delta", "role", "verification_status"], f"related_work[{index}]")
-        if error:
-            return error
-        if work["role"] not in VALID_RELATED_ROLE:
-            return f"related_work[{index}].role must be one of {sorted(VALID_RELATED_ROLE)}"
-        if work["verification_status"] not in VALID_RELATED_STATUS:
-            return f"related_work[{index}].verification_status must be one of {sorted(VALID_RELATED_STATUS)}"
-    return None
-
-
-def validate_experiments(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "experiments must be a non-empty array"
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"experiments[{index}] must be an object"
-        error = require_keys(item, ["section_reference", "title", "purpose", "datasets_or_workloads", "baselines", "metrics", "evidence_role", "connected_claim_sections"], f"experiments[{index}]")
-        if error:
-            return error
-        section_error = validate_section_ref(item["section_reference"], f"experiments[{index}].section_reference")
-        if section_error:
-            return section_error
-    return None
-
-
-def validate_figures_and_tables(items: list) -> str | None:
-    if not isinstance(items, list):
-        return "figures_and_tables must be an array"
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"figures_and_tables[{index}] must be an object"
-        error = require_keys(item, ["section_reference", "title", "message", "narrative_role", "supports_claim_sections", "data_source"], f"figures_and_tables[{index}]")
-        if error:
-            return error
-        section_error = validate_section_ref(item["section_reference"], f"figures_and_tables[{index}].section_reference")
-        if section_error:
-            return section_error
-    return None
-
-
-def validate_paper_structure(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "paper_structure must be a non-empty array"
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"paper_structure[{index}] must be an object"
-        error = require_keys(item, ["section_name", "rhetorical_role", "required_content"], f"paper_structure[{index}]")
-        if error:
-            return error
-    return None
-
-
-def validate_reproducibility_assets(items: list) -> str | None:
-    if not isinstance(items, list):
-        return "reproducibility_assets must be an array"
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"reproducibility_assets[{index}] must be an object"
-        error = require_keys(item, ["title", "asset_type", "contents", "claim_sections_supported", "status"], f"reproducibility_assets[{index}]")
-        if error:
-            return error
-    return None
-
-
-def validate_limitations(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "limitations_and_scope must be a non-empty array"
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"limitations_and_scope[{index}] must be an object"
-        error = require_keys(item, ["section_reference", "title", "boundary_or_limitation", "reason_for_boundary", "affected_claim_sections"], f"limitations_and_scope[{index}]")
-        if error:
-            return error
-        section_error = validate_section_ref(item["section_reference"], f"limitations_and_scope[{index}].section_reference")
-        if section_error:
-            return section_error
     return None
 
 
@@ -548,23 +569,25 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
         text = blueprint_path.read_text(encoding="utf-8-sig")
         for pattern in OFF_SCOPE_BLUEPRINT_PATTERNS:
             if pattern.lower() in text.lower():
-                return f"paper_blueprint.md contains off-scope workflow/advisory text: {pattern}"
+                return f"paper_blueprint.md contains overly detailed or advisory blueprint text: {pattern}"
         if contains_synthetic_id(text):
-            return "paper_blueprint.md contains synthetic object IDs; use natural section numbering instead"
+            return "paper_blueprint.md contains synthetic object IDs; use semantic headings instead"
         required_headings = [
-            "## 1. Target Venue and Paper Type",
-            "## 2. Paper Strategy Premises",
-            "## 3. Central Thesis",
-            "## 4. Problem Framing",
-            "## 5. Related-Work and Novelty Boundary",
-            "## 6. Core Idea",
-            "## 7. Method Design",
-            "## 8. Claims and Evidence Plan",
-            "## 9. Experimental Design",
-            "## 10. Figure and Table Plan",
-            "## 11. Paper Structure",
-            "## 12. Reproducibility-Relevant Assets",
-            "## 13. Limitations and Scope Boundaries",
+            "## 1. Paper Identity",
+            "## 2. Target Venue and Contribution Posture",
+            "## 3. Core Strategy Premises",
+            "## 4. Central Thesis",
+            "## 5. Contribution Contract",
+            "## 6. Claim Hierarchy",
+            "## 7. Related-Work and Novelty Boundary",
+            "## 8. Method Abstraction",
+            "## 9. Evidence Obligations",
+            "## 10. Narrative Requirements",
+            "## 11. Visual Argument Requirements",
+            "## 12. Scope and Constraint Boundaries",
+            "## 13. Research Risks and Dependency Signals",
+            "## 14. Open Planning Variables",
+            "## 15. Downstream Planning Interfaces",
         ]
         for heading in required_headings:
             if heading not in text:
@@ -573,10 +596,11 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
     if explanation_path.exists():
         text = explanation_path.read_text(encoding="utf-8-sig")
         required_heading_groups = [
-            ["## Blueprint Overview", "## 论文蓝图速览"],
+            ["## Blueprint Overview", "## 蓝图速览"],
             ["## Key Blueprint Content and Validation Entry Points", "## 蓝图重点内容与审核入口"],
             ["## Core Strategy Premises", "## 核心出发点"],
-            ["## Item-by-Item Blueprint Validation", "## 论文蓝图逐项解释"],
+            ["## Item-by-Item Blueprint Validation", "## 蓝图逐项解释"],
+            ["## What Is Delegated to Later Planning Skills", "## 哪些内容留给后续规划技能"],
             ["## Priority Questions for User Review", "## 用户审核时最应该确认的问题"],
         ]
         for headings in required_heading_groups:
@@ -585,17 +609,17 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
         if "paper_blueprint_summary:" in text:
             return "explanation file appears to duplicate machine-oriented blueprint content"
         if contains_synthetic_id(text):
-            return "explanation file contains synthetic object IDs; use natural section references instead"
+            return "explanation file contains synthetic object IDs; use semantic names instead"
         for pattern in OFF_SCOPE_EXPLANATION_PATTERNS:
             if pattern.lower() in text.lower():
-                return f"explanation file leaves the paper-strategy scope: {pattern}"
+                return f"explanation file leaves paper-strategy validation scope: {pattern}"
         section_refs = SECTION_REF_RE.findall(text)
         if len(section_refs) > 8:
-            return "explanation file relies too heavily on numbered section references; use semantic anchors such as claim titles, experiment names, and figure roles"
+            return "explanation file relies too heavily on numbered section references; use semantic anchors"
         paragraphs = re.split(r"\n\s*\n", text)
         for paragraph in paragraphs:
             if len(SECTION_REF_RE.findall(paragraph)) > 2:
-                return "explanation file has a paragraph driven by numbered section references; use semantic item names instead"
+                return "explanation file has a paragraph driven by numbered section references; use semantic item names"
     return None
 
 
@@ -618,7 +642,7 @@ def main() -> int:
     if error:
         return fail(error)
 
-    print("[OK] blueprint summary passes structural checks.")
+    print("[OK] core paper blueprint summary passes structural checks.")
     return 0
 
 
