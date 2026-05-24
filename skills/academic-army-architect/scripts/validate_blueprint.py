@@ -12,7 +12,7 @@ VALID_CLAIM_STATUS = {"supported", "unsupported", "needs_experiment", "needs_ver
 VALID_RELATED_STATUS = {"verified", "tentative", "needs_verification"}
 VALID_RELATED_ROLE = {"required_baseline", "required_citation", "contextual"}
 VALID_STORY_RECENCY = {"last_2_3_years", "latest_3_cycles", "expanded_last_5_years", "needs_verification"}
-BANNED_BLUEPRINT_PATTERNS = {
+OFF_SCOPE_BLUEPRINT_PATTERNS = {
     "Artifact cautions",
     "Assumptions to validate",
     "Metadata and Input State",
@@ -30,7 +30,7 @@ BANNED_BLUEPRINT_PATTERNS = {
     "High-impact paper pattern analysis",
     "why I chose",
 }
-BANNED_EXPLANATION_PATTERNS = {
+OFF_SCOPE_EXPLANATION_PATTERNS = {
     "deepresearch",
     "MCP",
     "web search",
@@ -484,9 +484,9 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
 
     if blueprint_path.exists():
         text = blueprint_path.read_text(encoding="utf-8-sig")
-        for pattern in BANNED_BLUEPRINT_PATTERNS:
+        for pattern in OFF_SCOPE_BLUEPRINT_PATTERNS:
             if pattern.lower() in text.lower():
-                return f"paper_blueprint.md contains banned workflow/advisory text: {pattern}"
+                return f"paper_blueprint.md contains off-scope workflow/advisory text: {pattern}"
         if contains_synthetic_id(text):
             return "paper_blueprint.md contains synthetic object IDs; use natural section numbering instead"
         required_headings = [
@@ -513,9 +513,9 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
             return "explanation file appears to duplicate machine-oriented blueprint content"
         if contains_synthetic_id(text):
             return "explanation file contains synthetic object IDs; use natural section references instead"
-        for pattern in BANNED_EXPLANATION_PATTERNS:
+        for pattern in OFF_SCOPE_EXPLANATION_PATTERNS:
             if pattern.lower() in text.lower():
-                return f"explanation file contains workflow/tool/project-management leakage: {pattern}"
+                return f"explanation file leaves the paper-strategy scope: {pattern}"
     return None
 
 
