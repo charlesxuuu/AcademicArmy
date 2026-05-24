@@ -35,7 +35,7 @@ Write this file in objective paper-plan prose.
 
 Use hierarchical Markdown headings and descriptive subsection titles.
 
-Use natural section references such as `Section 7.1 Primary claim` and `Section 8.2 Main-result experiment`.
+Use descriptive headings that can serve as semantic anchors in the explanation file.
 
 Represent uncertain evidence as claim scope, required evidence, or limitation boundaries.
 
@@ -66,7 +66,7 @@ It explains the paper plan itself:
 
 Write this file as a natural design memo for the current research idea.
 
-Use descriptive section references instead of synthetic object IDs.
+Use semantic anchors instead of numeric section references as the main way to discuss blueprint items.
 
 The explanation should let the user diagnose disagreement at three levels:
 
@@ -90,19 +90,49 @@ Place each type of information in the appropriate final object.
 | Paper-strategy rationale | `paper_blueprint_explanation.<lang>.md` |
 | User validation checkpoints | `paper_blueprint_explanation.<lang>.md`, diagnostic derivation chains and disagreement diagnosis |
 
-## Natural Numbering
+## Semantic Anchor References
 
-Use natural Markdown section numbering and descriptive headings.
+`paper_blueprint.md` uses hierarchical Markdown headings for structure.
 
-Preferred references:
+`paper_blueprint_explanation.<lang>.md` refers to blueprint items by semantic anchors rather than by section numbers.
 
-- `Section 4.1 Closest technical lineage`
-- `Section 7.1 Primary claim`
-- `Section 8.2 Main-result experiment`
-- `Section 9.3 Main-result figure`
-- `Section 12.1 Scope boundary: limited prediction horizon`
+A semantic anchor can be:
 
-Tables may use descriptive row labels.
+- the exact blueprint heading
+- a translated heading
+- a concise functional name
+- a natural-language paraphrase of the item
+
+Preferred explanation references:
+
+- the primary claim about reference-aware adaptation
+- the reference-versus-Gaussian utility sweep
+- the main-result experiment under dynamic network traces
+- the opening scheduling-decision figure
+- the baseline insufficiency risk
+- the CAGS reproduction evidence gap
+- the per-frame instrumentation step
+
+Section numbers are secondary locators. Place them after the semantic anchor when useful, not before it.
+
+The explanation should remain understandable when the reader ignores all section numbers.
+
+## Descriptive Heading Requirement
+
+Each important subsection in `paper_blueprint.md` has a self-contained descriptive heading.
+
+A heading identifies both the role of the item and its substantive content.
+
+Use headings like:
+
+- `Primary claim: <specific claim>`
+- `Mechanism claim: <specific mechanism>`
+- `Main-result experiment: <specific comparison and condition>`
+- `Ablation experiment: <specific mechanism being tested>`
+- `Scope boundary: <specific limitation>`
+- `Evidence requirement: <specific missing evidence before broadening claims>`
+
+The heading should be meaningful enough that the explanation file can discuss it without relying on the section number.
 
 ## Internal Evidence Handling
 
@@ -276,16 +306,16 @@ For each figure/table subsection, include:
 - paper placement
 - claim supported
 
-### Synthetic ID Normalization
+### Synthetic Label Normalization
 
-Convert synthetic labels from intermediate notes into natural section references:
+Convert synthetic labels from intermediate notes into descriptive headings or functional names:
 
 | Intermediate label | Final reference |
 |---|---|
-| `C1` | `Section 7.1 Primary claim: <descriptive title>` |
-| `E1` | `Section 8.2 Main-result experiment` |
-| `F1` | `Section 9.1 Opening problem or mechanism figure` |
-| `R1` | `Section 12.1 Scope boundary: <descriptive title>` |
+| `C1` | `Primary claim: <specific claim>` |
+| `E1` | `Main-result experiment: <specific comparison and condition>` |
+| `F1` | `Opening problem or mechanism figure: <specific message>` |
+| `R1` | `Scope boundary: <specific limitation>` |
 
 ## Step 5: Compile `paper_blueprint_explanation.<lang>.md`
 
@@ -327,7 +357,7 @@ It explains:
 - the main risks and evidence gaps
 - the research development order
 
-Use natural prose and descriptive section references.
+Use natural prose and semantic anchors.
 
 ### Blueprint Item Explanation Pattern
 
@@ -335,14 +365,24 @@ For every major section and important subsection of `paper_blueprint.md`, explai
 
 Each explanation should cover:
 
-- item summary: what the blueprint item says
+- item summary: what the blueprint item says, named by title or functional phrase
 - premise source: which core paper-strategy premise motivates the item
 - derivation: why that premise leads to this item
-- connections: which other blueprint parts depend on it or constrain it
+- connections: which other blueprint parts depend on it or constrain it, using semantic item names
 - user validation point: what the user should inspect if the item seems unreasonable
 - revision consequence: what parts of the blueprint would need to change if the item is revised
 
 Write this as natural prose, not as a rigid field list.
+
+Use relationship language such as:
+
+- this claim requires...
+- this experiment tests...
+- this figure makes visible...
+- this scope boundary protects...
+- this evidence requirement controls...
+
+Use semantic item names as the connective tissue. Section numbers may appear once as optional locators.
 
 ### Diagnostic Derivation Chains
 
@@ -420,7 +460,7 @@ Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 - the file reads as a paper-strategy memo in the user's language
 - the explanation focuses on paper positioning, venue fit, storytelling, technical lineage, evaluation design, risks, evidence gaps, and research order
 - each major blueprint section is explained in natural prose
-- the user can understand the design without following synthetic labels or internal workflow terms
+- the user can understand the design through semantic item names rather than numbered-section lookup
 - the explanation describes why the paper plan is shaped this way
 - the explanation helps the user judge whether each major blueprint item is reasonable
 - the explanation identifies whether disagreement points to a premise, a derivation, or an implementation detail

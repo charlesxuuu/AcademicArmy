@@ -54,6 +54,7 @@ OFF_SCOPE_EXPLANATION_PATTERNS = {
     "Review Risk Mitigation Plan",
 }
 SYNTHETIC_ID_RE = re.compile(r"\b(?:C|E|R|A|B|K|D)[1-9]\d?\b|\b(?:F|T)[1-9]\d?\b(?!\s*[- ]?score)|\bAR[1-9]\d?\b")
+SECTION_REF_RE = re.compile(r"\bSection\s+(?:[1-9]|1[0-3])(?:\.\d+)?\b|第\s*(?:[1-9]|1[0-3])(?:\.\d+)?\s*节")
 
 
 def fail(message: str) -> int:
@@ -540,6 +541,13 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
         for pattern in OFF_SCOPE_EXPLANATION_PATTERNS:
             if pattern.lower() in text.lower():
                 return f"explanation file leaves the paper-strategy scope: {pattern}"
+        section_refs = SECTION_REF_RE.findall(text)
+        if len(section_refs) > 8:
+            return "explanation file relies too heavily on numbered section references; use semantic anchors such as claim titles, experiment names, and figure roles"
+        paragraphs = re.split(r"\n\s*\n", text)
+        for paragraph in paragraphs:
+            if len(SECTION_REF_RE.findall(paragraph)) > 2:
+                return "explanation file has a paragraph driven by numbered section references; use semantic item names instead"
     return None
 
 
