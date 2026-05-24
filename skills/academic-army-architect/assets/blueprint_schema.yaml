@@ -45,22 +45,56 @@ paper_blueprint_summary:
     storytelling_patterns: [string]
     technical_patterns: [string]
     evaluation_patterns: [string]
-  core_focus_items:
-    - id: K1
-      focus: string
-      purpose: string
-      primary_blueprint_sections: [string]
-  acceptance_hypothesis: string
+  design_rationale:
+    core_judgment: string
+    venue_storytelling_patterns:
+      - pattern: string
+        influence_on_blueprint: string
+    technical_anchor_rationale:
+      - anchor: string
+        influence_on_method_or_evaluation: string
+    claim_rationale:
+      - claim_section: string
+        why_scoped_this_way: string
+        relation_to_thesis: string
+    experiment_rationale:
+      - experiment_section: string
+        why_needed: string
+        relation_to_claims: string
+    figure_rationale:
+      - figure_section: string
+        narrative_role: string
+    scope_and_limitation_rationale: string
+  central_thesis:
+    thesis: string
+    acceptance_critical_statement: string
+    contribution_boundary: string
+  problem_framing:
+    community_pain_point: string
+    why_now: string
+    existing_approach_gap: string
+  core_idea:
+    insight: string
+    narrative_center_rationale: string
+    tradeoff_changed: string
+  method_design:
+    components:
+      - title: string
+        function: string
+        relation_to_thesis: string
+    assumptions: [string]
   claims:
-    - id: string
+    - section_reference: string
+      title: string
       claim: string
+      why_it_matters_to_thesis: string
       evidence_required: [string]
       baselines: [string]
       baseline_gap_rationale: string
       metrics: [string]
-      figure_or_table: string
-      related_experiments: [string]
-      related_risks: [string]
+      connected_experiment_sections: [string]
+      connected_figure_sections: [string]
+      connected_scope_sections: [string]
       failure_condition: string
       status: supported_or_unsupported_or_needs_experiment_or_needs_verification
   related_work:
@@ -69,29 +103,43 @@ paper_blueprint_summary:
       role: required_baseline_or_required_citation_or_contextual
       delta: string
       verification_status: verified_or_tentative_or_needs_verification
+  experiments:
+    - section_reference: string
+      title: string
+      purpose: string
+      datasets_or_workloads: [string]
+      baselines: [string]
+      metrics: [string]
+      evidence_role: string
+      connected_claim_sections: [string]
   figures_and_tables:
-    - id: string
+    - section_reference: string
+      title: string
       message: string
-      supports_claims: [string]
+      narrative_role: string
+      supports_claim_sections: [string]
       data_source: string
-  section_traceability:
-    - blueprint_section: string
-      core_focus_ids: [string]
-      related_blueprint_ids: [string]
-      why_this_section_exists: string
-      downstream_impact: string
-  claim_traceability:
-    - claim_id: string
-      core_focus_ids: [string]
-      supporting_experiments: [string]
-      supporting_figures_or_tables: [string]
-      main_reviewer_risks: [string]
-      explanation: string
-  explanation_decision_log:
-    - decision: string
-      blueprint_id: string
-      reason: string
-      evidence_or_pattern: string
-      uncertainty: string
+  paper_structure:
+    - section_name: string
+      rhetorical_role: string
+      required_content: string
+  reproducibility_assets:
+    - title: string
+      asset_type: string
+      contents: string
+      claim_sections_supported: [string]
+      status: string
+  limitations_and_scope:
+    - section_reference: string
+      title: string
+      boundary_or_limitation: string
+      reason_for_boundary: string
+      affected_claim_sections: [string]
+  explanation_style_checks:
+    paper_design_rationale_only: boolean
+    no_tool_process: boolean
+    no_file_format_rationale: boolean
+    no_downstream_agent_usage: boolean
+    no_project_todos: boolean
+    avoids_synthetic_ids: boolean
   risks: [string]
-  next_actions: [string]

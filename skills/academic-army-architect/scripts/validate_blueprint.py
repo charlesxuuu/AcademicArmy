@@ -2,14 +2,58 @@
 
 from datetime import datetime
 import json
+import re
 import sys
 from pathlib import Path
+from typing import Any
 
 
 VALID_CLAIM_STATUS = {"supported", "unsupported", "needs_experiment", "needs_verification"}
 VALID_RELATED_STATUS = {"verified", "tentative", "needs_verification"}
 VALID_RELATED_ROLE = {"required_baseline", "required_citation", "contextual"}
 VALID_STORY_RECENCY = {"last_2_3_years", "latest_3_cycles", "expanded_last_5_years", "needs_verification"}
+BANNED_BLUEPRINT_PATTERNS = {
+    "Artifact cautions",
+    "Assumptions to validate",
+    "Metadata and Input State",
+    "Review Risk Mitigation Plan",
+    "Evidence Gaps and Dependencies",
+    "Execution Plan",
+    "Do not assume",
+    "You should",
+    "Be careful",
+    "Remember",
+    "It is important to note",
+    "Caution",
+    "Warning",
+    "Reasoning Summary",
+    "High-impact paper pattern analysis",
+    "why I chose",
+}
+BANNED_EXPLANATION_PATTERNS = {
+    "deepresearch",
+    "MCP",
+    "web search",
+    "rate limit",
+    "probe",
+    "PDF parsing",
+    "output directory",
+    "downstream agent",
+    "implementation agent",
+    "experiment agent",
+    "writing agent",
+    "two files",
+    "output format",
+    "specification format",
+    "implementation-plan format",
+    "how to use the files",
+    "next steps",
+    "TODO",
+    "Execution Plan",
+    "Evidence Gaps and Dependencies",
+    "Review Risk Mitigation Plan",
+}
+SYNTHETIC_ID_RE = re.compile(r"\b(?:C|E|R|A|B|K|D)[1-9]\d?\b|\b(?:F|T)[1-9]\d?\b(?!\s*[- ]?score)|\bAR[1-9]\d?\b")
 
 
 def fail(message: str) -> int:
@@ -29,6 +73,31 @@ def load_summary(path: Path) -> dict:
     if not isinstance(data, dict):
         raise ValueError("top-level JSON must be an object")
     return data.get("paper_blueprint_summary", data.get("paper_blueprint", data))
+
+
+def normalize_metric_text(text: str) -> str:
+    return re.sub(r"\bF1\s*[- ]?\s*score\b", "f1_metric", text, flags=re.IGNORECASE)
+
+
+def contains_synthetic_id(text: str) -> bool:
+    return bool(SYNTHETIC_ID_RE.search(normalize_metric_text(text)))
+
+
+def find_synthetic_id_path(obj: Any, path: str = "paper_blueprint_summary") -> str | None:
+    if isinstance(obj, str):
+        if contains_synthetic_id(obj):
+            return path
+    elif isinstance(obj, list):
+        for index, item in enumerate(obj, start=1):
+            found = find_synthetic_id_path(item, f"{path}[{index}]")
+            if found:
+                return found
+    elif isinstance(obj, dict):
+        for key, value in obj.items():
+            found = find_synthetic_id_path(value, f"{path}.{key}")
+            if found:
+                return found
+    return None
 
 
 def validate_output_files(data: dict) -> str | None:
@@ -96,88 +165,70 @@ def validate_exemplar_analysis(exemplar_analysis: dict) -> str | None:
     return None
 
 
-def validate_core_focus_items(items: list) -> tuple[str | None, set[str]]:
-    if not isinstance(items, list) or not items:
-        return "core_focus_items must be a non-empty array", set()
-    ids = set()
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"core_focus_items[{index}] must be an object", set()
-        error = require_keys(item, ["id", "focus", "purpose", "primary_blueprint_sections"], f"core_focus_items[{index}]")
-        if error:
-            return error, set()
-        if not item["id"].startswith("K"):
-            return f"core_focus_items[{index}].id must start with K", set()
-        if item["id"] in ids:
-            return f"duplicate core focus id: {item['id']}", set()
-        ids.add(item["id"])
-        if not isinstance(item["primary_blueprint_sections"], list) or not item["primary_blueprint_sections"]:
-            return f"core_focus_items[{index}].primary_blueprint_sections must be a non-empty array", set()
-    return None, ids
-
-
-def validate_section_traceability(items: list, core_focus_ids: set[str]) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "section_traceability must be a non-empty array"
-    required_sections = {
-        "Metadata",
-        "Target Venue and Contribution Type",
-        "Acceptance Hypothesis",
-        "Core Claims",
-        "Related-Work Positioning",
-        "Method Blueprint",
-        "Evaluation Blueprint",
-        "Figure and Table Storyboard",
-        "Section-by-Section Outline",
-        "Reviewer Risk Register",
-        "Reproducibility and Artifact Plan",
-        "Missing Evidence",
-        "Next Actions",
-    }
-    covered = set()
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"section_traceability[{index}] must be an object"
-        error = require_keys(item, ["blueprint_section", "core_focus_ids", "related_blueprint_ids", "why_this_section_exists", "downstream_impact"], f"section_traceability[{index}]")
-        if error:
-            return error
-        covered.add(item["blueprint_section"])
-        if not item["core_focus_ids"]:
-            return f"section_traceability[{index}] needs core_focus_ids"
-        unknown = [focus_id for focus_id in item["core_focus_ids"] if focus_id not in core_focus_ids]
-        if unknown:
-            return f"section_traceability[{index}] references unknown core focus id(s): {', '.join(unknown)}"
-    missing = sorted(required_sections - covered)
-    if missing:
-        return f"section_traceability missing major section(s): {', '.join(missing)}"
+def validate_design_rationale(rationale: dict) -> str | None:
+    if not isinstance(rationale, dict):
+        return "design_rationale must be an object"
+    error = require_keys(
+        rationale,
+        [
+            "core_judgment",
+            "venue_storytelling_patterns",
+            "technical_anchor_rationale",
+            "claim_rationale",
+            "experiment_rationale",
+            "figure_rationale",
+            "scope_and_limitation_rationale",
+        ],
+        "design_rationale",
+    )
+    if error:
+        return error
+    if not rationale["core_judgment"]:
+        return "design_rationale.core_judgment is required"
+    for group, keys in {
+        "venue_storytelling_patterns": ["pattern", "influence_on_blueprint"],
+        "technical_anchor_rationale": ["anchor", "influence_on_method_or_evaluation"],
+        "claim_rationale": ["claim_section", "why_scoped_this_way", "relation_to_thesis"],
+        "experiment_rationale": ["experiment_section", "why_needed", "relation_to_claims"],
+        "figure_rationale": ["figure_section", "narrative_role"],
+    }.items():
+        items = rationale[group]
+        if not isinstance(items, list):
+            return f"design_rationale.{group} must be an array"
+        for index, item in enumerate(items, start=1):
+            if not isinstance(item, dict):
+                return f"{group}[{index}] must be an object"
+            error = require_keys(item, keys, f"{group}[{index}]")
+            if error:
+                return error
     return None
 
 
-def validate_claim_traceability(items: list, core_focus_ids: set[str], claim_ids: set[str]) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "claim_traceability must be a non-empty array"
-    covered = set()
-    for index, item in enumerate(items, start=1):
-        if not isinstance(item, dict):
-            return f"claim_traceability[{index}] must be an object"
-        error = require_keys(item, ["claim_id", "core_focus_ids", "supporting_experiments", "supporting_figures_or_tables", "main_reviewer_risks", "explanation"], f"claim_traceability[{index}]")
-        if error:
-            return error
-        if item["claim_id"] not in claim_ids:
-            return f"claim_traceability[{index}] references unknown claim: {item['claim_id']}"
-        covered.add(item["claim_id"])
-        unknown = [focus_id for focus_id in item["core_focus_ids"] if focus_id not in core_focus_ids]
-        if unknown:
-            return f"claim_traceability[{index}] references unknown core focus id(s): {', '.join(unknown)}"
-        if not item["supporting_experiments"]:
-            return f"claim_traceability[{index}] needs supporting_experiments"
-        if not item["supporting_figures_or_tables"]:
-            return f"claim_traceability[{index}] needs supporting_figures_or_tables"
-        if not item["main_reviewer_risks"]:
-            return f"claim_traceability[{index}] needs main_reviewer_risks"
-    missing = sorted(claim_ids - covered)
-    if missing:
-        return f"claim_traceability missing claim(s): {', '.join(missing)}"
+def validate_section_ref(value: str, path: str) -> str | None:
+    if not isinstance(value, str) or not value:
+        return f"{path} must be a non-empty string"
+    if not re.search(r"\b(?:[1-9]|1[0-2])(?:\.\d+)?\b", value):
+        return f"{path} should use a natural section reference such as 'Section 7.1'"
+    return None
+
+
+def validate_style_checks(style_checks: dict) -> str | None:
+    if not isinstance(style_checks, dict):
+        return "explanation_style_checks must be an object"
+    required = [
+        "paper_design_rationale_only",
+        "no_tool_process",
+        "no_file_format_rationale",
+        "no_downstream_agent_usage",
+        "no_project_todos",
+        "avoids_synthetic_ids",
+    ]
+    error = require_keys(style_checks, required, "explanation_style_checks")
+    if error:
+        return error
+    for key in required:
+        if style_checks[key] is not True:
+            return f"explanation_style_checks.{key} must be true"
     return None
 
 
@@ -191,30 +242,38 @@ def validate(data: dict) -> str | None:
             "contribution_type",
             "exemplar_analysis",
             "distilled_patterns",
-            "core_focus_items",
-            "acceptance_hypothesis",
+            "design_rationale",
+            "central_thesis",
+            "problem_framing",
+            "core_idea",
+            "method_design",
             "claims",
             "related_work",
+            "experiments",
             "figures_and_tables",
-            "section_traceability",
-            "claim_traceability",
-            "explanation_decision_log",
-            "risks",
-            "next_actions",
+            "paper_structure",
+            "reproducibility_assets",
+            "limitations_and_scope",
+            "explanation_style_checks",
         ],
         "paper_blueprint_summary",
     )
     if top_error:
         return top_error
 
-    for validator in (validate_output_files, lambda d: validate_exemplar_analysis(d["exemplar_analysis"])):
+    synthetic_path = find_synthetic_id_path(data)
+    if synthetic_path:
+        return f"synthetic object ID found in {synthetic_path}; use natural section references instead"
+
+    for validator in (
+        validate_output_files,
+        lambda d: validate_exemplar_analysis(d["exemplar_analysis"]),
+        lambda d: validate_design_rationale(d["design_rationale"]),
+        lambda d: validate_style_checks(d["explanation_style_checks"]),
+    ):
         error = validator(data)
         if error:
             return error
-
-    focus_error, core_focus_ids = validate_core_focus_items(data["core_focus_items"])
-    if focus_error:
-        return focus_error
 
     venue = data["target_venue"]
     if not isinstance(venue, dict):
@@ -227,17 +286,94 @@ def validate(data: dict) -> str | None:
     if isinstance(venue["fit_score"], int) and not 1 <= venue["fit_score"] <= 5:
         return "target_venue.fit_score must be between 1 and 5"
 
-    claims = data["claims"]
-    if not isinstance(claims, list) or not claims:
-        return "claims must be a non-empty array"
-    claim_ids = set()
-    for index, claim in enumerate(claims, start=1):
-        if not isinstance(claim, dict):
-            return f"claims[{index}] must be an object"
-        error = require_keys(claim, ["id", "claim", "evidence_required", "baselines", "baseline_gap_rationale", "metrics", "figure_or_table", "related_experiments", "related_risks", "failure_condition", "status"], f"claims[{index}]")
+    for path, keys in (
+        ("central_thesis", ["thesis", "acceptance_critical_statement", "contribution_boundary"]),
+        ("problem_framing", ["community_pain_point", "why_now", "existing_approach_gap"]),
+        ("core_idea", ["insight", "narrative_center_rationale", "tradeoff_changed"]),
+    ):
+        obj = data[path]
+        if not isinstance(obj, dict):
+            return f"{path} must be an object"
+        error = require_keys(obj, keys, path)
         if error:
             return error
-        claim_ids.add(claim["id"])
+
+    method_error = validate_method_design(data["method_design"])
+    if method_error:
+        return method_error
+    claim_error = validate_claims(data["claims"])
+    if claim_error:
+        return claim_error
+    related_error = validate_related_work(data["related_work"])
+    if related_error:
+        return related_error
+    experiment_error = validate_experiments(data["experiments"])
+    if experiment_error:
+        return experiment_error
+    figure_error = validate_figures_and_tables(data["figures_and_tables"])
+    if figure_error:
+        return figure_error
+    structure_error = validate_paper_structure(data["paper_structure"])
+    if structure_error:
+        return structure_error
+    asset_error = validate_reproducibility_assets(data["reproducibility_assets"])
+    if asset_error:
+        return asset_error
+    limitation_error = validate_limitations(data["limitations_and_scope"])
+    if limitation_error:
+        return limitation_error
+
+    unsupported = [claim["title"] for claim in data["claims"] if claim["status"] == "unsupported"]
+    if unsupported:
+        print(f"[WARN] unsupported claims present: {', '.join(unsupported)}")
+    return None
+
+
+def validate_method_design(method_design: dict) -> str | None:
+    if not isinstance(method_design, dict):
+        return "method_design must be an object"
+    error = require_keys(method_design, ["components", "assumptions"], "method_design")
+    if error:
+        return error
+    if not isinstance(method_design["components"], list) or not method_design["components"]:
+        return "method_design.components must be a non-empty array"
+    for index, component in enumerate(method_design["components"], start=1):
+        error = require_keys(component, ["title", "function", "relation_to_thesis"], f"method_design.components[{index}]")
+        if error:
+            return error
+    return None
+
+
+def validate_claims(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "claims must be a non-empty array"
+    for index, claim in enumerate(items, start=1):
+        if not isinstance(claim, dict):
+            return f"claims[{index}] must be an object"
+        error = require_keys(
+            claim,
+            [
+                "section_reference",
+                "title",
+                "claim",
+                "why_it_matters_to_thesis",
+                "evidence_required",
+                "baselines",
+                "baseline_gap_rationale",
+                "metrics",
+                "connected_experiment_sections",
+                "connected_figure_sections",
+                "connected_scope_sections",
+                "failure_condition",
+                "status",
+            ],
+            f"claims[{index}]",
+        )
+        if error:
+            return error
+        section_error = validate_section_ref(claim["section_reference"], f"claims[{index}].section_reference")
+        if section_error:
+            return section_error
         if claim["status"] not in VALID_CLAIM_STATUS:
             return f"claims[{index}].status must be one of {sorted(VALID_CLAIM_STATUS)}"
         if not claim["evidence_required"]:
@@ -246,11 +382,13 @@ def validate(data: dict) -> str | None:
             return f"claims[{index}] needs baselines or baseline_gap_rationale"
         if not claim["failure_condition"]:
             return f"claims[{index}] needs a failure_condition"
+    return None
 
-    related_work = data["related_work"]
-    if not isinstance(related_work, list):
+
+def validate_related_work(items: list) -> str | None:
+    if not isinstance(items, list):
         return "related_work must be an array"
-    for index, work in enumerate(related_work, start=1):
+    for index, work in enumerate(items, start=1):
         if not isinstance(work, dict):
             return f"related_work[{index}] must be an object"
         error = require_keys(work, ["title", "source", "delta", "role", "verification_status"], f"related_work[{index}]")
@@ -260,40 +398,124 @@ def validate(data: dict) -> str | None:
             return f"related_work[{index}].role must be one of {sorted(VALID_RELATED_ROLE)}"
         if work["verification_status"] not in VALID_RELATED_STATUS:
             return f"related_work[{index}].verification_status must be one of {sorted(VALID_RELATED_STATUS)}"
+    return None
 
-    figures = data["figures_and_tables"]
-    if not isinstance(figures, list):
+
+def validate_experiments(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "experiments must be a non-empty array"
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"experiments[{index}] must be an object"
+        error = require_keys(item, ["section_reference", "title", "purpose", "datasets_or_workloads", "baselines", "metrics", "evidence_role", "connected_claim_sections"], f"experiments[{index}]")
+        if error:
+            return error
+        section_error = validate_section_ref(item["section_reference"], f"experiments[{index}].section_reference")
+        if section_error:
+            return section_error
+    return None
+
+
+def validate_figures_and_tables(items: list) -> str | None:
+    if not isinstance(items, list):
         return "figures_and_tables must be an array"
-    for index, item in enumerate(figures, start=1):
+    for index, item in enumerate(items, start=1):
         if not isinstance(item, dict):
             return f"figures_and_tables[{index}] must be an object"
-        error = require_keys(item, ["id", "message", "supports_claims"], f"figures_and_tables[{index}]")
+        error = require_keys(item, ["section_reference", "title", "message", "narrative_role", "supports_claim_sections", "data_source"], f"figures_and_tables[{index}]")
         if error:
             return error
-        unknown = [claim_id for claim_id in item["supports_claims"] if claim_id not in claim_ids]
-        if unknown:
-            return f"figures_and_tables[{index}] references unknown claim(s): {', '.join(unknown)}"
+        section_error = validate_section_ref(item["section_reference"], f"figures_and_tables[{index}].section_reference")
+        if section_error:
+            return section_error
+    return None
 
-    section_error = validate_section_traceability(data["section_traceability"], core_focus_ids)
-    if section_error:
-        return section_error
-    claim_trace_error = validate_claim_traceability(data["claim_traceability"], core_focus_ids, claim_ids)
-    if claim_trace_error:
-        return claim_trace_error
 
-    decision_log = data["explanation_decision_log"]
-    if not isinstance(decision_log, list):
-        return "explanation_decision_log must be an array"
-    for index, entry in enumerate(decision_log, start=1):
-        if not isinstance(entry, dict):
-            return f"explanation_decision_log[{index}] must be an object"
-        error = require_keys(entry, ["decision", "blueprint_id", "reason", "evidence_or_pattern", "uncertainty"], f"explanation_decision_log[{index}]")
+def validate_paper_structure(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "paper_structure must be a non-empty array"
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"paper_structure[{index}] must be an object"
+        error = require_keys(item, ["section_name", "rhetorical_role", "required_content"], f"paper_structure[{index}]")
         if error:
             return error
+    return None
 
-    if any(claim["status"] == "unsupported" for claim in claims):
-        unsupported_ids = [claim["id"] for claim in claims if claim["status"] == "unsupported"]
-        print(f"[WARN] unsupported claims present: {', '.join(unsupported_ids)}")
+
+def validate_reproducibility_assets(items: list) -> str | None:
+    if not isinstance(items, list):
+        return "reproducibility_assets must be an array"
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"reproducibility_assets[{index}] must be an object"
+        error = require_keys(item, ["title", "asset_type", "contents", "claim_sections_supported", "status"], f"reproducibility_assets[{index}]")
+        if error:
+            return error
+    return None
+
+
+def validate_limitations(items: list) -> str | None:
+    if not isinstance(items, list) or not items:
+        return "limitations_and_scope must be a non-empty array"
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            return f"limitations_and_scope[{index}] must be an object"
+        error = require_keys(item, ["section_reference", "title", "boundary_or_limitation", "reason_for_boundary", "affected_claim_sections"], f"limitations_and_scope[{index}]")
+        if error:
+            return error
+        section_error = validate_section_ref(item["section_reference"], f"limitations_and_scope[{index}].section_reference")
+        if section_error:
+            return section_error
+    return None
+
+
+def resolve_output_path(raw_path: str, base_dir: Path) -> Path:
+    path = Path(raw_path)
+    if path.is_absolute():
+        return path
+    return base_dir / path
+
+
+def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
+    files = data["output_files"]
+    blueprint_path = resolve_output_path(files["blueprint_markdown"], base_dir)
+    explanation_path = resolve_output_path(files["explanation_markdown"], base_dir)
+
+    if blueprint_path.exists():
+        text = blueprint_path.read_text(encoding="utf-8-sig")
+        for pattern in BANNED_BLUEPRINT_PATTERNS:
+            if pattern.lower() in text.lower():
+                return f"paper_blueprint.md contains banned workflow/advisory text: {pattern}"
+        if contains_synthetic_id(text):
+            return "paper_blueprint.md contains synthetic object IDs; use natural section numbering instead"
+        required_headings = [
+            "## 1. Target Venue and Paper Type",
+            "## 2. Central Thesis",
+            "## 3. Problem Framing",
+            "## 4. Related-Work and Novelty Boundary",
+            "## 5. Core Idea",
+            "## 6. Method Design",
+            "## 7. Claims and Evidence Plan",
+            "## 8. Experimental Design",
+            "## 9. Figure and Table Plan",
+            "## 10. Paper Structure",
+            "## 11. Reproducibility-Relevant Assets",
+            "## 12. Limitations and Scope Boundaries",
+        ]
+        for heading in required_headings:
+            if heading not in text:
+                return f"paper_blueprint.md must contain '{heading}'"
+
+    if explanation_path.exists():
+        text = explanation_path.read_text(encoding="utf-8-sig")
+        if "paper_blueprint_summary:" in text:
+            return "explanation file appears to duplicate machine-oriented blueprint content"
+        if contains_synthetic_id(text):
+            return "explanation file contains synthetic object IDs; use natural section references instead"
+        for pattern in BANNED_EXPLANATION_PATTERNS:
+            if pattern.lower() in text.lower():
+                return f"explanation file contains workflow/tool/project-management leakage: {pattern}"
     return None
 
 
@@ -311,6 +533,8 @@ def main() -> int:
         return fail(str(exc))
 
     error = validate(data)
+    if not error:
+        error = validate_markdown_files(data, path.parent)
     if error:
         return fail(error)
 
