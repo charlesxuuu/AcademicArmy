@@ -1,7 +1,7 @@
 ---
 name: academic-army-architect
 description: >-
-  Create two Markdown files for a research-paper design workflow: an English paper_blueprint.md containing an objective paper-design specification, and a user-language paper_blueprint_explanation.<lang>.md explaining the academic design rationale for that paper scheme. Use when the user needs venue fit, thesis shaping, problem framing, novelty boundary, method design, claim-evidence planning, experimental design, figure/table planning, paper structure, and limitation boundaries. Uses deepresearch MCP for live venue, literature, exemplar, and reviewer-context evidence.
+  Create two Markdown files for a research-paper design workflow: an English paper_blueprint.md containing an objective paper-design specification, and a user-language paper_blueprint_explanation.<lang>.md that restates key blueprint content and explains how each item follows from the paper's core premises so the user can validate the plan. Use when the user needs venue fit, thesis shaping, problem framing, novelty boundary, method design, claim-evidence planning, experimental design, figure/table planning, paper structure, and limitation boundaries. Uses deepresearch MCP for live venue, literature, exemplar, and reviewer-context evidence.
 ---
 
 # Academic Army Architect
@@ -10,7 +10,7 @@ description: >-
 
 The skill produces two Markdown files.
 
-The explanation file is not a summary of the blueprint. It is a validation companion that reconstructs the paper-level derivation from core strategy premises to blueprint details, so the user can inspect whether each item is reasonable and locate the source of disagreement.
+The explanation file is not a summary of the blueprint. It is a standalone validation companion that first restates the essential content of important blueprint items, then reconstructs the paper-level derivation from core strategy premises to those details, so the user can inspect whether each item is reasonable and locate the source of disagreement.
 
 ### File 1: `paper_blueprint.md`
 
@@ -49,6 +49,7 @@ This file is a paper-strategy explanation in the user's conversation language.
 
 It explains the paper plan itself:
 
+- what the important blueprint items actually say, in compressed user-language form
 - what core strategy premises the plan depends on
 - how each major blueprint item is derived from those premises
 - how blueprint items support or constrain each other
@@ -67,6 +68,8 @@ It explains the paper plan itself:
 Write this file as a natural design memo for the current research idea.
 
 Use semantic anchors instead of numeric section references as the main way to discuss blueprint items.
+
+The user should be able to understand the explanation without constantly switching to `paper_blueprint.md`.
 
 The explanation should let the user diagnose disagreement at three levels:
 
@@ -89,19 +92,13 @@ Place each type of information in the appropriate final object.
 | Artifact requirements | reproducibility-relevant assets |
 | Paper-strategy rationale | `paper_blueprint_explanation.<lang>.md` |
 | User validation checkpoints | `paper_blueprint_explanation.<lang>.md`, diagnostic derivation chains and disagreement diagnosis |
+| Compact digest of important blueprint content | `paper_blueprint_explanation.<lang>.md`, before each rationale |
 
 ## Semantic Anchor References
 
 `paper_blueprint.md` uses hierarchical Markdown headings for structure.
 
-`paper_blueprint_explanation.<lang>.md` refers to blueprint items by semantic anchors rather than by section numbers.
-
-A semantic anchor can be:
-
-- the exact blueprint heading
-- a translated heading
-- a concise functional name
-- a natural-language paraphrase of the item
+`paper_blueprint_explanation.<lang>.md` refers to blueprint items by semantic anchors rather than by section numbers: exact headings, translated headings, concise functional names, or natural-language paraphrases.
 
 Preferred explanation references:
 
@@ -306,17 +303,6 @@ For each figure/table subsection, include:
 - paper placement
 - claim supported
 
-### Synthetic Label Normalization
-
-Convert synthetic labels from intermediate notes into descriptive headings or functional names:
-
-| Intermediate label | Final reference |
-|---|---|
-| `C1` | `Primary claim: <specific claim>` |
-| `E1` | `Main-result experiment: <specific comparison and condition>` |
-| `F1` | `Opening problem or mechanism figure: <specific message>` |
-| `R1` | `Scope boundary: <specific limitation>` |
-
 ## Step 5: Compile `paper_blueprint_explanation.<lang>.md`
 
 Use this structure:
@@ -324,11 +310,15 @@ Use this structure:
 ```markdown
 # Paper Blueprint Explanation: <Working Title>
 
+## Blueprint Overview
+
+## Key Blueprint Content and Validation Entry Points
+
 ## Core Strategy Premises
 
 ## Overall Derivation from Premises to Paper Plan
 
-## Section-by-Section Blueprint Validation
+## Item-by-Item Blueprint Validation
 
 ## Key Design Tradeoffs and Their Derivations
 
@@ -341,31 +331,45 @@ Use this structure:
 
 The explanation reads as a paper-strategy memo for the current research idea.
 
-It explains:
+It gives the compact content of important blueprint items, the core premises behind the plan, the derivation from premises to items, the relationships among items, and the review questions that help the user locate disagreement.
 
-- the core premises behind the paper plan
-- how the major blueprint items are derived from those premises
-- how the blueprint items support or constrain each other
-- how the user can locate the source of disagreement
-- the paper's target-venue positioning
-- the central thesis and contribution shape
-- the reason for each major claim
-- the related-work boundary
-- the method decomposition
-- the evaluation order
-- the figure and manuscript strategy
-- the main risks and evidence gaps
-- the research development order
+Use natural prose and semantic anchors. For each important blueprint item, first restate the essential blueprint content in the user's language, then explain why the item is reasonable:
 
-Use natural prose and semantic anchors.
+1. Blueprint content digest: a concise restatement of what the blueprint item says.
+2. Derivation from core premises: why the item follows from the target venue, problem framing, contribution framing, novelty boundary, evidence standard, or storytelling strategy.
+3. Connections to other blueprint items: how the item supports or constrains claims, experiments, figures, risks, evidence gaps, or research order.
+4. User validation point: what the user should inspect if the item seems wrong.
+
+The digest summarizes the blueprint item. It does not duplicate the full formal blueprint.
+
+Start the explanation with a compact overview of the full blueprint.
+
+Cover:
+
+- paper positioning
+- central thesis
+- main contribution
+- primary claim
+- method direction
+- evaluation main line
+- most important limitation or risk
+- most important evidence requirement
+- research development order
+
+After the blueprint overview, include a short table with:
+
+| Key blueprint content | Why it matters | Main user validation question |
+|---|---|---|
+
+Use semantic content labels rather than section numbers.
 
 ### Blueprint Item Explanation Pattern
 
-For every major section and important subsection of `paper_blueprint.md`, explain it as a derivation from the core premises.
+For every major section and important subsection of `paper_blueprint.md`, explain it as a digest plus derivation from the core premises.
 
 Each explanation should cover:
 
-- item summary: what the blueprint item says, named by title or functional phrase
+- blueprint content digest: what the blueprint item says, named by title or functional phrase
 - premise source: which core paper-strategy premise motivates the item
 - derivation: why that premise leads to this item
 - connections: which other blueprint parts depend on it or constrain it, using semantic item names
@@ -383,6 +387,25 @@ Use relationship language such as:
 - this evidence requirement controls...
 
 Use semantic item names as the connective tissue. Section numbers may appear once as optional locators.
+
+### Digest Granularity
+
+Keep each digest concise.
+
+- simple items: one sentence
+- important claims, experiments, limitations, or evidence requirements: one short paragraph
+- complex evaluation or paper-structure items: three to five bullets
+
+Preserve the concrete content needed for validation:
+
+- claim statement
+- key baselines
+- key metrics
+- key evidence
+- key limitation
+- expected consequence
+
+Skip implementation-level detail unless it is essential for judging reasonableness.
 
 ### Diagnostic Derivation Chains
 
@@ -458,6 +481,9 @@ Before finalizing `paper_blueprint.md`, check that:
 Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 
 - the file reads as a paper-strategy memo in the user's language
+- the file includes a compact overview of the paper blueprint
+- each important blueprint item is restated before it is explained
+- each restatement includes enough concrete content for the user to evaluate the item without opening `paper_blueprint.md`
 - the explanation focuses on paper positioning, venue fit, storytelling, technical lineage, evaluation design, risks, evidence gaps, and research order
 - each major blueprint section is explained in natural prose
 - the user can understand the design through semantic item names rather than numbered-section lookup

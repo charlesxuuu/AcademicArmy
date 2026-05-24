@@ -173,6 +173,8 @@ def validate_design_rationale(rationale: dict) -> str | None:
         rationale,
         [
             "core_judgment",
+            "blueprint_overview",
+            "validation_overview",
             "core_strategy_premises",
             "venue_storytelling_patterns",
             "technical_anchor_rationale",
@@ -189,6 +191,42 @@ def validate_design_rationale(rationale: dict) -> str | None:
         return error
     if not rationale["core_judgment"]:
         return "design_rationale.core_judgment is required"
+
+    overview = rationale["blueprint_overview"]
+    if not isinstance(overview, dict):
+        return "design_rationale.blueprint_overview must be an object"
+    error = require_keys(
+        overview,
+        [
+            "paper_positioning",
+            "central_thesis",
+            "main_contribution",
+            "primary_claim",
+            "method_direction",
+            "evaluation_main_line",
+            "most_important_limitation_or_risk",
+            "most_important_evidence_requirement",
+            "research_development_order",
+        ],
+        "design_rationale.blueprint_overview",
+    )
+    if error:
+        return error
+
+    validation_overview = rationale["validation_overview"]
+    if not isinstance(validation_overview, list) or not validation_overview:
+        return "design_rationale.validation_overview must be a non-empty array"
+    for index, item in enumerate(validation_overview, start=1):
+        if not isinstance(item, dict):
+            return f"validation_overview[{index}] must be an object"
+        error = require_keys(
+            item,
+            ["key_blueprint_content", "why_it_matters", "main_user_validation_question"],
+            f"validation_overview[{index}]",
+        )
+        if error:
+            return error
+
     premises = rationale["core_strategy_premises"]
     if not isinstance(premises, dict):
         return "design_rationale.core_strategy_premises must be an object"
@@ -210,9 +248,9 @@ def validate_design_rationale(rationale: dict) -> str | None:
     for group, keys in {
         "venue_storytelling_patterns": ["pattern", "influence_on_blueprint"],
         "technical_anchor_rationale": ["anchor", "influence_on_method_or_evaluation"],
-        "claim_rationale": ["claim_section", "why_scoped_this_way", "relation_to_thesis"],
-        "experiment_rationale": ["experiment_section", "why_needed", "relation_to_claims"],
-        "figure_rationale": ["figure_section", "narrative_role"],
+        "claim_rationale": ["claim_section", "blueprint_content_digest", "why_scoped_this_way", "relation_to_thesis"],
+        "experiment_rationale": ["experiment_section", "blueprint_content_digest", "why_needed", "relation_to_claims"],
+        "figure_rationale": ["figure_section", "blueprint_content_digest", "narrative_role"],
         "diagnostic_derivation_chains": ["starting_premise", "derived_blueprint_choices", "evidence_needed", "likely_failure_point", "blueprint_revision_if_chain_fails"],
         "disagreement_diagnosis": ["disagreement_type", "upstream_premise_to_inspect", "affected_blueprint_sections", "likely_revision_direction"],
     }.items():
@@ -534,6 +572,16 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
 
     if explanation_path.exists():
         text = explanation_path.read_text(encoding="utf-8-sig")
+        required_heading_groups = [
+            ["## Blueprint Overview", "## 论文蓝图速览"],
+            ["## Key Blueprint Content and Validation Entry Points", "## 蓝图重点内容与审核入口"],
+            ["## Core Strategy Premises", "## 核心出发点"],
+            ["## Item-by-Item Blueprint Validation", "## 论文蓝图逐项解释"],
+            ["## Priority Questions for User Review", "## 用户审核时最应该确认的问题"],
+        ]
+        for headings in required_heading_groups:
+            if not any(heading in text for heading in headings):
+                return f"explanation file must contain one of: {', '.join(headings)}"
         if "paper_blueprint_summary:" in text:
             return "explanation file appears to duplicate machine-oriented blueprint content"
         if contains_synthetic_id(text):

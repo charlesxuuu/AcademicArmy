@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Architect"
-  short_description: "Two-file blueprint compiler"
-  default_prompt: "Create paper_blueprint.md and a user-language explanation file with $academic-army-architect."
+  short_description: "Research-paper blueprint plus validation explanation"
+  default_prompt: "Create paper_blueprint.md and a user-language validation explanation with $academic-army-architect."
 
 dependencies:
   tools:
