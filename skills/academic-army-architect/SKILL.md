@@ -10,6 +10,8 @@ description: >-
 
 The skill produces two Markdown files.
 
+The explanation file is not a summary of the blueprint. It is a validation companion that reconstructs the paper-level derivation from core strategy premises to blueprint details, so the user can inspect whether each item is reasonable and locate the source of disagreement.
+
 ### File 1: `paper_blueprint.md`
 
 This file is an English paper-design specification.
@@ -47,6 +49,11 @@ This file is a paper-strategy explanation in the user's conversation language.
 
 It explains the paper plan itself:
 
+- what core strategy premises the plan depends on
+- how each major blueprint item is derived from those premises
+- how blueprint items support or constrain each other
+- where the user should look when a blueprint item feels unreasonable
+- how the blueprint would change if a premise, derivation, or implementation detail changes
 - why the paper is positioned for the target venue
 - why the central thesis is framed this way
 - why the core idea is the narrative center
@@ -60,6 +67,12 @@ It explains the paper plan itself:
 Write this file as a natural design memo for the current research idea.
 
 Use descriptive section references instead of synthetic object IDs.
+
+The explanation should let the user diagnose disagreement at three levels:
+
+1. Core premise level: the target venue, problem framing, contribution framing, novelty boundary, evidence standard, storytelling style, or research strategy is wrong.
+2. Derivation level: the premise is plausible, but the blueprint item does not follow from it.
+3. Implementation-detail level: the item direction is right, but the concrete claim, baseline, metric, figure, or limitation needs revision.
 
 ## Content Placement Map
 
@@ -75,6 +88,7 @@ Place each type of information in the appropriate final object.
 | Reviewer concerns | baseline, metric, ablation, comparison, or limitation choices |
 | Artifact requirements | reproducibility-relevant assets |
 | Paper-strategy rationale | `paper_blueprint_explanation.<lang>.md` |
+| User validation checkpoints | `paper_blueprint_explanation.<lang>.md`, diagnostic derivation chains and disagreement diagnosis |
 
 ## Natural Numbering
 
@@ -157,71 +171,80 @@ Use this structure:
 ### 1.2 Expected paper type
 ### 1.3 Audience and evidence standard
 
-## 2. Central Thesis
-### 2.1 One-sentence thesis
-### 2.2 Acceptance-critical statement
-### 2.3 Contribution boundary
+## 2. Paper Strategy Premises
+### 2.1 Target-venue premise
+### 2.2 Problem premise
+### 2.3 Contribution premise
+### 2.4 Novelty premise
+### 2.5 Evidence premise
+### 2.6 Storytelling premise
+### 2.7 Research-strategy premise
 
-## 3. Problem Framing
-### 3.1 Community-level pain point
-### 3.2 Why the problem matters now
-### 3.3 Why existing approaches are insufficient
+## 3. Central Thesis
+### 3.1 One-sentence thesis
+### 3.2 Acceptance-critical statement
+### 3.3 Contribution boundary
 
-## 4. Related-Work and Novelty Boundary
-### 4.1 Closest technical lineage
-### 4.2 Nearest-neighbor papers
-### 4.3 Novelty boundary
-### 4.4 Claims that require narrower wording
+## 4. Problem Framing
+### 4.1 Community-level pain point
+### 4.2 Why the problem matters now
+### 4.3 Why existing approaches are insufficient
 
-## 5. Core Idea
-### 5.1 Core insight
-### 5.2 Why this idea is the narrative center
-### 5.3 Tradeoff changed by the idea
+## 5. Related-Work and Novelty Boundary
+### 5.1 Closest technical lineage
+### 5.2 Nearest-neighbor papers
+### 5.3 Novelty boundary
+### 5.4 Claims that require narrower wording
 
-## 6. Method Design
-### 6.1 Main mechanism
-### 6.2 Method components
-### 6.3 How components support the thesis
-### 6.4 Method assumptions
+## 6. Core Idea
+### 6.1 Core insight
+### 6.2 Why this idea is the narrative center
+### 6.3 Tradeoff changed by the idea
 
-## 7. Claims and Evidence Plan
-### 7.1 Primary claim: <short natural-language claim title>
-### 7.2 Mechanism claim: <short natural-language claim title>
-### 7.3 Generality or scope claim: <short natural-language claim title>
+## 7. Method Design
+### 7.1 Main mechanism
+### 7.2 Method components
+### 7.3 How components support the thesis
+### 7.4 Method assumptions
 
-## 8. Experimental Design
-### 8.1 Evaluation overview
-### 8.2 Main-result experiment
-### 8.3 Mechanism ablation
-### 8.4 Robustness, stress, or generalization test
-### 8.5 Failure-case or limitation analysis
+## 8. Claims and Evidence Plan
+### 8.1 Primary claim: <short natural-language claim title>
+### 8.2 Mechanism claim: <short natural-language claim title>
+### 8.3 Generality or scope claim: <short natural-language claim title>
 
-## 9. Figure and Table Plan
-### 9.1 Opening problem or mechanism figure
-### 9.2 Method overview figure
-### 9.3 Main-result figure
-### 9.4 Ablation or sensitivity figure
-### 9.5 Limitation or failure-case figure
+## 9. Experimental Design
+### 9.1 Evaluation overview
+### 9.2 Main-result experiment
+### 9.3 Mechanism ablation
+### 9.4 Robustness, stress, or generalization test
+### 9.5 Failure-case or limitation analysis
 
-## 10. Paper Structure
-### 10.1 Abstract
-### 10.2 Introduction
-### 10.3 Background and motivation
-### 10.4 Related work
-### 10.5 Method
-### 10.6 Evaluation
-### 10.7 Discussion and limitations
-### 10.8 Conclusion
+## 10. Figure and Table Plan
+### 10.1 Opening problem or mechanism figure
+### 10.2 Method overview figure
+### 10.3 Main-result figure
+### 10.4 Ablation or sensitivity figure
+### 10.5 Limitation or failure-case figure
 
-## 11. Reproducibility-Relevant Assets
-### 11.1 Code and configuration assets
-### 11.2 Dataset or workload assets
-### 11.3 Result and plotting assets
+## 11. Paper Structure
+### 11.1 Abstract
+### 11.2 Introduction
+### 11.3 Background and motivation
+### 11.4 Related work
+### 11.5 Method
+### 11.6 Evaluation
+### 11.7 Discussion and limitations
+### 11.8 Conclusion
 
-## 12. Limitations and Scope Boundaries
-### 12.1 Scope boundary: <natural-language boundary title>
-### 12.2 Limitation: <natural-language limitation title>
-### 12.3 Evidence requirement before broadening claims
+## 12. Reproducibility-Relevant Assets
+### 12.1 Code and configuration assets
+### 12.2 Dataset or workload assets
+### 12.3 Result and plotting assets
+
+## 13. Limitations and Scope Boundaries
+### 13.1 Scope boundary: <natural-language boundary title>
+### 13.2 Limitation: <natural-language limitation title>
+### 13.3 Evidence requirement before broadening claims
 ```
 
 For each claim subsection, include:
@@ -271,27 +294,29 @@ Use this structure:
 ```markdown
 # Paper Blueprint Explanation: <Working Title>
 
-## Overall Paper Strategy
+## Core Strategy Premises
 
-## Target-Venue Storytelling Patterns
+## Overall Derivation from Premises to Paper Plan
 
-## Technical and Evaluation Lessons
+## Section-by-Section Blueprint Validation
 
-## Paper-Plan Narrative
+## Key Design Tradeoffs and Their Derivations
 
-## Section-by-Section Explanation
+## Fragile Derivation Chains
 
-## Key Design Decisions
+## Disagreement Diagnosis
 
-## Evidence Gaps and Claim Scope
-
-## Research Development Order
+## Priority Questions for User Review
 ```
 
 The explanation reads as a paper-strategy memo for the current research idea.
 
 It explains:
 
+- the core premises behind the paper plan
+- how the major blueprint items are derived from those premises
+- how the blueprint items support or constrain each other
+- how the user can locate the source of disagreement
 - the paper's target-venue positioning
 - the central thesis and contribution shape
 - the reason for each major claim
@@ -303,6 +328,46 @@ It explains:
 - the research development order
 
 Use natural prose and descriptive section references.
+
+### Blueprint Item Explanation Pattern
+
+For every major section and important subsection of `paper_blueprint.md`, explain it as a derivation from the core premises.
+
+Each explanation should cover:
+
+- item summary: what the blueprint item says
+- premise source: which core paper-strategy premise motivates the item
+- derivation: why that premise leads to this item
+- connections: which other blueprint parts depend on it or constrain it
+- user validation point: what the user should inspect if the item seems unreasonable
+- revision consequence: what parts of the blueprint would need to change if the item is revised
+
+Write this as natural prose, not as a rigid field list.
+
+### Diagnostic Derivation Chains
+
+The explanation file highlights the most important derivation chains in the paper plan.
+
+Each chain explains:
+
+- the starting premise
+- the blueprint decisions derived from it
+- the evidence needed for the chain to hold
+- the most likely failure point
+- which blueprint sections change if the chain fails
+
+### Disagreement Diagnosis
+
+The explanation file helps the user locate the source of disagreement.
+
+Use paper-level diagnosis:
+
+- if target venue framing seems wrong, explain which thesis, claim, evidence, and paper-structure choices depend on it
+- if contribution framing seems wrong, explain which method and claim choices depend on it
+- if the primary claim seems too strong, explain which evidence premise and scope boundary control it
+- if baselines seem excessive or insufficient, explain which novelty boundary controls them
+- if evaluation feels misaligned, explain which evidence premise controls the experiment order and metrics
+- if a limitation feels too narrow or too broad, explain which claim boundary it protects
 
 ## DeepResearch Prompt Shape
 
@@ -357,6 +422,8 @@ Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 - each major blueprint section is explained in natural prose
 - the user can understand the design without following synthetic labels or internal workflow terms
 - the explanation describes why the paper plan is shaped this way
+- the explanation helps the user judge whether each major blueprint item is reasonable
+- the explanation identifies whether disagreement points to a premise, a derivation, or an implementation detail
 
 When writing a machine-readable summary for validation, use `assets/blueprint_schema.yaml` and optionally run:
 

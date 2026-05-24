@@ -172,12 +172,15 @@ def validate_design_rationale(rationale: dict) -> str | None:
         rationale,
         [
             "core_judgment",
+            "core_strategy_premises",
             "venue_storytelling_patterns",
             "technical_anchor_rationale",
             "claim_rationale",
             "experiment_rationale",
             "figure_rationale",
             "scope_and_limitation_rationale",
+            "diagnostic_derivation_chains",
+            "disagreement_diagnosis",
         ],
         "design_rationale",
     )
@@ -185,12 +188,32 @@ def validate_design_rationale(rationale: dict) -> str | None:
         return error
     if not rationale["core_judgment"]:
         return "design_rationale.core_judgment is required"
+    premises = rationale["core_strategy_premises"]
+    if not isinstance(premises, dict):
+        return "design_rationale.core_strategy_premises must be an object"
+    error = require_keys(
+        premises,
+        [
+            "target_venue_premise",
+            "problem_premise",
+            "contribution_premise",
+            "novelty_premise",
+            "evidence_premise",
+            "storytelling_premise",
+            "research_strategy_premise",
+        ],
+        "design_rationale.core_strategy_premises",
+    )
+    if error:
+        return error
     for group, keys in {
         "venue_storytelling_patterns": ["pattern", "influence_on_blueprint"],
         "technical_anchor_rationale": ["anchor", "influence_on_method_or_evaluation"],
         "claim_rationale": ["claim_section", "why_scoped_this_way", "relation_to_thesis"],
         "experiment_rationale": ["experiment_section", "why_needed", "relation_to_claims"],
         "figure_rationale": ["figure_section", "narrative_role"],
+        "diagnostic_derivation_chains": ["starting_premise", "derived_blueprint_choices", "evidence_needed", "likely_failure_point", "blueprint_revision_if_chain_fails"],
+        "disagreement_diagnosis": ["disagreement_type", "upstream_premise_to_inspect", "affected_blueprint_sections", "likely_revision_direction"],
     }.items():
         items = rationale[group]
         if not isinstance(items, list):
@@ -207,8 +230,8 @@ def validate_design_rationale(rationale: dict) -> str | None:
 def validate_section_ref(value: str, path: str) -> str | None:
     if not isinstance(value, str) or not value:
         return f"{path} must be a non-empty string"
-    if not re.search(r"\b(?:[1-9]|1[0-2])(?:\.\d+)?\b", value):
-        return f"{path} should use a natural section reference such as 'Section 7.1'"
+    if not re.search(r"\b(?:[1-9]|1[0-3])(?:\.\d+)?\b", value):
+        return f"{path} should use a natural section reference such as 'Section 8.1'"
     return None
 
 
@@ -491,17 +514,18 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
             return "paper_blueprint.md contains synthetic object IDs; use natural section numbering instead"
         required_headings = [
             "## 1. Target Venue and Paper Type",
-            "## 2. Central Thesis",
-            "## 3. Problem Framing",
-            "## 4. Related-Work and Novelty Boundary",
-            "## 5. Core Idea",
-            "## 6. Method Design",
-            "## 7. Claims and Evidence Plan",
-            "## 8. Experimental Design",
-            "## 9. Figure and Table Plan",
-            "## 10. Paper Structure",
-            "## 11. Reproducibility-Relevant Assets",
-            "## 12. Limitations and Scope Boundaries",
+            "## 2. Paper Strategy Premises",
+            "## 3. Central Thesis",
+            "## 4. Problem Framing",
+            "## 5. Related-Work and Novelty Boundary",
+            "## 6. Core Idea",
+            "## 7. Method Design",
+            "## 8. Claims and Evidence Plan",
+            "## 9. Experimental Design",
+            "## 10. Figure and Table Plan",
+            "## 11. Paper Structure",
+            "## 12. Reproducibility-Relevant Assets",
+            "## 13. Limitations and Scope Boundaries",
         ]
         for heading in required_headings:
             if heading not in text:

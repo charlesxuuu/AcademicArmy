@@ -47,6 +47,14 @@ paper_blueprint_summary:
     evaluation_patterns: [string]
   design_rationale:
     core_judgment: string
+    core_strategy_premises:
+      target_venue_premise: string
+      problem_premise: string
+      contribution_premise: string
+      novelty_premise: string
+      evidence_premise: string
+      storytelling_premise: string
+      research_strategy_premise: string
     venue_storytelling_patterns:
       - pattern: string
         influence_on_blueprint: string
@@ -65,6 +73,17 @@ paper_blueprint_summary:
       - figure_section: string
         narrative_role: string
     scope_and_limitation_rationale: string
+    diagnostic_derivation_chains:
+      - starting_premise: string
+        derived_blueprint_choices: [string]
+        evidence_needed: string
+        likely_failure_point: string
+        blueprint_revision_if_chain_fails: string
+    disagreement_diagnosis:
+      - disagreement_type: string
+        upstream_premise_to_inspect: string
+        affected_blueprint_sections: [string]
+        likely_revision_direction: string
   central_thesis:
     thesis: string
     acceptance_critical_statement: string
