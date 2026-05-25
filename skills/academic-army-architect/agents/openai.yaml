@@ -7,5 +7,5 @@ dependencies:
   tools:
     - type: "mcp"
       value: "academic_army_mcp_tools"
-      description: "DeepResearch tool for live venue, literature, benchmark, artifact, and reviewer evidence."
+      description: "Provides academic_army_mcp_tools.deepsearch for live venue, literature, benchmark, artifact, and reviewer evidence."
       transport: "stdio"
