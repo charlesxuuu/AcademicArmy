@@ -21,9 +21,6 @@ paper_blueprint_summary:
     target_venue_posture: string
     paper_type: string
     current_input_state: string
-    user_confirmed_constraints: [string]
-    intended_downstream_planning_pipeline: [string]
-    strategic_abstraction_level: string
   exemplar_analysis:
     storytelling_exemplars:
       - title: string

@@ -386,7 +386,7 @@ def validate(data: dict) -> str | None:
         if error:
             return error
     for path, keys in (
-        ("paper_identity", ["research_object", "target_venue_posture", "paper_type", "current_input_state", "user_confirmed_constraints", "intended_downstream_planning_pipeline", "strategic_abstraction_level"]),
+        ("paper_identity", ["research_object", "target_venue_posture", "paper_type", "current_input_state"]),
         ("core_strategy_premises", ["venue_premise", "problem_premise", "contribution_premise", "novelty_premise", "evidence_premise", "scope_premise"]),
         ("central_research_bet", ["one_sentence_thesis", "acceptance_critical_bet", "downgrade_condition"]),
         ("contribution_contract", ["primary_contribution", "secondary_contribution_roles", "non_contributions_and_boundaries"]),
@@ -423,7 +423,7 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
         if contains_synthetic_id(text):
             return "paper_blueprint.md contains synthetic object IDs; use semantic headings"
         required_headings = [
-            "## 1. Paper Identity and Confirmed Inputs",
+            "## 1. Paper Identity",
             "## 2. Core Strategy Premises",
             "## 3. Central Research Bet",
             "## 4. Contribution Contract",

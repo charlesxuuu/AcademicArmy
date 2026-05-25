@@ -16,7 +16,7 @@ This file is an English **Strategic Paper Blueprint**.
 
 It defines the paper's strategic core and downstream planning constraints:
 
-- paper identity and confirmed inputs
+- paper identity
 - core strategy premises
 - central research bet
 - contribution contract
@@ -52,6 +52,8 @@ Use the user's conversation language. Preserve technical terms, venue names, pap
 Start `paper_blueprint_explanation.<lang>.md` with a calibration section named `Confirmed User Context` or its natural equivalent in the user's language.
 
 This section records only user-confirmed inputs, constraints, preferences, and pipeline assumptions. It lets the user verify that the blueprint starts from the correct context before reading the strategic decomposition.
+
+This calibration section belongs only in `paper_blueprint_explanation.<lang>.md`. Keep `paper_blueprint.md` focused on the strategic paper blueprint itself.
 
 Include user-confirmed information such as:
 
@@ -198,12 +200,11 @@ Use this structure:
 ```markdown
 # Strategic Paper Blueprint: <Working Title>
 
-## 1. Paper Identity and Confirmed Inputs
+## 1. Paper Identity
 ### 1.1 Research object
-### 1.2 User-confirmed constraints
-### 1.3 Intended downstream planning pipeline
-### 1.4 Strategic abstraction level
-### 1.5 Current working assumptions
+### 1.2 Target venue posture
+### 1.3 Paper type
+### 1.4 Current input state
 
 ## 2. Core Strategy Premises
 ### 2.1 Venue premise
@@ -356,7 +357,7 @@ Use concise evidence-facing prose.
 Before finalizing `paper_blueprint.md`, check that:
 
 - the file reads as a Strategic Paper Blueprint
-- the first section records paper identity, user-confirmed constraints, pipeline assumptions, abstraction level, and working assumptions in concise specification form
+- the first section identifies the paper object, venue posture, paper type, and current input state in concise specification form
 - the central research bet, contribution contract, claim strategy, novelty boundary, and scope boundary are clear
 - evidence posture is strategic rather than a concrete experiment protocol
 - comparison posture is strategic rather than a fixed baseline list
