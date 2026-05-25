@@ -8,120 +8,105 @@ experiment_plan_summary:
     research_inputs: [string]
     upstream_blueprint_inputs: [string]
     target_venue_or_field_preferences: [string]
+    paper_claims_or_goals: [string]
+    storytelling_blueprint: [string]
     method_or_system_description: [string]
-    available_implementation_data_resources: [string]
-    user_confirmed_constraints: [string]
+    available_resources: [string]
+    known_constraints: [string]
+    existing_experiment_notes: [string]
     output_requirements: [string]
     downstream_pipeline_assumptions: [string]
     explanation_preferences: [string]
     working_assumptions: [string]
   title: string
-  experiment_plan_identity:
-    research_idea: string
-    target_venue_and_field: string
-    upstream_paper_goals: [string]
-    method_or_system_under_evaluation: string
-    available_implementation_data_resource_state: string
-    experiment_planning_scope: string
-  live_research_evidence:
-    recent_venue_field_norms:
-      - source_title: string
-        venue: string
-        year: integer_or_null
-        source_link: string
-        recency_basis: last_2_3_years_or_latest_3_cycles_or_expanded_last_5_years_or_needs_verification
-        experiment_plan_lesson: string
-        verification_status: verified_or_tentative_or_needs_verification
-    closest_recent_papers:
-      - source_title: string
-        venue: string
-        year: integer_or_null
-        source_link: string
-        extracted_experiment_norms: [string]
-        verification_status: verified_or_tentative_or_needs_verification
-    canonical_exemplar_patterns:
-      - source_title: string
-        venue: string
-        year: integer_or_null
-        source_link: string
-        design_pattern_lesson: string
-        current_planning_use: string
-        verification_status: verified_or_tentative_or_needs_verification
-  empirical_evidence_thesis:
-    central_empirical_claim: string
-    acceptance_critical_evidence: [string]
-    novelty_protecting_evidence: [string]
-    practical_value_evidence: [string]
-    evidence_boundary: string
+  paper_level_experimental_thesis: string
+  evidence_strategy_for_paper_story:
+    summary: string
+    motivation_or_insight_evidence: [string]
+    final_evaluation_evidence: [string]
+    venue_reviewer_concerns_addressed: [string]
+  live_research_synthesis:
+    venue_evidence_patterns:
+      - pattern: string
+        source_basis: [string]
+        planning_lesson: string
+    field_current_protocols:
+      - protocol_area: baseline_or_dataset_or_benchmark_or_metric_or_user_study_or_trace_or_testbed_or_artifact_or_other
+        current_expectation: string
+        source_basis: [string]
+        freshness_status: current_or_canonical_or_tentative_or_needs_verification
+    storytelling_patterns:
+      - story_role: motivation_or_design_insight_or_method_justification_or_final_evaluation_or_robustness_or_efficiency_or_artifact
+        pattern: string
+        source_basis: [string]
+        planning_lesson: string
+    freshness_or_staleness_notes:
+      - item: string
+        note: string
+        action_in_plan: string
   claim_to_evidence_map:
     - claim_statement: string
       required_evidence: [string]
-      experiment_family: string
-      required_comparator_class: [string]
-      required_dataset_workload_class: [string]
-      required_metric_family: [string]
-      expected_result_pattern: string
-      failure_implication: string
-  evaluation_posture:
-    recent_exemplar_pattern: string
-    dataset_workload_posture: string
-    baseline_comparator_posture: string
-    metric_outcome_posture: string
-    ablation_diagnostic_posture: string
-    robustness_generalization_stress_posture: string
-    efficiency_scalability_resource_posture: string
-    qualitative_perceptual_user_deployment_posture: string_or_null
-  experiment_inventory:
-    primary_claim_experiments: [string]
-    baseline_comparison_experiments: [string]
-    ablation_experiments: [string]
-    diagnostic_mechanism_experiments: [string]
-    robustness_generalization_experiments: [string]
-    efficiency_scalability_resource_experiments: [string]
-    qualitative_visual_user_deployment_experiments: [string]
-    negative_failure_boundary_experiments: [string]
-  experiment_cards:
-    - experiment_id: string
-      title: string
-      evidence_objective: string
-      claim_supported: string
-      venue_reviewer_pressure_addressed: string
-      evaluation_setting: string
-      comparators: [string]
-      metrics: [string]
-      protocol: string
-      controls_and_fairness_constraints: [string]
-      expected_result_pattern: string
-      interpretation_rule:
-        strong_result: string
-        mixed_result: string
-        weak_result: string
-        negative_result: string
-      output_artifact: [string]
-      dependencies: [string]
-      revision_implication: string
-  execution_dependency_graph:
-    must_run_first: [string]
-    depends_on_primary_results: [string]
-    diagnostic_branches: [string]
-    can_be_parallelized: [string]
-  result_interpretation_rules:
-    minimum_evidence_central_claim: string
-    minimum_evidence_novelty_claim: string
-    minimum_evidence_practical_value_claim: string
-    conditions_for_claim_downgrade: [string]
-    conditions_for_experiment_redesign: [string]
-  figure_table_interface:
-    main_paper_figures: [string]
-    main_paper_tables: [string]
-    supplementary_figures_tables: [string]
-    result_summaries_for_writing_planning_agents: [string]
-  downstream_interfaces:
-    experiment_execution_interface: [string]
-    result_analysis_interface: [string]
-    figure_planning_interface: [string]
-    paper_writing_interface: [string]
-    review_preparation_interface: [string]
+      objective_group: string
+      evidence_role: [motivation_or_design_insight_or_main_effectiveness_or_ablation_mechanism_or_scalability_efficiency_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_artifact_reproducibility]
+      story_placement: string
+      comparator_or_baseline_class: [string]
+      dataset_benchmark_trace_workload_scene_user_deployment_or_simulation_class: [string]
+      metric_or_observable_evidence_family: [string]
+      minimum_convincing_result_pattern: string
+      failure_or_downgrade_implication: string
+  experiment_objective_groups:
+    - objective_heading: string
+      purpose_in_the_paper_story: string
+      supported_paper_claims: [string]
+      evidence_role: [motivation_or_design_insight_or_main_effectiveness_or_ablation_mechanism_or_scalability_efficiency_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_artifact_reproducibility]
+      story_placement: string
+      evaluation_setting:
+        datasets_benchmarks_traces_workloads_scenes_users_deployments_or_simulations: [string]
+        selection_criteria: [string]
+      comparators_and_baselines:
+        named_baselines: [string]
+        comparator_classes: [string]
+        freshness_or_availability_notes: [string]
+      metrics_and_observable_evidence:
+        primary: [string]
+        secondary: [string]
+        qualitative_or_perceptual_or_user_evidence: [string]
+        uncertainty_or_statistical_reporting: [string]
+      controls_variables_and_stress_conditions: [string]
+      expected_tables_figures_or_qualitative_artifacts: [string]
+      downstream_execution_interface:
+        data_handles: [string]
+        code_model_benchmark_or_simulator_handles: [string]
+        required_measurements_or_logging_schema: [string]
+        expected_result_files: [string]
+        figure_table_or_writing_consumers: [string]
+      evidence_maturity_and_required_confirmation:
+        maturity: confirmed_by_user_or_live_research_supported_or_selection_needed_or_blocked
+        required_confirmation: [string]
+        downstream_dependency: [string]
+      priority_and_dependencies:
+        priority: critical_or_high_or_medium_or_low
+        depends_on: [string]
+        can_feed: [string]
+      revision_and_feedback_slots:
+        experiment_execution_feedback: string
+        result_analysis_feedback: string
+        plotting_feedback: string
+        paper_writing_feedback: string
+        review_feedback: string
+        revision_implication: string
+  cross_experiment_coherence:
+    motivation_to_final_evaluation_chain: string
+    objective_interdependencies: [string]
+    shared_protocol_requirements: [string]
+    claim_downgrade_paths: [string]
+  downstream_feedback_slots:
+    experiment_execution_feedback: [string]
+    result_analysis_feedback: [string]
+    plotting_and_figure_planning_feedback: [string]
+    paper_writing_feedback: [string]
+    review_or_rebuttal_feedback: [string]
   unresolved_strategic_questions:
     - question: string
       reason_it_changes_plan_or_claim: string
