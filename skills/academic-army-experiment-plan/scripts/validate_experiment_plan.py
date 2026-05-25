@@ -1,4 +1,4 @@
-"""Validate a claim-driven experiment-plan summary JSON file."""
+"""Validate a confirmation-state-aware experiment-plan summary JSON file."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from typing import Any
 
 REQUIRED_TOP_LEVEL = {
     "output_files",
+    "confirmation_ledger",
     "title",
     "paper_level_experimental_thesis",
     "evidence_strategy_for_paper_story",
@@ -19,34 +20,54 @@ REQUIRED_TOP_LEVEL = {
     "downstream_feedback_slots",
 }
 
+REQUIRED_LEDGER_FIELDS = {
+    "user_specified_facts",
+    "blueprint_confirmed_facts",
+    "existing_draft_note_or_result_facts",
+    "runtime_research_facts_used_in_this_version",
+    "planning_commitments_derived_from_those_facts",
+    "planning_items_closed_in_this_revision",
+    "remaining_open_planning_items",
+}
+
 REQUIRED_CLAIM_FIELDS = {
-    "claim_statement",
+    "paper_claim",
     "required_evidence",
-    "objective_group",
-    "evidence_role",
+    "objective_heading",
     "story_placement",
+    "planning_state",
     "comparator_or_baseline_class",
     "dataset_benchmark_trace_workload_scene_user_deployment_or_simulation_class",
     "metric_or_observable_evidence_family",
-    "minimum_convincing_result_pattern",
-    "failure_or_downgrade_implication",
+    "intended_reader_takeaway",
 }
 
 REQUIRED_OBJECTIVE_FIELDS = {
     "objective_heading",
-    "purpose_in_the_paper_story",
-    "supported_paper_claims",
-    "evidence_role",
     "story_placement",
+    "evidence_role",
+    "supported_paper_claims",
+    "planning_state_and_source",
     "evaluation_setting",
     "comparators_and_baselines",
     "metrics_and_observable_evidence",
     "controls_variables_and_stress_conditions",
     "expected_tables_figures_or_qualitative_artifacts",
     "downstream_execution_interface",
-    "evidence_maturity_and_required_confirmation",
     "priority_and_dependencies",
-    "revision_and_feedback_slots",
+}
+
+REQUIRED_PLANNING_STATE_FIELDS = {
+    "source_state",
+    "source_detail",
+    "execution_selection_handle",
+}
+
+REQUIRED_MOTIVATION_FIELDS = {
+    "intuition_made_visible",
+    "minimal_demonstration_setting",
+    "one_glance_evidence_artifact",
+    "link_to_the_full_method_evaluation",
 }
 
 REQUIRED_DOWNSTREAM_INTERFACE_FIELDS = {
@@ -57,13 +78,28 @@ REQUIRED_DOWNSTREAM_INTERFACE_FIELDS = {
     "figure_table_or_writing_consumers",
 }
 
-REQUIRED_FEEDBACK_FIELDS = {
-    "experiment_execution_feedback",
-    "result_analysis_feedback",
-    "plotting_feedback",
-    "paper_writing_feedback",
-    "review_feedback",
-    "revision_implication",
+ALLOWED_SOURCE_STATES = {
+    "user_specified",
+    "blueprint_confirmed",
+    "existing_evidence",
+    "live_research_selected",
+    "skill_derived",
+    "open_input",
+}
+
+MOTIVATION_ROLES = {"motivation", "design_insight"}
+
+LEGACY_OR_DEFENSIVE_PATTERNS = {
+    "Assumptions to validate",
+    "Questions to validate",
+    "Need to validate",
+    "need to verify whether",
+    "Fallback path",
+    "degradation path",
+    "downgrade path",
+    "failure implication",
+    "if the method fails",
+    "negative result",
 }
 
 PLAN_META_LEAK_PATTERNS = {
@@ -71,10 +107,8 @@ PLAN_META_LEAK_PATTERNS = {
     "tool call log",
     "MCP failure",
     "why this skill",
-    "why output two files",
     "Do not assume reviewers will run code",
     "Artifact cautions",
-    "Assumptions to validate",
 }
 
 TACTICAL_SCRIPT_PATTERNS = {
@@ -86,14 +120,7 @@ TACTICAL_SCRIPT_PATTERNS = {
     "--dataset",
 }
 
-DENSE_REFERENCE_PATTERNS = {
-    "C1",
-    "C2",
-    "B1",
-    "B2",
-    "M1",
-    "R1",
-}
+DENSE_REFERENCE_PATTERNS = {"C1", "C2", "B1", "B2", "M1", "R1", "E1", "E2"}
 
 
 def load_summary(path: Path) -> dict[str, Any]:
@@ -125,37 +152,96 @@ def missing_fields(obj: dict[str, Any], required: set[str]) -> list[str]:
     return sorted(required - set(obj))
 
 
-def validate_required_fields(summary: dict[str, Any], errors: list[str]) -> None:
-    missing = missing_fields(summary, REQUIRED_TOP_LEVEL)
-    if missing:
-        errors.append(f"Missing top-level fields: {', '.join(missing)}")
+def validate_ledger(summary: dict[str, Any], errors: list[str], warnings: list[str]) -> None:
+    ledger = summary.get("confirmation_ledger")
+    if not isinstance(ledger, dict):
+        errors.append("confirmation_ledger must be an object.")
+        return
 
+    missing = missing_fields(ledger, REQUIRED_LEDGER_FIELDS)
+    if missing:
+        errors.append(f"confirmation_ledger missing fields: {', '.join(missing)}")
+
+    remaining = ledger.get("remaining_open_planning_items", [])
+    if remaining is None:
+        return
+    if not isinstance(remaining, list):
+        errors.append("remaining_open_planning_items must be a list.")
+        return
+    for index, item in enumerate(remaining, start=1):
+        if not isinstance(item, dict):
+            errors.append(f"Remaining open planning item {index} must be an object.")
+            continue
+        for field in ("item", "why_it_changes_plan_structure", "affected_objective_or_claim"):
+            if field not in item:
+                errors.append(f"Remaining open planning item {index} missing field: {field}")
+        if not item.get("why_it_changes_plan_structure"):
+            warnings.append(
+                f"Remaining open planning item {index} lacks a structure-changing reason."
+            )
+
+
+def validate_claims(summary: dict[str, Any], errors: list[str]) -> None:
     claims = summary.get("claim_to_evidence_map", [])
     if not isinstance(claims, list) or not claims:
         errors.append("claim_to_evidence_map must contain at least one claim.")
-    else:
-        for index, claim in enumerate(claims, start=1):
-            if not isinstance(claim, dict):
-                errors.append(f"Claim-to-evidence item {index} must be an object.")
-                continue
-            missing_claim = missing_fields(claim, REQUIRED_CLAIM_FIELDS)
-            if missing_claim:
-                errors.append(
-                    f"Claim-to-evidence item {index} missing fields: {', '.join(missing_claim)}"
-                )
+        return
 
+    for index, claim in enumerate(claims, start=1):
+        if not isinstance(claim, dict):
+            errors.append(f"Claim-to-evidence item {index} must be an object.")
+            continue
+        missing = missing_fields(claim, REQUIRED_CLAIM_FIELDS)
+        if missing:
+            errors.append(f"Claim-to-evidence item {index} missing fields: {', '.join(missing)}")
+        state = claim.get("planning_state")
+        if isinstance(state, str) and state not in ALLOWED_SOURCE_STATES:
+            errors.append(f"Claim-to-evidence item {index} has invalid planning_state: {state}")
+
+
+def objective_roles(objective: dict[str, Any]) -> set[str]:
+    roles = objective.get("evidence_role", [])
+    if isinstance(roles, str):
+        return {roles}
+    if isinstance(roles, list):
+        return {role for role in roles if isinstance(role, str)}
+    return set()
+
+
+def validate_objectives(summary: dict[str, Any], errors: list[str], warnings: list[str]) -> None:
     objectives = summary.get("experiment_objective_groups", [])
     if not isinstance(objectives, list) or not objectives:
         errors.append("experiment_objective_groups must contain at least one objective.")
         return
 
+    headings: list[str] = []
     for index, objective in enumerate(objectives, start=1):
         if not isinstance(objective, dict):
             errors.append(f"Objective group {index} must be an object.")
             continue
-        missing_objective = missing_fields(objective, REQUIRED_OBJECTIVE_FIELDS)
-        if missing_objective:
-            errors.append(f"Objective group {index} missing fields: {', '.join(missing_objective)}")
+
+        missing = missing_fields(objective, REQUIRED_OBJECTIVE_FIELDS)
+        if missing:
+            errors.append(f"Objective group {index} missing fields: {', '.join(missing)}")
+
+        heading = objective.get("objective_heading")
+        if isinstance(heading, str) and heading.strip():
+            headings.append(heading.strip())
+        else:
+            errors.append(f"Objective group {index} must have a non-empty objective_heading.")
+
+        planning_state = objective.get("planning_state_and_source")
+        if not isinstance(planning_state, dict):
+            errors.append(f"Objective group {index} must include planning_state_and_source object.")
+        else:
+            missing_state = missing_fields(planning_state, REQUIRED_PLANNING_STATE_FIELDS)
+            if missing_state:
+                errors.append(
+                    f"Objective group {index} planning_state_and_source missing: {', '.join(missing_state)}"
+                )
+            state = planning_state.get("source_state")
+            if isinstance(state, str) and state not in ALLOWED_SOURCE_STATES:
+                errors.append(f"Objective group {index} has invalid source_state: {state}")
 
         interface = objective.get("downstream_execution_interface")
         if not isinstance(interface, dict):
@@ -167,38 +253,41 @@ def validate_required_fields(summary: dict[str, Any], errors: list[str]) -> None
                     f"Objective group {index} downstream interface missing: {', '.join(missing_interface)}"
                 )
 
-        feedback = objective.get("revision_and_feedback_slots")
-        if not isinstance(feedback, dict):
-            errors.append(f"Objective group {index} must include revision_and_feedback_slots object.")
-        else:
-            missing_feedback = missing_fields(feedback, REQUIRED_FEEDBACK_FIELDS)
-            if missing_feedback:
+        roles = objective_roles(objective)
+        motivation_fields = objective.get("motivation_design_insight_fields")
+        if roles & MOTIVATION_ROLES:
+            if not isinstance(motivation_fields, dict):
                 errors.append(
-                    f"Objective group {index} feedback slots missing: {', '.join(missing_feedback)}"
+                    f"Objective group {index} has motivation/design-insight role but no motivation_design_insight_fields object."
                 )
+            else:
+                missing_motivation = missing_fields(motivation_fields, REQUIRED_MOTIVATION_FIELDS)
+                if missing_motivation:
+                    errors.append(
+                        f"Objective group {index} motivation fields missing: {', '.join(missing_motivation)}"
+                    )
+                for field in REQUIRED_MOTIVATION_FIELDS:
+                    if not motivation_fields.get(field):
+                        warnings.append(
+                            f"Objective group {index} motivation field is empty: {field}"
+                        )
 
-
-def validate_objective_headings(summary: dict[str, Any], errors: list[str], warnings: list[str]) -> None:
-    headings: list[str] = []
-    for objective in summary.get("experiment_objective_groups", []):
-        if isinstance(objective, dict) and isinstance(objective.get("objective_heading"), str):
-            headings.append(objective["objective_heading"].strip())
+        if not objective.get("expected_tables_figures_or_qualitative_artifacts"):
+            warnings.append(
+                f"Objective group {index} has empty expected_tables_figures_or_qualitative_artifacts."
+            )
 
     if len(headings) != len(set(headings)):
         errors.append("Objective headings must be unique.")
-
-    for heading in headings:
-        if not heading:
-            errors.append("Objective headings must be non-empty.")
-        if heading.upper().startswith("E") and heading[1:].isdigit():
-            warnings.append(
-                f"Objective heading looks like a dense experiment ID instead of a semantic anchor: {heading}"
-            )
 
 
 def validate_content_quality(summary: dict[str, Any], warnings: list[str]) -> None:
     all_text = "\n".join(flatten_strings(summary))
     lower_text = all_text.lower()
+
+    for pattern in LEGACY_OR_DEFENSIVE_PATTERNS:
+        if pattern.lower() in lower_text:
+            warnings.append(f"Possible legacy defensive planning language: {pattern}")
 
     for pattern in PLAN_META_LEAK_PATTERNS:
         if pattern.lower() in lower_text:
@@ -213,25 +302,6 @@ def validate_content_quality(summary: dict[str, Any], warnings: list[str]) -> No
         warnings.append(
             "Summary may rely on dense cross-reference codes; prefer objective headings and semantic names."
         )
-
-    for index, objective in enumerate(summary.get("experiment_objective_groups", []), start=1):
-        if not isinstance(objective, dict):
-            continue
-        if not objective.get("story_placement"):
-            warnings.append(f"Objective group {index} has empty story_placement.")
-        if not objective.get("supported_paper_claims"):
-            warnings.append(f"Objective group {index} has empty supported_paper_claims.")
-        if not objective.get("expected_tables_figures_or_qualitative_artifacts"):
-            warnings.append(
-                f"Objective group {index} has empty expected_tables_figures_or_qualitative_artifacts."
-            )
-
-        interface = objective.get("downstream_execution_interface", {})
-        if isinstance(interface, dict):
-            if not interface.get("expected_result_files"):
-                warnings.append(f"Objective group {index} has empty expected_result_files.")
-            if not interface.get("figure_table_or_writing_consumers"):
-                warnings.append(f"Objective group {index} has empty figure/table/writing consumers.")
 
 
 def main() -> int:
@@ -249,8 +319,13 @@ def main() -> int:
         print(f"ERROR: failed to load JSON: {exc}", file=sys.stderr)
         return 1
 
-    validate_required_fields(summary, errors)
-    validate_objective_headings(summary, errors, warnings)
+    missing = missing_fields(summary, REQUIRED_TOP_LEVEL)
+    if missing:
+        errors.append(f"Missing top-level fields: {', '.join(missing)}")
+
+    validate_ledger(summary, errors, warnings)
+    validate_claims(summary, errors)
+    validate_objectives(summary, errors, warnings)
     validate_content_quality(summary, warnings)
 
     for warning in warnings:

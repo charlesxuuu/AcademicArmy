@@ -1,7 +1,7 @@
 ---
 name: academic-army-experiment-plan
 description: >-
-  Create two Markdown files for a claim-driven, venue-aware academic experiment strategy: an English experiment_plan.md for downstream AI experiment, coding, plotting, writing, and review skills, plus a user-language language-suffixed experiment_plan_explanation Markdown file for human confirmation. Use when a research idea, paper_blueprint.md, paper goals, claims, storytelling blueprint, target venue, or revision feedback must be converted into experiment objectives, story placement, evidence roles, current baselines/datasets/metrics, and downstream execution interfaces. Uses academic_army_mcp_tools.deepresearch, canonical Codex MCP tool name mcp__academic_army_mcp_tools__deepresearch, for live recent-paper, target-venue, baseline, dataset, metric, benchmark, artifact, and reviewer-expectation research.
+  Create two Markdown files for a confirmation-state-aware, positive-evidence academic experiment strategy: an English experiment_plan.md for downstream AI experiment, coding, plotting, writing, and review skills, plus a user-language language-suffixed experiment_plan_explanation Markdown file for human confirmation. Use when a research idea, paper_blueprint.md, paper goals, claims, storytelling blueprint, target venue, existing notes/results, or revision feedback must be converted into confirmed planning facts, experiment objectives, story placement, evidence roles, motivation one-glance artifacts, current baselines/datasets/metrics, and downstream execution interfaces. Uses academic_army_mcp_tools.deepresearch, canonical Codex MCP tool name mcp__academic_army_mcp_tools__deepresearch, for live recent-paper, target-venue, baseline, dataset, metric, benchmark, artifact, motivation-pattern, and reviewer-expectation research.
 ---
 
 # Academic Army Experiment Plan
@@ -14,27 +14,27 @@ Create exactly two Markdown deliverables.
 
 Write this file in English. Make it an AI-facing strategic experiment plan for later coding, experiment-running, plotting, paper-writing, and review-feedback skills.
 
-The plan organizes evidence around paper claims, experiment objectives, evidence roles, and story placement. It records the core information later skills need to act efficiently:
+The plan is a positive evidence specification. It organizes experiments around paper claims, confirmed planning facts, evidence roles, story placement, planning state, one-glance evidence artifacts, and downstream execution interfaces.
+
+Include:
 
 - paper-level experimental thesis
 - evidence strategy for the paper story
 - claim-to-evidence map
 - objective groups
-- current dataset, benchmark, baseline, metric, and protocol choices when live evidence supports them
+- planning state and source for each objective
+- motivation/design-insight fields when the objective makes an intuition visible
+- venue-current dataset, benchmark, trace, workload, baseline, metric, and protocol choices when live evidence supports them
 - controls, variables, and stress conditions
 - expected tables, figures, qualitative artifacts, logs, and result files
-- downstream execution interfaces
-- priority, dependencies, evidence maturity, and feedback slots
-
-Keep the file focused on the experiment plan itself. Encode uncertainty as `Evidence maturity`, `Required confirmation`, `Selection criterion`, `Downstream dependency`, or `Revision implication` inside the relevant objective.
+- downstream execution interface
+- priority, dependencies, and downstream feedback slots
 
 ### File 2: `experiment_plan_explanation.<lang>.md`
 
-Write this file in the user's conversation language. Make it a human confirmation companion that explains why the plan is structured as it is.
+Write this file in the user's conversation language. Make it a human confirmation companion that explains how the plan follows from confirmed facts, the paper blueprint, live venue research, and the paper story.
 
-Start with the user-confirmed context. Then explain the paper's core experimental thesis, how target-venue and recent-paper patterns shaped the plan, and how each objective follows from the paper's claims, story placement, and reviewer expectations.
-
-Use readable prose, objective headings, and short tables where helpful. Refer to objective headings and semantic names rather than dense cross-reference codes.
+Start with a confirmation ledger. As the user adds instructions across revisions, confirmed facts should grow and remaining open planning items should shrink. Open items appear only in this explanation ledger, and only when the missing input would change the experiment objective, required resource, story placement, or claim coverage.
 
 ## Required Research MCP
 
@@ -44,11 +44,14 @@ Use the `deepresearch` tool from the `academic_army_mcp_tools` MCP server for li
 - tool: `deepresearch`
 - canonical Codex MCP tool name, when exposed: `mcp__academic_army_mcp_tools__deepresearch`
 
-Use `academic_army_mcp_tools.deepresearch` whenever target venue, field, submission year, baselines, datasets, benchmarks, metrics, evaluation protocols, artifact expectations, or recent reviewer preferences affect the plan.
+Use `academic_army_mcp_tools.deepresearch` for venue- and field-sensitive facts:
 
-Evidence from built-in web search, browser tools, documentation search, or other MCP servers is supplemental. It does not replace this skill's required live research dependency.
+- recent strong target-venue or adjacent-venue papers
+- current baselines, datasets, benchmarks, traces, workloads, metrics, and evaluation protocols
+- current reviewer expectations around artifacts, user studies, production traces, scale tests, perceptual studies, deployment evidence, or reproducibility
+- motivation and design-insight experiment patterns that make an intuition visible before full method evaluation
 
-If `academic_army_mcp_tools.deepresearch` is unavailable, proceed from user-provided and local evidence. Represent live-research-dependent choices as evidence maturity, selection criteria, required confirmations, downstream dependencies, or revision implications inside the outputs.
+Use live research to decide how confirmed paper commitments should be evidenced for the target community.
 
 ## Inputs to Extract
 
@@ -60,8 +63,8 @@ Extract or infer:
 - upstream `paper_blueprint.md` or equivalent blueprint content
 - paper-level goals, claims, novelty boundary, evidence posture, and storytelling blueprint
 - available resources: code, data, models, compute, hardware, testbed, traces, simulator, deployment access, annotation resources, user-study access
-- known constraints: time, compute, inaccessible data, required public benchmarks, privacy limits, mandatory baselines, forbidden or unavailable baselines
-- existing experiment notes, failed attempts, preliminary results, or revision feedback
+- known constraints: time, compute, inaccessible data, required public benchmarks, privacy limits, mandatory baselines, unavailable baselines
+- existing experiment notes, drafts, preliminary results, prior explanation files, or revision feedback
 - user conversation language and output directory
 
 When an upstream `paper_blueprint.md` exists, read it first and extract:
@@ -74,42 +77,102 @@ When an upstream `paper_blueprint.md` exists, read it first and extract:
 - scope-control goal
 - storytelling and communication posture
 - experiment-planning interface
-- fragile goals and downgrade conditions
+- confirmed motivation points and method insights
 
-## Planning Principle
+## Confirmation-State Model
 
-Treat this skill as a claim-driven evidence planner.
+Before writing the deliverables, build or update a confirmation ledger from:
 
-Plan from paper claims to evidence objectives, then from objectives to venue-calibrated experimental information. Use objective groups with strategic dependencies and downstream interfaces.
+- explicit user instructions
+- paper blueprint facts
+- existing experiment notes, drafts, or prior results
+- previous `experiment_plan_explanation.<lang>.md`, if present
+- live deepresearch findings for current venue and field facts
 
-Each objective should answer:
+Classify every candidate planning item as:
 
-- what claim or reviewer concern it supports
-- what role it plays in the paper story
-- where the result should appear in the paper narrative
-- what evaluation setting, comparator, metric, and control structure can make the evidence credible
-- what downstream execution, plotting, and writing skills need to consume
-- how later feedback should return to this objective
+- `resolved_by_user_instruction`
+- `resolved_by_paper_blueprint`
+- `resolved_by_existing_evidence`
+- `resolved_by_live_research`
+- `downstream_execution_detail`
+- `remaining_open_planning_item`
+- `non_controlling_ambiguity`
+
+A user-specified, blueprint-confirmed, existing-evidence, or live-research-selected item becomes a planning commitment. A downstream execution detail becomes part of `Downstream Execution Interface`. A remaining open planning item appears only in the explanation ledger.
+
+### Open Item Retirement
+
+For each candidate planning item:
+
+1. Match against user-specified facts. If matched, resolve it as a user-controlled commitment.
+2. Match against blueprint-confirmed facts. If matched, resolve it as a blueprint-controlled commitment.
+3. Match against existing drafts, notes, or result facts. If matched, resolve it as an existing-evidence commitment.
+4. Match against runtime research facts. If the item is venue, field, or current-protocol sensitive, use deepresearch and resolve it as a live-research-selected commitment.
+5. Classify execution-level details. If later coding, experiment-running, plotting, or writing skills can decide the detail without changing the strategic objective, encode it as a downstream execution interface field.
+6. Preserve only strategic open items. Keep an item open only when it changes the experiment objective, required resource, story placement, or claim coverage.
+7. Omit non-controlling ambiguity.
+
+When a new fact closes an item that was previously open, list it under `Planning items closed in this revision` in the explanation ledger.
+
+## Positive Evidence Contract
+
+The plan's purpose is to make the paper's core intuition, method mechanism, and main claims visible and credible to reviewers.
+
+Use positive planning fields:
+
+```markdown
+#### Planning State and Source
+- Source state: user-specified / blueprint-confirmed / existing-evidence / live-research-selected / skill-derived / open-input.
+- Source detail: <which fact or research synthesis controls this choice>.
+- Execution selection handle: <what later execution skills should use when selecting concrete files, implementations, or scripts>.
+```
+
+Use `open-input` only when the missing input changes the plan structure. Explain the corresponding item in the explanation ledger's `Remaining open planning items`.
+
+Use `Downstream Feedback Slots` for later result-driven updates from experiment execution, plotting, writing, or review feedback. These slots are update interfaces for future evidence, not predictions that a claim will fail.
+
+## Motivation and Design-Insight Experiments
+
+A motivation experiment makes a core intuition, existing-system defect, or method mechanism directly observable before the full system is complete.
+
+Use two main forms:
+
+- `Existing-system defect demonstration`: show a structural weakness in current systems, methods, metrics, schedulers, pipelines, or evaluation protocols.
+- `Core-mechanism feasibility demonstration`: show that the proposed mechanism captures the important structure in a minimal faithful setting.
+
+Motivation and design-insight objectives belong in the Introduction, Motivation, Method opening, or Method design justification. Their result artifact should be immediately readable: a figure, compact table, case study, trace timeline, qualitative grid, heatmap, breakdown, curve separation, before/after panel, or diagnostic example.
+
+When an objective's `Evidence Role` includes `motivation` or `design insight`, include:
+
+```markdown
+#### Intuition Made Visible
+The engineering intuition, existing-system defect, or core mechanism this objective makes directly observable.
+
+#### Minimal Demonstration Setting
+The smallest existing-system, partial-prototype, diagnostic, trace-based, benchmark-based, or controlled setting that can reveal the intuition before the full system is complete.
+
+#### One-Glance Evidence Artifact
+The figure, table, case study, timeline, qualitative grid, heatmap, breakdown, or curve that should make the intuition obvious to the reader.
+
+#### Link to the Full Method Evaluation
+How this early evidence prepares the reader for the later end-to-end or final-effectiveness objective.
+```
 
 ## Live Research Strategy
 
-Use live research to keep the static skill short and current. Do not store changing baseline, dataset, benchmark, metric, or venue preference facts in the skill.
-
 Run the smallest set of deepresearch passes needed for the task:
 
-1. **Recent venue pattern scan.** Find recent strong target-venue or adjacent top-venue papers and extract what their experiments were designed to prove, where motivation/insight/final-evaluation experiments appeared, what datasets, traces, benchmarks, baselines, metrics, user studies, testbeds, deployments, ablations, stress tests, or artifacts they used, and what reviewers are likely to expect now.
-2. **High-impact pattern scan.** Find high-impact papers from the last 3-5 years and extract reusable claim-to-evidence patterns. Use older papers for evidence architecture, not for stale baseline or benchmark choices.
-3. **Baseline / benchmark freshness scan.** Identify current must-compare baselines, strong optional baselines, diagnostic baselines, datasets, benchmarks, metrics, evaluation protocols, and implementation availability.
-4. **Storytelling experiment scan.** Identify how recent strong papers use experiments to motivate the problem, reveal design insight, justify method components, prove final effectiveness, and show scalability, robustness, perceptual quality, deployment readiness, or artifact value.
+1. **Recent venue pattern scan.** Find recent strong papers and extract their experimental thesis, evidence roles, datasets, traces, benchmarks, testbeds, user studies, deployments, baselines, metrics, ablations, stress tests, artifact signals, and reviewer expectations.
+2. **Baseline / benchmark freshness scan.** Separate current must-use protocols, optional protocols useful for reviewer confidence, older canonical baselines still expected by reviewers, stale protocols, and implementation availability for later execution skills. Return the synthesis as planning commitments.
+3. **Motivation pattern scan.** Find recent papers that use motivation or early design-insight experiments to make an intuition visible before full evaluation. Extract the intuition, setting, one-glance artifact, story placement, and connection to final evaluation.
+4. **High-impact pattern scan.** Extract reusable evidence-design patterns from high-impact papers from the last 3-5 years. Use them for plan architecture, not stale baseline selection.
 
 Compress live research into:
 
-- `venue_evidence_patterns`
-- `field_current_protocols`
-- `storytelling_patterns`
-- `freshness_or_staleness_notes`
-
-The final files should contain synthesized planning conclusions, not tool-call logs.
+- `runtime_research_facts_used_in_this_version`
+- `planning_commitments_derived_from_those_facts`
+- objective-specific planning state and source details
 
 ## Deepresearch Prompt Shape
 
@@ -118,7 +181,7 @@ Use this shape when live evidence is needed:
 ```text
 Tool: academic_army_mcp_tools.deepresearch
 
-You are supporting a claim-driven experiment strategy planner for an academic paper.
+You are supporting a confirmation-state-aware positive evidence planner for an academic paper.
 
 Research brief:
 [RESEARCH_BRIEF]
@@ -126,19 +189,22 @@ Research brief:
 Target venue and field:
 [TARGET_VENUE_AND_FIELD]
 
+Confirmed planning facts:
+[CONFIRMED_FACTS]
+
 Return four sections:
 
-1. Recent venue and field evidence patterns
-   Find 8-12 recent papers from the last 24 months or latest target-venue cycles, prioritizing award papers, highly cited papers, and papers with strong experiment sections. Extract the experimental thesis, datasets/traces/benchmarks/testbeds/user studies/deployments, baselines, metrics, motivation or insight experiments, final evaluation experiments, ablations, stress tests, scalability tests, robustness tests, artifact signals, and reviewer expectations.
+1. Current venue and field protocols
+   Separate facts into current must-use protocols, optional protocols useful for reviewer confidence, older canonical baselines still expected by reviewers, protocols stale for the target year, and implementation availability later execution skills can use. Return these as planning commitments, not user questions.
 
-2. Current protocols for this field
-   Identify current must-compare baselines, strong optional baselines, diagnostic baselines, datasets/benchmarks for main evaluation, stress/generalization settings, metrics mapped to claims, implementation availability, and stale-risk notes.
+2. Recent paper evidence patterns
+   Find recent strong papers from the last 24 months or latest target-venue cycles. Extract claim-to-evidence patterns, datasets, traces, benchmarks, baselines, metrics, ablations, stress tests, scale tests, qualitative/user/deployment evidence, artifact signals, and result presentation patterns.
 
-3. High-impact experiment-design patterns
-   Identify 6-10 high-impact papers from the last 3-5 years whose experiment design influenced later work. Explain the reusable claim-to-evidence pattern and which parts should not be copied blindly.
+3. Motivation and design-insight patterns
+   Find recent strong papers that use motivation experiments or early design-insight experiments to make an intuition visible before full method evaluation. For each, extract the intuition or failure mode, the minimal setting, the one-glance artifact, the story placement, and how it prepares the reader for final evaluation.
 
-4. Storytelling placement patterns
-   Explain how strong recent papers use experiments for motivation, design insight, method justification, final effectiveness, scalability/efficiency, robustness, perceptual/user evidence, deployment readiness, or artifact support.
+4. Planning commitments for this paper
+   Explain how the confirmed facts should become experiment objectives, story placements, motivation artifacts, final-evaluation objectives, baseline/dataset/metric protocols, and downstream execution interfaces.
 
 For each source, include title, venue/year when available, link, relevance to this paper, and the lesson for experiment planning.
 Use concise evidence-facing prose.
@@ -146,22 +212,33 @@ Use concise evidence-facing prose.
 
 ## Workflow
 
-### Step 1: Parse and Normalize Inputs
+### Step 1: Update Confirmed Planning Facts
 
-Build a compact internal brief:
+Create the explanation ledger:
 
-- one-sentence paper idea
-- target venue and field
-- paper type and contribution type
-- method, system, dataset, benchmark, or object under evaluation
-- paper-level claims
-- expected paper story
-- available resources and constraints
-- current evidence state
-- decision-critical uncertainty
-- output language and output paths
+```markdown
+## Confirmed planning facts
 
-Use strategic defaults when information is missing. Ask the user only when the missing information blocks venue posture, central thesis, claim strength, or resource feasibility.
+### User-specified facts
+
+### Blueprint-confirmed facts
+
+### Existing draft, note, or result facts
+
+### Runtime research facts used in this version
+
+### Planning commitments derived from those facts
+
+### Planning items closed in this revision
+
+### Remaining open planning items
+```
+
+If no strategic open item remains, write:
+
+```markdown
+There are no remaining open planning items that affect the current experiment-plan structure.
+```
 
 ### Step 2: Normalize the Experimental Thesis
 
@@ -171,80 +248,40 @@ Write a concise paper-level thesis:
 The experiments are designed to show that {method/system} solves {problem} by {mechanism}, under {venue-relevant settings}, while improving {primary outcomes} relative to {current alternatives}.
 ```
 
-Adapt the template to the paper. The thesis should make the evidence strategy legible to later skills.
+### Step 3: Build the Claim-to-Evidence Map
 
-### Step 3: Build the Claim Graph
-
-Extract the major claims and reviewer concerns. For each claim, identify:
+For each major claim, identify:
 
 - required evidence
+- objective heading
 - evidence role
-- likely objective group
-- target story placement
-- relevant dataset/workload class
-- relevant comparator class
-- relevant metric family
-- minimum convincing result pattern
-- failure or downgrade implication
+- story placement
+- planning state
+- comparator or baseline class
+- dataset, benchmark, trace, workload, scene, user, deployment, or simulation class
+- metric or observable evidence family
+- intended reader takeaway
 
-### Step 4: Run Live Venue and Field Scan
+Use confirmed facts first, live research second, and skill-derived planning logic third.
 
-Use `academic_army_mcp_tools.deepresearch` when current venue or field information matters. Prefer recent nearest-neighbor papers for actual baselines, datasets, benchmarks, metrics, protocols, and reviewer expectations. Use canonical and high-impact papers for evidence design patterns and technical lineage.
+### Step 4: Design Motivation and Design-Insight Objectives
 
-### Step 5: Create Objective Groups
+For each confirmed core intuition or problem claim, create a motivation or design-insight objective when the paper story needs early evidence.
 
-Create objective groups, not low-level execution tasks. Use stable headings:
+Each such objective specifies:
 
-```markdown
-### Objective: <human-readable objective heading>
-```
+- `Intuition Made Visible`
+- `Minimal Demonstration Setting`
+- `One-Glance Evidence Artifact`
+- `Link to the Full Method Evaluation`
 
-Each objective group contains:
+Use existing systems, public benchmarks, traces, partial prototypes, controlled diagnostic settings, or small faithful demonstrations before the full system is complete.
 
-- `Purpose in the Paper Story`
-- `Supported Paper Claims`
-- `Evidence Role`
-- `Story Placement`
-- `Evaluation Setting`
-- `Comparators and Baselines`
-- `Metrics and Observable Evidence`
-- `Controls, Variables, and Stress Conditions`
-- `Expected Tables, Figures, or Qualitative Artifacts`
-- `Downstream Execution Interface`
-- `Evidence Maturity and Required Confirmation`
-- `Priority and Dependencies`
-- `Revision and Feedback Slots`
+### Step 5: Design Final-Evaluation Objectives
 
-Use evidence roles from this set when possible:
+Create objectives for main effectiveness, mechanism/ablation, generalization, robustness, efficiency/scalability, human/perceptual evidence, deployment realism, and artifact readiness as required by the claims and target venue.
 
-- motivation
-- design insight
-- main effectiveness
-- ablation/mechanism
-- scalability/efficiency
-- robustness/stress
-- generalization
-- human/perceptual
-- deployment/realism
-- artifact/reproducibility
-
-### Step 6: Align Objectives with Storytelling
-
-Record where each objective belongs in the paper:
-
-- Motivation / Introduction
-- Method opening
-- Method design justification
-- Evaluation main results
-- Evaluation ablation
-- Evaluation robustness/generalization
-- Evaluation efficiency/scalability
-- Evaluation qualitative/perceptual/user study
-- Deployment, artifact, appendix, or supplementary material
-
-Distinguish motivation and insight experiments from final evaluation experiments. Motivation and insight experiments explain why the problem or method design matters. Final evaluation experiments prove the completed method's effectiveness, scalability, robustness, quality, realism, or practical value.
-
-### Step 7: Compile `experiment_plan.md`
+### Step 6: Write `experiment_plan.md`
 
 Use this structure:
 
@@ -255,130 +292,80 @@ Use this structure:
 
 ## 2. Evidence Strategy for the Paper Story
 
-## 3. Live Research Synthesis
-### 3.1 Venue evidence patterns
-### 3.2 Field current protocols
-### 3.3 Storytelling patterns
-### 3.4 Freshness or staleness notes
+## 3. Claim-to-Evidence Map
 
-## 4. Claim-to-Evidence Map
+| Paper claim | Required evidence | Objective heading | Story placement | Planning state |
+|---|---|---|---|---|
 
-For each claim, specify:
-- claim statement
-- required evidence
-- objective group
-- evidence role
-- story placement
-- comparator or baseline class
-- dataset, benchmark, trace, workload, scene, user, deployment, or simulation class
-- metric or observable evidence family
-- minimum convincing result pattern
-- failure or downgrade implication
-
-## 5. Experiment Objective Groups
+## 4. Experiment Objective Groups
 
 ### Objective: <heading>
 
-#### Purpose in the Paper Story
-#### Supported Paper Claims
-#### Evidence Role
 #### Story Placement
+#### Evidence Role
+#### Supported Paper Claims
+#### Planning State and Source
+#### Intuition Made Visible
+#### Minimal Demonstration Setting
+#### One-Glance Evidence Artifact
+#### Link to the Full Method Evaluation
 #### Evaluation Setting
 #### Comparators and Baselines
 #### Metrics and Observable Evidence
 #### Controls, Variables, and Stress Conditions
 #### Expected Tables, Figures, or Qualitative Artifacts
 #### Downstream Execution Interface
-#### Evidence Maturity and Required Confirmation
 #### Priority and Dependencies
-#### Revision and Feedback Slots
 
-## 6. Cross-Experiment Coherence
-### 6.1 How motivation and insight evidence lead into final evaluation
-### 6.2 How objective groups support or constrain each other
-### 6.3 Shared datasets, baselines, metrics, controls, and logging needs
-### 6.4 Claim downgrade paths if evidence is mixed
+## 5. Cross-Experiment Coherence
 
-## 7. Downstream Feedback Slots
-### 7.1 Experiment execution feedback
-### 7.2 Result analysis feedback
-### 7.3 Plotting and figure-planning feedback
-### 7.4 Paper-writing feedback
-### 7.5 Review or rebuttal feedback
+## 6. Downstream Feedback Slots
 ```
 
-### Step 8: Compile `experiment_plan_explanation.<lang>.md`
+Use the motivation-specific fields for motivation and design-insight objectives. Omit those fields for objectives where they are not relevant.
 
-Use the user's conversation language. Include only the explanation.
+### Step 7: Write `experiment_plan_explanation.<lang>.md`
 
 Use this structure, translated naturally when appropriate:
 
 ```markdown
 # Experiment Plan Explanation: <Working Title>
 
-## 0. 用户已明确的信息
+## Confirmed planning facts
 
-## 1. 这份实验计划的核心出发点
+### User-specified facts
+### Blueprint-confirmed facts
+### Existing draft, note, or result facts
+### Runtime research facts used in this version
+### Planning commitments derived from those facts
+### Planning items closed in this revision
+### Remaining open planning items
 
-## 2. 目标 venue 和近期论文模式如何影响计划
+## The experimental story this plan is building
 
-## 3. 从论文 claim 到实验目标的推导
+## How the motivation and insight objectives make the core intuition visible
 
-## 4. 逐项解释 experiment_plan 中的 Objective
+### Objective: <same heading as in experiment_plan.md>
 
-## 5. Baseline、dataset、metric、protocol 的取舍逻辑
+## How the final evaluation objectives support the paper claims
 
-## 6. Motivation / insight 实验与 final evaluation 实验如何配合
+### Objective: <same heading as in experiment_plan.md>
 
-## 7. 当前最脆弱的证据链
+## How the objectives connect into one evidence chain
 
-## 8. 用户仍需确认的实验战略问题
-
-## 9. 已委派给后续执行、绘图、写作、review skill 的内容
+## Review guide for this plan
 ```
 
-For each objective, first restate what the plan says in the user's language, then explain:
+For each objective, explain in prose:
 
-- why the objective exists
-- which core claim, paper goal, novelty boundary, or reviewer concern generated it
-- why its story placement fits the paper narrative
-- how recent venue and field patterns shaped the choice
-- why the dataset, benchmark, trace, workload, user study, deployment setting, or simulation setting is appropriate
-- why the comparator or baseline posture is fair and current
-- why the metric or observable evidence captures the intended claim
-- how the objective connects to other objectives
-- how its result would affect the paper claim
-- what upstream assumption or derivation step the user should inspect if the objective feels wrong
+- which confirmed fact or paper claim it follows from
+- why its story placement is appropriate
+- for motivation/design-insight objectives, what intuition it makes visible
+- what one-glance artifact should convince the reader
+- how it prepares for or complements later objectives
+- what upstream confirmed fact the user should inspect when reviewing this part
 
-## Confirmed Context Coverage Filter
-
-Start the explanation with a confirmed-context ledger. Record only information explicitly supplied by the user or present in provided files. Separate working assumptions from confirmed context when assumptions are needed.
-
-Before writing remaining user-confirmation questions, classify candidate questions:
-
-| Classification | Output action |
-|---|---|
-| `covered_by_user_confirmation` | Treat the point as settled context and omit it. |
-| `partially_covered` | Ask only the unresolved strategic remainder. |
-| `conflicts_with_user_confirmation` | Revise the plan or mark the inconsistency as a plan issue. |
-| `delegated_to_downstream_skill` | Express the point as a downstream interface, dependency, or feedback slot. |
-| `unresolved_strategic_question` | Include it as a remaining strategic question. |
-
-Questions should be strategic: central claim, venue posture, evidence role, story placement, resource feasibility, baseline/dataset freshness, claim downgrade, or feedback loop. Execution details belong in downstream interfaces.
-
-## Positive Style Rules
-
-Use direct planning language:
-
-- Create exactly two deliverables.
-- Use English for `experiment_plan.md`.
-- Use the user's conversation language for `experiment_plan_explanation.<lang>.md`.
-- Organize the plan around paper claims and experiment objectives.
-- Use live deepresearch for current venue-specific baselines, datasets, benchmarks, metrics, protocols, and reviewer expectations.
-- Mirror objective headings in the explanation.
-- Record story placement for every objective.
-- Record downstream execution interfaces and strategic dependencies.
-- Encode uncertainty as evidence maturity, required confirmation, dependency, selection criterion, or revision implication.
+Use objective headings and semantic names. Avoid artificial chains such as `C1/B2/E3`.
 
 ## Machine-Readable Summary
 
@@ -395,24 +382,26 @@ The summary is optional unless the user or pipeline asks for it. It is a validat
 Before finalizing `experiment_plan.md`, check that:
 
 - the file is English-only and contains only the experiment plan
-- the plan is organized around claims and objective groups
-- every major claim has at least one supporting objective
-- every objective traces to a paper claim, paper goal, novelty boundary, or reviewer concern
-- every objective has a story placement
-- motivation/insight experiments are distinct from final evaluation experiments
-- baseline, dataset, benchmark, metric, and protocol choices come from live research or user-provided constraints when they are current-sensitive
-- every objective includes downstream execution interface information
-- the plan records strategic dependencies and downstream interfaces
-- uncertainty appears as evidence maturity, confirmation need, dependency, selection criterion, or revision implication
-- feedback slots exist for later experiment execution, plotting, writing, review, and plan revision
+- the plan is a positive evidence specification
+- every major paper claim has at least one evidence objective
+- every objective has story placement
+- every objective has `Planning State and Source`
+- user-specified, blueprint-confirmed, existing-evidence, and live-research-selected facts appear as planning commitments
+- `open-input` appears only when the missing input changes plan structure
+- motivation and design-insight objectives make a core intuition, existing-system defect, or method mechanism visible before full evaluation
+- every motivation or design-insight objective has a one-glance artifact intent
+- current baselines, datasets, benchmarks, metrics, and protocols come from live research or confirmed user/blueprint constraints
+- downstream execution interfaces are present for later AI skills
+- downstream feedback slots are present for future result-driven updates
 
 Before finalizing `experiment_plan_explanation.<lang>.md`, check that:
 
 - the file uses the user's conversation language and contains only the plan explanation
-- the file begins with user-confirmed context
-- working assumptions are separated from confirmed context when needed
-- the explanation restates each important plan item before explaining it
-- objective headings and semantic names are the main anchors
-- the explanation shows how each objective follows from core claims, venue patterns, story placement, and downstream needs
-- the explanation helps the user locate disagreement at the upstream premise, claim-to-evidence mapping, venue-pattern transfer, baseline/dataset/metric choice, story placement, or downstream-interface level
-- remaining questions only cover unresolved strategic issues
+- the file begins with the confirmation ledger
+- confirmed facts are separated by source
+- newly resolved items appear in `Planning items closed in this revision`
+- remaining open planning items materially affect objective design, story placement, required resources, or claim coverage
+- no remaining open item duplicates a user-specified, blueprint-confirmed, existing-evidence, or live-research-selected fact
+- if no strategic open item remains, the ledger says there are no remaining open planning items that affect the current experiment-plan structure
+- the explanation shows how each objective follows from confirmed facts, story placement, venue patterns, one-glance evidence needs, and downstream interfaces
+- the explanation uses readable prose and objective headings instead of dense cross-reference codes
