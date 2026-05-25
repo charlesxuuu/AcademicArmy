@@ -162,6 +162,30 @@ def validate_exemplar_analysis(exemplar_analysis: dict) -> str | None:
     return None
 
 
+def validate_confirmed_user_context(context: dict) -> str | None:
+    if not isinstance(context, dict):
+        return "confirmed_user_context must be an object"
+    required = [
+        "research_inputs",
+        "existing_materials",
+        "target_field_or_venue_preferences",
+        "blueprint_purpose",
+        "downstream_planning_pipeline",
+        "output_requirements",
+        "abstraction_level_preferences",
+        "explanation_preferences",
+        "content_delegated_to_later_planning",
+        "working_assumptions",
+    ]
+    error = require_keys(context, required, "confirmed_user_context")
+    if error:
+        return error
+    for key in required:
+        if not isinstance(context[key], list):
+            return f"confirmed_user_context.{key} must be an array"
+    return None
+
+
 def validate_claim_strategy(items: list) -> str | None:
     if not isinstance(items, list) or not items:
         return "claim_strategy must be a non-empty array"
@@ -321,6 +345,7 @@ def validate(data: dict) -> str | None:
         data,
         [
             "output_files",
+            "confirmed_user_context",
             "title",
             "paper_identity",
             "exemplar_analysis",
@@ -347,6 +372,7 @@ def validate(data: dict) -> str | None:
         return f"synthetic object ID found in {synthetic_path}; use semantic names instead"
     validators = (
         validate_output_files,
+        lambda d: validate_confirmed_user_context(d["confirmed_user_context"]),
         lambda d: validate_exemplar_analysis(d["exemplar_analysis"]),
         lambda d: validate_claim_strategy(d["claim_strategy"]),
         lambda d: validate_evidence_posture(d["evidence_posture"]),
@@ -360,7 +386,7 @@ def validate(data: dict) -> str | None:
         if error:
             return error
     for path, keys in (
-        ("paper_identity", ["research_object", "target_venue_posture", "paper_type", "current_input_state"]),
+        ("paper_identity", ["research_object", "target_venue_posture", "paper_type", "current_input_state", "user_confirmed_constraints", "intended_downstream_planning_pipeline", "strategic_abstraction_level"]),
         ("core_strategy_premises", ["venue_premise", "problem_premise", "contribution_premise", "novelty_premise", "evidence_premise", "scope_premise"]),
         ("central_research_bet", ["one_sentence_thesis", "acceptance_critical_bet", "downgrade_condition"]),
         ("contribution_contract", ["primary_contribution", "secondary_contribution_roles", "non_contributions_and_boundaries"]),
@@ -397,7 +423,7 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
         if contains_synthetic_id(text):
             return "paper_blueprint.md contains synthetic object IDs; use semantic headings"
         required_headings = [
-            "## 1. Paper Identity",
+            "## 1. Paper Identity and Confirmed Inputs",
             "## 2. Core Strategy Premises",
             "## 3. Central Research Bet",
             "## 4. Contribution Contract",
@@ -416,6 +442,7 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
     if explanation_path.exists():
         text = explanation_path.read_text(encoding="utf-8-sig")
         required_heading_groups = [
+            ["## 0. Confirmed User Context", "## 0. 用户已明确的信息"],
             ["## Strategic Blueprint Overview", "## 战略蓝图速览"],
             ["## Key Strategic Content and Validation Entry Points", "## 战略重点内容与审核入口"],
             ["## Core Premises", "## 核心出发点"],

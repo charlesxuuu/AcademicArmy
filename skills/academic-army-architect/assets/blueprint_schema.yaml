@@ -4,12 +4,26 @@ paper_blueprint_summary:
     explanation_markdown: paper_blueprint_explanation.<lang>.md
     output_language: string
     explanation_language_suffix: string
+  confirmed_user_context:
+    research_inputs: [string]
+    existing_materials: [string]
+    target_field_or_venue_preferences: [string]
+    blueprint_purpose: [string]
+    downstream_planning_pipeline: [string]
+    output_requirements: [string]
+    abstraction_level_preferences: [string]
+    explanation_preferences: [string]
+    content_delegated_to_later_planning: [string]
+    working_assumptions: [string]
   title: string
   paper_identity:
     research_object: string
     target_venue_posture: string
     paper_type: string
     current_input_state: string
+    user_confirmed_constraints: [string]
+    intended_downstream_planning_pipeline: [string]
+    strategic_abstraction_level: string
   exemplar_analysis:
     storytelling_exemplars:
       - title: string

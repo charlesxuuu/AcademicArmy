@@ -1,7 +1,7 @@
 ---
 name: academic-army-architect
 description: >-
-  Create two Markdown files for an upstream research-paper strategy workflow: an English paper_blueprint.md containing a Strategic Paper Blueprint, and a user-language paper_blueprint_explanation language-suffixed Markdown file that restates the blueprint's strategic content and explains how each item follows from the paper's premises so the user can validate the strategy. Use when the user needs venue posture, thesis shaping, problem framing, contribution boundaries, claim strategy, evidence posture, novelty boundary, method abstraction strategy, scope constraints, delegation boundaries, and strategic defaults for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses deepresearch MCP for live venue, literature, exemplar, and reviewer-context evidence.
+  Create two Markdown files for an upstream research-paper strategy workflow: an English paper_blueprint.md containing a Strategic Paper Blueprint, and a user-language paper_blueprint_explanation language-suffixed Markdown file that starts with user-confirmed context, then restates the blueprint's strategic content and explains how each item follows from the paper's premises so the user can validate the strategy. Use when the user needs venue posture, thesis shaping, problem framing, contribution boundaries, claim strategy, evidence posture, novelty boundary, method abstraction strategy, scope constraints, delegation boundaries, and strategic defaults for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses deepresearch MCP for live venue, literature, exemplar, and reviewer-context evidence.
 ---
 
 # Academic Army Architect
@@ -16,7 +16,7 @@ This file is an English **Strategic Paper Blueprint**.
 
 It defines the paper's strategic core and downstream planning constraints:
 
-- paper identity
+- paper identity and confirmed inputs
 - core strategy premises
 - central research bet
 - contribution contract
@@ -37,6 +37,7 @@ This file is a user-language strategic validation companion.
 
 It helps the user validate the blueprint by showing:
 
+- which inputs, constraints, preferences, and pipeline assumptions the user has explicitly provided
 - what the important strategic items say, in compressed user-language form
 - which premise motivates each item
 - how each item follows from the premises
@@ -45,6 +46,27 @@ It helps the user validate the blueprint by showing:
 - what strategic question the user should inspect when an item feels unreasonable
 
 Use the user's conversation language. Preserve technical terms, venue names, paper titles, datasets, benchmarks, metrics, and method names in their original language when that improves precision.
+
+## Confirmed User Context
+
+Start `paper_blueprint_explanation.<lang>.md` with a calibration section named `Confirmed User Context` or its natural equivalent in the user's language.
+
+This section records only user-confirmed inputs, constraints, preferences, and pipeline assumptions. It lets the user verify that the blueprint starts from the correct context before reading the strategic decomposition.
+
+Include user-confirmed information such as:
+
+- research idea
+- existing materials
+- target field or venue preference
+- intended use of the blueprint
+- downstream planning skills that will consume the blueprint
+- desired abstraction level
+- output file requirements
+- explanation-file purpose
+- language and readability preferences
+- content delegated to later planning skills
+
+Separate confirmed context from working assumptions. Use a short `Current Working Assumptions` subsection only when the blueprint must proceed despite missing strategic information.
 
 ## Strategic Abstraction Level
 
@@ -176,11 +198,12 @@ Use this structure:
 ```markdown
 # Strategic Paper Blueprint: <Working Title>
 
-## 1. Paper Identity
+## 1. Paper Identity and Confirmed Inputs
 ### 1.1 Research object
-### 1.2 Target venue posture
-### 1.3 Paper type
-### 1.4 Current input state
+### 1.2 User-confirmed constraints
+### 1.3 Intended downstream planning pipeline
+### 1.4 Strategic abstraction level
+### 1.5 Current working assumptions
 
 ## 2. Core Strategy Premises
 ### 2.1 Venue premise
@@ -262,6 +285,8 @@ Use this structure:
 ```markdown
 # Strategic Paper Blueprint Explanation: <Working Title>
 
+## 0. Confirmed User Context
+
 ## Strategic Blueprint Overview
 
 ## Key Strategic Content and Validation Entry Points
@@ -289,6 +314,8 @@ For each important strategic item, first restate the content in the user's langu
 4. what strategic question the user should inspect
 
 User validation questions should stay strategic: venue posture, problem premise, contribution contract, claim strength, novelty boundary, evidence posture, scope boundary, and delegation boundary.
+
+The explanation should use the confirmed context as its starting point. Goal decomposition and blueprint rationale should follow from that context and the explicitly stated working assumptions.
 
 ## DeepResearch Prompt Shape
 
@@ -329,6 +356,7 @@ Use concise evidence-facing prose.
 Before finalizing `paper_blueprint.md`, check that:
 
 - the file reads as a Strategic Paper Blueprint
+- the first section records paper identity, user-confirmed constraints, pipeline assumptions, abstraction level, and working assumptions in concise specification form
 - the central research bet, contribution contract, claim strategy, novelty boundary, and scope boundary are clear
 - evidence posture is strategic rather than a concrete experiment protocol
 - comparison posture is strategic rather than a fixed baseline list
@@ -340,6 +368,9 @@ Before finalizing `paper_blueprint.md`, check that:
 Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 
 - the file reads as a strategic validation companion in the user's language
+- the file begins with confirmed user context
+- confirmed user context records only information explicitly provided by the user
+- working assumptions are separated from confirmed user context when assumptions are needed
 - important strategic items are restated before they are explained
 - validation questions ask the user to confirm strategy, not tactical choices
 - tactical topics are discussed as delegated planning areas with strategic constraints
