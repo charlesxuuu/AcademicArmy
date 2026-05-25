@@ -1,7 +1,7 @@
 ---
 name: academic-army-architect
 description: >-
-  Create two Markdown files for an upstream research-paper strategy workflow: an English paper_blueprint.md containing a Strategic Paper Blueprint, and a user-language paper_blueprint_explanation language-suffixed Markdown file that starts with user-confirmed context, then restates the blueprint's strategic content and explains how each item follows from the paper's premises so the user can validate the strategy. Use when the user needs venue posture, thesis shaping, problem framing, contribution boundaries, claim strategy, evidence posture, novelty boundary, method abstraction strategy, scope constraints, delegation boundaries, and strategic defaults for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses `academic_army_mcp_tools.deepsearch` as the required live research MCP tool for venue, literature, exemplar, and reviewer-context evidence.
+  Create two Markdown files for an upstream research-paper strategy workflow: an English paper_blueprint.md containing a Strategic Paper Blueprint, and a user-language paper_blueprint_explanation language-suffixed Markdown file that starts with user-confirmed context, then restates the blueprint's strategic content and explains how each item follows from the paper's premises so the user can validate the strategy. Use when the user needs venue posture, thesis shaping, problem framing, contribution boundaries, claim strategy, evidence posture, novelty boundary, method abstraction strategy, scope constraints, delegation boundaries, and strategic defaults for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses `academic_army_mcp_tools.deepresearch` as the required live research MCP tool for venue, literature, exemplar, and reviewer-context evidence.
 ---
 
 # Academic Army Architect
@@ -49,17 +49,17 @@ Use the user's conversation language. Preserve technical terms, venue names, pap
 
 ## Required Research MCP
 
-This skill's live research dependency is the `deepsearch` tool from the `academic_army_mcp_tools` MCP server.
+This skill's live research dependency is the `deepresearch` tool from the `academic_army_mcp_tools` MCP server.
 
 Use the exact tool identity:
 
 - server: `academic_army_mcp_tools`
-- tool: `deepsearch`
-- canonical Codex MCP tool name, when exposed: `mcp__academic_army_mcp_tools__deepsearch`
+- tool: `deepresearch`
+- canonical Codex MCP tool name, when exposed: `mcp__academic_army_mcp_tools__deepresearch`
 
-All mentions of `deepsearch` in this skill refer to `academic_army_mcp_tools.deepsearch`.
+All mentions of `deepresearch` in this skill refer to `academic_army_mcp_tools.deepresearch`.
 
-Use `academic_army_mcp_tools.deepsearch` for current venue evidence, related-work evidence, exemplar-paper evidence, evaluation-expectation evidence, and reviewer-context evidence.
+Use `academic_army_mcp_tools.deepresearch` for current venue evidence, related-work evidence, exemplar-paper evidence, evaluation-expectation evidence, and reviewer-context evidence.
 
 Evidence from built-in web search, browser tools, documentation search, or other MCP servers is supplemental and does not satisfy this skill's required live research dependency.
 
@@ -176,7 +176,7 @@ Section numbers are secondary locators. The explanation remains readable without
 
 ## Evidence Gathering
 
-Use `academic_army_mcp_tools.deepsearch` when current venue expectations, related work, exemplars, SOTA, benchmark norms, or reviewer expectations affect the strategy.
+Use `academic_army_mcp_tools.deepresearch` when current venue expectations, related work, exemplars, SOTA, benchmark norms, or reviewer expectations affect the strategy.
 
 Gather evidence for:
 
@@ -209,7 +209,7 @@ Create a compact internal brief with:
 
 ### Step 3: Gather Live Evidence
 
-Use evidence returned by `academic_army_mcp_tools.deepsearch` to establish venue posture, related-work boundary, exemplar-derived story patterns, evidence posture, and reviewer-context pressure.
+Use evidence returned by `academic_army_mcp_tools.deepresearch` to establish venue posture, related-work boundary, exemplar-derived story patterns, evidence posture, and reviewer-context pressure.
 
 ### Step 4: Compile `paper_blueprint.md`
 
@@ -336,12 +336,12 @@ User validation questions should stay strategic: venue posture, problem premise,
 
 The explanation should use the confirmed context as its starting point. Goal decomposition and blueprint rationale should follow from that context and the explicitly stated working assumptions.
 
-## `academic_army_mcp_tools.deepsearch` Prompt Shape
+## `academic_army_mcp_tools.deepresearch` Prompt Shape
 
 Use this prompt shape when live evidence is needed:
 
 ```text
-Tool: academic_army_mcp_tools.deepsearch
+Tool: academic_army_mcp_tools.deepresearch
 
 You are supporting a strategic paper-blueprint generator.
 
@@ -374,9 +374,9 @@ Use concise evidence-facing prose.
 
 ## Research Tool Identity Checklist
 
-Before using live research evidence, confirm that it came from `academic_army_mcp_tools.deepsearch` or the canonical Codex MCP tool name `mcp__academic_army_mcp_tools__deepsearch`.
+Before using live research evidence, confirm that it came from `academic_army_mcp_tools.deepresearch` or the canonical Codex MCP tool name `mcp__academic_army_mcp_tools__deepresearch`.
 
-If `academic_army_mcp_tools.deepsearch` is unavailable, proceed with user-provided evidence and mark live-research-dependent strategy items as needing external evidence. Describe the resulting paper-level evidence gap in the outputs, not the tool availability issue.
+If `academic_army_mcp_tools.deepresearch` is unavailable, proceed with user-provided evidence and mark live-research-dependent strategy items as needing external evidence. Describe the resulting paper-level evidence gap in the outputs, not the tool availability issue.
 
 ## Final Quality Checklist
 

@@ -40,6 +40,6 @@
 
 19. 在论文蓝图解释的开头记录一下用户已经明确了哪些东西（论文蓝图里不需要加）。看看怎么改一下
 
-20. 似乎没有明确deepsearch工具的名字？明确这个工具来自academic_army_mcp_tools，以免系统内装了其他MCP
+20. 似乎没有明确deepresearch工具的名字？明确这个工具来自academic_army_mcp_tools，以免系统内装了其他MCP
 
 形成一份skill描述/详细介绍文档放在AcademicArmy/metaskills/academic-army-architect.md

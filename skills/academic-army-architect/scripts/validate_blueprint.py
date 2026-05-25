@@ -48,7 +48,7 @@ TACTICAL_EXPLANATION_PATTERNS = {
     "run order",
     "next step",
     "TODO",
-    "deepsearch",
+    "deepresearch",
     "MCP",
     "web search",
     "rate limit",
