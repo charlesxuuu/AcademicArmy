@@ -1,4 +1,4 @@
-"""Validate a strategic paper-blueprint summary JSON file."""
+"""Validate a goal-oriented strategic paper-blueprint summary JSON file."""
 
 from datetime import datetime
 import json
@@ -8,12 +8,26 @@ from pathlib import Path
 from typing import Any
 
 
-VALID_CLAIM_ROLE = {"acceptance_critical", "mechanism", "scope", "supporting", "deferred"}
+VALID_GOAL_ROLES = {
+    "acceptance",
+    "positioning",
+    "contribution",
+    "novelty",
+    "evidence",
+    "scope",
+    "communication",
+    "downstream_planning",
+}
 VALID_RELATED_STATUS = {"verified", "tentative", "needs_verification"}
 VALID_STORY_RECENCY = {"last_2_3_years", "latest_3_cycles", "expanded_last_5_years", "needs_verification"}
-VALID_DEFAULT_AREAS = {"venue", "contribution", "evidence", "narrative", "method", "scope"}
 VALID_DELEGATED_AREAS = {"content_planning", "experiment_planning", "figure_planning", "method_planning", "review_planning"}
-DELEGATION_BOUNDARIES = ["content_planning", "experiment_planning", "figure_planning", "method_planning", "review_planning"]
+DELEGATION_INTERFACES = [
+    "content_planning_interface",
+    "experiment_planning_interface",
+    "figure_planning_interface",
+    "method_planning_interface",
+    "review_planning_interface",
+]
 
 TACTICAL_BLUEPRINT_PATTERNS = {
     "Main-result experiment:",
@@ -55,6 +69,53 @@ TACTICAL_EXPLANATION_PATTERNS = {
     "downstream agent",
     "output format",
 }
+REQUIRED_BLUEPRINT_HEADINGS = [
+    "Paper Identity",
+    "Top-Level Paper Goal",
+    "Goal Decomposition",
+    "Goal Cards",
+    "Goal Dependency Map",
+    "Strategic Claim Posture",
+    "Strategic Evidence Posture",
+    "Strategic Communication Posture",
+    "Strategic Risks",
+    "Delegation Interfaces for Downstream Skills",
+]
+FORBIDDEN_LEGACY_BLUEPRINT_HEADINGS = [
+    "Core Strategy Premises",
+    "Central Research Bet",
+    "Contribution Contract",
+    "Claim Strategy",
+    "Evidence Posture",
+    "Narrative and Visual Strategy",
+    "Strategic Defaults",
+]
+GOAL_CARD_FIELDS = [
+    "Goal statement",
+    "Why this goal matters",
+    "Strategic role",
+    "Success condition",
+    "Derived constraints",
+    "Delegated details",
+    "Failure or revision implication",
+]
+EXPLANATION_HEADING_PATTERNS = [
+    ("Confirmed User Context", "用户已明确的信息"),
+    ("Blueprint Overview", "蓝图速览"),
+    ("Core Goal Set", "核心目标组"),
+    ("Derivation from Core Goals", "从核心目标到论文蓝图的推导"),
+    ("Key Blueprint Content", "蓝图重点内容概括与解释"),
+    ("How the Goals Support Each Other", "目标之间如何相互支撑"),
+    ("Fragile Goal Chains", "当前最脆弱的目标链"),
+    ("Remaining Strategic Questions", "用户仍需确认的战略问题"),
+]
+FORBIDDEN_LEGACY_EXPLANATION_HEADINGS = [
+    "Strategic Blueprint Overview",
+    "Key Strategic Content and Validation Entry Points",
+    "Core Premises",
+    "Item-by-Item Strategic Validation",
+    "Strategic Defaults and Change Conditions",
+]
 SYNTHETIC_ID_RE = re.compile(r"\b(?:C|E|R|A|B|K|D)[1-9]\d?\b|\b(?:F|T)[1-9]\d?\b(?!\s*[- ]?score)|\bAR[1-9]\d?\b")
 SECTION_REF_RE = re.compile(r"\bSection\s+(?:[1-9]|1[0-2])(?:\.\d+)?\b|第\s*(?:[1-9]|1[0-2])(?:\.\d+)?\s*节")
 
@@ -110,6 +171,26 @@ def find_synthetic_id_path(obj: Any, path: str = "paper_blueprint_summary") -> s
     return None
 
 
+def heading_present(text: str, heading: str) -> bool:
+    pattern = rf"^##\s+(?:\d+\.\s+)?{re.escape(heading)}\b"
+    return bool(re.search(pattern, text, flags=re.MULTILINE))
+
+
+def heading_containing_present(text: str, options: tuple[str, str]) -> bool:
+    return any(re.search(rf"^##\s+.*{re.escape(option)}.*$", text, flags=re.MULTILINE) for option in options)
+
+
+def extract_section(text: str, heading: str) -> str:
+    pattern = rf"^##\s+(?:\d+\.\s+)?{re.escape(heading)}\b.*$"
+    match = re.search(pattern, text, flags=re.MULTILINE)
+    if not match:
+        return ""
+    start = match.end()
+    next_match = re.search(r"^##\s+", text[start:], flags=re.MULTILINE)
+    end = start + next_match.start() if next_match else len(text)
+    return text[start:end]
+
+
 def validate_output_files(data: dict) -> str | None:
     files = data["output_files"]
     if not isinstance(files, dict):
@@ -122,6 +203,30 @@ def validate_output_files(data: dict) -> str | None:
     expected_suffix = f"paper_blueprint_explanation.{files['explanation_language_suffix']}.md"
     if Path(files["explanation_markdown"]).name != expected_suffix:
         return f"output_files.explanation_markdown must end with {expected_suffix}"
+    return None
+
+
+def validate_confirmed_user_context(context: dict) -> str | None:
+    if not isinstance(context, dict):
+        return "confirmed_user_context must be an object"
+    required = [
+        "research_inputs",
+        "existing_materials",
+        "target_field_or_venue_preferences",
+        "blueprint_purpose",
+        "downstream_planning_pipeline",
+        "output_requirements",
+        "abstraction_level_preferences",
+        "explanation_preferences",
+        "content_delegated_to_later_planning",
+        "working_assumptions",
+    ]
+    error = require_keys(context, required, "confirmed_user_context")
+    if error:
+        return error
+    for key in required:
+        if not isinstance(context[key], list):
+            return f"confirmed_user_context.{key} must be an array"
     return None
 
 
@@ -162,109 +267,51 @@ def validate_exemplar_analysis(exemplar_analysis: dict) -> str | None:
     return None
 
 
-def validate_confirmed_user_context(context: dict) -> str | None:
-    if not isinstance(context, dict):
-        return "confirmed_user_context must be an object"
+def validate_goal_cards(items: list) -> str | None:
+    if not isinstance(items, list) or len(items) < 6:
+        return "goal_cards must contain at least 6 goal cards"
     required = [
-        "research_inputs",
-        "existing_materials",
-        "target_field_or_venue_preferences",
-        "blueprint_purpose",
-        "downstream_planning_pipeline",
-        "output_requirements",
-        "abstraction_level_preferences",
-        "explanation_preferences",
-        "content_delegated_to_later_planning",
-        "working_assumptions",
+        "goal_name",
+        "goal_statement",
+        "why_this_goal_matters",
+        "strategic_role",
+        "success_condition",
+        "derived_constraints",
+        "delegated_details",
+        "failure_or_revision_implication",
     ]
-    error = require_keys(context, required, "confirmed_user_context")
-    if error:
-        return error
-    for key in required:
-        if not isinstance(context[key], list):
-            return f"confirmed_user_context.{key} must be an array"
-    return None
-
-
-def validate_claim_strategy(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "claim_strategy must be a non-empty array"
-    roles = set()
-    for index, claim in enumerate(items, start=1):
-        error = require_keys(
-            claim,
-            ["title", "claim_statement", "strategic_role", "evidence_posture", "scope_boundary", "downgrade_condition"],
-            f"claim_strategy[{index}]",
-        )
-        if error:
-            return error
-        if claim["strategic_role"] not in VALID_CLAIM_ROLE:
-            return f"claim_strategy[{index}].strategic_role must be one of {sorted(VALID_CLAIM_ROLE)}"
-        roles.add(claim["strategic_role"])
-    if "acceptance_critical" not in roles:
-        return "claim_strategy must include an acceptance_critical claim"
-    return None
-
-
-def validate_evidence_posture(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "evidence_posture must be a non-empty array"
     for index, item in enumerate(items, start=1):
-        error = require_keys(
-            item,
-            [
-                "title",
-                "strategic_claim_supported",
-                "high_level_evidence_type",
-                "comparison_posture",
-                "outcome_family",
-                "minimum_standard_for_strategic_viability",
-                "delegated_tactical_choices",
-                "downgrade_implication",
-            ],
-            f"evidence_posture[{index}]",
-        )
+        if not isinstance(item, dict):
+            return f"goal_cards[{index}] must be an object"
+        error = require_keys(item, required, f"goal_cards[{index}]")
         if error:
             return error
-        error = require_nonempty_list(item, "delegated_tactical_choices", f"evidence_posture[{index}]")
-        if error:
-            return error
-    return None
-
-
-def validate_delegation_boundaries(boundaries: dict) -> str | None:
-    if not isinstance(boundaries, dict):
-        return "delegation_boundaries must be an object"
-    error = require_keys(boundaries, DELEGATION_BOUNDARIES, "delegation_boundaries")
-    if error:
-        return error
-    for name in DELEGATION_BOUNDARIES:
-        boundary = boundaries[name]
-        if not isinstance(boundary, dict):
-            return f"delegation_boundaries.{name} must be an object"
-        error = require_keys(boundary, ["strategic_boundary", "constraints_to_preserve", "tactical_choices_delegated"], f"delegation_boundaries.{name}")
-        if error:
-            return error
-        for key in ("constraints_to_preserve", "tactical_choices_delegated"):
-            error = require_nonempty_list(boundary, key, f"delegation_boundaries.{name}")
+        if item["strategic_role"] not in VALID_GOAL_ROLES:
+            return f"goal_cards[{index}].strategic_role must be one of {sorted(VALID_GOAL_ROLES)}"
+        for key in ("derived_constraints", "delegated_details"):
+            error = require_nonempty_list(item, key, f"goal_cards[{index}]")
             if error:
                 return error
     return None
 
 
-def validate_strategic_defaults(items: list) -> str | None:
-    if not isinstance(items, list) or not items:
-        return "strategic_defaults must be a non-empty array"
-    for index, item in enumerate(items, start=1):
-        error = require_keys(
-            item,
-            ["posture_area", "recommended_default", "why_matches_premises", "evidence_that_would_change_it", "downstream_skill_to_explore_tactical_alternatives"],
-            f"strategic_defaults[{index}]",
-        )
+def validate_delegation_interfaces(interfaces: dict) -> str | None:
+    if not isinstance(interfaces, dict):
+        return "delegation_interfaces must be an object"
+    error = require_keys(interfaces, DELEGATION_INTERFACES, "delegation_interfaces")
+    if error:
+        return error
+    for name in DELEGATION_INTERFACES:
+        interface = interfaces[name]
+        if not isinstance(interface, dict):
+            return f"delegation_interfaces.{name} must be an object"
+        error = require_keys(interface, ["goals_to_operationalize", "constraints_to_preserve", "tactical_choices_delegated"], f"delegation_interfaces.{name}")
         if error:
             return error
-        if item["posture_area"] not in VALID_DEFAULT_AREAS:
-            return f"strategic_defaults[{index}].posture_area must be one of {sorted(VALID_DEFAULT_AREAS)}"
+        for key in ("goals_to_operationalize", "constraints_to_preserve", "tactical_choices_delegated"):
+            error = require_nonempty_list(interface, key, f"delegation_interfaces.{name}")
+            if error:
+                return error
     return None
 
 
@@ -274,43 +321,44 @@ def validate_design_rationale(rationale: dict) -> str | None:
     error = require_keys(
         rationale,
         [
-            "strategic_overview",
+            "goal_oriented_overview",
             "validation_overview",
             "confirmed_context_coverage",
             "remaining_strategic_questions",
-            "item_rationales",
+            "goal_rationales",
+            "goal_derived_arrangements",
             "delegated_detail_rationale",
-            "fragile_strategic_chains",
+            "fragile_goal_chains",
             "strategic_disagreement_diagnosis",
         ],
         "design_rationale",
     )
     if error:
         return error
-    overview = rationale["strategic_overview"]
+    overview = rationale["goal_oriented_overview"]
     error = require_keys(
         overview,
         [
-            "paper_positioning",
+            "top_level_paper_goal",
             "central_research_bet",
-            "primary_contribution",
-            "acceptance_critical_claim",
-            "evidence_posture_summary",
-            "delegation_summary",
-            "highest_strategic_risk",
+            "main_contribution_goal",
+            "evidence_goal",
+            "communication_goal",
+            "largest_strategic_risk",
         ],
-        "design_rationale.strategic_overview",
+        "design_rationale.goal_oriented_overview",
     )
     if error:
         return error
     for group, keys in {
-        "validation_overview": ["key_strategic_content", "why_it_matters", "main_user_validation_question"],
+        "validation_overview": ["key_goal_or_arrangement", "why_it_matters", "main_user_validation_question"],
         "confirmed_context_coverage": ["confirmed_context_item", "covered_or_narrowed_question", "effect_on_remaining_questions"],
         "remaining_strategic_questions": ["question", "why_not_covered_by_confirmed_context", "strategy_change_if_answer_changes"],
-        "item_rationales": ["semantic_item_name", "strategic_content_digest", "premise_source", "derivation", "downstream_constraint", "user_validation_point"],
-        "delegated_detail_rationale": ["detail_area", "what_is_delegated", "strategic_constraint", "reason_for_delegation"],
-        "fragile_strategic_chains": ["starting_premise", "derived_strategy", "evidence_needed", "likely_failure_point", "strategy_revision_if_chain_fails"],
-        "strategic_disagreement_diagnosis": ["disagreement_type", "upstream_premise_to_inspect", "affected_strategy_objects", "likely_revision_direction"],
+        "goal_rationales": ["goal_name", "goal_content_digest", "design_idea", "relationship_to_other_goals", "downstream_constraint", "user_validation_point"],
+        "goal_derived_arrangements": ["arrangement_name", "content_digest", "generating_goal", "derivation", "user_validation_point"],
+        "delegated_detail_rationale": ["detail_area", "what_is_delegated", "goal_constraint", "reason_for_delegation"],
+        "fragile_goal_chains": ["starting_goal", "derived_arrangement", "evidence_or_planning_dependency", "likely_failure_point", "blueprint_revision_if_chain_fails"],
+        "strategic_disagreement_diagnosis": ["disagreement_type", "upstream_goal_to_inspect", "affected_goal_or_arrangement", "likely_revision_direction"],
     }.items():
         items = rationale[group]
         if not isinstance(items, list) or not items:
@@ -327,9 +375,11 @@ def validate_design_rationale(rationale: dict) -> str | None:
 def validate_style_checks(style_checks: dict) -> str | None:
     required = [
         "strategic_validation_companion",
-        "includes_strategic_content_digest",
+        "goal_oriented_structure",
+        "goal_cards_are_core",
+        "includes_goal_content_digest",
         "uses_semantic_anchors",
-        "explains_delegation_boundaries",
+        "explains_delegation_interfaces",
         "applies_confirmed_context_filter",
         "outputs_only_remaining_strategic_questions",
         "avoids_tactical_questionnaire",
@@ -355,17 +405,15 @@ def validate(data: dict) -> str | None:
             "title",
             "paper_identity",
             "exemplar_analysis",
-            "core_strategy_premises",
-            "central_research_bet",
-            "contribution_contract",
-            "claim_strategy",
-            "novelty_and_comparison_strategy",
-            "method_abstraction_strategy",
-            "evidence_posture",
-            "narrative_and_visual_strategy",
-            "strategic_risks_and_uncertainties",
-            "delegation_boundaries",
-            "strategic_defaults",
+            "top_level_paper_goal",
+            "goal_decomposition",
+            "goal_cards",
+            "goal_dependency_map",
+            "strategic_claim_posture",
+            "strategic_evidence_posture",
+            "strategic_communication_posture",
+            "strategic_risks",
+            "delegation_interfaces",
             "design_rationale",
             "explanation_style_checks",
         ],
@@ -380,10 +428,8 @@ def validate(data: dict) -> str | None:
         validate_output_files,
         lambda d: validate_confirmed_user_context(d["confirmed_user_context"]),
         lambda d: validate_exemplar_analysis(d["exemplar_analysis"]),
-        lambda d: validate_claim_strategy(d["claim_strategy"]),
-        lambda d: validate_evidence_posture(d["evidence_posture"]),
-        lambda d: validate_delegation_boundaries(d["delegation_boundaries"]),
-        lambda d: validate_strategic_defaults(d["strategic_defaults"]),
+        lambda d: validate_goal_cards(d["goal_cards"]),
+        lambda d: validate_delegation_interfaces(d["delegation_interfaces"]),
         lambda d: validate_design_rationale(d["design_rationale"]),
         lambda d: validate_style_checks(d["explanation_style_checks"]),
     )
@@ -391,16 +437,17 @@ def validate(data: dict) -> str | None:
         error = validator(data)
         if error:
             return error
-    for path, keys in (
-        ("paper_identity", ["research_object", "target_venue_posture", "paper_type", "current_input_state"]),
-        ("core_strategy_premises", ["venue_premise", "problem_premise", "contribution_premise", "novelty_premise", "evidence_premise", "scope_premise"]),
-        ("central_research_bet", ["one_sentence_thesis", "acceptance_critical_bet", "downgrade_condition"]),
-        ("contribution_contract", ["primary_contribution", "secondary_contribution_roles", "non_contributions_and_boundaries"]),
-        ("novelty_and_comparison_strategy", ["closest_work_clusters", "differentiation_posture", "comparison_posture", "overclaim_boundary"]),
-        ("method_abstraction_strategy", ["core_abstraction", "mechanism_class", "strategic_decision_space", "constraints_and_invariants", "delegated_tactical_method_details"]),
-        ("narrative_and_visual_strategy", ["opening_tension", "central_abstraction_to_foreground", "story_arc", "visual_argument_requirements", "delegated_content_and_figure_choices"]),
-        ("strategic_risks_and_uncertainties", ["highest_risk_premise", "highest_risk_claim", "highest_risk_novelty_boundary", "highest_risk_evidence_gap", "strategy_change_if_risks_materialize"]),
-    ):
+    object_requirements = (
+        ("paper_identity", ["research_idea", "target_venue_posture", "paper_type", "research_object", "current_input_state"]),
+        ("top_level_paper_goal", ["acceptance_goal", "central_research_bet", "strategic_success_condition", "strategic_downgrade_condition"]),
+        ("goal_decomposition", ["positioning_goal", "problem_framing_goal", "contribution_goal", "novelty_boundary_goal", "evidence_goal", "communication_goal", "scope_control_goal", "downstream_planning_goal"]),
+        ("goal_dependency_map", ["supports_acceptance_goal", "protects_main_contribution", "protects_novelty_boundary", "determines_evidence_posture", "determines_communication_posture", "downstream_operationalization", "fragile_goals"]),
+        ("strategic_claim_posture", ["acceptance_goal_claim", "contribution_goal_claim", "evidence_goal_claim", "deferred_claims"]),
+        ("strategic_evidence_posture", ["top_level_goal_evidence", "contribution_goal_evidence", "novelty_boundary_evidence", "delegated_experiment_planning"]),
+        ("strategic_communication_posture", ["first_reader_belief", "central_abstraction", "story_movement", "delegated_figure_planning", "delegated_content_planning"]),
+        ("strategic_risks", ["goal_most_likely_to_fail", "goal_most_likely_to_be_challenged", "goal_most_dependent_on_missing_evidence", "blueprint_changes_if_risks_materialize"]),
+    )
+    for path, keys in object_requirements:
         obj = data[path]
         if not isinstance(obj, dict):
             return f"{path} must be an object"
@@ -417,55 +464,61 @@ def resolve_output_path(raw_path: str, base_dir: Path) -> Path:
     return base_dir / path
 
 
+def validate_blueprint_markdown(text: str) -> str | None:
+    if "Confirmed User Context" in text or "用户已明确的信息" in text:
+        return "paper_blueprint.md must not contain confirmed user context"
+    for pattern in TACTICAL_BLUEPRINT_PATTERNS:
+        if pattern.lower() in text.lower():
+            return f"paper_blueprint.md contains tactical detail instead of goal-oriented strategy: {pattern}"
+    if contains_synthetic_id(text):
+        return "paper_blueprint.md contains synthetic object IDs; use semantic headings"
+    for heading in REQUIRED_BLUEPRINT_HEADINGS:
+        if not heading_present(text, heading):
+            return f"paper_blueprint.md must contain goal-oriented heading '{heading}'"
+    for heading in FORBIDDEN_LEGACY_BLUEPRINT_HEADINGS:
+        if heading_present(text, heading):
+            return f"paper_blueprint.md still contains legacy strategic-posture heading '{heading}'"
+    goal_cards = extract_section(text, "Goal Cards")
+    if not goal_cards.strip():
+        return "paper_blueprint.md must contain Goal Cards section content"
+    card_count = len(re.findall(r"^###\s+", goal_cards, flags=re.MULTILINE))
+    if card_count < 6:
+        return f"Goal Cards section must contain at least 6 goal cards; found {card_count}"
+    for field in GOAL_CARD_FIELDS:
+        if f"**{field}.**" not in goal_cards:
+            return f"Goal Cards section missing field '{field}'"
+    return None
+
+
+def validate_explanation_markdown(text: str) -> str | None:
+    for headings in EXPLANATION_HEADING_PATTERNS:
+        if not heading_containing_present(text, headings):
+            return f"explanation file must contain a heading matching one of: {', '.join(headings)}"
+    for heading in FORBIDDEN_LEGACY_EXPLANATION_HEADINGS:
+        if heading_present(text, heading):
+            return f"explanation file still contains legacy heading '{heading}'"
+    if contains_synthetic_id(text):
+        return "explanation file contains synthetic object IDs; use semantic names"
+    for pattern in TACTICAL_EXPLANATION_PATTERNS:
+        if pattern.lower() in text.lower():
+            return f"explanation file asks about tactical detail instead of strategy: {pattern}"
+    if len(SECTION_REF_RE.findall(text)) > 8:
+        return "explanation file relies too heavily on numbered section references"
+    return None
+
+
 def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
     files = data["output_files"]
     blueprint_path = resolve_output_path(files["blueprint_markdown"], base_dir)
     explanation_path = resolve_output_path(files["explanation_markdown"], base_dir)
     if blueprint_path.exists():
-        text = blueprint_path.read_text(encoding="utf-8-sig")
-        for pattern in TACTICAL_BLUEPRINT_PATTERNS:
-            if pattern.lower() in text.lower():
-                return f"paper_blueprint.md contains tactical detail instead of strategic posture: {pattern}"
-        if contains_synthetic_id(text):
-            return "paper_blueprint.md contains synthetic object IDs; use semantic headings"
-        required_headings = [
-            "## 1. Paper Identity",
-            "## 2. Core Strategy Premises",
-            "## 3. Central Research Bet",
-            "## 4. Contribution Contract",
-            "## 5. Claim Strategy",
-            "## 6. Novelty and Comparison Strategy",
-            "## 7. Method Abstraction Strategy",
-            "## 8. Evidence Posture",
-            "## 9. Narrative and Visual Strategy",
-            "## 10. Strategic Risks and Decision-Critical Uncertainties",
-            "## 11. Delegation Boundaries for Downstream Skills",
-            "## 12. Strategic Defaults",
-        ]
-        for heading in required_headings:
-            if heading not in text:
-                return f"paper_blueprint.md must contain '{heading}'"
+        error = validate_blueprint_markdown(blueprint_path.read_text(encoding="utf-8-sig"))
+        if error:
+            return error
     if explanation_path.exists():
-        text = explanation_path.read_text(encoding="utf-8-sig")
-        required_heading_groups = [
-            ["## 0. Confirmed User Context", "## 0. 用户已明确的信息"],
-            ["## Strategic Blueprint Overview", "## 战略蓝图速览"],
-            ["## Key Strategic Content and Validation Entry Points", "## 战略重点内容与审核入口"],
-            ["## Core Premises", "## 核心出发点"],
-            ["## Item-by-Item Strategic Validation", "## 战略蓝图逐项解释"],
-            ["## What Is Delegated to Later Specialized Planning", "## 哪些内容留给后续专项规划"],
-            ["## Remaining Strategic Questions for User Confirmation", "## 用户仍需确认的战略问题"],
-        ]
-        for headings in required_heading_groups:
-            if not any(heading in text for heading in headings):
-                return f"explanation file must contain one of: {', '.join(headings)}"
-        if contains_synthetic_id(text):
-            return "explanation file contains synthetic object IDs; use semantic names"
-        for pattern in TACTICAL_EXPLANATION_PATTERNS:
-            if pattern.lower() in text.lower():
-                return f"explanation file asks about tactical detail instead of strategy: {pattern}"
-        if len(SECTION_REF_RE.findall(text)) > 8:
-            return "explanation file relies too heavily on numbered section references"
+        error = validate_explanation_markdown(explanation_path.read_text(encoding="utf-8-sig"))
+        if error:
+            return error
     return None
 
 
@@ -484,7 +537,7 @@ def main() -> int:
         error = validate_markdown_files(data, path.parent)
     if error:
         return fail(error)
-    print("[OK] strategic paper blueprint summary passes structural checks.")
+    print("[OK] goal-oriented strategic paper blueprint summary passes structural checks.")
     return 0
 
 

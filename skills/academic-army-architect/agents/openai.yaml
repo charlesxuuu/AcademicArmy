@@ -1,11 +1,11 @@
 interface:
   display_name: "Academic Army Architect"
-  short_description: "Strategic paper blueprint plus validation explanation"
-  default_prompt: "Create a Strategic Paper Blueprint and user-language validation explanation with $academic-army-architect."
+  short_description: "Goal-oriented paper blueprint plus validation explanation"
+  default_prompt: "Create a Goal-Oriented Strategic Paper Blueprint and user-language validation explanation with $academic-army-architect."
 
 dependencies:
   tools:
     - type: "mcp"
       value: "academic_army_mcp_tools"
-      description: "Provides academic_army_mcp_tools.deepresearch for live venue, literature, benchmark, artifact, and reviewer evidence."
+      description: "Provides academic_army_mcp_tools.deepresearch for live venue, literature, exemplar-paper, evaluation-expectation, and reviewer-context evidence."
       transport: "stdio"

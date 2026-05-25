@@ -1,7 +1,7 @@
 ---
 name: academic-army-architect
 description: >-
-  Create two Markdown files for an upstream research-paper strategy workflow: an English paper_blueprint.md containing a Strategic Paper Blueprint, and a user-language paper_blueprint_explanation language-suffixed Markdown file that starts with user-confirmed context, then restates the blueprint's strategic content and explains how each item follows from the paper's premises so the user can validate the strategy. Use when the user needs venue posture, thesis shaping, problem framing, contribution boundaries, claim strategy, evidence posture, novelty boundary, method abstraction strategy, scope constraints, delegation boundaries, and strategic defaults for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses `academic_army_mcp_tools.deepresearch` as the required live research MCP tool for venue, literature, exemplar, and reviewer-context evidence.
+  Create two Markdown files for a goal-oriented strategic research-paper blueprint: an English paper_blueprint.md and a user-language paper_blueprint_explanation language-suffixed Markdown file. The blueprint converts a research idea into top-level paper goals, goal decomposition, goal cards, a goal dependency map, strategic claim posture, strategic evidence posture, strategic communication posture, strategic risks, and downstream planning interfaces. Use when the user needs a stable upstream paper-goal specification for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses `academic_army_mcp_tools.deepresearch` as the required live research MCP tool for venue, literature, exemplar-paper, evaluation-expectation, and reviewer-context evidence.
 ---
 
 # Academic Army Architect
@@ -12,24 +12,22 @@ The skill produces two Markdown files.
 
 ### File 1: `paper_blueprint.md`
 
-This file is an English **Strategic Paper Blueprint**.
+This file is an English **Goal-Oriented Strategic Paper Blueprint**.
 
 It defines the paper's strategic core and downstream planning constraints:
 
 - paper identity
-- core strategy premises
-- central research bet
-- contribution contract
-- claim strategy
-- novelty and comparison strategy
-- method abstraction strategy
-- evidence posture
-- narrative and visual strategy
-- strategic risks and decision-critical uncertainties
-- delegation boundaries for downstream skills
-- strategic defaults and change conditions
+- top-level paper goal
+- goal decomposition
+- goal cards
+- goal dependency map
+- strategic claim posture
+- strategic evidence posture
+- strategic communication posture
+- strategic risks
+- delegation interfaces for downstream skills
 
-The blueprint stops at strategy. It states what the paper must prove, why it matters, what boundaries hold, what evidence posture is required, and what later skills must preserve.
+The blueprint stops at strategy. It states what the paper must achieve, why the goals matter, how goals constrain claims/evidence/communication, and what later skills must preserve.
 
 ### File 2: `paper_blueprint_explanation.<lang>.md`
 
@@ -38,10 +36,10 @@ This file is a user-language strategic validation companion.
 It helps the user validate the blueprint by showing:
 
 - which inputs, constraints, preferences, and pipeline assumptions the user has explicitly provided
-- what the important strategic items say, in compressed user-language form
-- which premise motivates each item
-- how each item follows from the premises
-- how each item constrains later content, experiment, figure, method, writing, or review planning
+- what the important goals and goal-derived arrangements say, in compressed user-language form
+- which goal motivates each arrangement
+- how each arrangement follows from the goal structure
+- how each goal constrains later content, experiment, figure, method, writing, or review planning
 - which tactical details are intentionally delegated
 - what strategic question the user should inspect when an item feels unreasonable
 
@@ -113,8 +111,8 @@ The blueprint operates only at Levels 0-2:
 | Level | Scope |
 |---|---|
 | Level 0: Paper identity | Research area, target venue posture, paper type, research object, current input state. |
-| Level 1: Paper strategy | Core premises, central research bet, contribution contract, claim strategy, novelty boundary, scope boundary, strategic risks. |
-| Level 2: Planning constraints | Evidence posture, comparison posture, narrative requirements, visual argument requirements, downstream delegation boundaries. |
+| Level 1: Paper goals | Top-level goal, goal decomposition, goal cards, goal dependency map, strategic risks. |
+| Level 2: Goal-derived planning constraints | Claim posture, evidence posture, communication posture, scope posture, downstream delegation interfaces. |
 
 Later specialized skills handle Levels 3-4:
 
@@ -141,23 +139,38 @@ When a planning decision becomes specific, compress it into one of these strateg
 
 Use strategic defaults over user prompting. Select a strategic default when possible and state what evidence would change it. Ask a clarification question only when the missing information blocks target venue posture, contribution posture, or central thesis.
 
-## Core Strategic Objects
+## Core Goal-Oriented Objects
 
-### Claim Strategy Object
+### Goal Card Object
 
-For each strategic claim, specify:
+Each major paper goal is represented as a goal card:
+
+- goal statement
+- why this goal matters
+- strategic role: acceptance, positioning, contribution, novelty, evidence, scope, communication, or downstream planning
+- success condition
+- derived constraints
+- delegated details
+- failure or revision implication
+
+Goal cards are the core output unit. Claim posture, evidence posture, communication posture, risks, and downstream interfaces should lose their source if the goal cards are removed.
+
+### Strategic Claim Posture Object
+
+For each claim posture item, specify:
 
 - claim statement
-- strategic role: acceptance-critical, mechanism, scope, supporting, or deferred
-- evidence posture
+- generating goal
+- strategic role of the claim
+- required evidence posture
 - scope boundary
 - downgrade condition
 
-### Evidence Posture Object
+### Strategic Evidence Posture Object
 
 For each evidence posture, specify:
 
-- strategic claim supported
+- goal served
 - evidence type at a high level
 - comparison posture
 - outcome family
@@ -165,15 +178,26 @@ For each evidence posture, specify:
 - delegated tactical choices
 - downgrade implication
 
-### Delegation Boundary Object
+### Delegation Interface Object
 
 For each downstream skill, specify:
 
-- strategic boundary
+- goal or goals it operationalizes
 - constraints to preserve
 - tactical choices delegated
-- strategic default to begin from
-- condition that would change the default
+
+## Goal-Derived Content Rule
+
+Every major blueprint arrangement is derived from one or more paper goals:
+
+- claim posture serves an acceptance, contribution, evidence, or scope-control goal
+- evidence posture validates a goal
+- novelty boundary protects a contribution or positioning goal
+- communication posture helps the reader accept a problem-framing or contribution goal
+- strategic risk exists because a fragile goal might fail
+- downstream interface exists because a goal must be operationalized by a later specialized skill
+
+Make these goal-to-arrangement relationships explicit.
 
 ## Semantic References
 
@@ -181,14 +205,14 @@ For each downstream skill, specify:
 
 Preferred explanation references:
 
-- the central research bet
-- the acceptance-critical claim
-- the evidence posture for the primary claim
-- the comparison posture against related work
-- the method abstraction strategy
-- the visual argument requirement
-- the experiment-planning boundary
-- the strategic default for contribution posture
+- the top-level paper goal
+- the contribution goal
+- the novelty-boundary goal
+- the evidence goal
+- the communication goal
+- the claim posture generated by the acceptance goal
+- the evidence posture generated by the contribution goal
+- the experiment-planning interface
 
 Section numbers are secondary locators. The explanation remains readable without them.
 
@@ -220,99 +244,98 @@ Create a compact internal brief with:
 - likely paper type
 - research object
 - known evidence
-- likely contribution posture
-- likely novelty boundary
+- likely top-level paper goal
+- likely contribution goal
+- likely novelty-boundary goal
 - decision-critical uncertainty
 - output language and output paths
 
 ### Step 3: Gather Live Evidence
 
-Use evidence returned by `academic_army_mcp_tools.deepresearch` to establish venue posture, related-work boundary, exemplar-derived story patterns, evidence posture, and reviewer-context pressure.
+Use evidence returned by `academic_army_mcp_tools.deepresearch` to establish venue posture, goal structure, related-work boundary, exemplar-derived story patterns, evidence posture, and reviewer-context pressure.
 
 ### Step 4: Compile `paper_blueprint.md`
 
 Use this structure:
 
 ```markdown
-# Strategic Paper Blueprint: <Working Title>
+# Goal-Oriented Strategic Paper Blueprint: <Working Title>
 
 ## 1. Paper Identity
-### 1.1 Research object
+### 1.1 Research idea
 ### 1.2 Target venue posture
 ### 1.3 Paper type
-### 1.4 Current input state
+### 1.4 Research object
+### 1.5 Current input state
 
-## 2. Core Strategy Premises
-### 2.1 Venue premise
-### 2.2 Problem premise
-### 2.3 Contribution premise
-### 2.4 Novelty premise
-### 2.5 Evidence premise
-### 2.6 Scope premise
+## 2. Top-Level Paper Goal
+### 2.1 Acceptance goal
+### 2.2 Central research bet
+### 2.3 Strategic success condition
+### 2.4 Strategic downgrade condition
 
-## 3. Central Research Bet
-### 3.1 One-sentence thesis
-### 3.2 Acceptance-critical bet
-### 3.3 What would downgrade the bet
+## 3. Goal Decomposition
+### 3.1 Positioning goal: <descriptive goal>
+### 3.2 Problem-framing goal: <descriptive goal>
+### 3.3 Contribution goal: <descriptive goal>
+### 3.4 Novelty-boundary goal: <descriptive goal>
+### 3.5 Evidence goal: <descriptive goal>
+### 3.6 Communication goal: <descriptive goal>
+### 3.7 Scope-control goal: <descriptive goal>
+### 3.8 Downstream-planning goal: <descriptive goal>
 
-## 4. Contribution Contract
-### 4.1 Primary contribution
-### 4.2 Secondary contribution roles
-### 4.3 Non-contributions and boundaries
+## 4. Goal Cards
 
-## 5. Claim Strategy
-### 5.1 Acceptance-critical claim
-### 5.2 Mechanism claim
-### 5.3 Scope claim
-### 5.4 Claims to defer
+For each major goal, include:
 
-## 6. Novelty and Comparison Strategy
-### 6.1 Closest work clusters
-### 6.2 Differentiation posture
-### 6.3 Comparison posture
-### 6.4 Overclaim boundary
+**Goal statement.**
+**Why this goal matters.**
+**Strategic role.**
+**Success condition.**
+**Derived constraints.**
+**Delegated details.**
+**Failure or revision implication.**
 
-## 7. Method Abstraction Strategy
-### 7.1 Core abstraction
-### 7.2 Mechanism class
-### 7.3 Decision space at a strategic level
-### 7.4 Constraints and invariants
-### 7.5 Tactical method details delegated to later planning
+## 5. Goal Dependency Map
+### 5.1 Goals that directly support the top-level acceptance goal
+### 5.2 Goals that protect the main contribution
+### 5.3 Goals that protect the novelty boundary
+### 5.4 Goals that determine evidence posture
+### 5.5 Goals that determine communication posture
+### 5.6 Goals that downstream planning skills must operationalize
+### 5.7 Goals that are currently most fragile
 
-## 8. Evidence Posture
-### 8.1 Evidence posture for the primary claim
-### 8.2 Evidence posture for the mechanism claim
-### 8.3 Evidence posture for scope and robustness
-### 8.4 Evidence posture for feasibility and cost
-### 8.5 Tactical experiment design delegated to later planning
+## 6. Strategic Claim Posture
+### 6.1 Claim implied by the acceptance goal
+### 6.2 Claim implied by the contribution goal
+### 6.3 Claim implied by the evidence goal
+### 6.4 Claims deferred by the scope-control goal
 
-## 9. Narrative and Visual Strategy
-### 9.1 Opening tension
-### 9.2 Central abstraction to foreground
-### 9.3 Story arc
-### 9.4 Visual argument requirements
-### 9.5 Tactical content and figure planning delegated to later planning
+## 7. Strategic Evidence Posture
+### 7.1 Evidence required to satisfy the top-level paper goal
+### 7.2 Evidence required to satisfy the contribution goal
+### 7.3 Evidence required to satisfy the novelty-boundary goal
+### 7.4 Evidence delegated to experiment-planning
 
-## 10. Strategic Risks and Decision-Critical Uncertainties
-### 10.1 Highest-risk premise
-### 10.2 Highest-risk claim
-### 10.3 Highest-risk novelty boundary
-### 10.4 Highest-risk evidence gap
-### 10.5 How the paper strategy changes if each risk materializes
+## 8. Strategic Communication Posture
+### 8.1 Reader belief that must be established first
+### 8.2 Central abstraction that must become clear
+### 8.3 Story movement from problem to contribution
+### 8.4 Visual argument requirements delegated to figure-planning
+### 8.5 Content sequencing delegated to content-planning
 
-## 11. Delegation Boundaries for Downstream Skills
-### 11.1 Content-planning boundary
-### 11.2 Experiment-planning boundary
-### 11.3 Figure-planning boundary
-### 11.4 Method-planning boundary
-### 11.5 Review-planning boundary
+## 9. Strategic Risks
+### 9.1 Goal most likely to fail
+### 9.2 Goal most likely to be challenged by reviewers
+### 9.3 Goal most dependent on missing evidence
+### 9.4 How the blueprint changes if each fragile goal fails
 
-## 12. Strategic Defaults
-### 12.1 Recommended venue posture
-### 12.2 Recommended contribution posture
-### 12.3 Recommended evidence posture
-### 12.4 Recommended narrative posture
-### 12.5 Conditions that would change these defaults
+## 10. Delegation Interfaces for Downstream Skills
+### 10.1 Content-planning interface
+### 10.2 Experiment-planning interface
+### 10.3 Figure-planning interface
+### 10.4 Method-planning interface
+### 10.5 Review-planning interface
 ```
 
 ### Step 5: Compile `paper_blueprint_explanation.<lang>.md`
@@ -320,37 +343,36 @@ Use this structure:
 Use this structure:
 
 ```markdown
-# Strategic Paper Blueprint Explanation: <Working Title>
+# Goal-Oriented Paper Blueprint Explanation: <Working Title>
 
 ## 0. Confirmed User Context
 
-## Strategic Blueprint Overview
+## Blueprint Overview: What This Paper Is Trying to Achieve
 
-## Key Strategic Content and Validation Entry Points
+## Core Goal Set
 
-## Core Premises
+## Derivation from Core Goals to the Blueprint
 
-## Derivation from Premises to Strategy
+## Key Blueprint Content: Digest and Rationale
 
-## Item-by-Item Strategic Validation
+## How the Goals Support Each Other
 
-## What Is Delegated to Later Specialized Planning
-
-## Strategic Defaults and Change Conditions
-
-## Fragile Strategic Chains
+## Fragile Goal Chains
 
 ## Remaining Strategic Questions for User Confirmation
+
+## What Is Delegated to Later Specialized Planning
 ```
 
-For each important strategic item, first restate the content in the user's language, then explain:
+For each important goal or goal-derived item, first restate the content in the user's language, then explain:
 
-1. which premise motivates it
-2. how it follows from the premise
-3. how it constrains downstream planning
-4. what strategic question the user should inspect
+1. which goal motivates it
+2. how it helps the paper achieve that goal
+3. how it connects to other goal-derived arrangements
+4. how it constrains downstream planning
+5. what strategic question the user should inspect
 
-User validation questions should stay strategic: venue posture, problem premise, contribution contract, claim strength, novelty boundary, evidence posture, scope boundary, and delegation boundary.
+User validation questions should stay strategic: top-level paper goal, venue posture, contribution goal, claim strength, novelty boundary, evidence posture, scope-control goal, and delegation interface.
 
 Before outputting these questions, apply the confirmed context coverage filter. Questions already answered by the confirmed user context should disappear; partially answered questions should be narrowed; tactical questions should become downstream planning boundaries. If no unresolved strategic question remains, say that the current confirmed context covers the strategic decisions and that remaining uncertainty belongs to later specialized planning.
 
@@ -363,9 +385,9 @@ Use this prompt shape when live evidence is needed:
 ```text
 Tool: academic_army_mcp_tools.deepresearch
 
-You are supporting a strategic paper-blueprint generator.
+You are supporting a goal-oriented strategic paper-blueprint generator.
 
-Return paper-relevant evidence for defining the upstream strategic blueprint.
+Return paper-relevant evidence for defining the upstream goal-oriented strategic blueprint.
 
 Research brief:
 [RESEARCH_BRIEF]
@@ -375,8 +397,8 @@ Target venue:
 
 Return four sections:
 
-1. Venue posture evidence
-   Summarize current venue expectations, contribution posture, evidence posture, and recent accepted-paper storytelling patterns.
+1. Venue and goal evidence
+   Summarize current venue expectations, likely paper goals, contribution posture, evidence posture, and recent accepted-paper storytelling patterns.
 
 2. Technical and literature boundary evidence
    Summarize closest work clusters, solved problems, differentiation posture, comparison posture, and overclaim boundaries.
@@ -385,9 +407,9 @@ Return four sections:
    Summarize recent storytelling patterns and canonical technical/evidence patterns that affect strategic positioning.
 
 4. Reviewer-context evidence
-   Summarize strategic pressure on novelty, evidence posture, comparison posture, scope, and claims.
+   Summarize strategic pressure on goals, novelty, evidence posture, comparison posture, scope, and claims.
 
-For each source, include title, venue/year when available, source link, relevance to the proposed paper, and the lesson for strategic blueprint design.
+For each source, include title, venue/year when available, source link, relevance to the proposed paper, and the lesson for goal-oriented strategic blueprint design.
 
 Use concise evidence-facing prose.
 ```
@@ -403,13 +425,13 @@ If `academic_army_mcp_tools.deepresearch` is unavailable, proceed with user-prov
 Before finalizing `paper_blueprint.md`, check that:
 
 - the file reads as a Strategic Paper Blueprint
-- the first section identifies the paper object, venue posture, paper type, and current input state in concise specification form
-- the central research bet, contribution contract, claim strategy, novelty boundary, and scope boundary are clear
+- the first section identifies the research idea, venue posture, paper type, research object, and current input state
+- top-level paper goal, goal decomposition, goal cards, and goal dependency map are explicit
+- goal cards contain goal statement, rationale, role, success condition, derived constraints, delegated details, and revision implication
+- claim posture, evidence posture, communication posture, risks, and delegation interfaces are derived from goals
 - evidence posture is strategic rather than a concrete experiment protocol
 - comparison posture is strategic rather than a fixed baseline list
-- narrative and visual strategy define requirements rather than detailed section or figure plans
-- delegation boundaries state which tactical choices later skills will decide
-- strategic defaults replace tactical option questionnaires
+- communication posture defines requirements rather than detailed section or figure plans
 - every included detail would change the paper's strategic identity if altered
 
 Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
@@ -419,10 +441,11 @@ Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 - confirmed user context records only information explicitly provided by the user
 - working assumptions are separated from confirmed user context when assumptions are needed
 - confirmed context is used to filter remaining strategic questions
-- important strategic items are restated before they are explained
+- important goals and goal-derived items are restated before they are explained
+- the explanation is organized around core goals and fragile goal chains
 - remaining validation questions ask only unresolved strategy, not already confirmed context or tactical choices
 - tactical topics are discussed as delegated planning areas with strategic constraints
-- the explanation helps the user locate disagreement at the premise, derivation, or strategic-default level
+- the explanation helps the user locate disagreement at the goal, derivation, or delegation-interface level
 
 When writing a machine-readable summary for validation, use `assets/blueprint_schema.yaml` and optionally run:
 

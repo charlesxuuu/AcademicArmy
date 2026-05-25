@@ -17,9 +17,10 @@ paper_blueprint_summary:
     working_assumptions: [string]
   title: string
   paper_identity:
-    research_object: string
+    research_idea: string
     target_venue_posture: string
     paper_type: string
+    research_object: string
     current_input_state: string
   exemplar_analysis:
     storytelling_exemplars:
@@ -44,98 +45,125 @@ paper_blueprint_summary:
         source: string
         strategic_evidence_lesson: string
         verification_status: verified_or_tentative_or_needs_verification
-  core_strategy_premises:
-    venue_premise: string
-    problem_premise: string
-    contribution_premise: string
-    novelty_premise: string
-    evidence_premise: string
-    scope_premise: string
-  central_research_bet:
-    one_sentence_thesis: string
-    acceptance_critical_bet: string
-    downgrade_condition: string
-  contribution_contract:
-    primary_contribution: string
-    secondary_contribution_roles: [string]
-    non_contributions_and_boundaries: [string]
-  claim_strategy:
-    - title: string
-      claim_statement: string
-      strategic_role: acceptance_critical_or_mechanism_or_scope_or_supporting_or_deferred
-      evidence_posture: string
+  top_level_paper_goal:
+    acceptance_goal: string
+    central_research_bet: string
+    strategic_success_condition: string
+    strategic_downgrade_condition: string
+  goal_decomposition:
+    positioning_goal: string
+    problem_framing_goal: string
+    contribution_goal: string
+    novelty_boundary_goal: string
+    evidence_goal: string
+    communication_goal: string
+    scope_control_goal: string
+    downstream_planning_goal: string
+  goal_cards:
+    - goal_name: string
+      goal_statement: string
+      why_this_goal_matters: string
+      strategic_role: acceptance_or_positioning_or_contribution_or_novelty_or_evidence_or_scope_or_communication_or_downstream_planning
+      success_condition: string
+      derived_constraints: [string]
+      delegated_details: [string]
+      failure_or_revision_implication: string
+  goal_dependency_map:
+    supports_acceptance_goal: [string]
+    protects_main_contribution: [string]
+    protects_novelty_boundary: [string]
+    determines_evidence_posture: [string]
+    determines_communication_posture: [string]
+    downstream_operationalization: [string]
+    fragile_goals: [string]
+  strategic_claim_posture:
+    acceptance_goal_claim:
+      generating_goal: string
+      claim_posture: string
+      required_evidence_posture: string
       scope_boundary: string
       downgrade_condition: string
-  novelty_and_comparison_strategy:
-    closest_work_clusters: [string]
-    differentiation_posture: string
-    comparison_posture: string
-    overclaim_boundary: string
-  method_abstraction_strategy:
-    core_abstraction: string
-    mechanism_class: string
-    strategic_decision_space: string
-    constraints_and_invariants: [string]
-    delegated_tactical_method_details: [string]
-  evidence_posture:
-    - title: string
-      strategic_claim_supported: string
-      high_level_evidence_type: string
+    contribution_goal_claim:
+      generating_goal: string
+      claim_posture: string
+      required_evidence_posture: string
+      scope_boundary: string
+      downgrade_condition: string
+    evidence_goal_claim:
+      generating_goal: string
+      claim_posture: string
+      required_evidence_posture: string
+      scope_boundary: string
+      downgrade_condition: string
+    deferred_claims:
+      - generating_goal: string
+        deferred_claim: string
+        reason_deferred: string
+  strategic_evidence_posture:
+    top_level_goal_evidence:
+      goal_served: string
+      required_evidence_type: string
       comparison_posture: string
       outcome_family: string
       minimum_standard_for_strategic_viability: string
-      delegated_tactical_choices: [string]
-      downgrade_implication: string
-  narrative_and_visual_strategy:
-    opening_tension: string
-    central_abstraction_to_foreground: string
-    story_arc: [string]
-    visual_argument_requirements: [string]
-    delegated_content_and_figure_choices: [string]
-  strategic_risks_and_uncertainties:
-    highest_risk_premise: string
-    highest_risk_claim: string
-    highest_risk_novelty_boundary: string
-    highest_risk_evidence_gap: string
-    strategy_change_if_risks_materialize: [string]
-  delegation_boundaries:
-    content_planning:
-      strategic_boundary: string
+      delegated_experiment_planning: [string]
+    contribution_goal_evidence:
+      goal_served: string
+      required_evidence_type: string
+      comparison_posture: string
+      outcome_family: string
+      minimum_standard_for_strategic_viability: string
+      delegated_experiment_planning: [string]
+    novelty_boundary_evidence:
+      goal_served: string
+      required_evidence_type: string
+      comparison_posture: string
+      outcome_family: string
+      minimum_standard_for_strategic_viability: string
+      delegated_experiment_planning: [string]
+    delegated_experiment_planning: [string]
+  strategic_communication_posture:
+    first_reader_belief: string
+    central_abstraction: string
+    story_movement: [string]
+    delegated_figure_planning: [string]
+    delegated_content_planning: [string]
+  strategic_risks:
+    goal_most_likely_to_fail: string
+    goal_most_likely_to_be_challenged: string
+    goal_most_dependent_on_missing_evidence: string
+    blueprint_changes_if_risks_materialize: [string]
+  delegation_interfaces:
+    content_planning_interface:
+      goals_to_operationalize: [string]
       constraints_to_preserve: [string]
       tactical_choices_delegated: [string]
-    experiment_planning:
-      strategic_boundary: string
+    experiment_planning_interface:
+      goals_to_operationalize: [string]
       constraints_to_preserve: [string]
       tactical_choices_delegated: [string]
-    figure_planning:
-      strategic_boundary: string
+    figure_planning_interface:
+      goals_to_operationalize: [string]
       constraints_to_preserve: [string]
       tactical_choices_delegated: [string]
-    method_planning:
-      strategic_boundary: string
+    method_planning_interface:
+      goals_to_operationalize: [string]
       constraints_to_preserve: [string]
       tactical_choices_delegated: [string]
-    review_planning:
-      strategic_boundary: string
+    review_planning_interface:
+      goals_to_operationalize: [string]
       constraints_to_preserve: [string]
       tactical_choices_delegated: [string]
-  strategic_defaults:
-    - posture_area: venue_or_contribution_or_evidence_or_narrative_or_method_or_scope
-      recommended_default: string
-      why_matches_premises: string
-      evidence_that_would_change_it: string
-      downstream_skill_to_explore_tactical_alternatives: string
   design_rationale:
-    strategic_overview:
-      paper_positioning: string
+    goal_oriented_overview:
+      top_level_paper_goal: string
       central_research_bet: string
-      primary_contribution: string
-      acceptance_critical_claim: string
-      evidence_posture_summary: string
-      delegation_summary: string
-      highest_strategic_risk: string
+      main_contribution_goal: string
+      evidence_goal: string
+      communication_goal: string
+      largest_strategic_risk: string
     validation_overview:
-      - key_strategic_content: string
+      - key_goal_or_arrangement: string
         why_it_matters: string
         main_user_validation_question: string
     confirmed_context_coverage:
@@ -146,34 +174,42 @@ paper_blueprint_summary:
       - question: string
         why_not_covered_by_confirmed_context: string
         strategy_change_if_answer_changes: string
-    item_rationales:
-      - semantic_item_name: string
-        strategic_content_digest: string
-        premise_source: string
-        derivation: string
+    goal_rationales:
+      - goal_name: string
+        goal_content_digest: string
+        design_idea: string
+        relationship_to_other_goals: string
         downstream_constraint: string
+        user_validation_point: string
+    goal_derived_arrangements:
+      - arrangement_name: string
+        content_digest: string
+        generating_goal: string
+        derivation: string
         user_validation_point: string
     delegated_detail_rationale:
       - detail_area: content_planning_or_experiment_planning_or_figure_planning_or_method_planning_or_review_planning
         what_is_delegated: [string]
-        strategic_constraint: string
+        goal_constraint: string
         reason_for_delegation: string
-    fragile_strategic_chains:
-      - starting_premise: string
-        derived_strategy: [string]
-        evidence_needed: string
+    fragile_goal_chains:
+      - starting_goal: string
+        derived_arrangement: [string]
+        evidence_or_planning_dependency: string
         likely_failure_point: string
-        strategy_revision_if_chain_fails: string
+        blueprint_revision_if_chain_fails: string
     strategic_disagreement_diagnosis:
       - disagreement_type: string
-        upstream_premise_to_inspect: string
-        affected_strategy_objects: [string]
+        upstream_goal_to_inspect: string
+        affected_goal_or_arrangement: [string]
         likely_revision_direction: string
   explanation_style_checks:
     strategic_validation_companion: boolean
-    includes_strategic_content_digest: boolean
+    goal_oriented_structure: boolean
+    goal_cards_are_core: boolean
+    includes_goal_content_digest: boolean
     uses_semantic_anchors: boolean
-    explains_delegation_boundaries: boolean
+    explains_delegation_interfaces: boolean
     applies_confirmed_context_filter: boolean
     outputs_only_remaining_strategic_questions: boolean
     avoids_tactical_questionnaire: boolean
