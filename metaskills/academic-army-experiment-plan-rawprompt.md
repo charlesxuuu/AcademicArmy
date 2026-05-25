@@ -1,6 +1,6 @@
 # 纯手打的prompts
 
-我正在编写一套基于codex的autoresearch工具，目前正在编写一个为论文制定实验方案的academic-army-experiment-plan skill。请看一下SIGGRAPH/CVPR/SIGCOMM/NSDI等顶级会议上的高引论文，分析一下这些高引论文为何优秀，分析一个优秀的experiment plan应该重点明确哪些方面的内容，并在网上找找相关的autoresearch工具，分析他们是怎么写的，分析一个优秀的experiment plan skill应该怎么写最好。请帮我总结一下，明确我需要一个什么样的skill，这个skill设计时需要注意哪些要点，总结一下这个skill背后的逻辑，可以作为prompt拿去给写skill的agent编写这个skill： 
+我正在编写一套基于codex的autoresearch工具，目前正在编写一个为论文制定实验方案的academic-army-experiment-plan skill。请看一下SIGGRAPH/CVPR/SIGCOMM/NSDI等顶级会议上的高引论文，分析一下这些高引论文为何优秀，分析一个优秀的experiment plan应该重点明确哪些方面的内容，并在网上找找相关的autoresearch工具，分析他们是怎么写的，分析一个优秀的experiment plan skill应该怎么写最好。请帮我总结一下，对这些问题进一步详细分析，明确我需要一个什么样的skill，这个skill设计时需要注意哪些要点，总结一下这个skill背后的逻辑，形成一份skill详细设计文档markdown用于之后据此编写这个skill： 
 
 我已经有了一个deepresearch的mcp工具academic_army_mcp_tools.deepresearch（其实就是输入prompt通过openai API转发给gpt-5.5+web search的API）所以有些可以现场搜索得到的信息不需要保存在skill里。这样怎么设计一下更简洁？
 
@@ -19,7 +19,3 @@ experiment plan需要和story telling相匹配，在experiment plan中，有些e
 在experiment plan解释的开头记录一下用户已经明确了哪些东西（experiment plan里不需要加）。
 
 上网搜索一下AI生成文本中的defensive现象，在编写这个skill的时候不要过度defensive，要通过正向语言严格限制skill只能做什么，而不是加反向的限制条件限制skill不能做什么
-
-以下是对上述问题进一步的详细分析：
-
-将这些内容形成一份skill描述/详细介绍文档放在AcademicArmy/metaskills/academic-army-experiment-plan.md用于之后据此编写这个skill
