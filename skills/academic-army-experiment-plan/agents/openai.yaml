@@ -1,0 +1,11 @@
+interface:
+  display_name: "Academic Army Experiment Plan"
+  short_description: "Venue-calibrated empirical evidence plan"
+  default_prompt: "Create a venue-calibrated experiment plan and user-language audit explanation with $academic-army-experiment-plan."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "academic_army_mcp_tools"
+      description: "Provides academic_army_mcp_tools.deepresearch for live venue, recent-literature, baseline, dataset, metric, benchmark, exemplar-paper, artifact, and reviewer-context evidence."
+      transport: "stdio"
