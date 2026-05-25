@@ -1,513 +1,684 @@
-# Academic Army Architect Metaskill: Paper Blueprint Skill Design Brief
+# Academic Army Architect Skill 写作经验与设计说明
 
-这份文档总结 `academic-army-architect` / `paper-blueprint` skill 的设计经验，可直接作为 prompt 交给另一个编写 skill 的 agent，用来创建或重构一个高质量的论文蓝图 skill。
+这份文档总结 `academic-army-architect` / `paper-blueprint` skill 的设计经验。它可以作为 prompt 交给负责写 skill 的 agent，用来从零设计或继续完善一个目标导向的论文战略蓝图 skill。
 
-## 1. 目标需求
+## 1. 用户真正需要的 skill
 
-需要的 skill 不是普通论文大纲生成器，也不是自动写论文工具。它的任务是在正式写论文前，把一个研究 idea、草稿、代码库、实验结果、目标 venue 或相关材料，转化成一份可实施的论文方案，并生成一份供用户审核该方案是否合理的解释文件。
+用户需要的不是普通“论文大纲生成器”，也不是“实验规划器”“绘图规划器”或“论文内容编排器”。
 
-最终产物必须是两个 Markdown 文件：
+用户需要的是一个：
 
-```text
-paper_blueprint.md
-paper_blueprint_explanation.<lang>.md
-```
+> 目标导向的论文战略蓝图生成 skill。
 
-其中：
+这个 skill 的核心任务是：
 
-- `paper_blueprint.md` 是英文论文蓝图，主要给后续 AI agent 使用。它是客观、结构化、可执行的论文方案规格。
-- `paper_blueprint_explanation.<lang>.md` 使用用户对话语言，主要给用户审核蓝图是否合理。它是自包含的蓝图审核说明，不是普通摘要，也不是 skill 运行说明。
+1. 接收一个 research idea、草稿、代码、实验结果、目标 venue 或候选 venue。
+2. 使用指定的 live research MCP 工具获取当前 venue、相关工作、近期写作风格、技术/评估 exemplar 和 reviewer expectation。
+3. 把 research idea 分解成论文层面的战略目标。
+4. 从这些目标推导出 claim posture、novelty posture、evidence posture、narrative posture、visual posture、scope boundary、strategic risks 和 downstream planning interfaces。
+5. 生成两个 Markdown 文件：
+   - `paper_blueprint.md`
+   - `paper_blueprint_explanation.<lang>.md`
 
 一句话定义：
 
-```text
-用 live research evidence 生成一份英文、AI 可执行的论文方案；
-再用用户语言生成一份可独立阅读的蓝图审核说明，
-让用户看懂每个蓝图细节如何从核心论文出发点推导出来，
-并能判断哪里合理、哪里需要改。
-```
+> `academic-army-architect` 是一个 goal-oriented strategic paper blueprint skill。它把 research idea 转化为论文目标体系和后续专项规划的战略接口，而不是提前决定具体实验、图表、算法、baseline 或章节安排。
 
-## 2. 这个 Skill 背后的核心判断
+## 2. 两个输出文件的职责
 
-优秀顶会论文通常不是简单展示一个方法或一个指标提升。它们通常具备以下特征：
+### 2.1 `paper_blueprint.md`
 
-1. 重新定义了社区正在卡住的问题，而不是只说“我们做了一个系统/模型”。
-2. 有一个可传播、可复用的核心贡献，例如 abstraction、mechanism、benchmark framing、evaluation perspective、optimization formulation 或 representation。
-3. 改变了一个关键 tradeoff，例如 quality vs latency、accuracy vs speed、scalability vs simplicity、bandwidth vs visual quality、deadline vs utility、generality vs specialization。
-4. 每个强 claim 都绑定证据。算法论文需要 benchmark、baseline、ablation、failure analysis；系统论文需要 workload、prototype、scalability、failure behavior、deployment realism；图形或视觉论文需要视觉质量、速度、消融、定性结果和可复现性。
-5. 相关工作不是综述堆砌，而是建立 novelty boundary：哪些必须引用，哪些必须比较，哪些差异不能夸大。
-6. 图表不是结果堆叠，而是论文叙事的一部分。优秀论文通常能从 figure/table storyboard 反推出整体结构。
-7. 论文要让审稿人快速判断：如果这篇论文成立，领域中的哪个抽象、方法、系统能力或评估方式会被改变。
+`paper_blueprint.md` 是英文文件，面向后续 AI planning skills。
 
-因此，这个 skill 的核心逻辑是：
+它应该是：
 
-```text
-live evidence + paper strategy premises
-  -> implementable paper blueprint
-  -> user-facing validation explanation
-```
+- Strategic Paper Blueprint
+- Core Paper Specification
+- downstream planning interface
+- goal-oriented paper strategy contract
 
-skill 本身不要存大量静态会议知识、论文案例、最新 SOTA、CFP 或 related work 数据库。动态信息应该通过 `deepresearch` MCP 现场获取。skill 应保存的是稳定工作流、输出契约、证据投影规则和质量标准。
+它应该定义：
 
-## 3. DeepResearch MCP 的角色
+- paper identity
+- top-level paper goal
+- central research bet
+- goal decomposition
+- contribution goals
+- claim posture
+- novelty posture
+- evidence posture
+- communication / visual posture
+- scope boundaries
+- strategic risks
+- delegation boundaries for downstream skills
 
-系统已有 `deepresearch` MCP 工具，可以把 prompt 转发给 GPT-5.5 + web search。这个 skill 应把它作为 live evidence retriever，而不是让它直接写最终蓝图。
+它不应该承担：
 
-应使用 deepresearch 获取：
+- 具体实验矩阵规划
+- 具体 baseline 选择
+- 具体 dataset / trace / workload 选择
+- 具体 metric 公式设计
+- 具体图表数量、layout、caption 设计
+- 具体章节顺序或段落结构
+- 具体算法路线选择
+- 具体执行步骤、脚本、run order
+- 面向用户的解释、提醒或建议
 
-- 当前目标 venue 的 CFP、review criteria、author instructions、artifact/reproducibility expectations。
-- 目标 venue 或相邻 venue 的近期强论文，用于分析当前 storytelling、Introduction、Figure 1、contribution framing、limitation style 和 evidence sequencing。
-- 当前研究领域的经典与近期技术论文，用于分析 method lineage、datasets、benchmarks、baselines、metrics 和 evaluation norms。
-- nearest-neighbor related work，用于判断 novelty boundary、required baselines 和 reviewer comparison points。
-- 可能的 reviewer objections，用于设计 review-risk mitigation 和 evidence gaps。
+判断粒度的原则：
 
-deepresearch prompt 应要求返回 paper-relevant evidence，例如：
+> 如果某项内容改变后会改变论文定位、主贡献、核心 claim、novelty boundary 或 evidence posture，它属于蓝图。  
+> 如果某项内容只是“怎么具体实现这个战略”，它应该交给后续专项 planning skill。
 
-```text
-1. Venue and storytelling evidence
-2. Technical lineage evidence
-3. Related-work boundary evidence
-4. Evaluation and reviewer expectation evidence
-```
+### 2.2 `paper_blueprint_explanation.<lang>.md`
 
-deepresearch 的输出只是证据输入。skill 负责把证据编译成 `paper_blueprint.md` 和 `paper_blueprint_explanation.<lang>.md`。
+`paper_blueprint_explanation.<lang>.md` 使用用户对话语言，面向用户。
 
-## 4. Exemplar 论文的时效规则
+它不是普通摘要，也不是 skill 运行说明。它是：
 
-不要把所有“高引论文”混成一个列表。不同用途的论文样例有不同筛选标准。
+> 用户审核论文蓝图是否合理的 validation companion。
 
-### 4.1 Storytelling Exemplars
+它需要帮助用户回答：
 
-用途：分析当前目标 venue 或相邻 venue 的叙事方式、写作风格、Introduction 结构、Figure 1 / teaser 设计、contribution framing、limitation 写法和 evidence sequencing。
+- skill 是否正确理解了用户已经明确的信息？
+- 这份论文蓝图的核心目标是什么？
+- 每个目标为什么存在？
+- 每个蓝图安排如何从这些目标推导出来？
+- 目标之间如何相互支撑？
+- 如果用户觉得某个安排不合理，应该检查哪个上游目标、哪个推导环节，还是某个后续战术细节？
 
-时效要求：
+解释文件必须先让用户看到“它正在解释什么”，再解释“为什么”。
 
-- 优先最近 2-3 年，或目标 venue 最近 3 个 cycle。
-- 如果不足，可以扩展到最近 5 年，并把它视为 evidence coverage limitation。
-- 不主要依赖 citation count，因为近期论文尚未充分积累引用。
-
-优先来源：
-
-- target venue accepted papers
-- best paper / honorable mention / oral / spotlight
-- 近期被广泛讨论或频繁作为 framing/baseline 的论文
-- 相邻 venue 中与当前任务非常接近的近期论文
-
-### 4.2 Technical / Method / Dataset / Evaluation Exemplars
-
-用途：分析技术谱系、方法边界、benchmark、dataset、metric、baseline、ablation 和 evaluation norm。
-
-这类论文可以更老：
-
-- foundational papers
-- test-of-time papers
-- 标准 benchmark/dataset 论文
-- 长期作为 baseline 的论文
-- 经典系统、算法、表示、优化或评估范式论文
-
-如果当前领域的 evaluation norm 已经变化，也要加入近期 nearest-neighbor papers。
-
-### 4.3 Nearest-Neighbor Exemplars
-
-用途：判断当前工作的 novelty risk、baseline requirement 和 reviewer comparison point。
-
-这类论文不一定最高引，但必须和当前研究 idea 最接近。
-
-## 5. `paper_blueprint.md` 的设计
-
-### 5.1 文件定位
-
-`paper_blueprint.md` 是英文文件，主要给后续 AI agent 使用。它应该像一份可实施的论文方案规格，而不是面向用户的建议书、教程、反思记录或工具运行报告。
-
-它应客观描述：
-
-- 论文定位是什么
-- 核心出发点是什么
-- 主 thesis 是什么
-- 贡献是什么
-- claim 是什么
-- 每个 claim 需要什么证据
-- 相关工作边界在哪里
-- 方法如何拆解
-- 实验如何设计
-- 图表如何服务故事
-- 论文结构如何展开
-- 审稿风险如何缓解
-- artifact 和可复现材料需要哪些
-- 哪些证据还缺
-- 研究执行顺序是什么
-
-### 5.2 内容投影规则
-
-中间分析中的自然语言判断要投影成论文方案对象：
-
-| 中间信息 | 蓝图中的落点 |
-|---|---|
-| venue expectations | scope and evidence standards |
-| storytelling patterns | manuscript and figure specifications |
-| technical lineage | method positioning and related-work differentiation |
-| evaluation norms | datasets, workloads, baselines, metrics, ablations |
-| uncertainty | evidence gaps and dependencies |
-| reviewer concerns | review-risk mitigation plan |
-| reproducibility expectations | artifact deliverables |
-| missing experiments | evaluation specification or research execution steps |
-| next steps | research execution plan |
-
-例如：
-
-- “数据集多样性还没验证”应写成 evidence gap / dependency。
-- “审稿人可能认为 baseline 太弱”应写成 review-risk mitigation。
-- “不要假设 reviewers 会跑代码”不应作为提醒出现；如果相关，就转成 reproducibility-relevant assets。
-
-### 5.3 推荐结构
-
-`paper_blueprint.md` 推荐结构：
-
-```markdown
-# Paper Blueprint: <Working Title>
-
-## 1. Metadata and Input State
-
-## 2. Paper Strategy Premises
-
-### 2.1 Target-venue premise
-### 2.2 Problem premise
-### 2.3 Contribution premise
-### 2.4 Novelty premise
-### 2.5 Evidence premise
-### 2.6 Storytelling premise
-### 2.7 Execution premise
-
-## 3. Venue and Scope Specification
-
-## 4. Paper Thesis and Contribution Shape
-
-## 5. Claim and Evidence Plan
-
-## 6. Related-Work Differentiation Plan
-
-## 7. Method Specification
-
-## 8. Evaluation Specification
-
-## 9. Figure and Table Specification
-
-## 10. Manuscript Structure Specification
-
-## 11. Review-Risk Mitigation Plan
-
-## 12. Artifact and Reproducibility Specification
-
-## 13. Evidence Gaps and Dependencies
-
-## 14. Research Execution Plan
-```
-
-`Paper Strategy Premises` 是关键部分。它应客观写出论文方案的核心出发点，后续所有 claim、method、evaluation、figures、risks、evidence gaps 和 execution plan 都从这些 premises 推导出来。
-
-### 5.4 标题与对象定位
-
-正式蓝图可以使用 Markdown 自然章节编号，但不使用人工对象编号，例如：
-
-```text
-C1, C2
-E1, E2
-F1, F2
-R1, R2
-B1, B2
-K1, K2
-```
-
-每个重要项目使用自解释的描述性标题。标题应同时说明项目角色和具体内容。
-
-好标题示例：
-
-```markdown
-### 5.1 Primary claim: Reference-aware adaptation improves visible QoE under dynamic bandwidth and viewport uncertainty
-
-### 8.2 Main-result experiment: Compare RefABR with CAGS, tuned CAGS, Gaussian-only ABR, fixed-reference strategies, and oracle variants under dynamic network traces
-
-### 11.1 Risk: The improvement may look like CAGS parameter tuning rather than a new ABR abstraction
-
-### 13.3 Evidence gap: The reference-versus-Gaussian utility crossover has not been measured
-```
-
-## 6. `paper_blueprint_explanation.<lang>.md` 的设计
-
-### 6.1 文件定位
-
-`paper_blueprint_explanation.<lang>.md` 使用用户对话语言。它的主要功能是帮助用户确认 `paper_blueprint.md` 中的项目是否合理。
-
-它不是：
-
-- 普通摘要
-- 工具运行日志
-- skill 工作流说明
-- “为什么生成两个文件”的解释
-- deepresearch / MCP 调用过程说明
-- 下游 agent 使用说明
-
-它是一个 self-contained validation companion。用户不应频繁打开 `paper_blueprint.md` 对照才能理解它。
-
-### 6.2 核心写法：Digest + Rationale
-
-解释文件对每个重要蓝图项目都应先复述内容，再解释来源和关系。
-
-每个重要项目使用以下结构：
+每个重要项目的解释模式应是：
 
 ```text
 蓝图内容概括
-  -> 该项目在正式蓝图中具体写了什么
-
-为什么这样设计
-  -> 它从哪些核心出发点推导出来
-
-它和其他部分的关系
-  -> 它支持、约束或依赖哪些其他蓝图项目
-
-用户审核点
-  -> 如果用户觉得它不合理，应检查哪个上游 premise、推导环节或执行细节
+→ 目标背后的思想
+→ 它如何服务顶层论文目标
+→ 它如何牵引其他目标或安排
+→ 用户审核点
 ```
 
-示例：
+解释文件开头必须包含：
 
 ```markdown
-### 主 claim：reference-aware adaptation 同时改善可见质量和 deadline reliability
-
-**蓝图内容概括。**  
-蓝图把主 claim 写成：RefABR 在动态网络、视角预测误差和 client compute 约束下，通过联合调度 Gaussian enhancement layer 与 reference image，提升 visible quality，同时降低 deadline miss 和 motion-to-photon latency。
-
-**为什么这样设计。**  
-这条 claim 来自两个核心出发点：论文应被定位为 INFOCOM 风格的网络系统论文；reference image 在这里不是固定 restoration 辅助输入，而是一种有带宽、视角、deadline 和计算成本的 adaptive streaming object。因此主 claim 必须同时包含质量和实时性，不能只写成 PSNR/SSIM/LPIPS 提升。
-
-**它和其他部分的关系。**  
-这个主 claim 牵引主实验、主结果图、baseline 设计和主要审稿风险。主实验需要覆盖动态网络 trace、视角误差和 client compute；主结果图需要同时展示可见质量、deadline miss、latency 和 bandwidth utilization；baseline 风险则主要保护这条 claim，避免审稿人认为收益只是 CAGS 参数调优。
-
-**用户审核点。**  
-如果用户觉得这条主 claim 不合理，最应该检查的是目标 venue 判断和贡献判断：RefABR 是否确实应该作为 deadline-aware reference adaptation 的网络系统论文，而不是 CAGS 的 graphics/compression extension。
+## 0. 用户已明确的信息
 ```
 
-### 6.3 语义引用方式
+这一节只记录用户显式提供的输入、约束、偏好和 pipeline 设定。它不记录模型推断、不记录 deepsearch 发现、不记录蓝图决策、不记录工具过程。正式蓝图 `paper_blueprint.md` 不加这一节。
 
-解释文件应使用标题、译名、功能近义词来指代蓝图项目，而不是依赖章节号或人工编号。
+## 3. Skill 背后的设计逻辑
 
-优先使用：
-
-- 主 claim
-- 主实验
-- 主结果图
-- baseline 风险
-- reference-versus-Gaussian utility sweep
-- CAGS reproduction evidence gap
-- per-frame instrumentation execution step
-- opening scheduling-decision figure
-
-可在第一次提到时引用正式蓝图标题，例如：
+这个 skill 的逻辑可以概括为：
 
 ```text
-主 claim（正式蓝图中标题为 “Primary claim: ...”）……
+research idea
+→ user-confirmed context
+→ academic_army_mcp_tools.deepsearch live evidence
+→ top-level paper goal
+→ goal decomposition
+→ goal dependency map
+→ strategic claim posture
+→ novelty posture
+→ evidence posture
+→ narrative / visual posture
+→ strategic risks
+→ downstream planning interfaces
+→ user-language validation explanation
 ```
 
-之后使用自然名称，例如：
+它背后的几个关键转变：
+
+1. 从“论文大纲生成”转向“论文战略规格生成”。
+2. 从“实验、图表、章节都提前规划”转向“定义后续 planning skill 必须满足的目标和约束”。
+3. 从“蓝图解释是说明文字”转向“蓝图解释是用户审核界面”。
+4. 从“高引论文模式分析”转向“按用途分层使用 exemplar”：近期论文分析 storytelling，经典和近期论文分析技术与评估 lineage。
+5. 从“反向禁止清单驱动”转向“正向产物契约驱动”。
+6. 从“编号式追踪”转向“语义锚点 + 自包含解释”。
+7. 从“泛称 deepresearch”转向“精确指定 `academic_army_mcp_tools.deepsearch`”。
+
+## 4. Live research 工具身份
+
+skill 必须明确使用唯一 live research MCP 工具：
 
 ```text
-这个主 claim
-reference-aware adaptation 这个判断
-主实验
-baseline 风险
+academic_army_mcp_tools.deepsearch
 ```
 
-### 6.4 推荐结构
-
-`paper_blueprint_explanation.<lang>.md` 推荐结构：
+在 `SKILL.md` 中应写清楚：
 
 ```markdown
-# Paper Blueprint Explanation: <Working Title>
+## Required Research MCP
 
-## 1. 论文蓝图速览
+This skill's live research dependency is the `deepsearch` tool from the `academic_army_mcp_tools` MCP server.
 
-用用户语言概括正式蓝图的论文定位、中心 thesis、主贡献、主 claim、方法方向、评估主线、主要风险、证据缺口和研究推进顺序。
+Use the exact tool identity:
 
-## 2. 蓝图重点内容与审核入口
+- server: `academic_army_mcp_tools`
+- tool: `deepsearch`
+- canonical Codex MCP tool name, when exposed: `mcp__academic_army_mcp_tools__deepsearch`
 
-| 蓝图重点内容 | 为什么重要 | 用户主要审核点 |
-|---|---|---|
-| ... | ... | ... |
+All mentions of `deepsearch` in this skill refer to `academic_army_mcp_tools.deepsearch`.
 
-## 3. 核心出发点
+Use `academic_army_mcp_tools.deepsearch` for current venue evidence, related-work evidence, exemplar-paper evidence, evaluation-expectation evidence, and reviewer-context evidence.
 
-解释 target venue 判断、problem framing 判断、contribution framing 判断、novelty boundary 判断、evidence standard 判断、storytelling strategy 判断和 execution strategy 判断。
+Evidence from built-in web search, browser tools, documentation search, or other MCP servers is supplemental and does not satisfy this skill's required live research dependency.
 
-## 4. 从核心出发点到论文方案的总体推导
-
-用自然语言串起：目标 venue -> 论文类型 -> 中心 thesis -> 主 claims -> related-work boundary -> method -> evaluation -> figures -> risks -> evidence gaps -> research execution order。
-
-## 5. 论文蓝图逐项解释
-
-每个重要项目都要先复述蓝图内容，再解释为什么这样设计、它和其他部分的关系、用户应如何审核。
-
-推荐覆盖：
-
-- 论文定位与范围
-- 中心 thesis 与贡献形态
-- 主 claim
-- 机制 claim
-- 泛化或范围 claim
-- 相关工作边界
-- 方法设计
-- 主实验
-- 机制消融或 utility analysis
-- 鲁棒性或压力测试
-- 开场图与主结果图
-- 论文结构
-- 审稿风险
-- 证据缺口
-- 研究推进顺序
-
-## 6. 关键设计取舍的推导
-
-解释 venue 定位、贡献 framing、claim scope、baseline 选择、evaluation 顺序、figure strategy 和 evidence gaps 的关键取舍。
-
-## 7. 当前最容易出错的推导链
-
-每条写成：核心出发点 -> 蓝图设计 -> 所需证据 -> 可能失败点 -> 如果失败如何改蓝图。
-
-## 8. 用户审核时最应该确认的问题
-
-列出用户最需要判断的 paper-level questions。
+The final Markdown files should contain the paper-level conclusions derived from this evidence, not tool-call logs or MCP implementation details.
 ```
 
-## 7. 正向 Instruction 风格
+这样可以避免系统内同时存在多个 MCP、内置 web search 或文档搜索工具时误用工具。
 
-这个 skill 应尽量使用正向产物契约，而不是过度 defensive 的禁止清单。
+## 5. Exemplar evidence 策略
 
-优先写：
+skill 不应该把所有论文样例都混成“高引论文”。应该明确分成三类。
 
-- The blueprint contains ...
-- The explanation contains ...
-- Represent uncertainty as evidence gaps.
-- Represent reviewer concerns as review-risk mitigation.
-- Represent reproducibility expectations as artifact deliverables.
-- Use semantic headings and natural prose.
-- Explain each blueprint item as content digest + premise derivation + connection + validation point.
+### 5.1 Storytelling exemplars
 
-少写：
+用途：
 
-- Do not include ...
-- Do not mention ...
-- Avoid ...
-- Banned phrases ...
+- 分析当前目标 venue 或相邻 venue 的写作风格。
+- 分析 introduction、problem framing、contribution framing、Figure 1、evidence sequencing、limitation style。
 
-必要边界可以保留，但整体控制方式应是“定义应该输出什么”，而不是“列出不能输出什么”。
+规则：
 
-## 8. 最终质量标准
+- 必须偏新。
+- 优先最近 2-3 年或最近 3 个会议周期。
+- 如果样例不足，可以扩展到最近 5 年并标记原因。
+- 不以 citation count 作为主要信号，因为近期论文引用还没积累起来。
 
-### 8.1 `paper_blueprint.md`
+### 5.2 Technical exemplars
 
-应满足：
+用途：
 
-- 使用英文。
-- 是 objective paper-plan specification。
-- 包含 `Paper Strategy Premises`。
-- 使用自然 Markdown 章节编号和描述性标题。
-- 不使用人工对象编号。
-- 每个重要 claim 都有 required evidence、baselines、metrics、expected figure/table、failure condition、current evidence status。
-- 每个 experiment 都服务于具体 claim。
-- 每个 figure/table 都有明确 message 和 placement。
-- reviewer concerns 被转成 risk mitigation。
-- uncertainty 被转成 evidence gap / dependency。
-- next steps 被转成 research execution step。
+- 分析 method lineage、system abstraction、algorithmic pattern、representation、protocol。
 
-### 8.2 `paper_blueprint_explanation.<lang>.md`
+规则：
 
-应满足：
+- 可以包含经典高影响论文。
+- 也应包含近期 nearest-neighbor work，尤其当 novelty risk 较高时。
+- citation、adoption、baseline usage 和 conceptual reuse 都是有效信号。
 
-- 使用用户对话语言。
-- 是 standalone validation companion。
-- 开头有论文蓝图速览。
-- 有“蓝图重点内容与审核入口”。
-- 明确解释核心出发点。
-- 每个重要蓝图项目先复述内容，再解释原因、关联和用户审核点。
-- 使用语义标题或功能近义词指代蓝图项目。
-- 不依赖 section number 或人工编号链。
-- 不解释 skill、工具、MCP、deepresearch 调用过程、rate limit 或后续 agent 使用方式。
-- 用户读完后能判断某个不合理之处来自核心出发点错误、推导错误，还是具体执行细节错误。
+### 5.3 Evaluation exemplars
 
-## 9. 可直接交给写 Skill Agent 的 Prompt
+用途：
+
+- 分析 datasets、benchmarks、workloads、metrics、ablation、artifact expectation。
+
+规则：
+
+- 标准 dataset / benchmark 论文可以较老。
+- 如果评估规范已经变化，必须补近期 evaluation norms。
+- 输出应转化为 evidence posture，而不是具体实验计划。
+
+## 6. Strategic abstraction level
+
+skill 必须停在战略层。
+
+推荐写入 `SKILL.md`：
+
+```markdown
+## Strategic Abstraction Level
+
+The paper blueprint is a strategic core specification.
+
+It operates at:
+
+- Level 0: Paper identity
+- Level 1: Paper strategy
+- Level 2: Planning constraints
+
+The paper blueprint stops at Level 2.
+
+Later specialized skills handle:
+
+- Level 3: Tactical planning
+- Level 4: Execution planning
+```
+
+战略层可以定义：
+
+- paper goal
+- contribution goal
+- claim posture
+- novelty posture
+- evidence posture
+- comparison posture
+- narrative posture
+- visual argument requirement
+- scope boundary
+- strategic risk
+- delegation boundary
+
+战术层交给后续 skill：
+
+- exact experiments
+- exact datasets, traces, workloads
+- exact baselines
+- exact metrics
+- exact figure list and layout
+- exact manuscript section structure
+- exact algorithm variants
+- scripts and run order
+
+当模型想输出战术细节时，应压缩成战略形式：
+
+| Tactical impulse | Strategic form |
+|---|---|
+| Choose an algorithm family | Recommended method posture plus change condition |
+| List exact baselines | Comparison posture and credible comparison classes |
+| Pick datasets or traces | Data/workload posture and target setting |
+| Specify metric formulas | Outcome family and evidence standard |
+| Design figures | Visual argument requirement |
+| Outline sections | Narrative requirement |
+| Create task sequence | Strategic research priority or decision-critical uncertainty |
+
+## 7. `paper_blueprint.md` 推荐结构
+
+推荐把正式蓝图写成目标导向结构：
+
+```markdown
+# Goal-Oriented Strategic Paper Blueprint: <Working Title>
+
+## 1. Paper Identity
+
+### 1.1 Research idea
+### 1.2 Target venue posture
+### 1.3 Paper type
+### 1.4 Research object
+### 1.5 Current input state
+
+## 2. Top-Level Paper Goal
+
+### 2.1 Acceptance goal
+### 2.2 Central research bet
+### 2.3 Strategic success condition
+### 2.4 Strategic downgrade condition
+
+## 3. Goal Decomposition
+
+### 3.1 Positioning goal: <descriptive goal>
+### 3.2 Problem-framing goal: <descriptive goal>
+### 3.3 Contribution goal: <descriptive goal>
+### 3.4 Novelty-boundary goal: <descriptive goal>
+### 3.5 Evidence goal: <descriptive goal>
+### 3.6 Communication goal: <descriptive goal>
+### 3.7 Scope-control goal: <descriptive goal>
+### 3.8 Downstream-planning goal: <descriptive goal>
+
+## 4. Goal Cards
+
+For each major goal:
+
+### <Goal type>: <descriptive goal title>
+
+**Goal statement.**  
+...
+
+**Why this goal matters.**  
+...
+
+**Strategic role.**  
+...
+
+**Success condition.**  
+...
+
+**Derived constraints.**  
+...
+
+**Delegated details.**  
+...
+
+**Failure implication.**  
+...
+
+## 5. Goal Dependency Map
+
+## 6. Strategic Claim Posture
+
+## 7. Strategic Evidence Posture
+
+## 8. Strategic Communication and Visual Posture
+
+## 9. Strategic Risks and Decision-Critical Uncertainties
+
+## 10. Delegation Interfaces for Downstream Skills
+
+### 10.1 Content-planning interface
+### 10.2 Experiment-planning interface
+### 10.3 Figure-planning interface
+### 10.4 Method-planning interface
+### 10.5 Review-planning interface
+```
+
+这份结构的关键不是标题本身，而是它表达的职责边界：
 
 ```text
-请为一个基于 Codex 的 autoresearch 系统编写或重构一个 skill，名称建议为 paper-blueprint 或 academic-army-architect。
+定义目标和战略约束；
+不替后续 skill 做具体规划。
+```
 
-这个 skill 的任务不是写论文，也不是生成普通论文大纲，而是把用户给出的研究 idea、草稿、代码、初步实验结果或目标 venue，转化成一份可执行的论文方案，以及一份供用户审核该方案是否合理的解释文件。
+## 8. Goal card 设计
 
-最终必须生成两个 Markdown 文件：
+每个 goal card 应回答：
+
+```text
+这个目标是什么？
+为什么这个目标重要？
+它在论文战略中扮演什么角色？
+什么情况说明目标达成？
+它约束哪些后续规划？
+它留下哪些战术细节给后续 skill？
+如果目标失败，论文战略如何调整？
+```
+
+典型目标类型：
+
+- acceptance goal
+- positioning goal
+- problem-framing goal
+- contribution goal
+- novelty-boundary goal
+- evidence goal
+- communication goal
+- scope-control goal
+- downstream-planning goal
+
+Goal card 是后续所有专项 skill 的接口。比如 experiment-planning 不应该重新判断论文目标，而应读取 evidence goal 和 claim posture；figure-planning 不应该重新发明叙事主线，而应读取 communication goal 和 visual argument requirement。
+
+## 9. `paper_blueprint_explanation.<lang>.md` 推荐结构
+
+```markdown
+# Goal-Oriented Paper Blueprint Explanation: <Working Title>
+
+## 0. 用户已明确的信息
+
+只记录用户显式表达的信息，包括 research idea、目标 venue 或领域、后续 pipeline、蓝图用途、抽象层级、输出要求、解释文件功能、语言和可读性偏好。不要放模型推断、deepsearch 发现、蓝图决策或生成过程。
+
+## 1. 蓝图速览：这篇论文试图达成什么
+
+概括顶层论文目标、中心研究赌注、主贡献目标、证据目标和最大战略风险。
+
+## 2. 核心目标组
+
+逐个解释蓝图中的目标。每个目标先复述蓝图内容，再解释目标背后的思想、目标之间的联系，以及这个目标如何约束后续规划。
+
+## 3. 从核心目标到论文蓝图的推导
+
+解释目标如何生成 claim posture、novelty posture、evidence posture、narrative posture、risk posture 和 downstream planning interfaces。
+
+## 4. 蓝图重点内容概括与解释
+
+先概括蓝图重点内容，再解释它如何服务论文目标。
+
+## 5. 目标之间如何相互支撑
+
+说明哪些目标支撑顶层 acceptance goal，哪些目标保护 novelty，哪些目标约束 evidence，哪些目标影响后续写作和绘图。
+
+## 6. 当前最脆弱的目标链
+
+列出最可能出错的目标链：目标 → 派生判断 → 所需证据 → 如果失败如何改蓝图。
+
+## 7. 用户最应该确认的战略问题
+
+列出少量用户应优先判断的问题，帮助确认蓝图战略是否合理。
+```
+
+解释文件写作原则：
+
+1. 先复述，再解释。
+2. 用用户语言写。
+3. 使用语义锚点，不依赖人工编号或章节编号。
+4. 解释论文方案，不解释 skill 机制。
+5. 帮助用户定位 disagreement 的来源：目标错、推导弱、还是战术细节待后续规划。
+
+## 10. 语义锚点，而不是编号索引
+
+不要让解释文件主要依赖：
+
+```text
+C1 / E1 / F1 / R1
+Section 5.1 / Section 8.3
+第 5.1 节 / 第 8.2 节
+```
+
+使用语义锚点：
+
+```text
+主贡献目标
+acceptance-critical claim
+evidence goal for the primary effect
+novelty-boundary goal
+reference-versus-Gaussian tradeoff
+baseline fairness risk
+visual argument requirement
+experiment-planning boundary
+```
+
+自然写法示例：
+
+```text
+主 claim 要求论文同时证明画质收益和 deadline reliability。这个要求直接决定了证据目标必须覆盖动态网络、视角误差和 client compute，也决定了后续实验规划不能只看 PSNR/SSIM/LPIPS。
+```
+
+而不是：
+
+```text
+第 5.1 节影响第 8.2 节和第 9.3 节。
+```
+
+## 11. 正向产物契约，减少 defensive 文风
+
+skill 不应该主要依靠大量反向限制，比如：
+
+```text
+Do not...
+Avoid...
+Banned phrases...
+```
+
+更好的写法是定义：
+
+```text
+这个文件是什么；
+这个 section 应包含什么；
+某类信息应如何投影；
+不确定性应如何表达；
+战术细节应如何 delegation；
+用户应如何审核。
+```
+
+推荐加入：
+
+```markdown
+## Paper-goal projection
+
+Convert intermediate analysis into paper-goal objects:
+
+- venue expectations become positioning and acceptance goals
+- storytelling patterns become communication goals
+- technical lineage becomes contribution and novelty-boundary goals
+- evaluation norms become evidence goals
+- reviewer concerns become strategic risks
+- uncertain items become decision-critical uncertainties
+- tactical choices become delegation boundaries
+```
+
+这比堆一长串 banned phrases 更稳定，也更不容易产生 meta-discourse leakage。
+
+## 12. 解释文件不输出的内容类型
+
+解释文件的对象是论文方案，不是 skill。
+
+它不应该输出：
+
+- 为什么有两个文件
+- 为什么正式蓝图采用某种格式
+- 为什么这是 AI-facing
+- downstream agent 怎么用文件
+- deepsearch 工具调用过程
+- MCP、web search、rate limit、probe、PDF parsing
+- output directory
+- 生成过程、prompt 过程、内部 reasoning
+- skill 工作流解释
+
+它应该输出：
+
+- 为什么论文要这样定位
+- 为什么这些目标重要
+- 为什么这些目标推导出当前 claim posture
+- 为什么 novelty boundary 这样画
+- 为什么 evidence posture 足以支持目标 venue
+- 为什么 scope boundary 能保护论文可信度
+- 为什么某些战术细节留给后续 skill
+
+## 13. 给写 skill 的 agent 的完整 prompt
+
+下面这段可以直接交给负责写 skill 的 agent。
+
+```text
+请编写或完善一个 Codex skill，名称为 academic-army-architect。这个 skill 用于 autoresearch 工具链中的论文战略蓝图生成。
+
+这个 skill 不是论文大纲生成器、实验规划器、绘图规划器或论文内容编排器。它是一个目标导向的论文战略蓝图 skill。
+
+它的任务是：接收一个 research idea、草稿、代码、实验结果、目标 venue 或候选 venue，通过 academic_army_mcp_tools.deepsearch 获取当前 venue、相关工作、近期 storytelling exemplars、技术和评估 exemplars、reviewer expectation，然后把 idea 分解为论文层面的战略目标，并从这些目标推导出 claim posture、novelty posture、evidence posture、narrative posture、visual posture、scope boundary、strategic risks 和 downstream planning interfaces。
+
+必须输出两个 Markdown 文件：
 
 1. paper_blueprint.md
+   - 英文。
+   - 面向后续 AI planning skills。
+   - 是 Goal-Oriented Strategic Paper Blueprint。
+   - 只描述论文战略核心、目标分解、目标依赖、claim posture、evidence posture、novelty posture、communication posture、scope boundary、strategic risks 和 downstream planning interfaces。
+   - 不具体决定实验矩阵、baseline 实现、dataset、trace、metric 公式、figure layout、章节结构、算法路线或执行步骤。
+
 2. paper_blueprint_explanation.<lang>.md
+   - 使用用户对话语言。
+   - 面向用户审核蓝图是否合理。
+   - 开头必须有“用户已明确的信息”或对应语言自然标题。
+   - 该开头只记录用户显式提供的 research idea、目标 venue 或领域、后续 pipeline、蓝图用途、抽象层级、输出要求、解释文件功能、语言和可读性偏好。
+   - 解释文件应先概括蓝图重点内容，再解释每个目标背后的思想、目标之间的联系，以及蓝图安排如何帮助论文达成目标。
+   - 每个重要项目应采用：蓝图内容概括 → 目标背后的思想 → 它如何服务顶层论文目标 → 它如何牵引其他目标或安排 → 用户审核点。
+   - 解释文件不解释 skill、MCP、工具调用、生成过程、输出格式理由或 downstream agent 使用方式。
 
-paper_blueprint.md 是英文文件，主要给后续 AI agent 使用。它应该是客观、结构化、可执行的论文方案规格，描述论文应该如何定位、主 thesis 是什么、有哪些 claims、每个 claim 需要什么证据、相关工作边界在哪里、方法如何拆解、实验如何设计、图表如何服务故事、审稿风险如何缓解、artifact 和可复现材料需要什么、当前还缺哪些证据、下一步研究如何推进。
+必须明确 live research 工具身份：
 
-paper_blueprint_explanation.<lang>.md 是用户语言文件，主要给用户确认蓝图是否合理。它不是普通摘要，也不是对 skill、工具、MCP 或生成流程的解释。它的功能是让用户理解整个论文方案的核心出发点，并看清楚蓝图中的每个重要细节如何从这些核心出发点推导出来。如果用户觉得某个蓝图项目不合理，应能通过解释文件判断是核心出发点错了、推导过程错了，还是具体执行细节需要改。
+- server: academic_army_mcp_tools
+- tool: deepsearch
+- canonical Codex MCP tool name if exposed: mcp__academic_army_mcp_tools__deepsearch
 
-系统已有 deepresearch MCP 工具，可以现场调用 GPT-5.5 + web search。skill 不需要内置大量 venue 规则、高引论文列表、CFP、最新 SOTA 或 related work 数据库。动态信息应通过 deepresearch 获取。skill 应使用 deepresearch 获取当前 venue expectations、近期 storytelling exemplars、经典和近期 technical/evaluation exemplars、nearest-neighbor related work 和 reviewer-context evidence。deepresearch 只返回证据和分析，不直接生成最终蓝图。
+所有 live venue、literature、exemplar、evaluation expectation、reviewer-context research 都使用 academic_army_mcp_tools.deepsearch。不要用泛称 deepresearch，也不要把内置 web search、browser tools、docs search 或其他 MCP 当作替代。
 
-分析写作手法和 storytelling 时，必须优先使用近期论文：最近 2-3 年或目标 venue 最近 3 个 cycle；不足时扩展到最近 5 年。分析 method、dataset、benchmark、baseline、metric、evaluation lineage 时，可以使用更老的经典论文，也要加入近期 nearest-neighbor papers。
+exemplar evidence 必须分层：
+
+- storytelling_exemplars：用于分析当前 venue 写作风格，必须偏新，优先最近 2-3 年或最近 3 个会议周期。
+- technical_exemplars：用于分析方法和系统谱系，可以包含经典论文和近期 nearest-neighbor work。
+- evaluation_exemplars：用于分析 dataset、benchmark、workload、metric、ablation、artifact expectation，可以包含仍然标准的经典论文，但应补充近期 norm。
 
 paper_blueprint.md 推荐结构：
 
-# Paper Blueprint: <Working Title>
+# Goal-Oriented Strategic Paper Blueprint: <Working Title>
 
-## 1. Metadata and Input State
-## 2. Paper Strategy Premises
-### 2.1 Target-venue premise
-### 2.2 Problem premise
-### 2.3 Contribution premise
-### 2.4 Novelty premise
-### 2.5 Evidence premise
-### 2.6 Storytelling premise
-### 2.7 Execution premise
-## 3. Venue and Scope Specification
-## 4. Paper Thesis and Contribution Shape
-## 5. Claim and Evidence Plan
-## 6. Related-Work Differentiation Plan
-## 7. Method Specification
-## 8. Evaluation Specification
-## 9. Figure and Table Specification
-## 10. Manuscript Structure Specification
-## 11. Review-Risk Mitigation Plan
-## 12. Artifact and Reproducibility Specification
-## 13. Evidence Gaps and Dependencies
-## 14. Research Execution Plan
+## 1. Paper Identity
+### 1.1 Research idea
+### 1.2 Target venue posture
+### 1.3 Paper type
+### 1.4 Research object
+### 1.5 Current input state
 
-正式蓝图可以使用 Markdown 自然章节编号，但不要使用 C1/E1/F1/R1/B1/K1 这类人工对象编号。每个重要项目应该有自解释的描述性标题，例如 Primary claim: <specific claim>、Main-result experiment: <specific comparison and condition>、Risk: <specific reviewer concern>、Evidence gap: <specific missing evidence>。
+## 2. Top-Level Paper Goal
+### 2.1 Acceptance goal
+### 2.2 Central research bet
+### 2.3 Strategic success condition
+### 2.4 Strategic downgrade condition
 
-paper_blueprint_explanation.<lang>.md 必须是 self-contained validation companion。用户不应频繁打开 paper_blueprint.md 对照才能理解它。每个重要蓝图项目都应先复述蓝图内容，再解释设计原因、关联关系和用户审核点。
+## 3. Goal Decomposition
+### 3.1 Positioning goal: <descriptive goal>
+### 3.2 Problem-framing goal: <descriptive goal>
+### 3.3 Contribution goal: <descriptive goal>
+### 3.4 Novelty-boundary goal: <descriptive goal>
+### 3.5 Evidence goal: <descriptive goal>
+### 3.6 Communication goal: <descriptive goal>
+### 3.7 Scope-control goal: <descriptive goal>
+### 3.8 Downstream-planning goal: <descriptive goal>
 
-解释文件推荐结构：
+## 4. Goal Cards
 
-# Paper Blueprint Explanation: <Working Title>
+For each major goal, include:
+- Goal statement
+- Why this goal matters
+- Strategic role
+- Success condition
+- Derived constraints
+- Delegated details
+- Failure implication
 
-## 1. 论文蓝图速览
-## 2. 蓝图重点内容与审核入口
-## 3. 核心出发点
-## 4. 从核心出发点到论文方案的总体推导
-## 5. 论文蓝图逐项解释
-## 6. 关键设计取舍的推导
-## 7. 当前最容易出错的推导链
-## 8. 用户审核时最应该确认的问题
+## 5. Goal Dependency Map
+## 6. Strategic Claim Posture
+## 7. Strategic Evidence Posture
+## 8. Strategic Communication and Visual Posture
+## 9. Strategic Risks and Decision-Critical Uncertainties
+## 10. Delegation Interfaces for Downstream Skills
 
-对每个重要蓝图项目，解释文件使用：
+paper_blueprint_explanation.<lang>.md 推荐结构：
 
-1. 蓝图内容概括：用用户语言压缩复述该项目的具体内容。
-2. 为什么这样设计：说明它来自哪个核心出发点。
-3. 它和其他部分的关系：说明它支持、约束或依赖哪些其他蓝图项目。
-4. 用户审核点：说明如果用户觉得这一项不合理，应检查哪个上游 premise、哪个中间推导或哪个执行细节。
+# Goal-Oriented Paper Blueprint Explanation: <Working Title>
 
-解释文件应通过语义标题、译名、功能近义词指代蓝图项目，而不是依赖 section number 或人工编号。例如使用“主 claim”“主实验”“主结果图”“baseline 风险”“reference-versus-Gaussian utility sweep”“CAGS reproduction evidence gap”等。
+## 0. 用户已明确的信息
+## 1. 蓝图速览：这篇论文试图达成什么
+## 2. 核心目标组
+## 3. 从核心目标到论文蓝图的推导
+## 4. 蓝图重点内容概括与解释
+## 5. 目标之间如何相互支撑
+## 6. 当前最脆弱的目标链
+## 7. 用户最应该确认的战略问题
 
-解释文件只解释论文方案本身，不解释 skill、MCP、deepresearch 调用、rate limit、两个文件用途、下游 agent 使用方式或生成流程。
+写 SKILL.md 时使用正向产物契约。重点定义 skill 应生成什么、每类信息应如何投影、两个文件分别承担什么职责、战术细节如何 delegation。减少大量 defensive 的反向禁止清单。
 
-请尽量使用正向产物契约来写 skill：定义 blueprint 应包含什么、explanation 应包含什么、uncertainty 如何投影成 evidence gaps、reviewer concerns 如何投影成 risk mitigation、reproducibility expectations 如何投影成 artifact deliverables。少用大段禁止清单。
+最终质量检查：
 
-最终 skill 要简洁，但必须明确两个输出文件的职责、deepresearch 使用方式、exemplar 时效规则、正式蓝图结构、解释文件的 validation companion 功能、语义引用方式、内容复述要求和正向 instruction 风格。
+- paper_blueprint.md 是英文目标导向战略蓝图。
+- paper_blueprint.md 不抢实验规划、绘图规划、内容编排规划、method planning 或 review planning 的工作。
+- 每个重要安排都服务至少一个论文目标。
+- 战术细节被表达为 delegation boundary、planning constraint 或 decision-critical uncertainty。
+- explanation 文件开头记录用户已明确的信息。
+- explanation 文件先复述蓝图重点内容，再解释原因。
+- explanation 文件帮助用户判断 disagreement 来自目标、推导还是战术细节。
+- explanation 文件使用语义锚点，不依赖 C1/E1/F1/R1 或频繁章节编号。
+- explanation 文件不输出工具过程、skill 过程、MCP 日志、rate limit 或文件格式 rationale。
 ```
+
+## 14. 最终质量检查清单
+
+给 skill 编写 agent 的最终检查：
+
+### `paper_blueprint.md`
+
+- 文件是英文。
+- 文件是目标导向的战略蓝图。
+- 论文目标、目标分解、目标依赖清楚。
+- claim posture 从目标推导出来。
+- evidence posture 是战略证据姿态，不是具体实验计划。
+- novelty posture 明确但不写成 related work 全文。
+- narrative / visual posture 是战略要求，不是具体章节或图表清单。
+- scope boundary 防止后续 skill 过度扩张 claim。
+- delegation interfaces 明确后续 content、experiment、figure、method、review planning 的自由度和约束。
+- 文件没有用户语言解释。
+- 文件没有 skill 过程、工具日志或面向用户提醒。
+
+### `paper_blueprint_explanation.<lang>.md`
+
+- 文件使用用户语言。
+- 开头有用户已明确的信息。
+- 用户已明确的信息只包含用户显式说过的输入、约束、偏好和 pipeline 设定。
+- 文件能独立阅读，不要求用户频繁对照正式蓝图。
+- 每个重要项目先复述蓝图内容，再解释目标和推导。
+- 解释围绕论文目标展开，而不是围绕 skill 格式展开。
+- 使用语义锚点，不使用人工编号链。
+- 用户能看出不合理之处应回溯到哪个目标、哪个推导或哪个后续战术规划。
+
+## 15. 一句话总结
+
+这个 skill 的关键经验是：
+
+> 不要把 paper-blueprint 写成“论文大纲 + 实验计划 + 图表计划”的混合物，而要写成“目标导向的论文战略规格”。正式蓝图服务后续 AI planning skills，定义论文目标和规划约束；解释文件服务用户审核，说明每个目标为什么存在、如何相互支撑、以及蓝图安排如何从目标推导出来。动态知识用 `academic_army_mcp_tools.deepsearch` 获取，skill 本身只保存稳定的目标分解、证据投影和输出契约。
