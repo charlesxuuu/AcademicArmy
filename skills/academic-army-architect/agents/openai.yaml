@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Architect"
-  short_description: "Core paper specification plus validation explanation"
-  default_prompt: "Create a Core Paper Specification and user-language validation explanation with $academic-army-architect."
+  short_description: "Strategic paper blueprint plus validation explanation"
+  default_prompt: "Create a Strategic Paper Blueprint and user-language validation explanation with $academic-army-architect."
 
 dependencies:
   tools:

@@ -1,7 +1,7 @@
 ---
 name: academic-army-architect
 description: >-
-  Create two Markdown files for an upstream research-paper planning workflow: an English paper_blueprint.md containing a Core Paper Specification, and a user-language paper_blueprint_explanation language-suffixed Markdown file that restates the blueprint's core content and explains how each item follows from the paper's premises so the user can validate the plan. Use when the user needs venue fit, thesis shaping, problem framing, contribution boundaries, claim hierarchy, evidence obligations, novelty boundary, method abstraction, scope constraints, open planning variables, and downstream interfaces for later content-planning, experiment-planning, figure-planning, writing, or review skills. Uses deepresearch MCP for live venue, literature, exemplar, and reviewer-context evidence.
+  Create two Markdown files for an upstream research-paper strategy workflow: an English paper_blueprint.md containing a Strategic Paper Blueprint, and a user-language paper_blueprint_explanation language-suffixed Markdown file that restates the blueprint's strategic content and explains how each item follows from the paper's premises so the user can validate the strategy. Use when the user needs venue posture, thesis shaping, problem framing, contribution boundaries, claim strategy, evidence posture, novelty boundary, method abstraction strategy, scope constraints, delegation boundaries, and strategic defaults for later content-planning, experiment-planning, figure-planning, method-planning, writing, or review skills. Uses deepresearch MCP for live venue, literature, exemplar, and reviewer-context evidence.
 ---
 
 # Academic Army Architect
@@ -12,149 +12,136 @@ The skill produces two Markdown files.
 
 ### File 1: `paper_blueprint.md`
 
-This file is an English **Core Paper Specification**.
+This file is an English **Strategic Paper Blueprint**.
 
-It defines the paper's stable upstream information for later planning skills:
+It defines the paper's strategic core and downstream planning constraints:
 
-- paper identity and research object
-- target venue and contribution posture
+- paper identity
 - core strategy premises
-- central thesis
+- central research bet
 - contribution contract
-- claim hierarchy
-- related-work and novelty boundary
-- method abstraction
-- evidence obligations
-- narrative requirements
-- visual argument requirements
-- scope and constraint boundaries
-- research risks and dependency signals
-- open planning variables
-- downstream planning interfaces
+- claim strategy
+- novelty and comparison strategy
+- method abstraction strategy
+- evidence posture
+- narrative and visual strategy
+- strategic risks and decision-critical uncertainties
+- delegation boundaries for downstream skills
+- strategic defaults and change conditions
 
-Write at the level of obligations, constraints, interfaces, and open variables. The blueprint states what the paper must prove and what later planning must satisfy.
-
-Use hierarchical Markdown headings with descriptive titles.
+The blueprint stops at strategy. It states what the paper must prove, why it matters, what boundaries hold, what evidence posture is required, and what later skills must preserve.
 
 ### File 2: `paper_blueprint_explanation.<lang>.md`
 
-This file is a user-language validation companion for the Core Paper Specification.
+This file is a user-language strategic validation companion.
 
-It helps the user judge whether the blueprint is reasonable by showing:
+It helps the user validate the blueprint by showing:
 
-- what the important blueprint items actually say, in compressed user-language form
-- which core premise motivates each item
+- what the important strategic items say, in compressed user-language form
+- which premise motivates each item
 - how each item follows from the premises
-- how items support or constrain later content, experiment, figure, writing, and review planning
-- what the user should inspect when an item feels unreasonable
-- which details are intentionally left to specialized downstream planning skills
+- how each item constrains later content, experiment, figure, method, writing, or review planning
+- which tactical details are intentionally delegated
+- what strategic question the user should inspect when an item feels unreasonable
 
-Use the user's conversation language. Preserve venue names, paper titles, method names, datasets, benchmarks, metrics, and key terms in their original language when that improves precision.
+Use the user's conversation language. Preserve technical terms, venue names, paper titles, datasets, benchmarks, metrics, and method names in their original language when that improves precision.
 
-## Blueprint Abstraction Level
+## Strategic Abstraction Level
 
-Use this distinction:
+The blueprint operates only at Levels 0-2:
 
-| Level | Purpose |
+| Level | Scope |
 |---|---|
-| Blueprint level | Define what the paper must prove, why it matters, which boundaries hold, which evidence classes are required, and what later skills must satisfy. |
-| Later planning level | Turn blueprint obligations into concrete experiments, figures, section outlines, prose, implementation tasks, and review responses. |
+| Level 0: Paper identity | Research area, target venue posture, paper type, research object, current input state. |
+| Level 1: Paper strategy | Core premises, central research bet, contribution contract, claim strategy, novelty boundary, scope boundary, strategic risks. |
+| Level 2: Planning constraints | Evidence posture, comparison posture, narrative requirements, visual argument requirements, downstream delegation boundaries. |
 
-Represent future planning detail as:
+Later specialized skills handle Levels 3-4:
 
-- evidence obligations instead of concrete experiment protocols
-- visual argument requirements instead of fixed figure lists
-- narrative requirements instead of full manuscript outlines
-- baseline classes instead of exact baseline implementations
-- data or workload classes instead of exact datasets or traces
-- research risks and dependency signals instead of project task sequences
-- open planning variables instead of prematurely fixed choices
+| Level | Scope |
+|---|---|
+| Level 3: Tactical planning | Exact experiments, datasets, traces, workloads, baselines, metrics, figure list, layouts, section structure, algorithm variants. |
+| Level 4: Execution planning | Scripts, run order, implementation tasks, plotting commands, writing tasks, rebuttal execution. |
 
-## Core Blueprint Objects
+Every detailed item in the blueprint should change the paper's strategic identity if altered. Otherwise compress it into a strategic requirement, planning constraint, acceptable design space, delegated planning variable, or decision-critical uncertainty.
 
-### Claim Object
+## Tactical-Detail Compression
 
-For each major claim, specify:
+When a planning decision becomes specific, compress it into one of these strategic forms:
 
-- statement
-- role in the paper: acceptance-critical, supporting, optional, or deferred
-- evidence obligation
-- acceptable proof modes
-- required comparison class
-- metric family
+| Tactical impulse | Strategic form |
+|---|---|
+| Choose an algorithm family | Recommended method posture plus change condition. |
+| List exact baselines | Comparison posture and credible comparison classes. |
+| Pick datasets or traces | Data/workload posture and target setting. |
+| Specify metric formulas | Outcome family and evidence standard. |
+| Design figures | Visual argument requirement. |
+| Outline sections | Narrative requirement. |
+| Create task sequence | Strategic research priority or decision-critical uncertainty. |
+
+Use strategic defaults over user prompting. Select a strategic default when possible and state what evidence would change it. Ask a clarification question only when the missing information blocks target venue posture, contribution posture, or central thesis.
+
+## Core Strategic Objects
+
+### Claim Strategy Object
+
+For each strategic claim, specify:
+
+- claim statement
+- strategic role: acceptance-critical, mechanism, scope, supporting, or deferred
+- evidence posture
 - scope boundary
-- current support status
-- failure implication
+- downgrade condition
 
-### Evidence Obligation Object
+### Evidence Posture Object
 
-For each evidence obligation, specify:
+For each evidence posture, specify:
 
-- supported claim
-- required evidence type
-- metric family
-- baseline or comparison class
-- data or workload class
-- minimum acceptable support
-- planning freedom delegated to later skills
-- failure implication
+- strategic claim supported
+- evidence type at a high level
+- comparison posture
+- outcome family
+- minimum standard for strategic viability
+- delegated tactical choices
+- downgrade implication
 
-### Narrative Requirement Object
-
-For each narrative requirement, specify:
-
-- paper-level story function
-- reader belief to establish
-- core concepts to foreground
-- claims to avoid foregrounding
-- planning freedom delegated to content-planning
-
-### Visual Argument Requirement Object
-
-For each visual argument requirement, specify:
-
-- message that must become visible
-- why the message matters
-- related thesis or claim
-- planning freedom delegated to figure-planning
-
-### Downstream Interface Object
+### Delegation Boundary Object
 
 For each downstream skill, specify:
 
-- information it should use from the blueprint
-- constraints it should preserve
-- output it should produce later
-- variables it is allowed to decide
+- strategic boundary
+- constraints to preserve
+- tactical choices delegated
+- strategic default to begin from
+- condition that would change the default
 
-## Semantic Anchor References
+## Semantic References
 
-`paper_blueprint.md` uses hierarchical Markdown headings for structure.
-
-`paper_blueprint_explanation.<lang>.md` refers to blueprint items by semantic anchors: exact headings, translated headings, concise functional names, or natural-language paraphrases.
+`paper_blueprint.md` uses hierarchical Markdown headings. `paper_blueprint_explanation.<lang>.md` refers to blueprint items by semantic anchors: exact headings, translated headings, concise functional names, or natural-language paraphrases.
 
 Preferred explanation references:
 
-- the target-venue premise
-- the primary claim about reference-aware adaptation
-- the evidence obligation for the primary effect
-- the visual requirement for showing the main tradeoff
-- the novelty boundary against CAGS-style restoration
-- the open variables for experiment planning
-- the interface for figure-planning
+- the central research bet
+- the acceptance-critical claim
+- the evidence posture for the primary claim
+- the comparison posture against related work
+- the method abstraction strategy
+- the visual argument requirement
+- the experiment-planning boundary
+- the strategic default for contribution posture
 
-Section numbers are secondary locators. The explanation remains understandable when the reader ignores all section numbers.
+Section numbers are secondary locators. The explanation remains readable without them.
 
 ## Evidence Gathering
 
-Use `deepresearch` when current venue expectations, related work, exemplars, SOTA, benchmark norms, or reviewer expectations affect the blueprint.
+Use `deepresearch` when current venue expectations, related work, exemplars, SOTA, benchmark norms, or reviewer expectations affect the strategy.
 
-Gather four evidence groups:
+Gather evidence for:
 
-1. Venue evidence: current CFP, review criteria, contribution categories, artifact expectations, and recent accepted-paper style.
-2. Literature evidence: closest related work, required comparison classes, novelty boundary, and overclaim risks.
-3. Exemplar evidence: recent storytelling exemplars, technical exemplars, and evaluation exemplars.
-4. Reviewer-context evidence: likely pressure on novelty, evidence type, baselines, metrics, scope, and claims.
+1. Venue posture: current venue expectations, contribution categories, evidence standards, and recent accepted-paper storytelling style.
+2. Literature boundary: closest work clusters, solved problems, differentiation posture, comparison posture, and overclaim boundaries.
+3. Exemplar patterns: recent storytelling exemplars, canonical technical anchors, and evidence-pattern exemplars.
+4. Reviewer context: strategic pressure on novelty, evidence posture, comparison posture, scope, and claims.
 
 Use recent target-venue papers for storytelling style. Use canonical and recent papers together for methods, datasets, benchmarks, and evaluation lineage.
 
@@ -162,144 +149,110 @@ Use recent target-venue papers for storytelling style. Use canonical and recent 
 
 ### Step 1: Parse Request
 
-Extract topic, target venue or candidate venues, field/subfield, likely paper type, research artifact, available materials, pending materials, constraints, output language, and output directory.
-
-Ask at most one clarification question when the paper specification would otherwise be misleading. Otherwise make explicit paper-design assumptions and continue.
+Extract topic, target venue or candidate venues, field/subfield, likely paper type, research object, available materials, pending materials, strategic constraints, output language, and output directory.
 
 ### Step 2: Build Internal Research Brief
 
 Create a compact internal brief with:
 
 - one-sentence paper idea
+- likely target venue posture
 - likely paper type
-- research artifact
-- target venue candidates
+- research object
 - known evidence
-- evidence that controls claim scope
+- likely contribution posture
 - likely novelty boundary
-- likely evidence obligations
-- likely downstream planning needs
+- decision-critical uncertainty
 - output language and output paths
 
 ### Step 3: Gather Live Evidence
 
-Use deepresearch evidence to establish venue expectations, related-work boundaries, exemplar-derived patterns, evidence norms, and reviewer-context pressure.
+Use deepresearch evidence to establish venue posture, related-work boundary, exemplar-derived story patterns, evidence posture, and reviewer-context pressure.
 
 ### Step 4: Compile `paper_blueprint.md`
 
 Use this structure:
 
 ```markdown
-# Core Paper Blueprint: <Working Title>
+# Strategic Paper Blueprint: <Working Title>
 
 ## 1. Paper Identity
-### 1.1 Working title
-### 1.2 Research area
-### 1.3 Target venue candidates
-### 1.4 Paper type
-### 1.5 Research artifact
-### 1.6 Current input state
+### 1.1 Research object
+### 1.2 Target venue posture
+### 1.3 Paper type
+### 1.4 Current input state
 
-## 2. Target Venue and Contribution Posture
-### 2.1 Primary target venue
-### 2.2 Alternative venues
-### 2.3 Expected reviewer audience
-### 2.4 Accepted contribution type
-### 2.5 Venue-specific evidence standard
-### 2.6 Paper positioning
+## 2. Core Strategy Premises
+### 2.1 Venue premise
+### 2.2 Problem premise
+### 2.3 Contribution premise
+### 2.4 Novelty premise
+### 2.5 Evidence premise
+### 2.6 Scope premise
 
-## 3. Core Strategy Premises
-### 3.1 Target-venue premise
-### 3.2 Problem premise
-### 3.3 Contribution premise
-### 3.4 Novelty premise
-### 3.5 Evidence premise
-### 3.6 Storytelling premise
-### 3.7 Scope premise
+## 3. Central Research Bet
+### 3.1 One-sentence thesis
+### 3.2 Acceptance-critical bet
+### 3.3 What would downgrade the bet
 
-## 4. Central Thesis
-### 4.1 One-sentence thesis
-### 4.2 Acceptance-critical paper bet
-### 4.3 What would falsify or downgrade the thesis
+## 4. Contribution Contract
+### 4.1 Primary contribution
+### 4.2 Secondary contribution roles
+### 4.3 Non-contributions and boundaries
 
-## 5. Contribution Contract
-### 5.1 Primary contribution
-### 5.2 Secondary contributions
-### 5.3 Supporting contributions
-### 5.4 Non-contributions and boundaries
+## 5. Claim Strategy
+### 5.1 Acceptance-critical claim
+### 5.2 Mechanism claim
+### 5.3 Scope claim
+### 5.4 Claims to defer
 
-## 6. Claim Hierarchy
-### 6.1 Primary claim: <descriptive claim>
-### 6.2 Mechanism claim: <descriptive claim>
-### 6.3 Scope or generality claim: <descriptive claim>
-### 6.4 Claims to defer
+## 6. Novelty and Comparison Strategy
+### 6.1 Closest work clusters
+### 6.2 Differentiation posture
+### 6.3 Comparison posture
+### 6.4 Overclaim boundary
 
-## 7. Related-Work and Novelty Boundary
-### 7.1 Closest work cluster: <cluster name>
-### 7.2 Closest work cluster: <cluster name>
-### 7.3 Required differentiation points
-### 7.4 Comparison obligations
-### 7.5 Overclaim boundaries
+## 7. Method Abstraction Strategy
+### 7.1 Core abstraction
+### 7.2 Mechanism class
+### 7.3 Decision space at a strategic level
+### 7.4 Constraints and invariants
+### 7.5 Tactical method details delegated to later planning
 
-## 8. Method Abstraction
-### 8.1 Core idea
-### 8.2 Mechanism class
-### 8.3 Inputs and outputs
-### 8.4 Decision variables
-### 8.5 Constraints
-### 8.6 Assumptions and invariants
-### 8.7 Method details delegated to later planning
+## 8. Evidence Posture
+### 8.1 Evidence posture for the primary claim
+### 8.2 Evidence posture for the mechanism claim
+### 8.3 Evidence posture for scope and robustness
+### 8.4 Evidence posture for feasibility and cost
+### 8.5 Tactical experiment design delegated to later planning
 
-## 9. Evidence Obligations
-### 9.1 Evidence obligation for the primary effect
-### 9.2 Evidence obligation for the mechanism
-### 9.3 Evidence obligation for scope and robustness
-### 9.4 Evidence obligation for cost and feasibility
-### 9.5 Evidence obligation for baseline fairness
+## 9. Narrative and Visual Strategy
+### 9.1 Opening tension
+### 9.2 Central abstraction to foreground
+### 9.3 Story arc
+### 9.4 Visual argument requirements
+### 9.5 Tactical content and figure planning delegated to later planning
 
-## 10. Narrative Requirements
-### 10.1 Opening tension
-### 10.2 Central abstraction
-### 10.3 Story arc
-### 10.4 Terms and concepts to foreground
-### 10.5 Claims to avoid foregrounding
-### 10.6 Detailed content planning delegated to later planning
+## 10. Strategic Risks and Decision-Critical Uncertainties
+### 10.1 Highest-risk premise
+### 10.2 Highest-risk claim
+### 10.3 Highest-risk novelty boundary
+### 10.4 Highest-risk evidence gap
+### 10.5 How the paper strategy changes if each risk materializes
 
-## 11. Visual Argument Requirements
-### 11.1 Core visual messages
-### 11.2 Tradeoffs that must become visually clear
-### 11.3 Evidence that likely needs visual support
-### 11.4 Detailed figure planning delegated to later planning
+## 11. Delegation Boundaries for Downstream Skills
+### 11.1 Content-planning boundary
+### 11.2 Experiment-planning boundary
+### 11.3 Figure-planning boundary
+### 11.4 Method-planning boundary
+### 11.5 Review-planning boundary
 
-## 12. Scope and Constraint Boundaries
-### 12.1 In-scope setting
-### 12.2 Out-of-scope setting
-### 12.3 Accepted assumptions
-### 12.4 Allowed claims
-### 12.5 Deferred claims
-### 12.6 Claims avoided by design
-
-## 13. Research Risks and Dependency Signals
-### 13.1 Highest-risk premise
-### 13.2 Highest-risk claim
-### 13.3 Highest-risk related-work boundary
-### 13.4 Highest-risk evidence gap
-### 13.5 What changes if each risk materializes
-
-## 14. Open Planning Variables
-### 14.1 Variables for content planning
-### 14.2 Variables for experiment planning
-### 14.3 Variables for figure planning
-### 14.4 Variables for method planning
-### 14.5 Variables for related-work planning
-### 14.6 Variables for review-risk planning
-
-## 15. Downstream Planning Interfaces
-### 15.1 Interface for content-planning skill
-### 15.2 Interface for experiment-planning skill
-### 15.3 Interface for figure-planning skill
-### 15.4 Interface for writing skill
-### 15.5 Interface for review-risk skill
+## 12. Strategic Defaults
+### 12.1 Recommended venue posture
+### 12.2 Recommended contribution posture
+### 12.3 Recommended evidence posture
+### 12.4 Recommended narrative posture
+### 12.5 Conditions that would change these defaults
 ```
 
 ### Step 5: Compile `paper_blueprint_explanation.<lang>.md`
@@ -307,51 +260,44 @@ Use this structure:
 Use this structure:
 
 ```markdown
-# Core Paper Blueprint Explanation: <Working Title>
+# Strategic Paper Blueprint Explanation: <Working Title>
 
-## Blueprint Overview
+## Strategic Blueprint Overview
 
-## Key Blueprint Content and Validation Entry Points
+## Key Strategic Content and Validation Entry Points
 
-## Core Strategy Premises
+## Core Premises
 
-## Overall Derivation from Premises to Core Specification
+## Derivation from Premises to Strategy
 
-## Item-by-Item Blueprint Validation
+## Item-by-Item Strategic Validation
 
-## What Is Delegated to Later Planning Skills
+## What Is Delegated to Later Specialized Planning
 
-## Key Design Tradeoffs and Their Derivations
+## Strategic Defaults and Change Conditions
 
-## Fragile Derivation Chains
-
-## Disagreement Diagnosis
+## Fragile Strategic Chains
 
 ## Priority Questions for User Review
 ```
 
-The explanation is a standalone validation document. For each important blueprint item, first restate the essential content in the user's language, then explain the derivation and validation point:
+For each important strategic item, first restate the content in the user's language, then explain:
 
-1. Blueprint content digest: what the item says.
-2. Derivation from core premises: why the item follows from the paper's premises.
-3. Connections to downstream planning: how the item constrains content, experiment, figure, writing, or review planning.
-4. User validation point: what the user should inspect if the item seems wrong.
+1. which premise motivates it
+2. how it follows from the premise
+3. how it constrains downstream planning
+4. what strategic question the user should inspect
 
-Include a short table after the overview:
-
-| Key blueprint content | Why it matters | Main user validation question |
-|---|---|---|
-
-Use semantic content labels rather than section numbers.
+User validation questions should stay strategic: venue posture, problem premise, contribution contract, claim strength, novelty boundary, evidence posture, scope boundary, and delegation boundary.
 
 ## DeepResearch Prompt Shape
 
 Use this prompt shape when live evidence is needed:
 
 ```text
-You are supporting a core paper-blueprint generator.
+You are supporting a strategic paper-blueprint generator.
 
-Return paper-relevant evidence for defining the upstream Core Paper Specification.
+Return paper-relevant evidence for defining the upstream strategic blueprint.
 
 Research brief:
 [RESEARCH_BRIEF]
@@ -361,19 +307,19 @@ Target venue:
 
 Return four sections:
 
-1. Venue and storytelling evidence
-   Summarize current venue expectations, contribution posture, evidence standards, and recent accepted-paper storytelling patterns.
+1. Venue posture evidence
+   Summarize current venue expectations, contribution posture, evidence posture, and recent accepted-paper storytelling patterns.
 
-2. Technical lineage evidence
-   Summarize canonical and recent work that defines the method, system, dataset, benchmark, or evaluation lineage.
+2. Technical and literature boundary evidence
+   Summarize closest work clusters, solved problems, differentiation posture, comparison posture, and overclaim boundaries.
 
-3. Related-work boundary evidence
-   Summarize closest work clusters, existing solved problems, required differentiation points, comparison obligations, and overclaim boundaries.
+3. Exemplar pattern evidence
+   Summarize recent storytelling patterns and canonical technical/evidence patterns that affect strategic positioning.
 
-4. Evidence and reviewer-context evidence
-   Summarize evidence classes, metric families, baseline classes, data/workload classes, artifact expectations, and likely reviewer pressure.
+4. Reviewer-context evidence
+   Summarize strategic pressure on novelty, evidence posture, comparison posture, scope, and claims.
 
-For each source, include title, venue/year when available, source link, relevance to the proposed paper, and the lesson for blueprint design.
+For each source, include title, venue/year when available, source link, relevance to the proposed paper, and the lesson for strategic blueprint design.
 
 Use concise evidence-facing prose.
 ```
@@ -382,25 +328,22 @@ Use concise evidence-facing prose.
 
 Before finalizing `paper_blueprint.md`, check that:
 
-- the file reads as an upstream Core Paper Specification
-- the thesis, contribution contract, claim hierarchy, novelty boundary, and scope boundaries are clear
-- each claim has evidence obligations, acceptable proof modes, metric families, comparison classes, support status, and failure implications
-- evidence obligations define evidence types and constraints without fixing exact experimental protocols
-- narrative requirements define story constraints without fixing a full manuscript outline
-- visual argument requirements define messages without fixing the figure list or layout
-- open planning variables identify what later skills may decide
-- downstream interfaces state what each later planning skill should consume and produce
+- the file reads as a Strategic Paper Blueprint
+- the central research bet, contribution contract, claim strategy, novelty boundary, and scope boundary are clear
+- evidence posture is strategic rather than a concrete experiment protocol
+- comparison posture is strategic rather than a fixed baseline list
+- narrative and visual strategy define requirements rather than detailed section or figure plans
+- delegation boundaries state which tactical choices later skills will decide
+- strategic defaults replace tactical option questionnaires
+- every included detail would change the paper's strategic identity if altered
 
 Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 
-- the file reads as a standalone validation companion in the user's language
-- the file includes a compact overview of the core blueprint
-- each important blueprint item is restated before it is explained
-- each restatement contains enough concrete content for the user to evaluate the item without opening `paper_blueprint.md`
-- the explanation shows how blueprint items derive from core premises
-- the explanation explains how each item constrains later content, experiment, figure, writing, or review planning
-- the explanation identifies which details are intentionally left to later planning skills
-- the explanation helps the user locate disagreement at the premise, derivation, or detail level
+- the file reads as a strategic validation companion in the user's language
+- important strategic items are restated before they are explained
+- validation questions ask the user to confirm strategy, not tactical choices
+- tactical topics are discussed as delegated planning areas with strategic constraints
+- the explanation helps the user locate disagreement at the premise, derivation, or strategic-default level
 
 When writing a machine-readable summary for validation, use `assets/blueprint_schema.yaml` and optionally run:
 

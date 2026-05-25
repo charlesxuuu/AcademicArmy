@@ -6,20 +6,10 @@ paper_blueprint_summary:
     explanation_language_suffix: string
   title: string
   paper_identity:
-    working_title: string
-    research_area: string
-    target_venue_candidates: [string]
+    research_object: string
+    target_venue_posture: string
     paper_type: string
-    research_artifact: string
     current_input_state: string
-  target_venue:
-    primary: string
-    alternatives: [string]
-    reviewer_audience: string
-    contribution_posture: string
-    evidence_standard: string
-    fit_score: integer_or_null
-    fit_rationale: string
   exemplar_analysis:
     storytelling_exemplars:
       - title: string
@@ -27,187 +17,143 @@ paper_blueprint_summary:
         year: integer_or_null
         source: string
         recency_basis: last_2_3_years_or_latest_3_cycles_or_expanded_last_5_years_or_needs_verification
-        why_current_storytelling_exemplar: string
-        transferable_storytelling_lesson: string
-        non_transferable_warning: string
+        strategic_story_lesson: string
         verification_status: verified_or_tentative_or_needs_verification
     technical_exemplars:
       - title: string
         venue: string
         year: integer_or_null
         source: string
-        influence_signal: string
-        core_technical_idea: string
-        technical_lesson_for_current_work: string
+        strategic_technical_lesson: string
         verification_status: verified_or_tentative_or_needs_verification
-    evaluation_exemplars:
+    evidence_exemplars:
       - title: string
         venue: string
         year: integer_or_null
         source: string
-        evidence_class_lesson: string
-        metric_family_lesson: string
-        comparison_class_lesson: string
+        strategic_evidence_lesson: string
         verification_status: verified_or_tentative_or_needs_verification
-  distilled_patterns:
-    storytelling_patterns: [string]
-    technical_patterns: [string]
-    evidence_patterns: [string]
   core_strategy_premises:
-    target_venue_premise: string
+    venue_premise: string
     problem_premise: string
     contribution_premise: string
     novelty_premise: string
     evidence_premise: string
-    storytelling_premise: string
     scope_premise: string
-  central_thesis:
+  central_research_bet:
     one_sentence_thesis: string
-    acceptance_critical_paper_bet: string
-    downgrade_or_falsification_condition: string
+    acceptance_critical_bet: string
+    downgrade_condition: string
   contribution_contract:
     primary_contribution: string
-    secondary_contributions: [string]
-    supporting_contributions: [string]
+    secondary_contribution_roles: [string]
     non_contributions_and_boundaries: [string]
-  claim_hierarchy:
+  claim_strategy:
     - title: string
-      statement: string
-      role: acceptance_critical_or_supporting_or_optional_or_deferred
-      evidence_obligation: string
-      acceptable_proof_modes: [string]
-      required_comparison_class: [string]
-      metric_family: [string]
+      claim_statement: string
+      strategic_role: acceptance_critical_or_mechanism_or_scope_or_supporting_or_deferred
+      evidence_posture: string
       scope_boundary: string
-      current_support_status: supported_or_unsupported_or_needs_evidence_or_needs_verification
-      failure_implication: string
-  related_work_boundary:
-    work_clusters:
-      - cluster_name: string
-        already_solves: string
-        blueprint_delta: string
-        comparison_obligation: string
-        overclaim_boundary: string
-        verification_status: verified_or_tentative_or_needs_verification
-    required_differentiation_points: [string]
-    highest_related_work_risks: [string]
-  method_abstraction:
-    core_idea: string
+      downgrade_condition: string
+  novelty_and_comparison_strategy:
+    closest_work_clusters: [string]
+    differentiation_posture: string
+    comparison_posture: string
+    overclaim_boundary: string
+  method_abstraction_strategy:
+    core_abstraction: string
     mechanism_class: string
-    inputs: [string]
-    outputs: [string]
-    decision_variables: [string]
-    constraints: [string]
-    assumptions_and_invariants: [string]
-    delegated_method_details: [string]
-  evidence_obligations:
+    strategic_decision_space: string
+    constraints_and_invariants: [string]
+    delegated_tactical_method_details: [string]
+  evidence_posture:
     - title: string
-      supported_claim: string
-      required_evidence_type: string
-      metric_family: [string]
-      baseline_or_comparison_class: [string]
-      data_or_workload_class: [string]
-      minimum_acceptable_support: string
-      planning_freedom: string
-      failure_implication: string
-  narrative_requirements:
+      strategic_claim_supported: string
+      high_level_evidence_type: string
+      comparison_posture: string
+      outcome_family: string
+      minimum_standard_for_strategic_viability: string
+      delegated_tactical_choices: [string]
+      downgrade_implication: string
+  narrative_and_visual_strategy:
     opening_tension: string
-    central_abstraction: string
+    central_abstraction_to_foreground: string
     story_arc: [string]
-    terms_to_foreground: [string]
-    claims_to_avoid_foregrounding: [string]
-    delegated_content_planning: [string]
-  visual_argument_requirements:
-    - title: string
-      message_that_must_be_visible: string
-      why_it_matters: string
-      related_thesis_or_claim: string
-      planning_freedom: string
-  scope_boundaries:
-    in_scope_setting: [string]
-    out_of_scope_setting: [string]
-    accepted_assumptions: [string]
-    allowed_claims: [string]
-    deferred_claims: [string]
-    claims_avoided_by_design: [string]
-  research_risks_and_dependency_signals:
+    visual_argument_requirements: [string]
+    delegated_content_and_figure_choices: [string]
+  strategic_risks_and_uncertainties:
     highest_risk_premise: string
     highest_risk_claim: string
-    highest_risk_related_work_boundary: string
+    highest_risk_novelty_boundary: string
     highest_risk_evidence_gap: string
-    risk_materialization_changes: [string]
-  open_planning_variables:
-    content_planning: [string]
-    experiment_planning: [string]
-    figure_planning: [string]
-    method_planning: [string]
-    related_work_planning: [string]
-    review_risk_planning: [string]
-  downstream_planning_interfaces:
+    strategy_change_if_risks_materialize: [string]
+  delegation_boundaries:
     content_planning:
-      use: [string]
-      preserve_constraints: [string]
-      produce_later: [string]
-      allowed_to_decide: [string]
+      strategic_boundary: string
+      constraints_to_preserve: [string]
+      tactical_choices_delegated: [string]
     experiment_planning:
-      use: [string]
-      preserve_constraints: [string]
-      produce_later: [string]
-      allowed_to_decide: [string]
+      strategic_boundary: string
+      constraints_to_preserve: [string]
+      tactical_choices_delegated: [string]
     figure_planning:
-      use: [string]
-      preserve_constraints: [string]
-      produce_later: [string]
-      allowed_to_decide: [string]
-    writing:
-      use: [string]
-      preserve_constraints: [string]
-      produce_later: [string]
-      allowed_to_decide: [string]
-    review_risk:
-      use: [string]
-      preserve_constraints: [string]
-      produce_later: [string]
-      allowed_to_decide: [string]
+      strategic_boundary: string
+      constraints_to_preserve: [string]
+      tactical_choices_delegated: [string]
+    method_planning:
+      strategic_boundary: string
+      constraints_to_preserve: [string]
+      tactical_choices_delegated: [string]
+    review_planning:
+      strategic_boundary: string
+      constraints_to_preserve: [string]
+      tactical_choices_delegated: [string]
+  strategic_defaults:
+    - posture_area: venue_or_contribution_or_evidence_or_narrative_or_method_or_scope
+      recommended_default: string
+      why_matches_premises: string
+      evidence_that_would_change_it: string
+      downstream_skill_to_explore_tactical_alternatives: string
   design_rationale:
-    blueprint_overview:
+    strategic_overview:
       paper_positioning: string
-      central_thesis: string
-      main_contribution: string
-      primary_claim: string
-      evidence_obligation_summary: string
-      most_important_boundary: string
-      open_planning_variable_summary: string
+      central_research_bet: string
+      primary_contribution: string
+      acceptance_critical_claim: string
+      evidence_posture_summary: string
+      delegation_summary: string
+      highest_strategic_risk: string
     validation_overview:
-      - key_blueprint_content: string
+      - key_strategic_content: string
         why_it_matters: string
         main_user_validation_question: string
     item_rationales:
       - semantic_item_name: string
-        blueprint_content_digest: string
+        strategic_content_digest: string
         premise_source: string
         derivation: string
-        downstream_connections: [string]
+        downstream_constraint: string
         user_validation_point: string
     delegated_detail_rationale:
-      - detail_area: content_planning_or_experiment_planning_or_figure_planning_or_method_planning_or_writing_or_review_risk
-        what_is_left_open: [string]
-        why_left_open: string
-        constraint_from_blueprint: string
-    diagnostic_derivation_chains:
+      - detail_area: content_planning_or_experiment_planning_or_figure_planning_or_method_planning_or_review_planning
+        what_is_delegated: [string]
+        strategic_constraint: string
+        reason_for_delegation: string
+    fragile_strategic_chains:
       - starting_premise: string
-        derived_blueprint_choices: [string]
+        derived_strategy: [string]
         evidence_needed: string
         likely_failure_point: string
-        blueprint_revision_if_chain_fails: string
-    disagreement_diagnosis:
+        strategy_revision_if_chain_fails: string
+    strategic_disagreement_diagnosis:
       - disagreement_type: string
         upstream_premise_to_inspect: string
-        affected_blueprint_objects: [string]
+        affected_strategy_objects: [string]
         likely_revision_direction: string
   explanation_style_checks:
-    standalone_validation_companion: boolean
-    includes_blueprint_content_digest: boolean
+    strategic_validation_companion: boolean
+    includes_strategic_content_digest: boolean
     uses_semantic_anchors: boolean
-    explains_delegated_details: boolean
+    explains_delegation_boundaries: boolean
+    avoids_tactical_questionnaire: boolean
     avoids_synthetic_ids: boolean
