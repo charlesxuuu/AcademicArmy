@@ -19,3 +19,7 @@ experiment plan需要和story telling相匹配，在experiment plan中，有些e
 在experiment plan解释的开头记录一下用户已经明确了哪些东西（experiment plan里不需要加）。
 
 上网搜索一下AI生成文本中的defensive现象，在编写这个skill的时候不要过度defensive，要通过正向语言严格限制skill只能做什么，而不是加反向的限制条件限制skill不能做什么
+
+以下是对上述问题进一步的详细分析：
+
+将这些内容形成一份skill描述/详细介绍文档放在AcademicArmy/metaskills/academic-army-experiment-plan.md用于之后据此编写这个skill
