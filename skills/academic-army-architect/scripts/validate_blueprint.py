@@ -276,6 +276,8 @@ def validate_design_rationale(rationale: dict) -> str | None:
         [
             "strategic_overview",
             "validation_overview",
+            "confirmed_context_coverage",
+            "remaining_strategic_questions",
             "item_rationales",
             "delegated_detail_rationale",
             "fragile_strategic_chains",
@@ -303,6 +305,8 @@ def validate_design_rationale(rationale: dict) -> str | None:
         return error
     for group, keys in {
         "validation_overview": ["key_strategic_content", "why_it_matters", "main_user_validation_question"],
+        "confirmed_context_coverage": ["confirmed_context_item", "covered_or_narrowed_question", "effect_on_remaining_questions"],
+        "remaining_strategic_questions": ["question", "why_not_covered_by_confirmed_context", "strategy_change_if_answer_changes"],
         "item_rationales": ["semantic_item_name", "strategic_content_digest", "premise_source", "derivation", "downstream_constraint", "user_validation_point"],
         "delegated_detail_rationale": ["detail_area", "what_is_delegated", "strategic_constraint", "reason_for_delegation"],
         "fragile_strategic_chains": ["starting_premise", "derived_strategy", "evidence_needed", "likely_failure_point", "strategy_revision_if_chain_fails"],
@@ -326,6 +330,8 @@ def validate_style_checks(style_checks: dict) -> str | None:
         "includes_strategic_content_digest",
         "uses_semantic_anchors",
         "explains_delegation_boundaries",
+        "applies_confirmed_context_filter",
+        "outputs_only_remaining_strategic_questions",
         "avoids_tactical_questionnaire",
         "avoids_synthetic_ids",
     ]
@@ -448,7 +454,7 @@ def validate_markdown_files(data: dict, base_dir: Path) -> str | None:
             ["## Core Premises", "## 核心出发点"],
             ["## Item-by-Item Strategic Validation", "## 战略蓝图逐项解释"],
             ["## What Is Delegated to Later Specialized Planning", "## 哪些内容留给后续专项规划"],
-            ["## Priority Questions for User Review", "## 用户应优先确认的战略问题"],
+            ["## Remaining Strategic Questions for User Confirmation", "## 用户仍需确认的战略问题"],
         ]
         for headings in required_heading_groups:
             if not any(heading in text for heading in headings):

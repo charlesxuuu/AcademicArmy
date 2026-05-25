@@ -73,6 +73,8 @@ This section records only user-confirmed inputs, constraints, preferences, and p
 
 This calibration section belongs only in `paper_blueprint_explanation.<lang>.md`. Keep `paper_blueprint.md` focused on the strategic paper blueprint itself.
 
+Treat this section as a confirmation ledger for the rest of the explanation. Later validation questions are generated after checking what this ledger already covers.
+
 Include user-confirmed information such as:
 
 - research idea
@@ -87,6 +89,22 @@ Include user-confirmed information such as:
 - content delegated to later planning skills
 
 Separate confirmed context from working assumptions. Use a short `Current Working Assumptions` subsection only when the blueprint must proceed despite missing strategic information.
+
+## Confirmed Context Coverage Filter
+
+Use the confirmed context ledger to filter user-facing validation questions.
+
+Before writing `Remaining Strategic Questions for User Confirmation`, classify candidate questions:
+
+| Classification | Output action |
+|---|---|
+| `covered_by_user_confirmation` | Treat the point as settled context and omit it from remaining questions. |
+| `partially_covered` | Ask only the unresolved strategic remainder. |
+| `conflicts_with_user_confirmation` | Revise the blueprint or mark the inconsistency as a blueprint issue. |
+| `delegated_to_downstream_skill` | Express the point as a downstream planning boundary, not a user question. |
+| `unresolved_strategic_question` | Include it as a remaining strategic question. |
+
+Across iterative runs, move newly confirmed strategic points into the confirmed context ledger. As the ledger grows, remaining strategic questions should usually shrink, except when the user changes the paper direction, venue posture, top-level goal, or strategic constraints.
 
 ## Strategic Abstraction Level
 
@@ -322,7 +340,7 @@ Use this structure:
 
 ## Fragile Strategic Chains
 
-## Priority Questions for User Review
+## Remaining Strategic Questions for User Confirmation
 ```
 
 For each important strategic item, first restate the content in the user's language, then explain:
@@ -333,6 +351,8 @@ For each important strategic item, first restate the content in the user's langu
 4. what strategic question the user should inspect
 
 User validation questions should stay strategic: venue posture, problem premise, contribution contract, claim strength, novelty boundary, evidence posture, scope boundary, and delegation boundary.
+
+Before outputting these questions, apply the confirmed context coverage filter. Questions already answered by the confirmed user context should disappear; partially answered questions should be narrowed; tactical questions should become downstream planning boundaries. If no unresolved strategic question remains, say that the current confirmed context covers the strategic decisions and that remaining uncertainty belongs to later specialized planning.
 
 The explanation should use the confirmed context as its starting point. Goal decomposition and blueprint rationale should follow from that context and the explicitly stated working assumptions.
 
@@ -398,8 +418,9 @@ Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 - the file begins with confirmed user context
 - confirmed user context records only information explicitly provided by the user
 - working assumptions are separated from confirmed user context when assumptions are needed
+- confirmed context is used to filter remaining strategic questions
 - important strategic items are restated before they are explained
-- validation questions ask the user to confirm strategy, not tactical choices
+- remaining validation questions ask only unresolved strategy, not already confirmed context or tactical choices
 - tactical topics are discussed as delegated planning areas with strategic constraints
 - the explanation helps the user locate disagreement at the premise, derivation, or strategic-default level
 

@@ -138,6 +138,14 @@ paper_blueprint_summary:
       - key_strategic_content: string
         why_it_matters: string
         main_user_validation_question: string
+    confirmed_context_coverage:
+      - confirmed_context_item: string
+        covered_or_narrowed_question: string
+        effect_on_remaining_questions: string
+    remaining_strategic_questions:
+      - question: string
+        why_not_covered_by_confirmed_context: string
+        strategy_change_if_answer_changes: string
     item_rationales:
       - semantic_item_name: string
         strategic_content_digest: string
@@ -166,5 +174,7 @@ paper_blueprint_summary:
     includes_strategic_content_digest: boolean
     uses_semantic_anchors: boolean
     explains_delegation_boundaries: boolean
+    applies_confirmed_context_filter: boolean
+    outputs_only_remaining_strategic_questions: boolean
     avoids_tactical_questionnaire: boolean
     avoids_synthetic_ids: boolean
