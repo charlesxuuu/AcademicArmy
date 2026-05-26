@@ -1,5 +1,14 @@
 {
+  "scripts": {
+    "evolve-skill": "tsx metaskills/evolve-skill.ts",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@openai/codex-sdk": "^0.134.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
   }
 }
