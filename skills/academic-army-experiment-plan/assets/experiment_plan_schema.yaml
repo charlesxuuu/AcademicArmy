@@ -2,6 +2,9 @@ experiment_plan_summary:
   output_files:
     experiment_plan_markdown: experiment_plan.md
     explanation_markdown: experiment_plan_explanation.<lang>.md
+    interface_contracts_yaml: experiment_interface_contracts.yaml
+    metric_contracts_yaml: experiment_metric_contracts.yaml
+    research_context_markdown: research_context.md
     plan_language: English
     explanation_language_suffix: string
 
@@ -9,11 +12,7 @@ experiment_plan_summary:
     user_specified_facts: [string]
     blueprint_confirmed_facts: [string]
     existing_draft_note_or_result_facts: [string]
-    live_research_context_used_in_this_version:
-      - anchor: string
-        venue_or_year: string
-        link: string
-        planning_lesson: string
+    live_research_context_used_in_this_version: [string]
     skill_derived_experiment_arrangements: [string]
     planning_items_closed_in_this_revision:
       - item: string
@@ -23,6 +22,25 @@ experiment_plan_summary:
       - item: string
         why_it_changes_plan_structure: string
         affected_objective_or_claim: string
+    required_explanation_headings: [string]
+
+  research_context_summary:
+    research_context_ref: research_context.md
+    last_verified_at: YYYY-MM-DD
+    target_venue: string
+    field: string
+    exported_ids:
+      baseline_ids: [string]
+      workload_ids: [string]
+      metric_ids: [string]
+    source_backed_anchors:
+      - source_id: string
+        title: string
+        venue_or_year: string
+        link: string
+        relevance: string
+        planning_lesson: string
+        exported_ids: [string]
 
   title: string
 
@@ -34,11 +52,68 @@ experiment_plan_summary:
   claim_to_evidence_architecture:
     - claim: string
       evidence_objective: string
-      story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_cost_scalability_reproducibility_protocol
+      story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism
       main_artifact: string
       downstream_consumers: [experiment_runner_or_code_generation_or_result_analysis_or_plot_planning_or_paper_writing_or_rebuttal_preparation_or_reproducibility]
 
-  shared_experimental_protocol:
+  plan_references:
+    research_context_ref: research_context.md
+    interface_contracts_ref: experiment_interface_contracts.yaml
+    metric_contracts_ref: experiment_metric_contracts.yaml
+
+  shared_protocol_summary:
+    required_workload_ids: [string]
+    scope_extension_workload_candidate_ids: [string]
+    required_baseline_ids: [string]
+    diagnostic_baseline_ids: [string]
+    upper_bound_ids: [string]
+    primary_metric_ids: [string]
+    secondary_metric_ids: [string]
+    cost_or_waste_metric_ids: [string]
+    logging_schema_ref: string
+    artifact_manifest_ref: string
+    execution_input_slots_ref: string
+
+  experiment_objectives:
+    - objective_heading: string
+      story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism
+      primary_claim: string
+      evidence_goal: string
+      claims_supported: [string]
+      evidence_outputs: [string]
+      writing_scope_outputs: [string]
+      boundary:
+        includes: [string]
+        excludes: [string]
+      core_experiment: string
+      controlled_factors: [string]
+      comparator_ids: [string]
+      primary_metric_ids: [string]
+      secondary_metric_ids: [string]
+      target_evidence_artifacts: [string]
+      target_evidence_pattern: string
+      output_files: [string]
+      logging_schema_ref: string
+      reuse_policy:
+        base_runs_from: [string]
+        new_runs_only_for: [string]
+      dependencies: [string]
+      priority: critical_or_high_or_medium_or_low
+
+  derived_analyses:
+    - analysis_heading: string
+      inputs: [string]
+      evidence_outputs: [string]
+      output_files: [string]
+      consumers: [experiment_runner_or_code_generation_or_result_analysis_or_plot_planning_or_paper_writing_or_rebuttal_preparation_or_reproducibility]
+      contract_refs: [string]
+
+  objective_dependency_graph:
+    - from_objective_or_artifact: string
+      to_objective_or_artifact: string
+      evidence_chain_role: string
+
+  interface_contracts_summary:
     workloads:
       required_workloads:
         scenes_or_datasets: [string]
@@ -49,87 +124,55 @@ experiment_plan_summary:
       scope_extension_workload_candidates:
         - workload_id: string
           scope_signal: string
-          explanation_reference: string
-    verified_research_context_ids:
-      baseline_ids: [string]
-      workload_ids: [string]
-      metric_ids: [string]
-    baseline_contracts:
+          explanation_ref: string
+          research_context_ref: string
+    baselines:
       required_baselines:
         - baseline_id: string
-          observation_access: string
+          role: required
+          available_state: [string]
+          state_used_by_policy: [string]
+          forbidden_state_usage: [string]
           action_space: string
           resource_budget: string
+          implementation_status: available_or_adapter_required_or_reimplementation_required_or_contract_equivalent_required
           implementation_owner: user_or_existing_repo_or_code_generation_or_external_reference
+          acceptable_implementations: [string]
+          minimum_contract: [string]
           fairness_constraint: string
+          allowed_use: main_comparison_or_diagnostic_or_oracle_upper_bound_or_ablation_only
           used_by_objectives: [string]
-      diagnostic_baselines:
-        - baseline_id: string
-          observation_access: string
-          action_space: string
-          resource_budget: string
-          implementation_owner: user_or_existing_repo_or_code_generation_or_external_reference
-          fairness_constraint: string
-          used_by_objectives: [string]
-      upper_bounds:
-        - baseline_id: string
-          observation_access: string
-          action_space: string
-          resource_budget: string
-          implementation_owner: user_or_existing_repo_or_code_generation_or_external_reference
-          fairness_constraint: string
-          used_by_objectives: [string]
-    shared_metrics:
-      quality: [string]
-      deadline_or_responsiveness: [string]
-      resource_or_cost: [string]
-      waste: [string]
-      statistical_reporting: [string]
-    metric_contracts:
-      - metric_id: string
-        type: continuous_or_binary_or_categorical_or_vector
-        unit_or_range: string
-        definition_owner: metric_spec_skill_or_experiment_runner_or_confirmed_formula
-        required_inputs: [string]
-        aggregation_policy: string
-        used_by_objectives: [string]
-    shared_logging_schema:
+      diagnostic_baselines: []
+      upper_bounds: []
+    logging_schema:
       required_keys: [string]
       required_timing_fields: [string]
       required_resource_fields: [string]
       required_quality_fields: [string]
       required_action_or_controller_fields: [string]
       required_run_metadata: [string]
-    shared_resource_waste_and_artifact_protocol:
-      resource_cost_reporting: [string]
-      waste_taxonomy: [string]
-      artifact_manifest: [string]
     execution_input_slots:
       - slot: string
         required_handle_for_downstream_execution: string
+    artifact_manifest: [string]
 
-  experiment_objectives:
-    - objective_heading: string
-      story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_cost_scalability_reproducibility_protocol
-      evidence_goal: string
-      claims_supported: [string]
-      claim_calibration_output: [string]
-      boundary:
-        includes: [string]
-        excludes: [string]
-      core_experiment: string
-      controlled_factors: [string]
-      comparators: [string]
-      primary_metrics: [string]
-      secondary_metrics: [string]
-      target_evidence_artifacts: [string]
-      target_evidence_pattern: string
-      output_files: [string]
-      logging_schema: [string]
-      dependencies: [string]
-      priority: critical_or_high_or_medium_or_low
-
-  objective_dependency_graph:
-    - from_objective_or_artifact: string
-      to_objective_or_artifact: string
-      evidence_chain_role: string
+  metric_contracts_summary:
+    metrics:
+      - metric_id: string
+        type: continuous_or_binary_or_categorical_or_vector_or_ratio_or_cdf_or_distribution
+        unit_or_range: string
+        sign: higher_is_better_or_lower_is_better_or_nominal_or_distribution
+        definition_status: confirmed_or_delegated_or_unresolved
+        definition_owner: metric_spec_skill_or_experiment_runner_or_confirmed_formula
+        formula_id: string
+        formula_ref: string
+        required_decision: string
+        default_base_metric_candidates: [string]
+        required_inputs: [string]
+        aggregation_policy: string
+        numerator: string
+        denominator: string
+        x_unit: string
+        y_unit: string
+        zero_point: string
+        used_by_objectives: [string]

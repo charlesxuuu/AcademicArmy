@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Experiment Plan"
-  short_description: "Clean claim-to-evidence experiment plan plus user-language explanation"
-  default_prompt: "Create a clean English experiment_plan.md and user-language experiment_plan_explanation.<lang>.md with $academic-army-experiment-plan."
+  short_description: "Clean claim-to-evidence plan plus contracts and research context"
+  default_prompt: "Create experiment_plan.md, experiment_plan_explanation.<lang>.md, experiment_interface_contracts.yaml, experiment_metric_contracts.yaml, and research_context.md with $academic-army-experiment-plan."
 
 dependencies:
   tools:

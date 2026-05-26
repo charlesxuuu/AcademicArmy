@@ -1,25 +1,28 @@
 ---
 name: academic-army-experiment-plan
 description: >-
-  Create a clean two-artifact academic experiment plan: an English, AI-facing
-  experiment_plan.md that contains only the strategic experiment specification,
-  and a user-language experiment_plan_explanation.<lang>.md that explains the
-  confirmed-input ledger, live-research context, and reasoning behind each
-  objective. Use when a research idea, paper_blueprint.md, paper goals, claims,
-  storytelling blueprint, target venue, existing notes/results, or revision
-  feedback must be converted into claim-to-evidence objectives, shared
-  protocols, target evidence artifacts, target evidence patterns, and downstream
-  execution interfaces. Uses academic_army_mcp_tools.deepresearch, canonical
-  Codex MCP tool name mcp__academic_army_mcp_tools__deepresearch, for current
-  venue, baseline, dataset, metric, benchmark, artifact, motivation-pattern,
-  and reviewer-expectation research.
+  Create a clean multi-artifact academic experiment plan: an English,
+  AI-facing experiment_plan.md that contains only the strategic experiment
+  specification; a user-language experiment_plan_explanation.<lang>.md for
+  human confirmation; experiment_interface_contracts.yaml for workloads,
+  baselines, logging, artifact manifests, and execution handles;
+  experiment_metric_contracts.yaml for metric definitions; and
+  research_context.md for live-research anchors and verified IDs. Use when a
+  research idea, paper_blueprint.md, paper goals, claims, storytelling
+  blueprint, target venue, existing notes/results, or revision feedback must be
+  converted into claim-to-evidence objectives, shared protocol references,
+  target evidence artifacts, target evidence patterns, and downstream execution
+  interfaces. Uses academic_army_mcp_tools.deepresearch, canonical Codex MCP
+  tool name mcp__academic_army_mcp_tools__deepresearch, for current venue,
+  baseline, dataset, metric, benchmark, artifact, motivation-pattern, and
+  reviewer-expectation research.
 ---
 
 # Academic Army Experiment Plan
 
 ## Output Contract
 
-Create exactly two Markdown deliverables.
+Create exactly five deliverables.
 
 ### File 1: `experiment_plan.md`
 
@@ -30,23 +33,24 @@ skills.
 The plan contains only the experiment specification. It does not contain the
 confirmed-input ledger, source explanations, live-research notes, skill
 self-explanations, literature-review prose, user-facing caveats, fallback
-language, or future feedback questionnaires.
+language, future feedback questionnaires, full baseline contracts, full metric
+contracts, or live-research source lists.
 
 Include only:
 
 - experimental thesis, primary comparison, and operating conditions
 - claim-to-evidence architecture
-- shared workloads, verified research-context IDs, baseline contracts, metric
-  contracts, logging schema, resource/cost protocol, waste taxonomy, and
-  artifact manifest protocol
+- research context and contract references
+- shared protocol summary that points to contract files
 - experiment objectives organized by paper claim and story role
-- for each objective: story role, evidence goal, supported claims, claim
-  calibration output, boundary, core experiment, controlled factors,
-  comparators, metrics, target evidence artifacts, target evidence pattern,
-  output files, logging schema, dependencies, and priority
+- for each objective: story role, evidence goal, supported claims, evidence
+  outputs, writing scope outputs, boundary, core experiment, controlled factors,
+  comparator IDs, metric IDs, target evidence artifacts, target evidence
+  pattern, output files, logging schema reference, reuse policy, dependencies,
+  and priority
+- derived analyses and artifact protocol summaries when they aggregate existing
+  objective outputs rather than running new experiments
 - a short objective dependency graph or evidence order when useful
-- concise execution input slots only when a missing concrete handle is needed
-  by downstream execution skills
 
 The plan must be fielded, compact, and machine-readable enough for later AI
 skills. Prefer short bullets and stable field names over long explanatory
@@ -82,6 +86,71 @@ Open items appear only in the explanation ledger, not in the plan. As the user
 adds instructions across revisions, confirmed facts grow and remaining open
 planning items shrink.
 
+### File 3: `experiment_interface_contracts.yaml`
+
+Write this file in YAML. It is the machine-facing interface for experiment
+runner, code generation, result analysis, plot planning, and reproducibility
+skills.
+
+Include:
+
+- workload contracts, split into required workloads and scope-extension
+  workload candidates
+- baseline contracts, split into required baselines, diagnostic baselines, and
+  upper bounds
+- baseline state contracts with `available_state`, `state_used_by_policy`, and
+  `forbidden_state_usage`
+- baseline implementation contracts with acceptable implementations and minimum
+  behavioral contract when a named external implementation is not the only
+  valid route
+- `allowed_use` for each baseline: `main_comparison`, `diagnostic`,
+  `oracle_upper_bound`, or `ablation_only`
+- shared logging schema
+- execution input slots
+- artifact manifest and result-file handoff protocol
+
+### File 4: `experiment_metric_contracts.yaml`
+
+Write this file in YAML. It is the machine-facing metric dictionary.
+
+Include every metric ID used in `experiment_plan.md` or
+`experiment_interface_contracts.yaml`. Each metric contract includes:
+
+- `metric_id`
+- `type`
+- `unit_or_range`
+- `sign`
+- `definition_status`: `confirmed`, `delegated`, or `unresolved`
+- `definition_owner`
+- `formula_id`
+- `formula_ref` when confirmed
+- `required_decision` when delegated or unresolved
+- `required_inputs`
+- `aggregation_policy`
+- `used_by_objectives`
+
+For ratio metrics, include `numerator` and `denominator`. For CDF or
+distribution metrics, include `x_unit`, `y_unit`, and `zero_point`.
+
+### File 5: `research_context.md`
+
+Write this file in English unless the user explicitly asks otherwise. It is the
+source-backed context for current venue patterns, research anchors, and
+canonical IDs used by the plan and contracts.
+
+Include:
+
+- `last_verified_at` using the current date
+- target venue and field
+- source-backed baseline, workload, and metric IDs used by other artifacts
+- source title, venue/year from source metadata, link, relevance, and planning
+  lesson
+- alternatives or implementation notes when a canonical baseline family can be
+  satisfied by multiple equivalent implementations
+
+The plan references this file by ID or path. The plan does not repeat the
+source discussion.
+
 ## Required Research MCP
 
 Use the `deepresearch` tool from the `academic_army_mcp_tools` MCP server for
@@ -103,16 +172,17 @@ Use `academic_army_mcp_tools.deepresearch` for:
 - motivation and design-insight experiment patterns that make an intuition
   visible before full method evaluation
 
-Use live research to make planning commitments. Put the concise synthesis and
-source anchors in the explanation file. Put only the resulting experiment
-choices in the plan.
+Use live research to make planning commitments. Put source anchors and current
+venue/field synthesis in `research_context.md`. Put user-facing reasoning about
+how that research shaped the plan in `experiment_plan_explanation.<lang>.md`.
+Put only references and IDs in `experiment_plan.md`.
 
 When live research identifies papers, datasets, baselines, metrics, or workload
-families, create stable IDs for the plan and put the source explanation in the
-explanation file. The plan should reference canonical IDs such as
+families, create stable IDs for the plan and put the source explanation in
+`research_context.md`. The plan should reference canonical IDs such as
 `lapisgs_like_layered_3dgs`, `lts_like_dynamic_multilayer_3dgs`, or
-`n3dv_dynamic_multiview_sequences` only after the explanation or research
-context verifies them.
+`n3dv_dynamic_multiview_sequences` only after `research_context.md` records the
+verification source.
 
 ## Inputs to Extract
 
@@ -213,8 +283,10 @@ Use positive, executable planning language:
   listed in the explanation file.`
 - Write `The plan includes artifact outputs when they directly support
   execution, plotting, writing, or reproducibility.`
-- Write `Claim calibration output: supported_scene_scope,
-  supported_trace_scope, supported_substrate_scope.`
+- Write `Evidence outputs: supported_scene_scope, supported_trace_scope,
+  supported_substrate_scope.`
+- Write `Writing scope outputs: dynamic_scene_claim_support,
+  deployment_claim_support.`
 
 Avoid defensive reviewer-facing phrasing, fallback paths, and questionnaire
 language in the plan. Express uncertainty as structured execution input slots in
@@ -233,8 +305,10 @@ For every candidate objective, answer:
   insight, main end-to-end effectiveness, mechanism/ablation, robustness/stress,
   generalization, human/perceptual evidence, deployment realism, or
   cost/scalability/reproducibility protocol?
-- What claim-calibration signals should this experiment export for writing and
-  review-response skills?
+- What evidence outputs should this experiment export for experiment runner,
+  result analysis, plot planning, and paper writing skills?
+- What writing scope outputs should this experiment export for paper writing and
+  rebuttal preparation skills?
 - What target evidence artifact should downstream plotting or writing produce?
 - What target evidence pattern should the artifact make visible?
 - Which workloads, comparators, metrics, controlled factors, logging fields, and
@@ -246,18 +320,18 @@ If a candidate objective does not correspond to an independent claim,
 independent story role, or independent paper artifact, merge it into another
 objective as a metric slice, reporting view, or shared protocol.
 
-Use `Claim calibration output` as a machine-readable list of signals, not as a
-human-facing question. Examples:
+Use `Evidence outputs` and `Writing scope outputs` as machine-readable lists of
+signals, not as human-facing questions. Examples:
 
-- `controller_state_justification`
-- `prototype_system_claim`
 - `supported_scene_scope`
 - `supported_trace_scope`
 - `supported_substrate_scope`
 - `mechanism_attribution_to_state_terms`
+- `dynamic_scene_claim_support`
+- `deployment_claim_support`
 
-Do not use `Decision supported` or `Whether...` fields in the plan. Put
-human-readable decision reasoning in the explanation file.
+The plan uses `Evidence outputs` and `Writing scope outputs` for these signals.
+Human-readable decision reasoning belongs in the explanation file.
 
 ### Target Evidence Pattern
 
@@ -354,25 +428,19 @@ Use shared sections for:
 
 - workloads: scenes, datasets, traces, users, simulations, hardware, network
   profiles, compute profiles, deadline profiles, deployment/testbed scope,
-  required workloads, and scope-extension workload candidates
-- verified research context: canonical IDs for current baselines, datasets,
-  workloads, or metrics whose source notes live in the explanation file or a
-  separate research context artifact
-- baseline contracts: required baselines, diagnostic baselines, and oracle upper
-  bounds, each with observation access, action space, resource budget,
-  implementation owner, fairness constraint, and used-by objectives
-- metrics: quality, accuracy, latency, responsiveness, resource/cost, waste,
-  user/perceptual, statistical reporting, and uncertainty reporting
-- metric contracts: metric ID, type, unit or range, definition owner, required
-  inputs, aggregation policy, and used-by objectives for every score, ratio,
-  quality, waste, deadline, or utility field
-- logging schema: required keys, timing fields, resource fields, quality fields,
-  action/controller fields, trace/workload fields, random seeds, and run
-  metadata
-- waste taxonomy for reference-related, compute-related, bandwidth-related, or
-  prediction-related resources
-- artifact manifest protocol for result files, figure/table consumers,
-  reproducibility handles, and handoff metadata
+  required workloads, and scope-extension workload candidates. Put the full
+  workload contract in `experiment_interface_contracts.yaml`.
+- research context references: paths and anchors for source-backed baseline,
+  workload, and metric IDs. Put the source notes in `research_context.md`.
+- baseline contract references: baseline IDs grouped by required, diagnostic,
+  and upper bound roles. Put full state and fairness contracts in
+  `experiment_interface_contracts.yaml`.
+- metric references: metric IDs grouped by quality, deadline/responsiveness,
+  resource/cost, waste, and statistical reporting. Put full metric definitions
+  in `experiment_metric_contracts.yaml`.
+- logging schema reference, waste taxonomy reference, execution input slots
+  reference, and artifact manifest reference. Put full fields in
+  `experiment_interface_contracts.yaml`.
 
 ## Live Research Strategy
 
@@ -395,11 +463,12 @@ Run the smallest set of deepresearch passes needed for the task:
    high-impact papers from the last 3-5 years. Use them for plan architecture,
    not stale baseline selection.
 
-Compress live research into the explanation file:
+Compress live research into `research_context.md`:
 
 - `Current field and venue experiment patterns`
 - `Live-research anchors used in this version`
 - `Planning commitments derived from those anchors`
+- `Canonical IDs exported to the plan and contracts`
 
 Do not put full literature notes, URLs, tool logs, or research-anchor prose in
 `experiment_plan.md`.
@@ -535,15 +604,14 @@ more specific skill ID:
 Before writing objectives, factor out repeated:
 
 - workloads
-- verified research-context IDs
-- baseline contracts
-- shared metrics
-- metric contracts
-- logging schema
-- resource/cost reporting
-- waste taxonomy
-- artifact manifest protocol
-- execution input slots
+- research context references
+- baseline contract references
+- metric ID references
+- logging schema references
+- resource/cost reporting references
+- waste taxonomy references
+- artifact manifest protocol references
+- execution input slot references
 
 These shared protocols prevent objective-level repetition and give downstream
 skills a stable interface.
@@ -611,77 +679,30 @@ Use this structure:
 
 ## 3. Shared Experimental Protocol
 
-### Workloads
-- Required workloads:
-  - Scenes/datasets:
-  - Viewport/user traces:
-  - Network traces:
-  - Compute/hardware profiles:
-  - Deadline profiles:
-- Scope-extension workload candidates:
-  - <workload_id>: <scope signal; explanation reference>
+### Research and Contract References
+- research_context_ref: research_context.md
+- interface_contracts_ref: experiment_interface_contracts.yaml
+- metric_contracts_ref: experiment_metric_contracts.yaml
 
-### Verified Research Context IDs
-- Baseline IDs:
-- Workload IDs:
-- Metric IDs:
+### Workload Scope Summary
+- Required workload IDs:
+- Scope-extension workload candidate IDs:
 
-### Baseline Contracts
-- Required baselines:
-  - baseline_id:
-    observation_access:
-    action_space:
-    resource_budget:
-    implementation_owner:
-    fairness_constraint:
-    used_by_objectives:
-- Diagnostic baselines:
-  - baseline_id:
-    observation_access:
-    action_space:
-    resource_budget:
-    implementation_owner:
-    fairness_constraint:
-    used_by_objectives:
-- Upper bounds:
-  - baseline_id:
-    observation_access:
-    action_space:
-    resource_budget:
-    implementation_owner:
-    fairness_constraint:
-    used_by_objectives:
+### Baseline Summary
+- Required baseline IDs:
+- Diagnostic baseline IDs:
+- Upper-bound IDs:
 
-### Shared Metrics
-- Quality:
-- Deadline/responsiveness:
-- Resource/cost:
-- Waste:
-- Statistical reporting:
+### Metric Summary
+- Primary metric IDs:
+- Secondary metric IDs:
+- Cost/waste metric IDs:
+- Statistical reporting IDs:
 
-### Metric Contracts
-- metric_id:
-  type:
-  unit_or_range:
-  definition_owner:
-  required_inputs:
-  aggregation_policy:
-  used_by_objectives:
-
-### Shared Logging Schema
-- Required keys:
-- Required timing fields:
-- Required resource fields:
-- Required quality fields:
-- Required action/controller fields:
-
-### Shared Resource, Waste, and Artifact Protocol
-- Resource/cost reporting:
-- Waste taxonomy:
-- Artifact manifest:
-
-### Execution Input Slots
-- <slot>: <required handle for downstream execution skills>
+### Artifact and Logging Summary
+- logging_schema_ref:
+- artifact_manifest_ref:
+- execution_input_slots_ref:
 
 ## 4. Experiment Objectives
 
@@ -690,31 +711,41 @@ Use this structure:
 - Story role:
 - Evidence goal:
 - Claims supported:
-- Claim calibration output:
+- Evidence outputs:
+- Writing scope outputs:
 - Boundary:
   - Includes:
   - Excludes:
 - Core experiment:
 - Controlled factors:
-- Comparators:
-- Primary metrics:
-- Secondary metrics:
+- Comparator IDs:
+- Primary metric IDs:
+- Secondary metric IDs:
 - Target evidence artifacts:
 - Target evidence pattern:
 - Output files:
-- Logging schema:
+- Logging schema ref:
+- Reuse policy:
 - Dependencies:
 - Priority:
 
 ### Objective 2: <Name>
 ...
 
-## 5. Objective Dependency Graph
+## 5. Derived Analyses and Artifact Protocol
+
+### Derived Analysis A: <Name>
+- Inputs:
+- Evidence outputs:
+- Output files:
+- Consumers:
+- Contract refs:
+
+## 6. Objective Dependency Graph
 
 - <objective/evidence artifact> -> <objective/evidence artifact>:
 ```
 
-Omit `Execution Input Slots` only when no concrete execution handles are needed.
 Keep the dependency graph short. Do not add a separate cross-experiment prose
 essay.
 
@@ -765,17 +796,148 @@ For each objective, explain in prose:
 Use objective headings and semantic names. Avoid dense cross-reference codes
 such as `C1/C2/B1/E1`.
 
+### Step 9: Write `experiment_interface_contracts.yaml`
+
+Use this structure:
+
+```yaml
+workloads:
+  required_workloads:
+    scenes_or_datasets: []
+    viewport_or_user_traces: []
+    network_traces: []
+    compute_or_hardware_profiles: []
+    deadline_profiles: []
+  scope_extension_workload_candidates:
+    - workload_id:
+      scope_signal:
+      explanation_ref:
+      research_context_ref:
+
+baselines:
+  required_baselines:
+    - baseline_id:
+      role: required
+      available_state: []
+      state_used_by_policy: []
+      forbidden_state_usage: []
+      action_space:
+      resource_budget:
+      implementation_status:
+      acceptable_implementations: []
+      minimum_contract: []
+      fairness_constraint:
+      allowed_use: main_comparison
+      used_by_objectives: []
+  diagnostic_baselines: []
+  upper_bounds:
+    - baseline_id:
+      role: oracle
+      allowed_use: oracle_upper_bound
+      not_for_main_claim_delta: true
+
+logging_schema:
+  required_keys: []
+  required_timing_fields: []
+  required_resource_fields: []
+  required_quality_fields: []
+  required_action_or_controller_fields: []
+  required_run_metadata: []
+
+execution_input_slots: []
+artifact_manifest: []
+```
+
+### Step 10: Write `experiment_metric_contracts.yaml`
+
+Use this structure:
+
+```yaml
+metrics:
+  - metric_id:
+    type:
+    unit_or_range:
+    sign:
+    definition_status:
+    definition_owner:
+    formula_id:
+    formula_ref:
+    required_decision:
+    default_base_metric_candidates: []
+    required_inputs: []
+    aggregation_policy:
+    used_by_objectives: []
+```
+
+For ratio metrics add:
+
+```yaml
+numerator:
+denominator:
+```
+
+For CDF or distribution metrics add:
+
+```yaml
+x_unit:
+y_unit:
+zero_point:
+```
+
+### Step 11: Write `research_context.md`
+
+Use this structure:
+
+```markdown
+# Research Context: <Paper/System Name>
+
+## Metadata
+
+- last_verified_at:
+- target_venue:
+- field:
+
+## Exported IDs
+
+### Baseline IDs
+### Workload IDs
+### Metric IDs
+
+## Current Field and Venue Patterns
+
+## Source-Backed Anchors
+
+### <source title>
+
+- venue_or_year:
+- link:
+- relevance:
+- planning_lesson:
+- exported_ids:
+
+## Alternatives and Contract Equivalences
+```
+
 ## Built-In Lint Rules
 
-Apply these checks before finalizing the two deliverables.
+Apply these checks before finalizing the five deliverables.
 
-### Two-File Lint
+### File Boundary Lint
 
 - `experiment_plan.md` exists, is English-only, and contains only the plan.
 - `experiment_plan_explanation.<lang>.md` exists, uses the user's conversation
   language, and begins with the confirmed-input ledger.
-- Live-research anchors, source reasoning, and user-facing plan review guidance
-  appear in the explanation file, not the plan.
+- `experiment_interface_contracts.yaml` exists and contains workload, baseline,
+  logging, execution-slot, and artifact-manifest contracts.
+- `experiment_metric_contracts.yaml` exists and contains metric definitions.
+- `research_context.md` exists and contains live-research anchors and exported
+  IDs.
+- Live-research anchors and source notes appear in `research_context.md`, not
+  the plan.
+- User-facing plan review reasoning appears in the explanation file, not the
+  plan.
+- If the plan contains `explanation_ref`, `research_context_ref`, or contract
+  refs, the referenced file and heading or anchor must exist.
 
 ### Confirmed-Input Ledger Lint
 
@@ -801,11 +963,17 @@ Each baseline has:
 
 - `baseline_id`
 - `role`: required, diagnostic, or oracle
-- `observation_access`
+- `available_state`
+- `state_used_by_policy`
+- `forbidden_state_usage`
 - `action_space`
 - `resource_budget`
+- `implementation_status`
+- `acceptable_implementations`
+- `minimum_contract`
 - `implementation_owner`
 - `fairness_constraint`
+- `allowed_use`
 - `used_by_objectives`
 
 ### Metric Contract Lint
@@ -816,10 +984,25 @@ utility metric appears in `Metric Contracts` with:
 - `metric_id`
 - `type`
 - `unit_or_range`
+- `sign`
+- `definition_status`: confirmed, delegated, or unresolved
 - `definition_owner`
+- `formula_id`
+- `formula_ref` when confirmed
+- `required_decision` when delegated or unresolved
 - `required_inputs`
 - `aggregation_policy`
 - `used_by_objectives`
+
+Ratio metrics include `numerator` and `denominator`. CDF or distribution
+metrics include `x_unit`, `y_unit`, and `zero_point`.
+
+### Derived-Analysis Lint
+
+If an objective's core experiment aggregates logs from prior objectives and does
+not require new workload runs, move it to `Derived Analyses and Artifact
+Protocol`. Derived analyses can support claims, but they are not peer
+experiment objectives.
 
 ### Defensive-Language Rewrite Lint
 
@@ -841,12 +1024,17 @@ boundary language
 
 Rewrite these into positive plan fields. Examples:
 
-- `whether the paper should claim...` becomes `Claim calibration output:
+- `whether the paper should claim...` becomes `Evidence outputs:
   supported_scene_scope, supported_trace_scope, supported_substrate_scope`.
 - `when available` becomes `Scope-extension workload candidates`.
 - `fail in different stress regimes` becomes `baseline-specific stress
   sensitivity`.
 - `narrower claim scope` becomes `supported scope`.
+- `hidden substrate cost` becomes `explicit substrate cost accounting`.
+- `cannot reproduce` becomes `separated from baseline policy behavior`.
+- `claim holds` becomes `supported behavior is measured`.
+- `joint allocation is valuable` becomes `joint-allocation-favorable state
+  regions`.
 
 ### Consumer Vocabulary Lint
 
@@ -870,7 +1058,7 @@ python scripts/validate_experiment_plan.py <experiment-plan-summary.json>
 ```
 
 The summary is optional unless the user or pipeline asks for it. It is a
-validation aid, not one of the two required deliverables.
+validation aid, not one of the five required deliverables.
 
 ## Final Quality Checklist
 
@@ -880,29 +1068,34 @@ Before finalizing `experiment_plan.md`, check that:
 - the plan does not contain the confirmation ledger, source explanations,
   live-research notes, literature review prose, skill self-description, or
   user-facing rationale
+- the plan contains references to contract and research files, not full
+  baseline contracts, full metric contracts, or source lists
 - the plan uses `Experimental thesis`, `Primary comparison`, and `Operating
   conditions`
 - every major paper claim has at least one evidence objective
-- every objective has story role, evidence goal, supported claims, claim
-  calibration output, boundary, target evidence artifacts, and target evidence
-  pattern
-- every baseline appears under required, diagnostic, or upper-bound contracts
+- every objective has story role, evidence goal, supported claims, evidence
+  outputs, writing scope outputs, boundary, target evidence artifacts, and
+  target evidence pattern
+- every baseline used by the plan appears in
+  `experiment_interface_contracts.yaml`
 - every named score, ratio, deadline, quality, waste, or utility metric appears
-  in metric contracts
+  in `experiment_metric_contracts.yaml`
 - workload scope is expressed as required workloads and scope-extension
   candidates, not fallback language
 - resource/cost metrics, waste taxonomy, logging schema, and artifact manifest
-  requirements are shared protocols unless they support an independent claim
+  requirements are references to contract files unless they support an
+  independent claim summary
 - objectives with overlapping workloads, metrics, controls, and artifacts have
   been merged, represented as reporting views, or separated by explicit
   `Boundary` fields
+- analyses that only aggregate logs from prior objectives are under `Derived
+  Analyses and Artifact Protocol`, not `Experiment Objectives`
 - open planning items do not appear in the plan
-- execution input slots are machine-readable handles, not user questions
 - the plan avoids fallback language, future feedback questionnaires, and
   defensive reviewer-facing phrasing
 - downstream consumers use the fixed vocabulary or explicit local skill IDs
-- current baselines, datasets, benchmarks, metrics, and protocols come from
-  confirmed user/blueprint constraints or live research
+- current baselines, datasets, benchmarks, metrics, and protocols have sources
+  in the ledger, blueprint, contract files, or `research_context.md`
 
 Before finalizing `experiment_plan_explanation.<lang>.md`, check that:
 
@@ -923,3 +1116,28 @@ Before finalizing `experiment_plan_explanation.<lang>.md`, check that:
   placement, venue patterns, target evidence needs, and downstream interfaces
 - the explanation uses readable prose and objective headings instead of dense
   cross-reference codes
+
+Before finalizing `experiment_interface_contracts.yaml`, check that:
+
+- baseline contracts distinguish available state, state used by policy, and
+  forbidden state usage
+- oracle and diagnostic baselines have `allowed_use` values that prevent them
+  from being used as main claim deltas
+- named external baseline families include acceptable implementations and
+  minimum behavioral contracts
+- execution input slots are machine-readable handles, not user questions
+
+Before finalizing `experiment_metric_contracts.yaml`, check that:
+
+- every metric used by the plan or interface contracts is defined
+- `confirmed` metrics have `formula_ref`
+- `delegated` or `unresolved` metrics have `required_decision`
+- ratio metrics have numerator and denominator
+- CDF/distribution metrics have x-unit, y-unit, and zero point
+
+Before finalizing `research_context.md`, check that:
+
+- every exported baseline, workload, and metric ID used by the plan or
+  contracts has a source-backed entry or a confirmed non-research source
+- `last_verified_at` is present
+- source links and venue/year metadata stay out of `experiment_plan.md`
