@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Architect"
-  short_description: "Goal-oriented paper blueprint plus validation explanation"
-  default_prompt: "Create a Goal-Oriented Strategic Paper Blueprint and user-language validation explanation with $academic-army-architect."
+  short_description: "AI-facing paper strategy blueprint plus user-language validation explanation"
+  default_prompt: "Create an English AI-facing strategic paper blueprint and user-language validation explanation with $academic-army-architect."
 
 dependencies:
   tools:

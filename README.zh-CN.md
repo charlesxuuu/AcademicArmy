@@ -20,6 +20,23 @@ ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”�
 
 需要精细调研的部分，主要通过会使用 API 的 skill 调用 Deep Research 来完成。这样可以避免为了检索而在本地保存大量数据，让项目更轻量，也方便后续刷新调研结果。
 
+## Skill 制作流程
+
+AcademicArmy 的 skill 不是一次性写完就固定下来，而是通过一套 meta-skill 迭代流程逐步打磨。
+
+我们会先初步编写一个 skill。这个阶段用到的相关 prompt 和记录保存在 `metaskills` 文件夹中，方便读者查看这个 skill 最初是如何被制作出来的。
+
+随后，我们选择一个固定选题，并围绕这个选题反复运行下面的循环：
+
+1. 执行当前版本的 skill。
+2. 把 skill 的输出和 `metaskills` 中的相关记录一起交给另一个 agent。
+3. 让这个 agent 仔细分析当前 skill 存在哪些问题：有没有冗余的地方，语言是否清晰，内容是否完整，结构是否适合后续 agent 稳定执行。
+4. 根据这个分析，总结出 skill 可以如何优化。
+5. 把修改意见交给 Codex，让 Codex 修改 skill。
+6. 再次执行修改后的 skill，并继续用同一个固定选题检验效果。
+
+这个循环的作用是让不同版本的 skill 在稳定任务条件下可比较。我们的目标是逐步减少冗余、修正表达和内容问题，并让每个 skill 更容易被后续 agent 一致地执行。
+
 ## DeepResearch MCP
 
 AcademicArmy 在 `mcp-server` 目录下提供了本地 stdio MCP 实现。它只暴露一个工具：

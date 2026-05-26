@@ -20,6 +20,22 @@ The blueprint produced by ProductManager should be specific enough for each role
 
 Parts that require fine-grained research should mainly be handled by skills that know how to call Deep Research through APIs. This avoids saving large amounts of local data only for retrieval, keeping the project lighter and making research updates easier to refresh.
 
+## How We Build Skills
+
+AcademicArmy skills are developed through an iterative meta-skill workflow rather than written once and treated as final.
+
+We first draft an initial version of the skill. The prompts and notes used for this initial drafting process are kept in the `metaskills` directory, so readers can inspect how the skill itself was produced.
+
+After that, we choose a fixed test topic and repeatedly run the following loop:
+
+1. Execute the skill on the fixed topic.
+2. Give the skill output, together with the relevant records from `metaskills`, to another agent.
+3. Ask that agent to analyze the skill carefully: what problems does it have, which parts are redundant, and where can its language, structure, or content be improved?
+4. Give the resulting revision suggestions to Codex and ask Codex to update the skill.
+5. Execute the revised skill again on the same fixed topic.
+
+This loop lets us compare different versions under a stable task setting. The goal is to make each skill more precise, less redundant, and easier for future agents to execute consistently.
+
 ## DeepResearch MCP
 
 AcademicArmy includes a local stdio MCP implementation in the `mcp-server` directory. It exposes one tool:
