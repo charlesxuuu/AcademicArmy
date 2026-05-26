@@ -14,11 +14,19 @@ paper_blueprint_summary:
     strategic_preferences_or_boundaries: [string]
     blueprint_purpose: [string]
     downstream_planning_pipeline: [string]
-    output_requirements: [string]
     abstraction_level_preferences: [string]
     explanation_preferences: [string]
     content_delegated_to_later_planning: [string]
-    working_assumptions: [string]
+  user_mentioned_preferences:
+    method_preferences: [string]
+    evidence_preferences: [string]
+    baseline_or_comparison_preferences: [string]
+    implementation_or_deployment_preferences: [string]
+    language_or_readability_preferences: [string]
+  working_assumptions:
+    - assumption: string
+      why_needed: string
+      replaced_by_confirmed_input_when: string
   title: string
   paper_identity:
     research_idea: string
@@ -137,34 +145,56 @@ paper_blueprint_summary:
       allowed_resolutions: [string]
       default_propagation_rule: string
   explanation_design:
+    what_to_check_first:
+      - strategic_judgment: string
+        why_user_should_check_it: string
+    source_budget:
+      load_bearing_signal_count: integer
+      additional_background_summary: [string]
     core_starting_points:
       - starting_point: string
         derived_from_confirmed_inputs_or_research_signal: string
+        what_user_should_confirm: string
     blueprint_item_rationales:
       - blueprint_item: string
+        item_type: top_level_section_or_core_goal_or_open_variable_or_downstream_contract
         restated_content_digest: string
         derived_from_starting_point: string
+        relationship_to_other_blueprint_items: string
         downstream_constraints_explained: [string]
-        remaining_confirmation_point: string
+        user_check_point: string
     confirmed_context_coverage:
       - confirmed_context_item: string
         strategic_variable_covered_or_narrowed: string
         effect_on_remaining_questions: string
     remaining_strategic_choices:
       - strategic_choice: string
-        why_not_covered_by_confirmed_context: string
-        strategy_change_if_answer_changes: string
+        confirmed_part: string
+        unresolved_part: string
+        current_default_stance: string
+        what_changes_under_different_choices: string
     change_impact_if_confirmed_inputs_change:
       - confirmed_input: string
         affected_blueprint_items: [string]
         likely_revision_direction: string
+    evidence_dependent_claim_calibration:
+      - evidence_outcome: string
+        calibrated_claim_level: string
+        affected_blueprint_items: [string]
   validation_checks:
     file_separation_check: boolean
+    confirmed_input_hygiene_check: boolean
     redundancy_check: boolean
     tactical_leakage_check: boolean
     defensive_tone_check: boolean
     question_deduplication_check: boolean
     source_role_check: boolean
+    source_budget_check: boolean
+    source_role_freshness_check: boolean
+    skill_meta_language_check: boolean
+    item_level_explanation_check: boolean
+    evidence_vs_input_separation_check: boolean
+    terminology_alignment_check: boolean
     contradiction_check: boolean
     terminology_check: boolean
     overcommitment_check: boolean

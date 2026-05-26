@@ -54,12 +54,15 @@ This file is a user-language validation companion. Its function is to help the u
 
 Allowed content:
 
-1. User-confirmed inputs
-2. Key research-context signals, including target venue, closest prior work, recent storytelling patterns, and source roles
-3. Core starting points behind the blueprint
-4. Item-by-item explanation of the blueprint: restate each important blueprint item, explain which starting point produced it, and identify which downstream skills it constrains
-5. Remaining strategic choices for confirmation, limited to unresolved strategic variables
-6. What would change if the user modifies a confirmed input
+1. What the user should check first
+2. User-confirmed inputs, limited to facts explicitly locked by the user
+3. User-mentioned preferences and working assumptions, separated from confirmed inputs
+4. Research signals used, compressed to load-bearing sources and grouped by source role
+5. Core starting points behind the blueprint, each with a user confirmation target
+6. Item-by-item explanation of the blueprint, including each core goal, open strategic variable, and downstream contract
+7. Remaining strategic choices for confirmation, deduplicated against confirmed inputs
+8. Change impact if confirmed inputs change
+9. Evidence-dependent claim calibration, separated from user-input changes
 
 Use the user's conversation language. Preserve technical terms, venue names, paper titles, datasets, benchmarks, metrics, and method names in their original language when that improves precision.
 
@@ -85,9 +88,9 @@ The final Markdown files should contain paper-level conclusions derived from evi
 
 ## Confirmed-Inputs Mechanism
 
-Start `paper_blueprint_explanation.<lang>.md` with a section named `User-Confirmed Inputs` or its natural equivalent in the user's language.
+Start `paper_blueprint_explanation.<lang>.md` with a short section named `What You Should Check First` or its natural equivalent in the user's language. Then write `User-Confirmed Inputs`.
 
-This section records only information explicitly provided by the user, such as:
+`User-Confirmed Inputs` records only paper-strategy information explicitly provided or locked by the user, such as:
 
 - research idea
 - target venue or venue preference
@@ -97,10 +100,21 @@ This section records only information explicitly provided by the user, such as:
 - preferred or prohibited strategic directions
 - intended downstream planning skills
 - desired abstraction level
-- output file requirements
 - explanation-file purpose
 
-Keep working assumptions separate from confirmed inputs. Use a short `Working Assumptions` subsection only when the blueprint must proceed despite missing strategic information.
+Do not include output paths, workspace paths, generated file locations, tool names, or execution environment details in the explanation file. Keep those in internal execution metadata or final run logs.
+
+Keep user-mentioned but unresolved preferences separate from confirmed inputs. Use a `User-Mentioned Preferences and Working Assumptions` section with two subsections:
+
+- `User-mentioned preferences`: items the user mentioned or leaned toward but did not lock as final paper strategy.
+- `Working assumptions`: defaults the skill uses to produce a coherent blueprint despite missing strategic information.
+
+Examples:
+
+- Confirmed: target venue is INFOCOM; CAGS is the closest substrate; novelty is not a restoration model.
+- User-mentioned preference: method should remain interpretable; evidence should go beyond average PSNR.
+- Working assumption: prototype-anchored systems paper; segment/chunk-level plus visible-region control until granularity is resolved.
+- Open strategic variable: deployment boundary, control granularity, dynamic-scene breadth, claim strength.
 
 Before writing any remaining confirmation question, check whether `User-Confirmed Inputs` already covers it.
 
@@ -191,6 +205,15 @@ In the explanation, include a `Research Signals Used` section. Classify each sou
 For writing style and storytelling, prefer recent papers. For methods, datasets, baselines, and metrics, older canonical sources are acceptable when they remain standard.
 
 Do not put a bare source list in either file. Every cited source in the explanation must have a source role and a concise lesson for the blueprint.
+
+Source budget rule for the explanation:
+
+- The main `Research Signals Used` section should contain at most 6-8 load-bearing signals.
+- Each load-bearing signal must state `role`, `what it showed`, and `which blueprint choice it influenced`.
+- Additional sources should be compressed into `Additional background signals` with at most one sentence per role, or omitted when they do not change a blueprint choice.
+- Avoid long raw URL stacks. Keep links only when source traceability helps the user verify the blueprint.
+- `Storytelling exemplars` must be recent, preferably from the last 1-3 years or the latest 3 venue cycles, and must explain their introduction/story movement influence.
+- Older works may be `Method precedents` or `Evaluation precedents`, but they cannot support claims about current reviewer-facing writing style.
 
 In `paper_blueprint.md`, at most include brief `Context anchors` lines inside `Paper Identity`, such as:
 
@@ -398,22 +421,36 @@ Use this structure in the user's language:
 ```markdown
 # Paper Blueprint Explanation: <Working Title>
 
-## User-Confirmed Inputs
+## 0. What You Should Check First
 
-## Working Assumptions
+## 1. User-Confirmed Inputs
 
-## Research Signals Used
+## 2. User-Mentioned Preferences and Working Assumptions
+### User-mentioned preferences
+### Working assumptions
 
-## Core Starting Points
+## 3. Research Signals Used
+### Load-bearing signals
+### Additional background signals
 
-## Blueprint Items and Rationale
+## 4. Core Starting Points
 
-## Downstream Planning Implications
+## 5. Blueprint Items and Rationale
 
-## Remaining Strategic Choices for Confirmation
+## 6. Remaining Strategic Choices for Confirmation
 
-## Change Impact if Confirmed Inputs Change
+## 7. Change Impact if Confirmed Inputs Change
+
+## 8. Evidence-Dependent Claim Calibration
 ```
+
+`What You Should Check First` should list 3-6 strategic judgments the user most needs to confirm before reading details.
+
+For each core starting point, include:
+
+1. the starting point
+2. why it matters for the paper strategy
+3. what the user should confirm
 
 For each important blueprint item, first restate the blueprint content in the user's language, then explain:
 
@@ -422,6 +459,47 @@ For each important blueprint item, first restate the blueprint content in the us
 3. which other blueprint items it constrains
 4. which downstream skills must inherit it
 5. what strategic confirmation point remains, if any
+
+`Blueprint Items and Rationale` must explain at item level, not only section level. Include separate explanation items for:
+
+- each top-level blueprint section
+- each core strategic goal
+- each open strategic variable
+- each downstream contract
+
+Use this item template:
+
+```markdown
+### <Blueprint item title>
+
+蓝图复述：<brief restatement of the blueprint item>
+
+推导来源：<core starting point or research signal that produced it>
+
+与其他部分的关系：<related thesis, claim, evidence objective, contract, or open variable>
+
+约束哪些后续 skill：<content/method/experiment/figure/writing/review planning constraints>
+
+用户应检查：<the exact strategic judgment the user should confirm>
+```
+
+`Remaining Strategic Choices for Confirmation` must use this template:
+
+```markdown
+### <Strategic variable>
+
+已确认部分：<what User-Confirmed Inputs already settles>
+
+未确认部分：<the remaining strategic variable>
+
+当前默认立场：<the blueprint's current conservative stance>
+
+不同选择会改变什么：<paper identity, claim scope, method, evidence, figure, or writing implications>
+```
+
+Separate `Change Impact if Confirmed Inputs Change` from `Evidence-Dependent Claim Calibration`. The former covers changes in user-provided inputs such as venue, scope, deployment boundary, or novelty boundary. The latter covers experiment-outcome contingencies, such as reference usefulness being broad, narrow, or deployment-specific.
+
+Do not create a long standalone `Downstream Planning Implications` section. Downstream implications belong inside each item-level explanation and each downstream-contract explanation. If a summary is useful, keep it to at most five short lines and avoid repeating the contract.
 
 Use semantic anchors such as exact headings, translated headings, concise functional names, or natural-language paraphrases. Avoid relying on section numbers.
 
@@ -539,6 +617,34 @@ Every source in the explanation is categorized as venue posture, closest technic
 
 Every open strategic variable in the blueprint appears in the explanation as a user confirmation point unless already covered by `User-Confirmed Inputs`.
 
+### Confirmed-Input Hygiene Check
+
+Only user-explicit paper-strategy facts appear under `User-Confirmed Inputs`. User-mentioned but unresolved preferences move to `User-Mentioned Preferences`; inferred assumptions move to `Working Assumptions`; output paths and execution metadata stay out of the explanation file.
+
+### Open-Question Deduplication Check
+
+A remaining strategic choice cannot ask for something already confirmed. If partially confirmed, it must state `confirmed part` and `unresolved part`.
+
+### Source Budget and Freshness Check
+
+The main `Research Signals Used` section contains at most 6-8 load-bearing signals. Storytelling exemplars are recent and influence story movement; older works are used only as method or evaluation precedents.
+
+### Skill-Meta Language Check
+
+Remove phrases that explain the skill implementation, such as `from the skill's terminology stabilization rule`, `from the skill file contract`, `this skill decided`, or equivalent translations. Explain the paper rationale instead.
+
+### Item-Level Explanation Check
+
+Every top-level blueprint section, every core strategic goal, every open strategic variable, and every downstream contract has a corresponding explanation item.
+
+### Evidence-vs-Input Separation Check
+
+User input changes and experimental outcome contingencies appear in separate sections: `Change Impact if Confirmed Inputs Change` and `Evidence-Dependent Claim Calibration`.
+
+### Explanation Compression Check
+
+Each core judgment is explained fully once. Later sections refer to the relevant starting point, source role, metric family, novelty boundary, or contract instead of restating it in full.
+
 ## Final Quality Checklist
 
 Before finalizing `paper_blueprint.md`, check that:
@@ -557,11 +663,15 @@ Before finalizing `paper_blueprint.md`, check that:
 Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 
 - it is in the user's language
-- it starts with user-confirmed inputs
-- working assumptions are separated from confirmed inputs
-- research signals are categorized by source role and linked to blueprint choices
+- it starts with `What You Should Check First`, then `User-Confirmed Inputs`
+- user-confirmed inputs, user-mentioned preferences, and working assumptions are separated
+- output paths and execution metadata are absent from the explanation file
+- research signals are limited to load-bearing sources, categorized by role, and linked to blueprint choices
 - each major blueprint item is restated before its rationale
+- every core goal, open variable, and downstream contract receives item-level explanation
 - the explanation helps the user locate disagreement at the starting-point, derivation, or downstream-contract level
+- remaining strategic choices state confirmed part, unresolved part, current default, and impact
+- evidence-dependent claim calibration is separate from user-input change impact
 - remaining strategic choices are filtered by confirmed inputs and do not ask tactical questions
 
 When writing a machine-readable summary for validation, use `assets/blueprint_schema.yaml` and optionally run:

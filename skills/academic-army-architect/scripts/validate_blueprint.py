@@ -52,12 +52,16 @@ FORBIDDEN_LEGACY_BLUEPRINT_HEADINGS = [
     "Delegation Interfaces for Downstream Skills",
 ]
 REQUIRED_EXPLANATION_HEADING_PATTERNS = [
+    ("What You Should Check First", "优先确认", "最需要确认", "先检查"),
     ("User-Confirmed Inputs", "用户已明确", "已确认输入"),
+    ("User-Mentioned Preferences", "用户提到的偏好", "用户提及的偏好"),
+    ("Working Assumptions", "工作假设"),
     ("Research Signals Used", "研究信号", "使用的研究依据"),
     ("Core Starting Points", "核心出发点"),
     ("Blueprint Items and Rationale", "蓝图条目", "逐项解释"),
-    ("Downstream Planning Implications", "后续规划"),
     ("Remaining Strategic Choices", "剩余战略", "仍需确认"),
+    ("Change Impact", "输入变化"),
+    ("Evidence-Dependent Claim Calibration", "证据依赖", "claim calibration", "声明校准"),
 ]
 FORBIDDEN_LEGACY_EXPLANATION_HEADINGS = [
     "Fragile Goal Chains",
@@ -65,6 +69,17 @@ FORBIDDEN_LEGACY_EXPLANATION_HEADINGS = [
     "Goal-Oriented Overview",
     "Strategic Defaults and Change Conditions",
 ]
+FORBIDDEN_EXPLANATION_META_PATTERNS = {
+    "from the skill",
+    "skill's terminology",
+    "skill file contract",
+    "this skill decided",
+    "来自 skill",
+    "来自skill",
+    "技能的文件契约",
+    "术语稳定化要求",
+}
+EXECUTION_PATH_RE = re.compile(r"[A-Za-z]:\\")
 
 TACTICAL_BLUEPRINT_PATTERNS = {
     "robust mpc",
@@ -261,11 +276,9 @@ def validate_confirmed_user_context(context: dict) -> str | None:
         "strategic_preferences_or_boundaries",
         "blueprint_purpose",
         "downstream_planning_pipeline",
-        "output_requirements",
         "abstraction_level_preferences",
         "explanation_preferences",
         "content_delegated_to_later_planning",
-        "working_assumptions",
     ]
     error = require_keys(context, required, "confirmed_user_context")
     if error:
@@ -273,6 +286,37 @@ def validate_confirmed_user_context(context: dict) -> str | None:
     for key in required:
         if not isinstance(context[key], list):
             return f"confirmed_user_context.{key} must be an array"
+    return None
+
+
+def validate_user_mentioned_preferences(preferences: dict) -> str | None:
+    if not isinstance(preferences, dict):
+        return "user_mentioned_preferences must be an object"
+    required = [
+        "method_preferences",
+        "evidence_preferences",
+        "baseline_or_comparison_preferences",
+        "implementation_or_deployment_preferences",
+        "language_or_readability_preferences",
+    ]
+    error = require_keys(preferences, required, "user_mentioned_preferences")
+    if error:
+        return error
+    for key in required:
+        if not isinstance(preferences[key], list):
+            return f"user_mentioned_preferences.{key} must be an array"
+    return None
+
+
+def validate_working_assumptions(assumptions: list) -> str | None:
+    if not isinstance(assumptions, list):
+        return "working_assumptions must be an array"
+    for index, item in enumerate(assumptions, start=1):
+        if not isinstance(item, dict):
+            return f"working_assumptions[{index}] must be an object"
+        error = require_keys(item, ["assumption", "why_needed", "replaced_by_confirmed_input_when"], f"working_assumptions[{index}]")
+        if error:
+            return error
     return None
 
 
@@ -397,24 +441,42 @@ def validate_explanation_design(design: dict) -> str | None:
     error = require_keys(
         design,
         [
+            "what_to_check_first",
+            "source_budget",
             "core_starting_points",
             "blueprint_item_rationales",
             "confirmed_context_coverage",
             "remaining_strategic_choices",
             "change_impact_if_confirmed_inputs_change",
+            "evidence_dependent_claim_calibration",
         ],
         "explanation_design",
     )
     if error:
         return error
+    source_budget = design["source_budget"]
+    if not isinstance(source_budget, dict):
+        return "explanation_design.source_budget must be an object"
+    error = require_keys(source_budget, ["load_bearing_signal_count", "additional_background_summary"], "explanation_design.source_budget")
+    if error:
+        return error
+    if not isinstance(source_budget["load_bearing_signal_count"], int):
+        return "explanation_design.source_budget.load_bearing_signal_count must be an integer"
+    if source_budget["load_bearing_signal_count"] > 8:
+        return "explanation_design.source_budget.load_bearing_signal_count must be at most 8"
+    if not isinstance(source_budget["additional_background_summary"], list):
+        return "explanation_design.source_budget.additional_background_summary must be an array"
     groups = {
+        "what_to_check_first": ["strategic_judgment", "why_user_should_check_it"],
         "core_starting_points": ["starting_point", "derived_from_confirmed_inputs_or_research_signal"],
         "blueprint_item_rationales": [
             "blueprint_item",
+            "item_type",
             "restated_content_digest",
             "derived_from_starting_point",
+            "relationship_to_other_blueprint_items",
             "downstream_constraints_explained",
-            "remaining_confirmation_point",
+            "user_check_point",
         ],
         "confirmed_context_coverage": [
             "confirmed_context_item",
@@ -423,21 +485,30 @@ def validate_explanation_design(design: dict) -> str | None:
         ],
         "remaining_strategic_choices": [
             "strategic_choice",
-            "why_not_covered_by_confirmed_context",
-            "strategy_change_if_answer_changes",
+            "confirmed_part",
+            "unresolved_part",
+            "current_default_stance",
+            "what_changes_under_different_choices",
         ],
         "change_impact_if_confirmed_inputs_change": [
             "confirmed_input",
             "affected_blueprint_items",
             "likely_revision_direction",
         ],
+        "evidence_dependent_claim_calibration": [
+            "evidence_outcome",
+            "calibrated_claim_level",
+            "affected_blueprint_items",
+        ],
     }
     for group, keys in groups.items():
         items = design[group]
         if not isinstance(items, list):
             return f"explanation_design.{group} must be an array"
-        if group in {"core_starting_points", "blueprint_item_rationales"} and not items:
+        if group in {"what_to_check_first", "core_starting_points", "blueprint_item_rationales"} and not items:
             return f"explanation_design.{group} must be a non-empty array"
+        if group == "what_to_check_first" and len(items) > 6:
+            return "explanation_design.what_to_check_first must contain at most 6 items"
         for index, item in enumerate(items, start=1):
             error = require_keys(item, keys, f"explanation_design.{group}[{index}]")
             if error:
@@ -447,17 +518,28 @@ def validate_explanation_design(design: dict) -> str | None:
                 for pattern in TACTICAL_EXPLANATION_QUESTION_PATTERNS:
                     if pattern in text:
                         return f"explanation_design.remaining_strategic_choices[{index}] asks about tactical detail: {pattern}"
+            if group == "blueprint_item_rationales":
+                valid_types = {"top_level_section", "core_goal", "open_variable", "downstream_contract"}
+                if item["item_type"] not in valid_types:
+                    return f"explanation_design.blueprint_item_rationales[{index}].item_type must be one of {sorted(valid_types)}"
     return None
 
 
 def validate_validation_checks(checks: dict) -> str | None:
     required = [
         "file_separation_check",
+        "confirmed_input_hygiene_check",
         "redundancy_check",
         "tactical_leakage_check",
         "defensive_tone_check",
         "question_deduplication_check",
         "source_role_check",
+        "source_budget_check",
+        "source_role_freshness_check",
+        "skill_meta_language_check",
+        "item_level_explanation_check",
+        "evidence_vs_input_separation_check",
+        "terminology_alignment_check",
         "contradiction_check",
         "terminology_check",
         "overcommitment_check",
@@ -487,6 +569,8 @@ def validate(data: dict) -> str | None:
         [
             "output_files",
             "confirmed_user_context",
+            "user_mentioned_preferences",
+            "working_assumptions",
             "title",
             "paper_identity",
             "research_signals_used",
@@ -510,6 +594,8 @@ def validate(data: dict) -> str | None:
     validators = (
         validate_output_files,
         lambda d: validate_confirmed_user_context(d["confirmed_user_context"]),
+        lambda d: validate_user_mentioned_preferences(d["user_mentioned_preferences"]),
+        lambda d: validate_working_assumptions(d["working_assumptions"]),
         lambda d: validate_research_signals(d["research_signals_used"]),
         lambda d: validate_core_goals(d["core_strategic_goals"]),
         lambda d: validate_downstream_contract(d["downstream_skill_contract"]),
@@ -664,6 +750,17 @@ def validate_explanation_markdown(text: str) -> str | None:
     if contains_synthetic_id(text):
         return "explanation file contains synthetic object IDs; use semantic names"
     lower = text.lower()
+    for pattern in FORBIDDEN_EXPLANATION_META_PATTERNS:
+        if pattern in lower:
+            return f"explanation file contains skill-meta language instead of paper rationale: {pattern}"
+    if EXECUTION_PATH_RE.search(text):
+        return "explanation file contains local execution path; keep output paths out of paper_blueprint_explanation"
+    if "svq" in lower:
+        return "explanation file contains SVQ; use VQ-based wording unless SVQ is user-confirmed or source-confirmed"
+    if "reference bits" in lower and "bitrate" not in lower and "bandwidth" not in lower:
+        return "explanation file uses reference bits outside bitrate/bandwidth context; prefer reference resource"
+    if "gaussian bits" in lower and "bitrate" not in lower and "bandwidth" not in lower:
+        return "explanation file uses Gaussian bits outside bitrate/bandwidth context; prefer Gaussian resource"
     for pattern in TACTICAL_EXPLANATION_QUESTION_PATTERNS:
         if pattern in lower:
             return f"explanation file asks about tactical detail instead of strategic confirmation: {pattern}"
@@ -686,6 +783,10 @@ def validate_explanation_markdown(text: str) -> str | None:
         ]
         if not any(term.lower() in lower for term in role_terms):
             return "explanation file has research signals but no source-role labels"
+    if "downstream planning implications" in lower or "后续规划影响" in lower:
+        section = extract_section(text, "Downstream Planning Implications")
+        if section.count("\n") > 8:
+            return "Downstream Planning Implications should be omitted or compressed; explain downstream effects item-by-item"
     return None
 
 
