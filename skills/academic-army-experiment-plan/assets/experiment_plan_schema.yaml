@@ -36,26 +36,63 @@ experiment_plan_summary:
       evidence_objective: string
       story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_cost_scalability_reproducibility_protocol
       main_artifact: string
-      downstream_consumers: [experiment_running_or_coding_or_plotting_or_paper_writing_or_review_response_or_reproducibility]
+      downstream_consumers: [experiment_runner_or_code_generation_or_result_analysis_or_plot_planning_or_paper_writing_or_rebuttal_preparation_or_reproducibility]
 
   shared_experimental_protocol:
     workloads:
-      scenes_or_datasets: [string]
-      viewport_or_user_traces: [string]
-      network_traces: [string]
-      compute_or_hardware_profiles: [string]
-      deadline_profiles: [string]
-      other_workloads: [string]
-    shared_baseline_families:
-      - family: string
-        fair_information_actions_resources: string
-        role: deployable_baseline_or_oracle_upper_bound_or_diagnostic_comparator
+      required_workloads:
+        scenes_or_datasets: [string]
+        viewport_or_user_traces: [string]
+        network_traces: [string]
+        compute_or_hardware_profiles: [string]
+        deadline_profiles: [string]
+      scope_extension_workload_candidates:
+        - workload_id: string
+          scope_signal: string
+          explanation_reference: string
+    verified_research_context_ids:
+      baseline_ids: [string]
+      workload_ids: [string]
+      metric_ids: [string]
+    baseline_contracts:
+      required_baselines:
+        - baseline_id: string
+          observation_access: string
+          action_space: string
+          resource_budget: string
+          implementation_owner: user_or_existing_repo_or_code_generation_or_external_reference
+          fairness_constraint: string
+          used_by_objectives: [string]
+      diagnostic_baselines:
+        - baseline_id: string
+          observation_access: string
+          action_space: string
+          resource_budget: string
+          implementation_owner: user_or_existing_repo_or_code_generation_or_external_reference
+          fairness_constraint: string
+          used_by_objectives: [string]
+      upper_bounds:
+        - baseline_id: string
+          observation_access: string
+          action_space: string
+          resource_budget: string
+          implementation_owner: user_or_existing_repo_or_code_generation_or_external_reference
+          fairness_constraint: string
+          used_by_objectives: [string]
     shared_metrics:
       quality: [string]
       deadline_or_responsiveness: [string]
       resource_or_cost: [string]
       waste: [string]
       statistical_reporting: [string]
+    metric_contracts:
+      - metric_id: string
+        type: continuous_or_binary_or_categorical_or_vector
+        unit_or_range: string
+        definition_owner: metric_spec_skill_or_experiment_runner_or_confirmed_formula
+        required_inputs: [string]
+        aggregation_policy: string
+        used_by_objectives: [string]
     shared_logging_schema:
       required_keys: [string]
       required_timing_fields: [string]
@@ -76,7 +113,10 @@ experiment_plan_summary:
       story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_cost_scalability_reproducibility_protocol
       evidence_goal: string
       claims_supported: [string]
-      decision_supported: string
+      claim_calibration_output: [string]
+      boundary:
+        includes: [string]
+        excludes: [string]
       core_experiment: string
       controlled_factors: [string]
       comparators: [string]

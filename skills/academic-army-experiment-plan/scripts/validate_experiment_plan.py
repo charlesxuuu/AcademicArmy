@@ -56,20 +56,44 @@ REQUIRED_CLAIM_FIELDS = {
 
 REQUIRED_PROTOCOL_FIELDS = {
     "workloads",
-    "shared_baseline_families",
+    "verified_research_context_ids",
+    "baseline_contracts",
     "shared_metrics",
+    "metric_contracts",
     "shared_logging_schema",
     "shared_resource_waste_and_artifact_protocol",
     "execution_input_slots",
 }
 
 REQUIRED_WORKLOAD_FIELDS = {
+    "required_workloads",
+    "scope_extension_workload_candidates",
+}
+
+REQUIRED_REQUIRED_WORKLOAD_FIELDS = {
     "scenes_or_datasets",
     "viewport_or_user_traces",
     "network_traces",
     "compute_or_hardware_profiles",
     "deadline_profiles",
-    "other_workloads",
+}
+
+REQUIRED_BASELINE_CONTRACT_GROUPS = {
+    "required_baselines",
+    "diagnostic_baselines",
+    "upper_bounds",
+}
+
+REQUIRED_RESEARCH_CONTEXT_ID_FIELDS = {"baseline_ids", "workload_ids", "metric_ids"}
+
+REQUIRED_BASELINE_CONTRACT_FIELDS = {
+    "baseline_id",
+    "observation_access",
+    "action_space",
+    "resource_budget",
+    "implementation_owner",
+    "fairness_constraint",
+    "used_by_objectives",
 }
 
 REQUIRED_METRIC_FIELDS = {
@@ -78,6 +102,16 @@ REQUIRED_METRIC_FIELDS = {
     "resource_or_cost",
     "waste",
     "statistical_reporting",
+}
+
+REQUIRED_METRIC_CONTRACT_FIELDS = {
+    "metric_id",
+    "type",
+    "unit_or_range",
+    "definition_owner",
+    "required_inputs",
+    "aggregation_policy",
+    "used_by_objectives",
 }
 
 REQUIRED_SHARED_LOGGING_FIELDS = {
@@ -100,7 +134,8 @@ REQUIRED_OBJECTIVE_FIELDS = {
     "story_role",
     "evidence_goal",
     "claims_supported",
-    "decision_supported",
+    "claim_calibration_output",
+    "boundary",
     "core_experiment",
     "controlled_factors",
     "comparators",
@@ -113,6 +148,8 @@ REQUIRED_OBJECTIVE_FIELDS = {
     "dependencies",
     "priority",
 }
+
+REQUIRED_BOUNDARY_FIELDS = {"includes", "excludes"}
 
 ALLOWED_STORY_ROLES = {
     "motivation",
@@ -128,6 +165,20 @@ ALLOWED_STORY_ROLES = {
 }
 
 ALLOWED_PRIORITIES = {"critical", "high", "medium", "low"}
+
+ALLOWED_DOWNSTREAM_CONSUMERS = {
+    "experiment_runner",
+    "code_generation",
+    "result_analysis",
+    "plot_planning",
+    "paper_writing",
+    "rebuttal_preparation",
+    "reproducibility",
+}
+
+REMOVED_OBJECTIVE_FIELDS = {"decision_supported"}
+
+REMOVED_PROTOCOL_FIELDS = {"shared_baseline_families"}
 
 PLAN_EXPLANATION_LEAK_PATTERNS = {
     "Planning State and Source",
@@ -151,8 +202,15 @@ DEFENSIVE_OR_QUESTIONNAIRE_PATTERNS = {
     "Questions to validate",
     "Need to validate",
     "need to verify whether",
+    "when available",
     "if resources permit",
+    "otherwise",
     "otherwise clearly label",
+    "do not",
+    "should remain",
+    "narrower claim",
+    "fail",
+    "hide cost",
     "Fallback path",
     "degradation path",
     "downgrade path",
@@ -184,6 +242,16 @@ DENSE_REFERENCE_PATTERNS = {"C1", "C2", "B1", "B2", "M1", "R1", "E1", "E2"}
 RESOURCE_ARTIFACT_OBJECTIVE_TERMS = {
     "artifact readiness",
     "resource efficiency, waste, and artifact readiness",
+}
+
+METRIC_CONTRACT_KEYWORDS = {
+    "score",
+    "ratio",
+    "quality",
+    "waste",
+    "deadline",
+    "utility",
+    "qoe",
 }
 
 
@@ -288,6 +356,16 @@ def validate_claims(summary: dict[str, Any], errors: list[str]) -> None:
         role = claim.get("story_role")
         if isinstance(role, str) and role not in ALLOWED_STORY_ROLES:
             errors.append(f"Claim-to-evidence item {index} has invalid story_role: {role}")
+        consumers = claim.get("downstream_consumers", [])
+        if not isinstance(consumers, list):
+            errors.append(f"Claim-to-evidence item {index} downstream_consumers must be a list.")
+        else:
+            invalid = [item for item in consumers if item not in ALLOWED_DOWNSTREAM_CONSUMERS]
+            if invalid:
+                errors.append(
+                    f"Claim-to-evidence item {index} has invalid downstream_consumers: "
+                    + ", ".join(sorted(map(str, invalid)))
+                )
 
 
 def validate_shared_protocol(summary: dict[str, Any], errors: list[str]) -> None:
@@ -300,13 +378,33 @@ def validate_shared_protocol(summary: dict[str, Any], errors: list[str]) -> None
     if missing:
         errors.append(f"shared_experimental_protocol missing fields: {', '.join(missing)}")
 
-    require_object(
+    removed_present = sorted(REMOVED_PROTOCOL_FIELDS & set(protocol))
+    if removed_present:
+        errors.append(
+            "shared_experimental_protocol uses removed fields: " + ", ".join(removed_present)
+        )
+
+    workloads = require_object(
         protocol,
         "workloads",
         REQUIRED_WORKLOAD_FIELDS,
         errors,
         "shared_experimental_protocol",
     )
+    if workloads:
+        require_object(
+            workloads,
+            "required_workloads",
+            REQUIRED_REQUIRED_WORKLOAD_FIELDS,
+            errors,
+            "shared_experimental_protocol.workloads",
+        )
+        scope_candidates = workloads.get("scope_extension_workload_candidates", [])
+        if not isinstance(scope_candidates, list):
+            errors.append(
+                "shared_experimental_protocol.workloads.scope_extension_workload_candidates must be a list."
+            )
+
     require_object(
         protocol,
         "shared_metrics",
@@ -328,10 +426,51 @@ def validate_shared_protocol(summary: dict[str, Any], errors: list[str]) -> None
         errors,
         "shared_experimental_protocol",
     )
+    require_object(
+        protocol,
+        "verified_research_context_ids",
+        REQUIRED_RESEARCH_CONTEXT_ID_FIELDS,
+        errors,
+        "shared_experimental_protocol",
+    )
 
-    baseline_families = protocol.get("shared_baseline_families", [])
-    if not isinstance(baseline_families, list):
-        errors.append("shared_baseline_families must be a list.")
+    baseline_contracts = require_object(
+        protocol,
+        "baseline_contracts",
+        REQUIRED_BASELINE_CONTRACT_GROUPS,
+        errors,
+        "shared_experimental_protocol",
+    )
+    if baseline_contracts:
+        for group in REQUIRED_BASELINE_CONTRACT_GROUPS:
+            baselines = baseline_contracts.get(group, [])
+            if not isinstance(baselines, list):
+                errors.append(f"baseline_contracts.{group} must be a list.")
+                continue
+            for index, baseline in enumerate(baselines, start=1):
+                if not isinstance(baseline, dict):
+                    errors.append(f"baseline_contracts.{group}[{index}] must be an object.")
+                    continue
+                missing_baseline = missing_fields(baseline, REQUIRED_BASELINE_CONTRACT_FIELDS)
+                if missing_baseline:
+                    errors.append(
+                        f"baseline_contracts.{group}[{index}] missing fields: "
+                        + ", ".join(missing_baseline)
+                    )
+
+    metric_contracts = protocol.get("metric_contracts", [])
+    if not isinstance(metric_contracts, list):
+        errors.append("metric_contracts must be a list.")
+    for index, metric in enumerate(metric_contracts, start=1):
+        if not isinstance(metric, dict):
+            errors.append(f"metric_contracts[{index}] must be an object.")
+            continue
+        missing_metric = missing_fields(metric, REQUIRED_METRIC_CONTRACT_FIELDS)
+        if missing_metric:
+            errors.append(
+                f"metric_contracts[{index}] missing fields: {', '.join(missing_metric)}"
+            )
+
     execution_slots = protocol.get("execution_input_slots", [])
     if not isinstance(execution_slots, list):
         errors.append("execution_input_slots must be a list.")
@@ -352,6 +491,10 @@ def validate_objectives(summary: dict[str, Any], errors: list[str], warnings: li
         missing = missing_fields(objective, REQUIRED_OBJECTIVE_FIELDS)
         if missing:
             errors.append(f"Objective {index} missing fields: {', '.join(missing)}")
+
+        removed_present = sorted(REMOVED_OBJECTIVE_FIELDS & set(objective))
+        if removed_present:
+            errors.append(f"Objective {index} uses removed fields: {', '.join(removed_present)}")
 
         heading = objective.get("objective_heading")
         if isinstance(heading, str) and heading.strip():
@@ -374,6 +517,24 @@ def validate_objectives(summary: dict[str, Any], errors: list[str], warnings: li
 
         if not objective.get("target_evidence_pattern"):
             errors.append(f"Objective {index} must include target_evidence_pattern.")
+
+        claim_calibration = objective.get("claim_calibration_output")
+        if not isinstance(claim_calibration, list) or not claim_calibration:
+            errors.append(f"Objective {index} must include non-empty claim_calibration_output list.")
+
+        boundary = objective.get("boundary")
+        if not isinstance(boundary, dict):
+            errors.append(f"Objective {index} must include boundary object.")
+        else:
+            missing_boundary = missing_fields(boundary, REQUIRED_BOUNDARY_FIELDS)
+            if missing_boundary:
+                errors.append(
+                    f"Objective {index} boundary missing fields: {', '.join(missing_boundary)}"
+                )
+            for field in REQUIRED_BOUNDARY_FIELDS:
+                value = boundary.get(field)
+                if not isinstance(value, list) or not value:
+                    errors.append(f"Objective {index} boundary.{field} must be a non-empty list.")
 
         if not objective.get("target_evidence_artifacts"):
             warnings.append(f"Objective {index} has empty target_evidence_artifacts.")
@@ -399,6 +560,42 @@ def validate_dependency_graph(summary: dict[str, Any], errors: list[str]) -> Non
         for field in ("from_objective_or_artifact", "to_objective_or_artifact", "evidence_chain_role"):
             if field not in edge:
                 errors.append(f"Dependency graph edge {index} missing field: {field}")
+
+
+def normalize_id(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", value.lower()).strip("_")
+
+
+def validate_metric_contract_coverage(summary: dict[str, Any], warnings: list[str]) -> None:
+    protocol = summary.get("shared_experimental_protocol", {})
+    if not isinstance(protocol, dict):
+        return
+
+    metric_contracts = protocol.get("metric_contracts", [])
+    if not isinstance(metric_contracts, list):
+        return
+    metric_ids = {
+        normalize_id(metric.get("metric_id", ""))
+        for metric in metric_contracts
+        if isinstance(metric, dict)
+    }
+
+    candidate_metrics: list[str] = []
+    shared_metrics = protocol.get("shared_metrics", {})
+    candidate_metrics.extend(flatten_strings(shared_metrics))
+    for objective in summary.get("experiment_objectives", []):
+        if isinstance(objective, dict):
+            candidate_metrics.extend(flatten_strings(objective.get("primary_metrics", [])))
+            candidate_metrics.extend(flatten_strings(objective.get("secondary_metrics", [])))
+
+    for metric in sorted(set(candidate_metrics)):
+        metric_norm = normalize_id(metric)
+        lower = metric.lower()
+        if any(keyword in lower for keyword in METRIC_CONTRACT_KEYWORDS):
+            if metric_norm and metric_norm not in metric_ids:
+                warnings.append(
+                    f"Metric-like field lacks an exact metric_contracts entry: {metric}"
+                )
 
 
 def validate_content_quality(summary: dict[str, Any], warnings: list[str]) -> None:
@@ -464,6 +661,7 @@ def main() -> int:
     validate_shared_protocol(summary, errors)
     validate_objectives(summary, errors, warnings)
     validate_dependency_graph(summary, errors)
+    validate_metric_contract_coverage(summary, warnings)
     validate_content_quality(summary, warnings)
 
     for warning in warnings:

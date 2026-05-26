@@ -36,11 +36,12 @@ Include only:
 
 - experimental thesis, primary comparison, and operating conditions
 - claim-to-evidence architecture
-- shared workloads, baselines, metrics, logging schema, resource/cost protocol,
-  waste taxonomy, and artifact manifest protocol
+- shared workloads, verified research-context IDs, baseline contracts, metric
+  contracts, logging schema, resource/cost protocol, waste taxonomy, and
+  artifact manifest protocol
 - experiment objectives organized by paper claim and story role
-- for each objective: story role, evidence goal, supported claims, decision
-  supported by the experiment, core experiment, controlled factors,
+- for each objective: story role, evidence goal, supported claims, claim
+  calibration output, boundary, core experiment, controlled factors,
   comparators, metrics, target evidence artifacts, target evidence pattern,
   output files, logging schema, dependencies, and priority
 - a short objective dependency graph or evidence order when useful
@@ -105,6 +106,13 @@ Use `academic_army_mcp_tools.deepresearch` for:
 Use live research to make planning commitments. Put the concise synthesis and
 source anchors in the explanation file. Put only the resulting experiment
 choices in the plan.
+
+When live research identifies papers, datasets, baselines, metrics, or workload
+families, create stable IDs for the plan and put the source explanation in the
+explanation file. The plan should reference canonical IDs such as
+`lapisgs_like_layered_3dgs`, `lts_like_dynamic_multilayer_3dgs`, or
+`n3dv_dynamic_multiview_sequences` only after the explanation or research
+context verifies them.
 
 ## Inputs to Extract
 
@@ -199,11 +207,14 @@ Use positive, executable planning language:
   restoration, controller-overhead, and resource-cost metrics.`
 - Write `The evaluation scope is trace-driven prototype evaluation unless the
   confirmed input ledger specifies deployment-scale evaluation.`
-- Write `Dynamic scenes are included when the confirmed claim scope covers
-  dynamic volumetric media; otherwise they are secondary workload candidates in
-  the explanation file.`
+- Write `Required workloads: trace-driven prototype workloads confirmed by the
+  ledger.`
+- Write `Scope-extension workload candidates: dynamic volumetric sequences
+  listed in the explanation file.`
 - Write `The plan includes artifact outputs when they directly support
   execution, plotting, writing, or reproducibility.`
+- Write `Claim calibration output: supported_scene_scope,
+  supported_trace_scope, supported_substrate_scope.`
 
 Avoid defensive reviewer-facing phrasing, fallback paths, and questionnaire
 language in the plan. Express uncertainty as structured execution input slots in
@@ -222,15 +233,31 @@ For every candidate objective, answer:
   insight, main end-to-end effectiveness, mechanism/ablation, robustness/stress,
   generalization, human/perceptual evidence, deployment realism, or
   cost/scalability/reproducibility protocol?
-- What reader decision should this experiment enable?
+- What claim-calibration signals should this experiment export for writing and
+  review-response skills?
 - What target evidence artifact should downstream plotting or writing produce?
 - What target evidence pattern should the artifact make visible?
 - Which workloads, comparators, metrics, controlled factors, logging fields, and
   output files are necessary for that artifact?
+- What is the objective boundary, including what it measures and what it leaves
+  to another objective or shared protocol?
 
 If a candidate objective does not correspond to an independent claim,
 independent story role, or independent paper artifact, merge it into another
 objective as a metric slice, reporting view, or shared protocol.
+
+Use `Claim calibration output` as a machine-readable list of signals, not as a
+human-facing question. Examples:
+
+- `controller_state_justification`
+- `prototype_system_claim`
+- `supported_scene_scope`
+- `supported_trace_scope`
+- `supported_substrate_scope`
+- `mechanism_attribution_to_state_terms`
+
+Do not use `Decision supported` or `Whether...` fields in the plan. Put
+human-readable decision reasoning in the explanation file.
 
 ### Target Evidence Pattern
 
@@ -297,6 +324,27 @@ Keep objectives separate only when they support distinct claims, occupy distinct
 story roles, or produce distinct paper artifacts that cannot be represented as
 views of the same experiment.
 
+When two objectives overlap but should remain separate, add a `Boundary` field
+to each objective:
+
+```markdown
+- Boundary:
+  - Includes:
+    - <what this objective measures>
+  - Excludes:
+    - <what another objective or shared protocol measures>
+```
+
+Example:
+
+```markdown
+- Boundary:
+  - Includes:
+    - Per-state marginal utility under controlled candidate states.
+  - Excludes:
+    - Full online queue evolution beyond controlled deadline slack.
+```
+
 ## Shared Protocols
 
 Move repeated details into shared protocols instead of duplicating them in every
@@ -305,11 +353,19 @@ objective.
 Use shared sections for:
 
 - workloads: scenes, datasets, traces, users, simulations, hardware, network
-  profiles, compute profiles, deadline profiles, and deployment/testbed scope
-- baseline families: fair information, fair actions, fair resources, and oracle
-  upper bounds
+  profiles, compute profiles, deadline profiles, deployment/testbed scope,
+  required workloads, and scope-extension workload candidates
+- verified research context: canonical IDs for current baselines, datasets,
+  workloads, or metrics whose source notes live in the explanation file or a
+  separate research context artifact
+- baseline contracts: required baselines, diagnostic baselines, and oracle upper
+  bounds, each with observation access, action space, resource budget,
+  implementation owner, fairness constraint, and used-by objectives
 - metrics: quality, accuracy, latency, responsiveness, resource/cost, waste,
   user/perceptual, statistical reporting, and uncertainty reporting
+- metric contracts: metric ID, type, unit or range, definition owner, required
+  inputs, aggregation policy, and used-by objectives for every score, ratio,
+  quality, waste, deadline, or utility field
 - logging schema: required keys, timing fields, resource fields, quality fields,
   action/controller fields, trace/workload fields, random seeds, and run
   metadata
@@ -394,8 +450,10 @@ Return four sections:
    placements, motivation artifacts, final-evaluation objectives,
    baseline/dataset/metric protocols, and downstream execution interfaces.
 
-For each source, include title, venue/year when available, link, relevance to
-this paper, and the lesson for experiment planning.
+For each source, include title, venue/year from source metadata, link,
+relevance to this paper, and the lesson for experiment planning. If the source
+metadata does not provide a venue or year, leave that source attribute empty in
+the explanation file instead of adding fallback language to the plan.
 Use concise evidence-facing prose.
 ```
 
@@ -407,6 +465,15 @@ Create the explanation ledger:
 
 ```markdown
 ## 用户已经明确的内容 / Confirmed User Inputs
+
+- Target system:
+- Target venue / field:
+- Core method claim:
+- Confirmed story roles:
+- Confirmed experiment scope:
+- Confirmed workloads:
+- Confirmed baselines:
+- Confirmed exclusions:
 
 ## 论文蓝图中已经确定的内容 / Blueprint-Confirmed Inputs
 
@@ -452,13 +519,26 @@ For each major claim, identify:
 Use confirmed facts first, live research second, and skill-derived planning
 logic third. Put source explanations in the explanation file.
 
+Use only these downstream consumer IDs unless the local toolchain provides a
+more specific skill ID:
+
+- `experiment_runner`
+- `code_generation`
+- `result_analysis`
+- `plot_planning`
+- `paper_writing`
+- `rebuttal_preparation`
+- `reproducibility`
+
 ### Step 4: Build Shared Experimental Protocols
 
 Before writing objectives, factor out repeated:
 
 - workloads
-- baseline families
+- verified research-context IDs
+- baseline contracts
 - shared metrics
+- metric contracts
 - logging schema
 - resource/cost reporting
 - waste taxonomy
@@ -485,11 +565,31 @@ For each confirmed core claim, create the smallest objective set that covers:
 The last category is usually a shared reporting protocol or view, not an
 independent objective.
 
+For workload scope, write deterministic categories:
+
+- `Required workloads`: workloads committed by the user, blueprint, existing
+  evidence, or live-research-selected venue protocol.
+- `Scope-extension workload candidates`: workload IDs that would extend claim
+  scope and are explained in the explanation file.
+
+Do not write `when available`, `if resources permit`, or equivalent fallback
+phrases in the plan.
+
 ### Step 6: Run Objective Redundancy Check
 
 Merge objectives that share more than half of their controlled factors, metrics,
 workloads, and artifacts. Convert repeated cost, waste, latency, and artifact
 readiness details into shared protocols or reporting views.
+
+Each objective must satisfy:
+
+- `unique_claim_supported`
+- `unique_story_role`
+- `unique_primary_artifact`
+- `non_overlapping_boundary`
+
+If these cannot all be satisfied, merge the objective into another objective or
+make it a reporting view.
 
 ### Step 7: Write `experiment_plan.md`
 
@@ -512,15 +612,45 @@ Use this structure:
 ## 3. Shared Experimental Protocol
 
 ### Workloads
-- Scenes/datasets:
-- Viewport/user traces:
-- Network traces:
-- Compute/hardware profiles:
-- Deadline profiles:
+- Required workloads:
+  - Scenes/datasets:
+  - Viewport/user traces:
+  - Network traces:
+  - Compute/hardware profiles:
+  - Deadline profiles:
+- Scope-extension workload candidates:
+  - <workload_id>: <scope signal; explanation reference>
 
-### Shared Baseline Families
-- <baseline family>: <fair information/actions/resources>
-- <oracle>: <upper-bound role, not a deployable baseline>
+### Verified Research Context IDs
+- Baseline IDs:
+- Workload IDs:
+- Metric IDs:
+
+### Baseline Contracts
+- Required baselines:
+  - baseline_id:
+    observation_access:
+    action_space:
+    resource_budget:
+    implementation_owner:
+    fairness_constraint:
+    used_by_objectives:
+- Diagnostic baselines:
+  - baseline_id:
+    observation_access:
+    action_space:
+    resource_budget:
+    implementation_owner:
+    fairness_constraint:
+    used_by_objectives:
+- Upper bounds:
+  - baseline_id:
+    observation_access:
+    action_space:
+    resource_budget:
+    implementation_owner:
+    fairness_constraint:
+    used_by_objectives:
 
 ### Shared Metrics
 - Quality:
@@ -528,6 +658,15 @@ Use this structure:
 - Resource/cost:
 - Waste:
 - Statistical reporting:
+
+### Metric Contracts
+- metric_id:
+  type:
+  unit_or_range:
+  definition_owner:
+  required_inputs:
+  aggregation_policy:
+  used_by_objectives:
 
 ### Shared Logging Schema
 - Required keys:
@@ -551,7 +690,10 @@ Use this structure:
 - Story role:
 - Evidence goal:
 - Claims supported:
-- Decision supported:
+- Claim calibration output:
+- Boundary:
+  - Includes:
+  - Excludes:
 - Core experiment:
 - Controlled factors:
 - Comparators:
@@ -623,6 +765,101 @@ For each objective, explain in prose:
 Use objective headings and semantic names. Avoid dense cross-reference codes
 such as `C1/C2/B1/E1`.
 
+## Built-In Lint Rules
+
+Apply these checks before finalizing the two deliverables.
+
+### Two-File Lint
+
+- `experiment_plan.md` exists, is English-only, and contains only the plan.
+- `experiment_plan_explanation.<lang>.md` exists, uses the user's conversation
+  language, and begins with the confirmed-input ledger.
+- Live-research anchors, source reasoning, and user-facing plan review guidance
+  appear in the explanation file, not the plan.
+
+### Confirmed-Input Ledger Lint
+
+- The explanation ledger records target system, target venue/field, core method
+  claim, confirmed story roles, confirmed experiment scope, confirmed
+  workloads, confirmed baselines, and confirmed exclusions when those facts are
+  available.
+- A fact resolved by the user, blueprint, existing evidence, or live research is
+  not reintroduced as `whether`, `which`, `when available`, or any other open
+  question in the plan.
+
+### Objective Distinctness Lint
+
+- Each objective has `unique_claim_supported`, `unique_story_role`,
+  `unique_primary_artifact`, and `non_overlapping_boundary`.
+- Objectives sharing more than half of their controlled factors, metrics,
+  outputs, and dependencies are merged or represented as reporting views unless
+  their `Boundary` fields make the distinction explicit.
+
+### Baseline Contract Lint
+
+Each baseline has:
+
+- `baseline_id`
+- `role`: required, diagnostic, or oracle
+- `observation_access`
+- `action_space`
+- `resource_budget`
+- `implementation_owner`
+- `fairness_constraint`
+- `used_by_objectives`
+
+### Metric Contract Lint
+
+Every named score, ratio, quality metric, waste metric, deadline metric, or
+utility metric appears in `Metric Contracts` with:
+
+- `metric_id`
+- `type`
+- `unit_or_range`
+- `definition_owner`
+- `required_inputs`
+- `aggregation_policy`
+- `used_by_objectives`
+
+### Defensive-Language Rewrite Lint
+
+Scan the plan for:
+
+```text
+whether
+if resources permit
+when available
+otherwise
+do not
+should remain
+narrower claim
+fail
+hide cost
+rebuttal-ready
+boundary language
+```
+
+Rewrite these into positive plan fields. Examples:
+
+- `whether the paper should claim...` becomes `Claim calibration output:
+  supported_scene_scope, supported_trace_scope, supported_substrate_scope`.
+- `when available` becomes `Scope-extension workload candidates`.
+- `fail in different stress regimes` becomes `baseline-specific stress
+  sensitivity`.
+- `narrower claim scope` becomes `supported scope`.
+
+### Consumer Vocabulary Lint
+
+Use fixed downstream consumer IDs:
+
+- `experiment_runner`
+- `code_generation`
+- `result_analysis`
+- `plot_planning`
+- `paper_writing`
+- `rebuttal_preparation`
+- `reproducibility`
+
 ## Machine-Readable Summary
 
 When writing a machine-readable summary for validation, use
@@ -646,16 +883,24 @@ Before finalizing `experiment_plan.md`, check that:
 - the plan uses `Experimental thesis`, `Primary comparison`, and `Operating
   conditions`
 - every major paper claim has at least one evidence objective
-- every objective has story role, evidence goal, supported claims, decision
-  supported, target evidence artifacts, and target evidence pattern
+- every objective has story role, evidence goal, supported claims, claim
+  calibration output, boundary, target evidence artifacts, and target evidence
+  pattern
+- every baseline appears under required, diagnostic, or upper-bound contracts
+- every named score, ratio, deadline, quality, waste, or utility metric appears
+  in metric contracts
+- workload scope is expressed as required workloads and scope-extension
+  candidates, not fallback language
 - resource/cost metrics, waste taxonomy, logging schema, and artifact manifest
   requirements are shared protocols unless they support an independent claim
 - objectives with overlapping workloads, metrics, controls, and artifacts have
-  been merged or represented as reporting views
+  been merged, represented as reporting views, or separated by explicit
+  `Boundary` fields
 - open planning items do not appear in the plan
 - execution input slots are machine-readable handles, not user questions
 - the plan avoids fallback language, future feedback questionnaires, and
   defensive reviewer-facing phrasing
+- downstream consumers use the fixed vocabulary or explicit local skill IDs
 - current baselines, datasets, benchmarks, metrics, and protocols come from
   confirmed user/blueprint constraints or live research
 
