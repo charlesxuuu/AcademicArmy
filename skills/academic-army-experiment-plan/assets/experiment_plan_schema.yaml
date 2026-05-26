@@ -4,12 +4,17 @@ experiment_plan_summary:
     explanation_markdown: experiment_plan_explanation.<lang>.md
     plan_language: English
     explanation_language_suffix: string
-  confirmation_ledger:
+
+  explanation_confirmation_ledger:
     user_specified_facts: [string]
     blueprint_confirmed_facts: [string]
     existing_draft_note_or_result_facts: [string]
-    runtime_research_facts_used_in_this_version: [string]
-    planning_commitments_derived_from_those_facts: [string]
+    live_research_context_used_in_this_version:
+      - anchor: string
+        venue_or_year: string
+        link: string
+        planning_lesson: string
+    skill_derived_experiment_arrangements: [string]
     planning_items_closed_in_this_revision:
       - item: string
         closed_by_source_state: user_specified_or_blueprint_confirmed_or_existing_evidence_or_live_research_selected_or_downstream_execution_detail
@@ -18,69 +23,73 @@ experiment_plan_summary:
       - item: string
         why_it_changes_plan_structure: string
         affected_objective_or_claim: string
+
   title: string
-  paper_level_experimental_thesis: string
-  evidence_strategy_for_paper_story:
-    summary: string
-    motivation_or_insight_evidence: [string]
-    final_evaluation_evidence: [string]
-    venue_reviewer_concerns_addressed: [string]
-  claim_to_evidence_map:
-    - paper_claim: string
-      required_evidence: [string]
-      objective_heading: string
-      story_placement: string
-      planning_state: user_specified_or_blueprint_confirmed_or_existing_evidence_or_live_research_selected_or_skill_derived_or_open_input
-      comparator_or_baseline_class: [string]
-      dataset_benchmark_trace_workload_scene_user_deployment_or_simulation_class: [string]
-      metric_or_observable_evidence_family: [string]
-      intended_reader_takeaway: string
-  experiment_objective_groups:
+
+  experimental_thesis:
+    experimental_thesis: string
+    primary_comparison: string
+    operating_conditions: string
+
+  claim_to_evidence_architecture:
+    - claim: string
+      evidence_objective: string
+      story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_cost_scalability_reproducibility_protocol
+      main_artifact: string
+      downstream_consumers: [experiment_running_or_coding_or_plotting_or_paper_writing_or_review_response_or_reproducibility]
+
+  shared_experimental_protocol:
+    workloads:
+      scenes_or_datasets: [string]
+      viewport_or_user_traces: [string]
+      network_traces: [string]
+      compute_or_hardware_profiles: [string]
+      deadline_profiles: [string]
+      other_workloads: [string]
+    shared_baseline_families:
+      - family: string
+        fair_information_actions_resources: string
+        role: deployable_baseline_or_oracle_upper_bound_or_diagnostic_comparator
+    shared_metrics:
+      quality: [string]
+      deadline_or_responsiveness: [string]
+      resource_or_cost: [string]
+      waste: [string]
+      statistical_reporting: [string]
+    shared_logging_schema:
+      required_keys: [string]
+      required_timing_fields: [string]
+      required_resource_fields: [string]
+      required_quality_fields: [string]
+      required_action_or_controller_fields: [string]
+      required_run_metadata: [string]
+    shared_resource_waste_and_artifact_protocol:
+      resource_cost_reporting: [string]
+      waste_taxonomy: [string]
+      artifact_manifest: [string]
+    execution_input_slots:
+      - slot: string
+        required_handle_for_downstream_execution: string
+
+  experiment_objectives:
     - objective_heading: string
-      story_placement: string
-      evidence_role: [motivation_or_design_insight_or_main_effectiveness_or_ablation_mechanism_or_scalability_efficiency_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_artifact_reproducibility]
-      supported_paper_claims: [string]
-      planning_state_and_source:
-        source_state: user_specified_or_blueprint_confirmed_or_existing_evidence_or_live_research_selected_or_skill_derived_or_open_input
-        source_detail: string
-        execution_selection_handle: string
-      motivation_design_insight_fields:
-        intuition_made_visible: string_or_null
-        minimal_demonstration_setting: string_or_null
-        one_glance_evidence_artifact: string_or_null
-        link_to_the_full_method_evaluation: string_or_null
-      evaluation_setting:
-        datasets_benchmarks_traces_workloads_scenes_users_deployments_or_simulations: [string]
-        selection_handles: [string]
-      comparators_and_baselines:
-        named_baselines: [string]
-        comparator_classes: [string]
-        source_state: user_specified_or_blueprint_confirmed_or_existing_evidence_or_live_research_selected_or_skill_derived_or_open_input
-      metrics_and_observable_evidence:
-        primary: [string]
-        secondary: [string]
-        qualitative_or_perceptual_or_user_evidence: [string]
-        statistical_or_uncertainty_reporting: [string]
-      controls_variables_and_stress_conditions: [string]
-      expected_tables_figures_or_qualitative_artifacts: [string]
-      downstream_execution_interface:
-        data_handles: [string]
-        code_model_benchmark_or_simulator_handles: [string]
-        required_measurements_or_logging_schema: [string]
-        expected_result_files: [string]
-        figure_table_or_writing_consumers: [string]
-      priority_and_dependencies:
-        priority: critical_or_high_or_medium_or_low
-        depends_on: [string]
-        prepares_for_or_feeds: [string]
-  cross_experiment_coherence:
-    motivation_to_final_evaluation_chain: string
-    objective_interdependencies: [string]
-    shared_protocol_requirements: [string]
-    positive_evidence_chain: [string]
-  downstream_feedback_slots:
-    experiment_execution_feedback: [string]
-    result_analysis_feedback: [string]
-    plotting_and_figure_planning_feedback: [string]
-    paper_writing_feedback: [string]
-    review_or_rebuttal_feedback: [string]
+      story_role: motivation_or_problem_definition_or_method_design_insight_or_main_end_to_end_effectiveness_or_mechanism_ablation_or_robustness_stress_or_generalization_or_human_perceptual_or_deployment_realism_or_cost_scalability_reproducibility_protocol
+      evidence_goal: string
+      claims_supported: [string]
+      decision_supported: string
+      core_experiment: string
+      controlled_factors: [string]
+      comparators: [string]
+      primary_metrics: [string]
+      secondary_metrics: [string]
+      target_evidence_artifacts: [string]
+      target_evidence_pattern: string
+      output_files: [string]
+      logging_schema: [string]
+      dependencies: [string]
+      priority: critical_or_high_or_medium_or_low
+
+  objective_dependency_graph:
+    - from_objective_or_artifact: string
+      to_objective_or_artifact: string
+      evidence_chain_role: string

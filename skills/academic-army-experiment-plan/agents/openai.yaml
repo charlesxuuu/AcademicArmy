@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Experiment Plan"
-  short_description: "Confirmation-state positive evidence plan"
-  default_prompt: "Create a confirmation-state-aware positive experiment plan and user-language explanation with $academic-army-experiment-plan."
+  short_description: "Clean claim-to-evidence experiment plan plus user-language explanation"
+  default_prompt: "Create a clean English experiment_plan.md and user-language experiment_plan_explanation.<lang>.md with $academic-army-experiment-plan."
 
 dependencies:
   tools:
