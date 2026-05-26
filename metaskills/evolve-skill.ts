@@ -1,70 +1,38 @@
 import { Codex } from "@openai/codex-sdk";
-import { mkdir, rm, stat } from "node:fs/promises";
+import { mkdir, readFile, rm, stat } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
 
-const TASK_PROMPT = `
-Use the skill on a small but representative research-planning task.
-
-Task:
-Design a concise paper blueprint for a systems or AI research idea. The output
-should make the core claim, paper goals, evidence strategy, and downstream
-planning needs clear enough for later AcademicArmy skills to continue from it.
-`;
-
 const RUNNER_PROMPT = (
   skillName: string,
-  task: string,
   artifactPath: string,
-  skillPath: string,
+  extraPrompt: string,
 ) => `
-Use $${skillName} to complete the task below.
+Use ${skillName} to complete the task below. Write the final artifact to ${artifactPath}.
 
-Task:
-${task}
-
-Write the final artifact to:
-${artifactPath}
-
-Do not edit ${skillPath} or any other skill file.
+${extraPrompt}
 `;
 
 const EVALUATOR_PROMPT = (
   artifactPath: string,
-  task: string,
-  skillPath: string,
+  metaskillPath: string,
+  extraPrompt: string,
 ) => `
 Evaluate the artifact at ${artifactPath}.
 
-Task:
-${task}
+The metaskill file at ${metaskillPath} contains important guidance about what to consider when writing and improving this skill.
 
-Rubric:
-- Correctness and completeness.
-- Output quality.
-- Whether the current skill instructions caused avoidable mistakes.
-- Whether the artifact exposes ambiguous, missing, or over-defensive behavior.
-
-Do not modify files.
-
-First line must be exactly one of:
-APPROVED score=<0-10>
-CHANGES_REQUIRED score=<0-10>
-
-Then give concise evidence and concrete changes needed in ${skillPath}.
+${extraPrompt}
 `;
 
-const MODIFIER_PROMPT = (skillPath: string, review: string) => `
-Update only ${skillPath} to address this review.
+const MODIFIER_PROMPT = (
+  skillPath: string,
+  metaskillPath: string,
+  review: string,
+) => `
+Update ${skillPath} to address this review.
 
-Rules:
-- Make the smallest useful change.
-- Do not rewrite the whole skill.
-- Do not add helper functions unless the logic is reused at least twice.
-- Do not add generic wrappers, catch-all fallbacks, silent defaults, or "best effort" branches.
-- Prefer fail-fast, explicit errors over swallowed failures.
-- Keep the skill focused on the task's public inputs and outputs.
-- Inaction is acceptable if the review does not identify a concrete defect; explain why instead of editing.
+The metaskill file at ${metaskillPath} contains important guidance about what to consider when writing and improving this skill.
 
 Review:
 ${review}
@@ -74,6 +42,9 @@ const { values } = parseArgs({
   options: {
     "skill-path": { type: "string" },
     "artifact-path": { type: "string" },
+    "metaskill-path": { type: "string" },
+    "runner-extra-prompt-path": { type: "string" },
+    "evaluator-extra-prompt-path": { type: "string" },
     rounds: { type: "string" },
   },
 });
@@ -81,20 +52,30 @@ const { values } = parseArgs({
 const repo = process.cwd();
 const rawSkillPath = values["skill-path"];
 const rawArtifactPath = values["artifact-path"];
+const metaskillPath = values["metaskill-path"];
+const runnerExtraPromptPath = values["runner-extra-prompt-path"];
+const evaluatorExtraPromptPath = values["evaluator-extra-prompt-path"];
 const rounds = Number(values.rounds);
 
-if (!rawSkillPath || !rawArtifactPath || !values.rounds) {
+if (
+  !rawSkillPath ||
+  !rawArtifactPath ||
+  !metaskillPath
+) {
   throw new Error(
-    "Usage: npm run evolve-skill -- --skill-path <path> --artifact-path <path> --rounds <positive-integer>",
+    "Usage: npm run evolve-skill -- --skill-path <path> --artifact-path <path> --metaskill-path <path> [--runner-extra-prompt-path <path>] [--evaluator-extra-prompt-path <path>] [--rounds <positive-integer>]",
   );
 }
 
-if (!Number.isInteger(rounds) || rounds < 1) {
+const checkedRounds = values.rounds ? rounds : 3;
+
+if (!Number.isInteger(checkedRounds) || checkedRounds < 1) {
   throw new Error("ROUNDS must be a positive integer.");
 }
 
 const skillPath = rawSkillPath;
 const artifactPath = rawArtifactPath;
+const checkedMetaskillPath = metaskillPath;
 const skillName = path.basename(skillPath);
 const codex = new Codex();
 const commonThreadOptions = {
@@ -113,7 +94,14 @@ const modifier = codex.startThread({
 });
 
 async function main() {
-  for (let round = 1; round <= rounds; round++) {
+  const runnerExtraPrompt = runnerExtraPromptPath
+    ? await readFile(runnerExtraPromptPath, "utf8")
+    : "";
+  const evaluatorExtraPrompt = evaluatorExtraPromptPath
+    ? await readFile(evaluatorExtraPromptPath, "utf8")
+    : "";
+
+  for (let round = 1; round <= checkedRounds; round++) {
     await rm(artifactPath, { recursive: true, force: true });
     await mkdir(path.dirname(artifactPath), { recursive: true });
 
@@ -123,14 +111,18 @@ async function main() {
     });
 
     await runner.run(
-      RUNNER_PROMPT(skillName, TASK_PROMPT, artifactPath, skillPath),
+      RUNNER_PROMPT(skillName, artifactPath, runnerExtraPrompt),
     );
 
     await stat(artifactPath);
 
     const review = (
       await evaluator.run(
-        EVALUATOR_PROMPT(artifactPath, TASK_PROMPT, skillPath),
+        EVALUATOR_PROMPT(
+          artifactPath,
+          checkedMetaskillPath,
+          evaluatorExtraPrompt,
+        ),
       )
     ).finalResponse.trim();
 
@@ -140,7 +132,9 @@ async function main() {
       break;
     }
 
-    const edit = await modifier.run(MODIFIER_PROMPT(skillPath, review));
+    const edit = await modifier.run(
+      MODIFIER_PROMPT(skillPath, checkedMetaskillPath, review),
+    );
 
     console.log(`# Edit ${round}\n${edit.finalResponse}\n`);
   }
