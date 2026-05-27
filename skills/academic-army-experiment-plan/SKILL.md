@@ -47,6 +47,12 @@ already requires one. Put metric implementation handles, logging schemas,
 output file paths, manifest fields, owners, and concrete artifact paths there,
 not in `experiment_plan.md`.
 
+The explanation file should also make the run reviewable. At the start of the
+confirmation ledger, record the concrete local or supplied inputs that were
+actually read, including paper blueprint paths, prior plan/explanation files,
+artifact feedback, and live-research anchors. This provenance belongs only in
+the explanation file; never place it in `experiment_plan.md`.
+
 ## Research Tool
 
 Use `academic_army_mcp_tools.deepresearch` when venue-, field-, or date-sensitive
@@ -122,6 +128,54 @@ Also extract or infer:
   files, or revision feedback
 - user conversation language and output directory
 
+## Context Acquisition and Missing-Input Handling
+
+Before planning or revising, actively gather the required local context instead
+of assuming it is unavailable.
+
+1. Read `paper_blueprint.md` first when present.
+2. Read prior `experiment_plan.md`, prior explanation files, revision feedback,
+   and current artifact directories when the task is a revision or evolution.
+   If the artifact path is a directory such as
+   `output/evolve-academic-army-experiment-plan`, enumerate it and read every
+   Markdown file under it before judging the produced artifact.
+3. When invoked through a metaskill/evolution workflow, read the relevant
+   metaskill or runner-task file if its path is provided or obvious from the
+   task.
+4. Use MCP fallback tools when local shell/file access is unavailable and a
+   suitable repository-file MCP resource is available.
+
+If a required input cannot be read after the available local and MCP paths have
+been tried, stop before producing or revising the plan and ask the user to paste
+the missing contents. Name the exact missing files or directories. Do not
+generate placeholder plans, simulated reviews, or broad generic advice from
+memory when the missing input controls the paper thesis, objective structure,
+or artifact revision.
+
+Treat local-access failures such as shell spawn/setup errors, empty MCP
+resource listings, missing repository templates, or cancelled repository
+fallbacks as evidence that the artifact contents are unavailable in that run.
+Live research and `deepresearch` can supply field knowledge, but they cannot
+replace missing local files such as a metaskill, blueprint, prior plan, or
+artifact directory.
+
+For repeated access-failure feedback, do not keep cycling through the same
+attempted reads or produce a new non-review. Give a concise stop response with:
+
+- `missing_required_contents`: exact file paths and directories needed
+- `attempts_already_made`: local shell, artifact directory listing, MCP
+  resources/templates, repository MCP fallback, or other attempted channels
+- `why_no_revision_can_be_inferred`: the missing contents control artifact
+  language, content gaps, redundancy checks, or skill optimization decisions
+- `paste_bundle_request`: a copy-ready request for the metaskill text and all
+  Markdown files under the named artifact output directory
+
+If feedback only says the reviewer lacked access to local files, treat that as
+an access/provenance issue rather than a substantive experiment-plan critique.
+Resolve it by reading the named files yourself when possible; otherwise ask for
+their contents. Do not change objectives, baselines, workloads, or metrics based
+solely on a missing-context report.
+
 ## Confirmation-State Model
 
 Before writing, build or update a confirmation ledger in the explanation file.
@@ -143,6 +197,16 @@ design, story placement, required resources, or claim coverage.
 
 As revisions add confirmed facts, retire matching open items rather than
 restating them.
+
+For revision tasks, add a compact `artifact_feedback_consumed` entry in the
+ledger. Separate:
+
+- substantive feedback that changes the plan
+- access/provenance feedback that only changes how inputs are documented
+- non-controlling feedback that does not affect the experiment strategy
+
+This prevents "could not inspect the artifact" messages from being converted
+into artificial open experiment questions.
 
 ## Strategic Plan Boundary
 
@@ -393,11 +457,19 @@ Separate current field evidence from classic background precedent.
 
 ## Workflow
 
+0. Gather required context. Read the paper blueprint, prior artifacts, provided
+   feedback, and metaskill/runner-task files when they are part of the current
+   request. If required contents cannot be accessed, ask for the exact missing
+   contents before writing outputs. For artifact-review or skill-evolution
+   requests, read the metaskill and every file in the named artifact output
+   directory before deciding which skill instructions to change. If the same
+   access failure has already been reported, return the structured
+   `missing_required_contents` paste request and stop.
 1. Build the explanation ledger in the user's language. Localize headings,
    table titles, and field labels. For Chinese, use headings such as
    `已确认的用户输入`, `论文蓝图已确认的信息`, `现有证据输入`,
-   `本轮使用的实时研究背景`, `Skill 推导出的规划承诺`, and
-   `剩余开放规划项`.
+   `本轮读取的工件与反馈`, `本轮使用的实时研究背景`,
+   `Skill 推导出的规划承诺`, and `剩余开放规划项`.
 2. Normalize the thesis into `Experimental thesis`, `Primary comparison`, and
    `Operating conditions`.
 3. Build the claim-to-evidence map with only claim, objective, story role, and
@@ -552,5 +624,18 @@ Before finalizing, check:
 - The explanation is causal and readable, not an administrative checklist.
 - The explanation uses the user's language and begins with the confirmation
   ledger.
+- The explanation names the concrete blueprint, prior artifacts, feedback, and
+  metaskill/runner-task files that shaped the run, or explicitly says which
+  required contents were unavailable and stops before fabricating a plan.
+- Missing local artifact access is treated as provenance feedback, not as a
+  reason to invent new experiment objectives or open research questions.
+- Live research is not used as a substitute for unavailable repository files;
+  it only supplies current external venue, baseline, dataset, metric, and
+  reviewer-expectation context after the local paper/artifact inputs are known.
+- Artifact-review revisions enumerate and read all Markdown files under the
+  referenced output directory before making concrete skill changes.
+- Repeated access-failure reviews return a structured missing-content request
+  with paths, attempted channels, and paste-bundle instructions, instead of
+  producing a generic critique or another paraphrase of the same failure.
 - Each objective has a distinct claim, story role, or primary evidence output.
 - Overlapping objectives are merged or represented as reporting views.

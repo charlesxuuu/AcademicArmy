@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Experiment Plan"
   short_description: "Clean claim-to-evidence experiment plan plus user-language explanation"
-  default_prompt: "Create a clean English experiment_plan.md and user-language experiment_plan_explanation.LANG.md with $academic-army-experiment-plan."
+  default_prompt: "Create a clean English experiment_plan.md and user-language experiment_plan_explanation.LANG.md with $academic-army-experiment-plan. Read the available blueprint, prior artifacts, artifact output directories, metaskill context, and revision feedback first; ask for exact missing required contents instead of using live research or generic memory to replace unavailable repository files. If the same access failure repeats, return one structured paste-bundle request and stop."
 
 dependencies:
   tools:
