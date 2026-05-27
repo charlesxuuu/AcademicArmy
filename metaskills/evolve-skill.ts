@@ -8,7 +8,7 @@ const RUNNER_PROMPT = (
   artifactPath: string,
   runnerTask: string,
 ) => `
-Use ${skillName} to complete the task below. Write the final artifact to ${artifactPath}.
+Use the ${skillName} skill to help me complete the following task, and output the related files to the ${artifactPath} folder.
 
 ${runnerTask}
 `;
@@ -18,9 +18,10 @@ const EVALUATOR_PROMPT = (
   metaskillPath: string,
   extraPrompt: string,
 ) => `
-Evaluate the artifact at ${artifactPath}.
-
-The metaskill file at ${metaskillPath} contains important guidance about what to consider when writing and improving this skill.
+Evaluate the artifact at ${artifactPath}. This artifact was produced by a skill.
+The metaskill at ${metaskillPath} contains the design goals and tips of this skill.
+Based on these goals and tips, are there any problems in the artifact produced by this skill? Are there any redundant parts?
+Carefully inspect both the language and the content, and use that analysis to explain how this skill can be optimized.
 
 ${extraPrompt}
 `;
@@ -30,11 +31,11 @@ const MODIFIER_PROMPT = (
   metaskillPath: string,
   review: string,
 ) => `
-Update ${skillPath} to address this review.
+Following is feedback on ${skillPath} based on a artifact produced by that skill.
+Please revise this skill according to the feedback.
+The metaskill at ${metaskillPath} contains the design goals and tips of this skill.
+Consider these design goals and tips when revising it.
 
-The metaskill file at ${metaskillPath} contains important guidance about what to consider when writing and improving this skill.
-
-Review:
 ${review}
 `;
 
