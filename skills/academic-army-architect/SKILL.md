@@ -1,14 +1,19 @@
 ---
 name: academic-army-architect
 description: >-
-  Create two Markdown files for a strategic research-paper blueprint: an English, AI-facing paper_blueprint.md and a user-language paper_blueprint_explanation.<lang>.md. The blueprint is a concise paper strategy specification for downstream content, method, experiment, figure, writing, and review-planning skills. It uses `academic_army_mcp_tools.deepresearch` as the required live research MCP tool for venue, literature, exemplar-paper, evaluation-expectation, and reviewer-context evidence.
+  Create two Markdown files for a strategic research-paper blueprint: an English, AI-facing paper_blueprint.md and a user-language paper_blueprint.explain.md. The blueprint is a concise paper strategy specification for downstream content, method, experiment, figure, writing, and review-planning skills. It uses `academic_army_mcp_tools.deepresearch` as the required live research MCP tool for venue, literature, exemplar-paper, evaluation-expectation, and reviewer-context evidence.
 ---
 
 # Academic Army Architect
 
 ## Output Contract
 
-The skill produces two Markdown files with strict separation of responsibilities.
+The skill produces exactly two Markdown files with strict separation of responsibilities:
+
+- `paper_blueprint.md`
+- `paper_blueprint.explain.md`
+
+Do not add language suffixes, translated filename components, or auxiliary explanation files.
 
 ### File 1: `paper_blueprint.md`
 
@@ -35,20 +40,21 @@ The blueprint answers:
 
 The blueprint is not a user-facing explanation. Do not put user-confirmation ledgers, research-process notes, review-defense language, source analysis, or rationale paragraphs in this file.
 
-`Open Strategic Variables` may appear in the blueprint, but only as planning state. Do not write user-facing confirmation prompts there. Use this format:
+`Open Strategic Variables` may appear in the blueprint, but only as planning state. Do not write user-facing confirmation prompts there. State the default propagation rule once at the start of the section, then use this format for each variable:
 
 ```markdown
+Default propagation rule: downstream skills must use each variable's current conservative stance unless the user or evidence resolves that variable.
+
 ### <Variable name>
 Status: unresolved.
 Affects: <paper identity, claim scope, method planning, experiment planning, figure planning, or related downstream areas>
 Current conservative stance: <neutral stance to use until the variable is resolved>
 Allowed resolutions: <short semicolon-separated set of strategic resolutions>
-Default propagation rule: downstream skills must use the current conservative stance unless the user or evidence resolves this variable.
 ```
 
-The corresponding user-facing question belongs only in `paper_blueprint_explanation.<lang>.md`.
+Any corresponding user-facing question, when the variable remains unresolved, belongs only in `paper_blueprint.explain.md`.
 
-### File 2: `paper_blueprint_explanation.<lang>.md`
+### File 2: `paper_blueprint.explain.md`
 
 This file is a user-language validation companion. Its function is to help the user confirm whether the blueprint items are reasonable.
 
@@ -58,13 +64,13 @@ Allowed content:
 2. User-confirmed inputs, limited to facts explicitly locked by the user
 3. User-mentioned preferences and working assumptions, separated from confirmed inputs
 4. Research signals used, compressed to load-bearing sources and grouped by source role
-5. Core starting points behind the blueprint, each with a user confirmation target
+5. Core starting points behind the blueprint, each with rationale and only unresolved confirmation targets
 6. Item-by-item explanation of the blueprint, including each core goal, open strategic variable, and downstream contract
 7. Remaining strategic choices for confirmation, deduplicated against confirmed inputs
 8. Change impact if confirmed inputs change
 9. Evidence-dependent claim calibration, separated from user-input changes
 
-Use the user's conversation language. Preserve technical terms, venue names, paper titles, datasets, benchmarks, metrics, and method names in their original language when that improves precision.
+Use the user's conversation language for the full explanation file, including section headings, field labels, table column labels, and repeated phrases. Preserve technical terms, venue names, paper titles, datasets, benchmarks, metrics, and method names in their original language when that improves precision.
 
 The explanation explains the paper strategy, not the skill's workflow. For example, explain why the paper is positioned as reference-aware ABR; do not explain why this skill uses a particular file format.
 
@@ -88,7 +94,7 @@ The final Markdown files should contain paper-level conclusions derived from evi
 
 ## Confirmed-Inputs Mechanism
 
-Start `paper_blueprint_explanation.<lang>.md` with a short section named `What You Should Check First` or its natural equivalent in the user's language. Then write `User-Confirmed Inputs`.
+Start `paper_blueprint.explain.md` with a short section named in the user's language equivalent to `What You Should Check First`. Then write the user's-language equivalent of `User-Confirmed Inputs`. Translate all generic labels in these sections; do not leave English headings such as `Role`, `What it showed`, or `User-Confirmed Inputs` in a Chinese or other non-English explanation unless they are paper terms.
 
 `User-Confirmed Inputs` records only paper-strategy information explicitly provided or locked by the user, such as:
 
@@ -116,7 +122,14 @@ Examples:
 - Working assumption: prototype-anchored systems paper; segment/chunk-level plus visible-region control until granularity is resolved.
 - Open strategic variable: deployment boundary, control granularity, dynamic-scene breadth, claim strength.
 
-Before writing any remaining confirmation question, check whether `User-Confirmed Inputs` already covers it.
+Before writing any remaining confirmation question, check whether `User-Confirmed Inputs` already covers it. If a fact appears in `User-Confirmed Inputs`, treat it as settled context everywhere in the explanation. Do not ask the user to confirm it again in `What You Should Check First`, item rationales, open-variable explanations, or remaining choices.
+
+`What You Should Check First` should shrink as the confirmed-inputs ledger grows. It may contain:
+
+- unresolved strategic variables that still affect paper identity, claim scope, or downstream contracts
+- derived consequences of confirmed inputs that the user may want to inspect for reasonableness
+
+It should not contain direct re-confirmation of confirmed inputs.
 
 Question filtering:
 
@@ -150,6 +163,18 @@ Later specialized skills handle Levels 3-4:
 | Level 4: Execution planning | Scripts, run order, implementation tasks, plotting commands, writing tasks, rebuttal execution. |
 
 Every item in `paper_blueprint.md` must directly constrain later planning or change the paper's strategic identity if altered. Compress lower-level details into strategic requirements, acceptable design spaces, delegated planning variables, or evidence-dependent claim calibration.
+
+Keep only strategic invariants in the blueprint:
+
+- thesis
+- novelty boundary
+- resource model
+- strategic goals
+- claim and scope calibration
+- evidence objectives
+- downstream contracts
+
+Move detailed controller choices, exact experiment options, exact metric lists, exact figure choices, reference-generation alternatives, implementation variants, and proof-form options into later planning skills unless the detail changes the paper's strategic identity or has been explicitly confirmed by the user.
 
 ## Strategic/Tactical Filter
 
@@ -191,7 +216,7 @@ Avoid defensive phrasing in the blueprint, including long lists of what the pape
 
 ## Source-Use Rules
 
-Source analysis belongs in `paper_blueprint_explanation.<lang>.md`, not in `paper_blueprint.md`.
+Source analysis belongs in `paper_blueprint.explain.md`, not in `paper_blueprint.md`.
 
 In the explanation, include a `Research Signals Used` section. Classify each source by role and explain how it influenced the blueprint:
 
@@ -206,10 +231,20 @@ For writing style and storytelling, prefer recent papers. For methods, datasets,
 
 Do not put a bare source list in either file. Every cited source in the explanation must have a source role and a concise lesson for the blueprint.
 
+Research-signal synthesis must extract patterns, not only summarize papers. For recent high-impact or target-venue exemplars, explain why they are persuasive for this blueprint:
+
+- how they define a new control abstraction or resource model
+- how their first figure, opening claim, or introduction makes the core idea legible
+- how they calibrate claim breadth against evidence strength
+- how they separate substrate contributions from the paper's own contribution
+- how their evaluation style supports a systems or networking claim
+
+Use these patterns to justify blueprint choices such as thesis shape, novelty boundary, evidence posture, and downstream contracts.
+
 Source budget rule for the explanation:
 
 - The main `Research Signals Used` section should contain at most 6-8 load-bearing signals.
-- Each load-bearing signal must state `role`, `what it showed`, and `which blueprint choice it influenced`.
+- Each load-bearing signal must state localized equivalents of `role`, `what it showed`, `persuasive pattern`, and `which blueprint choice it influenced`.
 - Additional sources should be compressed into `Additional background signals` with at most one sentence per role, or omitted when they do not change a blueprint choice.
 - Avoid long raw URL stacks. Keep links only when source traceability helps the user verify the blueprint.
 - `Storytelling exemplars` must be recent, preferably from the last 1-3 years or the latest 3 venue cycles, and must explain their introduction/story movement influence.
@@ -281,7 +316,6 @@ Status: unresolved.
 Affects: online state/action definition, deadline model, evaluation trace format, prototype instrumentation.
 Current conservative stance: describe control at the segment/chunk plus visible-region level until the implementation granularity is fixed.
 Allowed resolutions: chunk-level; frame-level; spatial-unit-level; hybrid chunk-level Gaussian resource control plus frame-level reference resource scheduling.
-Default propagation rule: downstream skills must use the current conservative stance unless the user or evidence resolves this variable.
 ```
 
 ## Downstream Skill Contract
@@ -306,9 +340,9 @@ Use the relevant subset of these contract areas:
 - `Experiment-Planning Contract`
 - `Figure-Planning Contract`
 - `Review-Planning Contract`, only when the user has requested review planning or the downstream skill list includes review-planning
-- `Writing-Planning Contract`, only when useful
+- `Writing-Planning Contract`, only when it adds constraints not already covered by the content-planning contract
 
-The contract should not repeat full goal definitions. It should reference goal titles or concise strategic phrases already defined in `Core Strategic Goals`.
+The contract should not repeat full goal definitions. It should reference goal titles or concise strategic phrases already defined in `Core Strategic Goals`. Merge or omit contracts whose preserve lists would substantially duplicate another contract. In particular, do not create both content-planning and writing-planning contracts merely to repeat venue-facing story, abstract framing, introduction framing, or related-work organization.
 
 For `Writing-Planning Contract`, prefer venue-fit and contribution-legibility phrasing:
 
@@ -388,7 +422,7 @@ Success signal: <strategic success signal>
 ### Evidence-dependent claim calibration
 
 ## 6. Evidence Objectives
-### Metric families
+### Outcome families to test
 ### Phenomena to establish
 ### System-level outcomes
 ### Baseline families
@@ -402,55 +436,56 @@ Success signal: <strategic success signal>
 ### Figure-Planning Contract
 
 ## 8. Open Strategic Variables
+Default propagation rule: downstream skills must use each variable's current conservative stance unless the user or evidence resolves that variable.
+
 ### <Variable name>
 Status: unresolved.
 Affects: <downstream planning areas>
 Current conservative stance: <neutral stance until resolved>
 Allowed resolutions: <resolution set>
-Default propagation rule: downstream skills must use the current conservative stance unless the user or evidence resolves this variable.
 ```
 
 Use 5-6 core strategic goals unless the paper truly needs fewer or more. Each goal appears once with its full definition. Later sections may refer to goal titles or short phrases, but should not rewrite the full goal.
 
 Do not include `Current input state`, `Why this goal matters`, `Failure or revision implication`, `Strategic Risks`, `Goal Dependency Map`, `Sources Used`, `Confirmation prompt`, `Confirm whether`, or user-facing process notes in the blueprint.
 
-### Step 5: Compile `paper_blueprint_explanation.<lang>.md`
+### Step 5: Compile `paper_blueprint.explain.md`
 
-Use this structure in the user's language:
+Use this structure in the user's language. The English names below are semantic placeholders; translate them and all local field labels in the actual file:
 
 ```markdown
-# Paper Blueprint Explanation: <Working Title>
+# <User-language title equivalent to "Paper Blueprint Explanation">: <Working Title>
 
-## 0. What You Should Check First
+## 0. <User-language title equivalent to "What You Should Check First">
 
-## 1. User-Confirmed Inputs
+## 1. <User-language title equivalent to "User-Confirmed Inputs">
 
-## 2. User-Mentioned Preferences and Working Assumptions
-### User-mentioned preferences
-### Working assumptions
+## 2. <User-language title equivalent to "User-Mentioned Preferences and Working Assumptions">
+### <User-language title equivalent to "User-mentioned preferences">
+### <User-language title equivalent to "Working assumptions">
 
-## 3. Research Signals Used
-### Load-bearing signals
-### Additional background signals
+## 3. <User-language title equivalent to "Research Signals Used">
+### <User-language title equivalent to "Load-bearing signals">
+### <User-language title equivalent to "Additional background signals">
 
-## 4. Core Starting Points
+## 4. <User-language title equivalent to "Core Starting Points">
 
-## 5. Blueprint Items and Rationale
+## 5. <User-language title equivalent to "Blueprint Items and Rationale">
 
-## 6. Remaining Strategic Choices for Confirmation
+## 6. <User-language title equivalent to "Remaining Strategic Choices for Confirmation">
 
-## 7. Change Impact if Confirmed Inputs Change
+## 7. <User-language title equivalent to "Change Impact if Confirmed Inputs Change">
 
-## 8. Evidence-Dependent Claim Calibration
+## 8. <User-language title equivalent to "Evidence-Dependent Claim Calibration">
 ```
 
-`What You Should Check First` should list 3-6 strategic judgments the user most needs to confirm before reading details.
+`What You Should Check First` should list 3-6 unresolved strategic judgments or derived consequences the user most needs to inspect before reading details. Do not include a direct confirmation item for any fact already recorded under `User-Confirmed Inputs`.
 
 For each core starting point, include:
 
 1. the starting point
 2. why it matters for the paper strategy
-3. what the user should confirm
+3. the remaining strategic uncertainty, only if it is not already covered by confirmed inputs
 
 For each important blueprint item, first restate the blueprint content in the user's language, then explain:
 
@@ -458,7 +493,7 @@ For each important blueprint item, first restate the blueprint content in the us
 2. how it supports the paper strategy
 3. which other blueprint items it constrains
 4. which downstream skills must inherit it
-5. what strategic confirmation point remains, if any
+5. what strategic confirmation point remains, if any and only if not already confirmed
 
 `Blueprint Items and Rationale` must explain at item level, not only section level. Include separate explanation items for:
 
@@ -467,21 +502,14 @@ For each important blueprint item, first restate the blueprint content in the us
 - each open strategic variable
 - each downstream contract
 
-Use this item template:
+Write these explanations as short prose blocks, not as a fixed five-line template. Each block should naturally:
 
-```markdown
-### <Blueprint item title>
+- restate the blueprint item before explaining it
+- explain the core reason or research-signal pattern behind it
+- connect it to the thesis, goals, claim scope, evidence objectives, or downstream contracts
+- mention actionable uncertainty only when the item still depends on an unresolved strategic variable
 
-蓝图复述：<brief restatement of the blueprint item>
-
-推导来源：<core starting point or research signal that produced it>
-
-与其他部分的关系：<related thesis, claim, evidence objective, contract, or open variable>
-
-约束哪些后续 skill：<content/method/experiment/figure/writing/review planning constraints>
-
-用户应检查：<the exact strategic judgment the user should confirm>
-```
+Avoid repeated labels such as `blueprint restatement`, `derivation source`, `relationship to other parts`, `downstream skill constraints`, and `user should check` for every item. Use semantic anchors such as exact headings, translated headings, concise functional names, or natural-language paraphrases. Avoid relying on section numbers.
 
 `Remaining Strategic Choices for Confirmation` must use this template:
 
@@ -497,11 +525,13 @@ Use this item template:
 不同选择会改变什么：<paper identity, claim scope, method, evidence, figure, or writing implications>
 ```
 
+Omit any strategic variable from this section when `User-Confirmed Inputs` fully resolves it. If the confirmed inputs partially resolve it, ask only about the unresolved remainder and explicitly state why it remains unresolved.
+
 Separate `Change Impact if Confirmed Inputs Change` from `Evidence-Dependent Claim Calibration`. The former covers changes in user-provided inputs such as venue, scope, deployment boundary, or novelty boundary. The latter covers experiment-outcome contingencies, such as reference usefulness being broad, narrow, or deployment-specific.
 
 Do not create a long standalone `Downstream Planning Implications` section. Downstream implications belong inside each item-level explanation and each downstream-contract explanation. If a summary is useful, keep it to at most five short lines and avoid repeating the contract.
 
-Use semantic anchors such as exact headings, translated headings, concise functional names, or natural-language paraphrases. Avoid relying on section numbers.
+Before finalizing the explanation, read the confirmation sections together and remove repeated questions. Most item-level rationales should be rationale statements, not confirmation prompts.
 
 ## `academic_army_mcp_tools.deepresearch` Prompt Shape
 
@@ -532,13 +562,13 @@ Return six sections:
    Summarize recent systems that already cover adjacent control axes such as viewport prediction, saliency-aware tiling, layered/progressive Gaussian delivery, segment-level adaptation, and learned QoE/ABR.
 
 4. Storytelling exemplars
-   Use recent target-venue or adjacent top-venue papers when available. Summarize story movement and writing-style lessons.
+   Use recent target-venue or adjacent top-venue papers when available. Extract persuasive patterns: control abstraction, first-figure or opening-claim legibility, claim calibration, substrate-vs-contribution separation, and evidence style.
 
 5. Method and evaluation precedents
    Summarize canonical and recent precedents that affect method posture, evaluation posture, metrics, workloads, and comparison families.
 
 6. Source-role table
-   For each source, include title, venue/year when available, source link, role among closest technical substrate / venue posture / closest competing system / storytelling exemplar / method precedent / evaluation precedent, and the lesson for blueprint design.
+   For each source, include title, venue/year when available, source link, role among closest technical substrate / venue posture / closest competing system / storytelling exemplar / method precedent / evaluation precedent, persuasive pattern when relevant, and the lesson for blueprint design.
 
 Use concise evidence-facing prose.
 ```
@@ -570,9 +600,18 @@ The explanation contains user confirmation, derivation, and source-role analysis
 
 Each core strategic goal has one complete definition. Other sections reference the goal title or short strategic phrase instead of repeating the full definition.
 
+Run a deduplication pass across both files before finalizing:
+
+- metric families appear once in canonical terminology; later sections reference or group them instead of relisting them
+- central claim language appears once in the thesis or claim section; goals and explanations paraphrase only as needed
+- Gaussian/reference substitution or equivalent core novelty is compactly stated once, then referenced by title or short phrase
+- downstream contracts do not duplicate each other, especially content-planning and writing-planning contracts
+- `Default propagation rule` appears once globally in `Open Strategic Variables`
+- confirmation questions appear only in the opening check list or remaining strategic choices, and only for unresolved strategic variables
+
 ### Tactical Leakage Check
 
-If the blueprint names a concrete algorithm family, dataset, trace, figure count, statistical test, device setup, exact baseline, or concrete spatial partition such as tiles, verify that the user explicitly specified it. If not, move it to an open tactical choice in the downstream contract or to the explanation as delegated detail.
+If the blueprint names a concrete algorithm family, controller proof option, dataset, trace, metric formula, figure count, required figure, statistical test, device setup, reference-generation alternative, exact baseline, or concrete spatial partition such as tiles, verify that the user explicitly specified it and that it affects strategic identity. If not, move it to an open tactical choice in the downstream contract or to the explanation as delegated detail.
 
 ### Contradiction Check
 
@@ -607,15 +646,15 @@ Rewrite defensive language into positive scope and claim calibration:
 
 ### Question Deduplication Check
 
-Each remaining confirmation question in the explanation corresponds to an unresolved strategic variable not covered by `User-Confirmed Inputs`. Remove tactical questions and questions already answered by confirmed context.
+Each remaining confirmation question in the explanation corresponds to an unresolved strategic variable not covered by `User-Confirmed Inputs`. Remove tactical questions and questions already answered by confirmed context. Search the explanation for repeated confirmation verbs and collapse duplicates into one remaining-choice item.
 
 ### Source-Role Check
 
-Every source in the explanation is categorized as venue posture, closest technical substrate, closest competing system, storytelling exemplar, method precedent, or evaluation precedent, with a concise lesson. A bare source list is not valid.
+Every source in the explanation is categorized as venue posture, closest technical substrate, closest competing system, storytelling exemplar, method precedent, or evaluation precedent, with a concise lesson. A bare source list is not valid. For recent high-impact or target-venue exemplars, include the persuasive pattern used by the blueprint, not only a source summary.
 
 ### Explanation Alignment Check
 
-Every open strategic variable in the blueprint appears in the explanation as a user confirmation point unless already covered by `User-Confirmed Inputs`.
+Every open strategic variable in the blueprint appears in the explanation. It becomes a user confirmation point only when it is not already covered by `User-Confirmed Inputs`; otherwise explain it as settled context or remove it from open variables.
 
 ### Confirmed-Input Hygiene Check
 
@@ -651,7 +690,7 @@ Before finalizing `paper_blueprint.md`, check that:
 
 - it uses the required strategic structure, with optional open strategic variables
 - it is English, declarative, specification-like, and AI-facing
-- open strategic variables use `Status`, `Affects`, `Current conservative stance`, `Allowed resolutions`, and `Default propagation rule`, not user-facing prompts
+- open strategic variables state one section-level `Default propagation rule`; each variable uses `Status`, `Affects`, `Current conservative stance`, and `Allowed resolutions`, not user-facing prompts
 - each item directly constrains later planning or the paper's strategic identity
 - no goal's full definition appears more than once
 - canonical resource terms, delivery unit, reference state, reference usefulness, and metric families are defined once and referenced later
@@ -660,10 +699,11 @@ Before finalizing `paper_blueprint.md`, check that:
 - baseline guidance stays at the baseline-family level unless user-confirmed
 - visual and content guidance states strategic requirements, not exact figure or section plans
 
-Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
+Before finalizing `paper_blueprint.explain.md`, check that:
 
 - it is in the user's language
-- it starts with `What You Should Check First`, then `User-Confirmed Inputs`
+- it starts with localized equivalents of `What You Should Check First`, then `User-Confirmed Inputs`
+- all generic headings, labels, and table columns are in the user's language
 - user-confirmed inputs, user-mentioned preferences, and working assumptions are separated
 - output paths and execution metadata are absent from the explanation file
 - research signals are limited to load-bearing sources, categorized by role, and linked to blueprint choices
