@@ -1,0 +1,11 @@
+interface:
+  display_name: "Academic Army Coding Plan"
+  short_description: "Modular coding plan with harnesses and raw result contracts"
+  default_prompt: "Create an English coding_plan.md and user-language coding_plan.explain.md with $academic-army-coding-plan from the available paper blueprint, experiment plan, and repository context."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "academic_army_mcp_tools"
+      description: "Provides academic_army_mcp_tools.deepresearch for current method, baseline, dataset, benchmark, metric, artifact, and evaluation-harness evidence."
+      transport: "stdio"
