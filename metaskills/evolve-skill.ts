@@ -92,7 +92,7 @@ const evaluator = codex.startThread({
 
 const modifier = codex.startThread({
   ...commonThreadOptions,
-  sandboxMode: "workspace-write",
+  sandboxMode: "danger-full-access",
 });
 
 async function runAndPrint(thread: Thread, prompt: string) {
@@ -132,7 +132,7 @@ async function main() {
 
     const runner = codex.startThread({
       ...commonThreadOptions,
-      sandboxMode: "workspace-write",
+      sandboxMode: "danger-full-access",
     });
 
     await runAndPrint(
