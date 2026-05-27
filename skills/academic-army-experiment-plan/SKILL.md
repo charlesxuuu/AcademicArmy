@@ -35,7 +35,8 @@ Create exactly two required Markdown files:
    - Uses compact, stable fields for downstream skills.
 
 2. `experiment_plan_explanation.<lang>.md`
-   - Uses the user's conversation language.
+   - Uses the user's conversation language for headings, table titles, field
+     labels, and body text.
    - Human-facing confirmation companion.
    - Explains how the plan follows from user inputs, the paper blueprint,
      existing evidence, live research, and the paper's core thesis.
@@ -76,15 +77,23 @@ explanation file:
 - `source`: title and link
 - `date`: publication date, submission date, or metadata date visible in the
   source
-- `venue_status`: one of `verified`, `arxiv_only`, or `source_claim`
+- `venue_status`: one of `verified`, `arxiv_only`, `project_claim`,
+  `classic_background`, or `unverified`
 - `why_it_affects_this_plan`: the planning decision it changes
 
 Use `verified` only when the venue is confirmed by source metadata from the
 venue, publisher, proceedings, author PDF, or institutional publication page.
-Use `arxiv_only` when only arXiv metadata is visible. Use `source_claim` when a
-venue label appears in a non-primary source or page text but is not confirmed by
-the source metadata. Do not promote an arXiv-only paper to a venue-labeled
-anchor inside the plan.
+Use `arxiv_only` when only arXiv metadata is visible. Use `project_claim` when a
+venue or artifact claim appears on a project, lab, or author page but is not
+confirmed by proceedings metadata. Use `classic_background` for older
+foundational baselines or precedent papers that explain evaluation lineage but
+do not establish current protocol freshness. Use `unverified` for sources whose
+metadata is incomplete or inconsistent.
+
+Prefer primary papers, proceedings pages, publisher pages, DOIs, official arXiv
+records, and author-hosted PDFs over secondary summaries. Keep current
+3DGS/volumetric evidence anchors separate from classic ABR or networking
+background anchors in the explanation file.
 
 ## Inputs to Extract
 
@@ -139,10 +148,11 @@ restating them.
 
 - experimental thesis, primary comparison, and operating conditions
 - claim-to-evidence map
-- shared evidence context
+- workload registry
 - metric registry
 - baseline registry
-- objective definitions
+- core objective definitions
+- optional claim-expansion objective definitions when they affect scope
 - objective dependency graph
 
 `experiment_plan.md` should not include:
@@ -156,6 +166,7 @@ restating them.
 - manifest fields
 - detailed metric implementation contracts
 - repeated metric or baseline lists inside every objective
+- ID-only summaries that duplicate registries
 
 Represent execution-level detail with logical handles. Let downstream skills
 choose concrete filenames, logs, schemas, owners, and implementation layouts.
@@ -222,6 +233,20 @@ Merge objectives that do not support an independent claim, story role, or
 primary evidence output. Represent secondary needs as reporting views, metric
 slices, or shared protocol entries.
 
+Separate objectives into:
+
+- `core_objectives`: required evidence for the current paper thesis and claim
+  scope.
+- `optional_claim_expansion_objectives`: conditional scope-calibration modules
+  that expand supported scene, workload, substrate, deployment, or contention
+  claims.
+
+Use `optional_claim_expansion_objectives` for workloads such as new dynamic
+scene classes, mobile-device profiles, multi-client contention, deployment
+profiles, or extra dataset families when they broaden the claim rather than
+support the core thesis. Mark their trigger as `claim_expansion_module` and
+state which claim scope they would expand.
+
 ## Motivation and Design-Insight Experiments
 
 A motivation or design-insight objective makes a core intuition, current-system
@@ -280,12 +305,14 @@ Use compact baseline entries:
   - Role: required | diagnostic | oracle
   - Comparison purpose:
   - Fairness principle:
-  - Used by objectives:
 ```
 
 Keep observation access, action space, resource budget, and implementation owner
 out of the main plan unless they change the strategic comparison. Put those
 details in the optional execution contract when needed.
+
+Objectives own baseline usage through their `Comparators` field. The baseline
+registry defines each baseline family once and does not list objective usage.
 
 Objectives reference comparators as:
 
@@ -306,6 +333,10 @@ Define:
 Do not use fallback phrases such as `when available` for workloads. If a
 workload is not strategically required, place it under scope-extension
 candidates or leave it out.
+
+Use a workload registry, not an ID-only research context list. Add a compact
+generated index only when the plan becomes long enough that downstream skills
+would otherwise struggle to locate identifiers.
 
 ## Objective Redundancy Check
 
@@ -328,168 +359,31 @@ and primary evidence output.
 
 ## Live Research Prompt Shape
 
-Use the smallest set of deepresearch passes needed. A useful prompt shape:
-
-```text
-You are supporting a confirmation-state-aware academic experiment planner.
-
-Research brief:
-[RESEARCH_BRIEF]
-
-Target venue and field:
-[TARGET_VENUE_AND_FIELD]
-
-Confirmed planning facts:
-[CONFIRMED_FACTS]
-
-Return:
-
-1. Current venue and field protocols
-   Separate must-use protocols, optional confidence-building protocols, older
-   canonical baselines still expected by reviewers, stale protocols, and
-   implementation availability useful to later execution skills.
-
-2. Recent paper evidence patterns
-   For recent strong papers, extract claim-to-evidence patterns, datasets,
-   traces, benchmarks, baselines, metrics, ablations, stress tests, scale tests,
-   qualitative/user/deployment evidence, artifact signals, and result
-   presentation patterns.
-
-3. Motivation and design-insight patterns
-   Extract the intuition or failure mode, minimal setting, one-glance artifact,
-   story placement, and connection to final evaluation.
-
-4. Planning commitments for this paper
-   Explain which objectives, story placements, baseline/dataset/metric choices,
-   and evidence outputs should be used.
-
-For each source, include title, link, date, visible venue metadata, provenance
-quality, relevance, and the lesson for experiment planning. Distinguish
-verified venue metadata, arXiv-only metadata, and source claims.
-```
+Use the smallest set of deepresearch passes needed. Ask for current protocols,
+recent evidence patterns, motivation/design-insight patterns, and planning
+commitments for this paper. Require each source to include title, link, date,
+visible venue metadata, provenance category, relevance, and planning lesson.
+Separate current field evidence from classic background precedent.
 
 ## Workflow
 
-### Step 1: Build the Explanation Ledger
-
-Start `experiment_plan_explanation.<lang>.md` with a concise ledger:
-
-```markdown
-## Confirmed User Inputs
-
-## Blueprint-Confirmed Inputs
-
-## Existing Evidence Inputs
-
-## Live-Research Context Used
-
-## Skill-Derived Planning Commitments
-
-## Remaining Open Planning Items
-```
-
-Use `Remaining Open Planning Items` only for strategic gaps. If none remain,
-state in the user's language that no remaining open item changes the current
-plan structure.
-
-Do not include closed-item administration unless the user specifically asks for
-revision bookkeeping.
-
-### Step 2: Normalize the Thesis
-
-In `experiment_plan.md`, write:
-
-- `Experimental thesis`: the central mechanism and claim.
-- `Primary comparison`: comparator families.
-- `Operating conditions`: workload, environment, and variability conditions.
-
-Keep this section concise.
-
-### Step 3: Build the Claim-to-Evidence Map
-
-Map each major claim to:
-
-- evidence objective
-- story role
-- expected evidence output
-- downstream consumers
-
-Use these downstream consumer IDs unless the local toolchain provides a more
-specific skill ID:
-
-- `experiment_runner`
-- `code_generation`
-- `result_analysis`
-- `plot_planning`
-- `paper_writing`
-- `reproducibility`
-
-Use `rebuttal_preparation` only when the user asks for response/rebuttal
-planning or when the paper is already in a review-response stage.
-
-### Step 4: Build Shared Evidence Context
-
-Factor out repeated details into:
-
-- workloads
-- research context IDs
-- metric registry
-- baseline registry
-- resource and cost reporting principles
-- reproducibility/artifact principles
-
-Keep these strategic. Avoid concrete paths, logs, schemas, and owner fields.
-
-### Step 5: Design Objectives
-
-For each objective, use this compact schema:
-
-```markdown
-### Objective <n>: <Name>
-
-- Story role:
-- Evidence goal:
-- Claims supported:
-- Evidence scope:
-- Evidence role:
-- Claim calibration output:
-- Workloads:
-- Controlled factors:
-- Comparators:
-- Metrics:
-- Expected evidence outputs:
-- Target evidence pattern:
-- Handled by later skills:
-- Dependencies:
-- Priority:
-```
-
-Use IDs from registries for metrics and comparators. Use logical evidence output
-names, not file paths. Keep `Handled by later skills` short and concrete, such
-as `figure filenames`, `logging schema`, or `statistical test implementation`.
-
-### Step 6: Write the Explanation Causally
-
-The explanation should make the derivation inspectable without becoming a
-workflow-management memo.
-
-Explain:
-
-- which confirmed facts anchor the plan
-- how the core thesis decomposes into evidence needs
-- why each objective exists
-- why its story role fits the paper
-- why its evidence output and target evidence pattern fit the claim
-- how objectives depend on or calibrate each other
-- which source anchors changed the plan, with confidence/provenance
-
-Avoid:
-
-- generic user audit checklists
-- closed planning item lists unless requested
-- dense cross-reference codes such as `C1/B2/E3`
-- long literature-review prose
-- advice about how the user should review the file
+1. Build the explanation ledger in the user's language. Localize headings,
+   table titles, and field labels. For Chinese, use headings such as
+   `已确认的用户输入`, `论文蓝图已确认的信息`, `现有证据输入`,
+   `本轮使用的实时研究背景`, `Skill 推导出的规划承诺`, and
+   `剩余开放规划项`.
+2. Normalize the thesis into `Experimental thesis`, `Primary comparison`, and
+   `Operating conditions`.
+3. Build the claim-to-evidence map with only claim, objective, story role, and
+   expected evidence output.
+4. Define workload, metric, and baseline registries once. Avoid ID-only
+   summaries unless the plan is long enough to need a generated index.
+5. Write required evidence under `Core Objectives`. Put conditional scope
+   modules under `Optional Claim-Expansion Objectives` with `Module type:
+   claim_expansion_module`, `Scope expanded`, and `Activation condition`.
+6. Write the explanation causally. Include compact localized traceability
+   tables for baseline families, metric families, workload classes, and open
+   variables that affect experiment scale or claim coverage.
 
 ## `experiment_plan.md` Template
 
@@ -504,40 +398,31 @@ Avoid:
 
 ## 2. Claim-to-Evidence Map
 
-| Claim | Evidence Objective | Story Role | Expected Evidence Output | Downstream Consumers |
-|---|---|---|---|---|
+| Claim | Evidence Objective | Story Role | Expected Evidence Output |
+|---|---|---|---|
 
-## 3. Shared Evidence Context
-
-### Workloads
+## 3. Workload Registry
 
 - Required workloads:
 - Scope-extension workload candidates:
 
-### Research Context IDs
-
-- Baseline IDs:
-- Workload IDs:
-- Metric IDs:
-
-### Metric Registry
+## 4. Metric Registry
 
 - `<metric_id>`:
 
-### Baseline Registry
+## 5. Baseline Registry
 
 - `<baseline_id>`:
   - Role:
   - Comparison purpose:
   - Fairness principle:
-  - Used by objectives:
 
-### Resource, Cost, and Reproducibility Principles
+## 6. Resource, Cost, and Reproducibility Principles
 
 - Resource/cost reporting:
 - Reproducibility/artifact principle:
 
-## 4. Experiment Objectives
+## 7. Core Objectives
 
 ### Objective 1: <Name>
 
@@ -557,7 +442,16 @@ Avoid:
 - Dependencies:
 - Priority:
 
-## 5. Objective Dependency Graph
+## 8. Optional Claim-Expansion Objectives
+
+### Optional Module 1: <Name>
+
+- Module type: claim_expansion_module
+- Scope expanded:
+- Activation condition:
+- Use the same objective fields as core objectives when the module is activated.
+
+## 9. Objective Dependency Graph
 
 - <objective/output> -> <objective/output>:
 ```
@@ -566,32 +460,33 @@ Omit empty optional fields. Keep the dependency graph short.
 
 ## `experiment_plan_explanation.<lang>.md` Template
 
-Translate headings naturally when appropriate:
+Translate every heading, table title, and field label into the user's
+conversation language. For Chinese, use Chinese headings rather than English.
 
 ```markdown
-# Experiment Plan Explanation: <Paper/System Name>
+# <Localized title>: <Paper/System Name>
 
-## Confirmed User Inputs
+## <localized confirmed-input ledger sections>
 
-## Blueprint-Confirmed Inputs
+## <localized current field and target-venue experiment patterns>
 
-## Existing Evidence Inputs
+## <localized core experimental logic>
 
-## Live-Research Context Used
+## <localized why these baselines are necessary>
+| <baseline family> | <reviewer concern answered> | <link to plan> |
 
-## Skill-Derived Planning Commitments
+## <localized why these metrics are necessary>
+| <metric family> | <claim or evidence role> | <link to plan> |
 
-## Remaining Open Planning Items
+## <localized which workloads change scope>
+| <workload class> | <scope decision affected> | <plan treatment> |
 
-## Current Field and Target-Venue Experiment Patterns
+## <localized which open variables change experiment scale>
+| <open variable> | <effect on experiment scale or claim coverage> |
 
-## Core Experimental Logic
+## <localized derivation of each objective>
 
-## Derivation of Each Objective
-
-### <Objective name>
-
-## Evidence Chain Across Objectives
+## <localized evidence chain across objectives>
 ```
 
 For each objective, write readable prose rather than numbered cross-reference
@@ -624,5 +519,3 @@ Before finalizing, check:
   ledger.
 - Each objective has a distinct claim, story role, or primary evidence output.
 - Overlapping objectives are merged or represented as reporting views.
-- Downstream consumers use the fixed vocabulary unless a more specific local
-  skill ID is known.

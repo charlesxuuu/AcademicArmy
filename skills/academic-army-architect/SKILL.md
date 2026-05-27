@@ -60,9 +60,9 @@ This file is a user-language validation companion. Its function is to help the u
 
 Allowed content:
 
-1. What the user should check first
-2. User-confirmed inputs, limited to facts explicitly locked by the user
-3. User-mentioned preferences and working assumptions, separated from confirmed inputs
+1. A short first-check summary of unresolved strategic decisions
+2. Confirmation state, with separate buckets for confirmed facts, preferences not locked, and unresolved strategic variables
+3. Working assumptions, separated from confirmed facts and preferences
 4. Research signals used, compressed to load-bearing sources and grouped by source role
 5. Core starting points behind the blueprint, each with rationale and only unresolved confirmation targets
 6. Item-by-item explanation of the blueprint, including each core goal, open strategic variable, and downstream contract
@@ -94,9 +94,11 @@ The final Markdown files should contain paper-level conclusions derived from evi
 
 ## Confirmed-Inputs Mechanism
 
-Start `paper_blueprint.explain.md` with a short section named in the user's language equivalent to `What You Should Check First`. Then write the user's-language equivalent of `User-Confirmed Inputs`. Translate all generic labels in these sections; do not leave English headings such as `Role`, `What it showed`, or `User-Confirmed Inputs` in a Chinese or other non-English explanation unless they are paper terms.
+Start `paper_blueprint.explain.md` with a short first-check summary, then a confirmation-state section with the user's-language equivalents of `Confirmed`, `Preferred but Not Locked`, and `Still to Confirm`. Translate all generic labels in these sections; do not leave English headings such as `Role`, `What it showed`, or `User-Confirmed Inputs` in a Chinese or other non-English explanation unless they are paper terms.
 
-`User-Confirmed Inputs` records only paper-strategy information explicitly provided or locked by the user, such as:
+For Chinese explanations, use these bucket labels: `已确认`, `偏好但未锁定`, and `仍需确认`.
+
+`Confirmed` records only paper-strategy information explicitly provided or locked by the user, such as:
 
 - research idea
 - target venue or venue preference
@@ -108,12 +110,17 @@ Start `paper_blueprint.explain.md` with a short section named in the user's lang
 - desired abstraction level
 - explanation-file purpose
 
+Use three mutually exclusive confirmation-state buckets:
+
+- `User-confirmed facts`: explicit locked paper-strategy facts. These are settled context.
+- `User preferences, not locked`: preferences, expectations, likely directions, or desired evidence that the user mentioned but did not lock as final strategy.
+- `Unresolved strategic variables`: decisions still open because they affect paper identity, claim scope, evidence posture, or downstream contracts.
+
+An item can appear in only one bucket. If a statement includes uncertainty words such as `expected`, `preferred`, `likely`, `should include`, `if possible`, or equivalent user-language phrasing, treat it as a preference or working assumption unless the user explicitly locked it. If a preference affects a strategic variable, keep the preference in the preference bucket and put only the unresolved remainder in `Remaining Strategic Choices for Confirmation`.
+
 Do not include output paths, workspace paths, generated file locations, tool names, or execution environment details in the explanation file. Keep those in internal execution metadata or final run logs.
 
-Keep user-mentioned but unresolved preferences separate from confirmed inputs. Use a `User-Mentioned Preferences and Working Assumptions` section with two subsections:
-
-- `User-mentioned preferences`: items the user mentioned or leaned toward but did not lock as final paper strategy.
-- `Working assumptions`: defaults the skill uses to produce a coherent blueprint despite missing strategic information.
+Keep user-mentioned but unresolved preferences separate from confirmed inputs. Use `Preferred but Not Locked` for items the user mentioned or leaned toward but did not lock as final paper strategy. Use `Working Assumptions` for defaults the skill uses to produce a coherent blueprint despite missing strategic information.
 
 Examples:
 
@@ -122,14 +129,14 @@ Examples:
 - Working assumption: prototype-anchored systems paper; segment/chunk-level plus visible-region control until granularity is resolved.
 - Open strategic variable: deployment boundary, control granularity, dynamic-scene breadth, claim strength.
 
-Before writing any remaining confirmation question, check whether `User-Confirmed Inputs` already covers it. If a fact appears in `User-Confirmed Inputs`, treat it as settled context everywhere in the explanation. Do not ask the user to confirm it again in `What You Should Check First`, item rationales, open-variable explanations, or remaining choices.
+Before writing any remaining confirmation question, check whether `Confirmed` already covers it. If a fact appears in `Confirmed`, treat it as settled context everywhere in the explanation. Do not ask the user to confirm it again in the first-check summary, item rationales, open-variable explanations, or remaining choices.
 
-`What You Should Check First` should shrink as the confirmed-inputs ledger grows. It may contain:
+The first-check summary should shrink as the confirmed-inputs ledger grows. It may contain:
 
 - unresolved strategic variables that still affect paper identity, claim scope, or downstream contracts
 - derived consequences of confirmed inputs that the user may want to inspect for reasonableness
 
-It should not contain direct re-confirmation of confirmed inputs.
+It should not contain direct re-confirmation of confirmed inputs. Keep it to 3-5 short lines that summarize the unresolved decision space. Put the detailed reasoning, confirmed portion, default stance, and downstream impact only in `Remaining Strategic Choices for Confirmation`. Do not phrase the same unresolved decision twice.
 
 Question filtering:
 
@@ -142,6 +149,12 @@ Question filtering:
 | `unresolved_strategic_variable` | Include it under `Remaining Strategic Choices for Confirmation`. |
 
 Across iterative runs, move newly confirmed strategic points into the confirmed-inputs ledger. As confirmed inputs grow, remaining strategic choices should shrink unless the user changes the paper direction, venue posture, top-level claim, or strategic boundary.
+
+Before finalizing, compare the three buckets. If the same semantic item appears in more than one bucket, resolve it by this precedence:
+
+1. explicit user confirmation
+2. unresolved strategic variable, when the user has not locked it and it changes paper strategy
+3. preference or working assumption, when it guides but does not settle strategy
 
 Open questions may ask about target venue, core novelty, system boundary, deployment boundary, dynamic-scene breadth, control granularity, claim strength, paper type, or evidence posture. Do not ask tactical questions about exact algorithms, datasets, traces, figure counts, statistical tests, device setups, baseline implementations, section order, or plotting choices.
 
@@ -197,6 +210,8 @@ Examples:
 - Too tactical: `Use robust MPC, Lyapunov optimization, online primal-dual, or structured bandit/RL.`
 - Blueprint-level: `Evidence must isolate the marginal value of joint adaptation across Gaussian resources and reference resources.`
 - Too tactical: `Compare against fixed-FoV reference, perfect-viewport oracle, and bandwidth oracle.`
+- Blueprint-level: `Baseline families should separate substrate benefit from adaptation benefit.`
+- Too tactical: `Include baseline A, B, C, and D with exact oracle variants.`
 - Blueprint-level: `The visual strategy must make the Gaussian/reference resource surface legible.`
 - Too tactical: `Use one decision-surface figure, one pipeline figure, and one evaluation figure.`
 
@@ -213,6 +228,14 @@ Preferred language:
 - `Opening communication priority. Introduce the central resource-control abstraction before implementation details.`
 
 Avoid defensive phrasing in the blueprint, including long lists of what the paper does not claim. Replace rejection-risk language with contribution boundary, novelty scope, evidence-dependent scope, or claim calibration.
+
+Use positive constraint language in `paper_blueprint.md`, especially in goals and downstream contracts. Prefer action-oriented strategic constraints:
+
+- `Frame the contribution as a reference-aware control layer over the CAGS/restoration substrate.`
+- `Treat CAGS and restoration quality improvement as substrate; claim the paper contribution in resource-control decisions.`
+- `Preserve the Gaussian/reference resource tradeoff as the first visible abstraction.`
+
+Limit `must` to strict machine-contract invariants where a downstream skill would otherwise violate the paper identity. Replace defensive forms such as `must be X rather than Y`, `not restoration`, `not generic ABR`, and `not graphics-only` with positive boundaries such as `Frame as X`, `Treat Y as substrate`, `Scope the claim to Z`, or `Calibrate breadth by evidence`.
 
 ## Source-Use Rules
 
@@ -240,6 +263,14 @@ Research-signal synthesis must extract patterns, not only summarize papers. For 
 - how their evaluation style supports a systems or networking claim
 
 Use these patterns to justify blueprint choices such as thesis shape, novelty boundary, evidence posture, and downstream contracts.
+
+Write research signals pattern-first. Each load-bearing signal should contribute a reusable writing or evidence pattern, then connect that pattern to a blueprint decision. Use this shape in the user's language:
+
+- Pattern: the transferable lesson from the paper or venue.
+- Source basis: the source evidence supporting the pattern.
+- Blueprint consequence: the thesis, goal, scope boundary, evidence objective, or contract changed by the pattern.
+
+If a source only supports background context and does not yield a reusable pattern, move it to `Additional background signals` or omit it. Example pattern: strong INFOCOM-style systems papers make a new resource-control abstraction visible before implementation details, then use evidence to calibrate claim breadth.
 
 Source budget rule for the explanation:
 
@@ -344,6 +375,8 @@ Use the relevant subset of these contract areas:
 
 The contract should not repeat full goal definitions. It should reference goal titles or concise strategic phrases already defined in `Core Strategic Goals`. Merge or omit contracts whose preserve lists would substantially duplicate another contract. In particular, do not create both content-planning and writing-planning contracts merely to repeat venue-facing story, abstract framing, introduction framing, or related-work organization.
 
+Contract closure rule: every downstream skill area named anywhere in the blueprint must have a corresponding contract in `Downstream Skill Contract`, or the obligation must be explicitly routed into a defined contract. For example, baseline-planning obligations usually belong under `Experiment-Planning Contract` unless the user has a separate baseline-planning skill. If the blueprint mentions review planning, include `Review-Planning Contract` or remove the review-planning reference. Do not leave undefined downstream names such as `Baseline planning`, `Review planning`, or `Writing planning` in goals or evidence objectives without a matching contract or routing sentence.
+
 For `Writing-Planning Contract`, prefer venue-fit and contribution-legibility phrasing:
 
 ```markdown
@@ -434,6 +467,7 @@ Success signal: <strategic success signal>
 ### Method-Planning Contract
 ### Experiment-Planning Contract
 ### Figure-Planning Contract
+### <Optional referenced contract, only if the blueprint references that downstream skill>
 
 ## 8. Open Strategic Variables
 Default propagation rule: downstream skills must use each variable's current conservative stance unless the user or evidence resolves that variable.
@@ -458,11 +492,12 @@ Use this structure in the user's language. The English names below are semantic 
 
 ## 0. <User-language title equivalent to "What You Should Check First">
 
-## 1. <User-language title equivalent to "User-Confirmed Inputs">
+## 1. <User-language title equivalent to "Confirmation State">
+### <User-language title equivalent to "Confirmed">
+### <User-language title equivalent to "Preferred but Not Locked">
+### <User-language title equivalent to "Still to Confirm">
 
-## 2. <User-language title equivalent to "User-Mentioned Preferences and Working Assumptions">
-### <User-language title equivalent to "User-mentioned preferences">
-### <User-language title equivalent to "Working assumptions">
+## 2. <User-language title equivalent to "Working Assumptions">
 
 ## 3. <User-language title equivalent to "Research Signals Used">
 ### <User-language title equivalent to "Load-bearing signals">
@@ -479,7 +514,15 @@ Use this structure in the user's language. The English names below are semantic 
 ## 8. <User-language title equivalent to "Evidence-Dependent Claim Calibration">
 ```
 
-`What You Should Check First` should list 3-6 unresolved strategic judgments or derived consequences the user most needs to inspect before reading details. Do not include a direct confirmation item for any fact already recorded under `User-Confirmed Inputs`.
+`What You Should Check First` should be a 3-5 line strategic status snapshot, not a second confirmation section. Summarize the unresolved decision space in compact prose or bullets. Do not include detailed rationale, confirmed portions, downstream impacts, or direct confirmation wording here; those belong in `Remaining Strategic Choices for Confirmation`.
+
+The confirmation-state section must use three visible buckets in the user's language:
+
+- `Confirmed`: explicit locked facts only.
+- `Preferred but Not Locked`: user preferences or expectations that guide the default stance but do not settle strategy.
+- `Still to Confirm`: unresolved strategic variables only, named briefly without detailed reasoning.
+
+`Working Assumptions` contains defaults inferred by the skill to make a coherent blueprint. Do not mix inferred defaults into confirmed facts.
 
 For each core starting point, include:
 
@@ -511,12 +554,14 @@ Write these explanations as short prose blocks, not as a fixed five-line templat
 
 Avoid repeated labels such as `blueprint restatement`, `derivation source`, `relationship to other parts`, `downstream skill constraints`, and `user should check` for every item. Use semantic anchors such as exact headings, translated headings, concise functional names, or natural-language paraphrases. Avoid relying on section numbers.
 
+When explaining English blueprint sections in a Chinese or other non-English explanation, use localized headings with the English blueprint term in parentheses on first mention, such as `论文身份（Paper Identity）` or `下游规划契约（Downstream Skill Contract）`. Avoid English-only explanation headings like `Paper Identity`, `Strategic Thesis`, or `Downstream Contract` unless the user's dialogue language is English.
+
 `Remaining Strategic Choices for Confirmation` must use this template:
 
 ```markdown
 ### <Strategic variable>
 
-已确认部分：<what User-Confirmed Inputs already settles>
+已确认部分：<what the Confirmed bucket already settles>
 
 未确认部分：<the remaining strategic variable>
 
@@ -525,7 +570,7 @@ Avoid repeated labels such as `blueprint restatement`, `derivation source`, `rel
 不同选择会改变什么：<paper identity, claim scope, method, evidence, figure, or writing implications>
 ```
 
-Omit any strategic variable from this section when `User-Confirmed Inputs` fully resolves it. If the confirmed inputs partially resolve it, ask only about the unresolved remainder and explicitly state why it remains unresolved.
+Omit any strategic variable from this section when the `Confirmed` bucket fully resolves it. If the confirmed inputs partially resolve it, ask only about the unresolved remainder and explicitly state why it remains unresolved.
 
 Separate `Change Impact if Confirmed Inputs Change` from `Evidence-Dependent Claim Calibration`. The former covers changes in user-provided inputs such as venue, scope, deployment boundary, or novelty boundary. The latter covers experiment-outcome contingencies, such as reference usefulness being broad, narrow, or deployment-specific.
 
@@ -605,7 +650,9 @@ Run a deduplication pass across both files before finalizing:
 - metric families appear once in canonical terminology; later sections reference or group them instead of relisting them
 - central claim language appears once in the thesis or claim section; goals and explanations paraphrase only as needed
 - Gaussian/reference substitution or equivalent core novelty is compactly stated once, then referenced by title or short phrase
+- clean substrate boundary is stated once in novelty scope, then referenced instead of repeating in identity, context anchors, goals, and contracts
 - downstream contracts do not duplicate each other, especially content-planning and writing-planning contracts
+- content-planning and figure-planning contracts do not repeat the same resource-tradeoff legibility instruction; one owns story movement and the other owns visual argument
 - `Default propagation rule` appears once globally in `Open Strategic Variables`
 - confirmation questions appear only in the opening check list or remaining strategic choices, and only for unresolved strategic variables
 
@@ -646,7 +693,7 @@ Rewrite defensive language into positive scope and claim calibration:
 
 ### Question Deduplication Check
 
-Each remaining confirmation question in the explanation corresponds to an unresolved strategic variable not covered by `User-Confirmed Inputs`. Remove tactical questions and questions already answered by confirmed context. Search the explanation for repeated confirmation verbs and collapse duplicates into one remaining-choice item.
+Each remaining confirmation question in the explanation corresponds to an unresolved strategic variable not covered by the `Confirmed` bucket. Remove tactical questions and questions already answered by confirmed context. Search the explanation for repeated confirmation verbs and collapse duplicates into one remaining-choice item.
 
 ### Source-Role Check
 
@@ -654,11 +701,11 @@ Every source in the explanation is categorized as venue posture, closest technic
 
 ### Explanation Alignment Check
 
-Every open strategic variable in the blueprint appears in the explanation. It becomes a user confirmation point only when it is not already covered by `User-Confirmed Inputs`; otherwise explain it as settled context or remove it from open variables.
+Every open strategic variable in the blueprint appears in the explanation. It becomes a user confirmation point only when it is not already covered by the `Confirmed` bucket; otherwise explain it as settled context or remove it from open variables.
 
 ### Confirmed-Input Hygiene Check
 
-Only user-explicit paper-strategy facts appear under `User-Confirmed Inputs`. User-mentioned but unresolved preferences move to `User-Mentioned Preferences`; inferred assumptions move to `Working Assumptions`; output paths and execution metadata stay out of the explanation file.
+Only user-explicit paper-strategy facts appear under `Confirmed`. User-mentioned but unresolved preferences move to `Preferred but Not Locked`; inferred assumptions move to `Working Assumptions`; output paths and execution metadata stay out of the explanation file.
 
 ### Open-Question Deduplication Check
 
@@ -684,6 +731,21 @@ User input changes and experimental outcome contingencies appear in separate sec
 
 Each core judgment is explained fully once. Later sections refer to the relevant starting point, source role, metric family, novelty boundary, or contract instead of restating it in full.
 
+### Final Artifact Audit
+
+Before delivery, audit the generated files as artifacts, not only as prose:
+
+- filenames are exactly `paper_blueprint.md` and `paper_blueprint.explain.md`
+- `paper_blueprint.md` is English and AI-facing; `paper_blueprint.explain.md` uses the user's dialogue language for headings, labels, and explanatory prose
+- the explanation's first-check summary is 3-5 short lines and does not duplicate the detailed `Remaining Strategic Choices for Confirmation`
+- confirmed facts, preferences not locked, unresolved variables, and working assumptions are mutually exclusive
+- no confirmed fact is repeated as a question
+- every downstream skill area referenced anywhere in the blueprint has a matching contract or is explicitly routed into a defined contract
+- baseline obligations are routed through experiment planning unless a baseline-planning contract is explicitly defined
+- review-planning references appear only when a review-planning contract is present or the user requested review planning
+- repeated metric lists, novelty-boundary statements, Gaussian/reference substitution statements, and confirmation prompts have been merged or replaced by references
+- blueprint constraints use positive boundaries and strategic verbs; `must` appears only for strict machine-contract invariants
+
 ## Final Quality Checklist
 
 Before finalizing `paper_blueprint.md`, check that:
@@ -702,9 +764,9 @@ Before finalizing `paper_blueprint.md`, check that:
 Before finalizing `paper_blueprint.explain.md`, check that:
 
 - it is in the user's language
-- it starts with localized equivalents of `What You Should Check First`, then `User-Confirmed Inputs`
+- it starts with a localized first-check summary, then a localized confirmation-state section with `Confirmed`, `Preferred but Not Locked`, and `Still to Confirm`
 - all generic headings, labels, and table columns are in the user's language
-- user-confirmed inputs, user-mentioned preferences, and working assumptions are separated
+- confirmed facts, preferences not locked, unresolved variables, and working assumptions are separated
 - output paths and execution metadata are absent from the explanation file
 - research signals are limited to load-bearing sources, categorized by role, and linked to blueprint choices
 - each major blueprint item is restated before its rationale
