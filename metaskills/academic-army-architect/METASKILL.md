@@ -2,7 +2,7 @@
 
 我已经有了一个deepresearch的mcp工具（其实就是输入prompt通过openai API转发给gpt-5.5+web search的API）所以有些可以现场搜索得到的信息不需要保存在skill里。
 
-skill输出的论文蓝图为英文，skill本身也是英文，并且让skill以英文输出对论文蓝图的解释和思考流程。
+skill输出的论文蓝图为英文，skill本身也是英文，并且让skill以用户对话的语言输出对论文蓝图的解释和思考流程。
 
 论文蓝图文件名为paper_blueprint.md，论文蓝图解释文件名为paper_blueprint.explain.md，都是markdown格式。论文蓝图里就只放论文蓝图，论文蓝图解释里就只放论文蓝图解释，要在skill里明确。
 
