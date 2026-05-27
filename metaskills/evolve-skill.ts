@@ -65,7 +65,7 @@ if (
   !runnerTaskPath
 ) {
   throw new Error(
-    "Usage: npm run evolve-skill -- --skill-path <path> --artifact-path <path> --metaskill-path <path> --runner-task-path <path> [--evaluator-extra-prompt-path <path>] [--rounds <positive-integer>]",
+    "Usage: npm run evolve-skill -- --skill-path <path> --artifact-path <folder> --metaskill-path <path> --runner-task-path <path> [--evaluator-extra-prompt-path <path>] [--rounds <positive-integer>]",
   );
 }
 
