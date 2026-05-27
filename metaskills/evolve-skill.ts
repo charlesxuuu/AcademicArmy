@@ -103,7 +103,7 @@ async function main() {
 
   for (let round = 1; round <= checkedRounds; round++) {
     await rm(artifactPath, { recursive: true, force: true });
-    await mkdir(path.dirname(artifactPath), { recursive: true });
+    await mkdir(artifactPath, { recursive: true });
 
     const runner = codex.startThread({
       ...commonThreadOptions,

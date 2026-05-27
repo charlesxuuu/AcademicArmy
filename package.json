@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "scripts": {
     "evolve-skill": "tsx metaskills/evolve-skill.ts",
     "typecheck": "tsc --noEmit"
