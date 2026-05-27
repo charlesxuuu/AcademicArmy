@@ -545,7 +545,7 @@ Use concise evidence-facing prose.
 
 ## Internal Validation Pass
 
-Before finalizing, run these checks mentally and, when a machine-readable summary is produced, with `scripts/validate_blueprint.py`.
+Before finalizing, run these checks mentally.
 
 ### File Separation Check
 
@@ -673,9 +673,3 @@ Before finalizing `paper_blueprint_explanation.<lang>.md`, check that:
 - remaining strategic choices state confirmed part, unresolved part, current default, and impact
 - evidence-dependent claim calibration is separate from user-input change impact
 - remaining strategic choices are filtered by confirmed inputs and do not ask tactical questions
-
-When writing a machine-readable summary for validation, use `assets/blueprint_schema.yaml` and optionally run:
-
-```bash
-python scripts/validate_blueprint.py <blueprint-summary.json>
-```

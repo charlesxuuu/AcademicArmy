@@ -860,18 +860,6 @@ Use fixed downstream consumer IDs:
 - `rebuttal_preparation`
 - `reproducibility`
 
-## Machine-Readable Summary
-
-When writing a machine-readable summary for validation, use
-`assets/experiment_plan_schema.yaml` and optionally run:
-
-```bash
-python scripts/validate_experiment_plan.py <experiment-plan-summary.json>
-```
-
-The summary is optional unless the user or pipeline asks for it. It is a
-validation aid, not one of the two required deliverables.
-
 ## Final Quality Checklist
 
 Before finalizing `experiment_plan.md`, check that:
