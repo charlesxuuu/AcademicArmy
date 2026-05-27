@@ -1,5 +1,3 @@
-我和一个编写skill的agent进行了多轮交互编写skill，以下是我这边每次提出的问题，请帮我明确需求，具体说明我想要的一个优秀的skill是什么样的？并给出一份prompt，我去交给编写skill的agent完善skill 
-
 我正在编写一套基于codex的autoresearch工具，目前正在编写一个为论文制定论文蓝图的skill。请看一下SIGGRAPH/CVPR/SIGCOMM/NSDI等顶级会议上的高引论文，分析一下这些高引论文为何优秀，分析一个优秀的论文蓝图应该重点明确哪些方面的内容，并在网上找找相关的autoresearch工具，分析他们是怎么写的，分析一个优秀的论文蓝图skill应该怎么写最好。 
 
 我已经有了一个deepresearch的mcp工具（其实就是输入prompt通过openai API转发给gpt-5.5+web search的API）所以有些可以现场搜索得到的信息不需要保存在skill里。看看这样怎么设计一下更简洁？
