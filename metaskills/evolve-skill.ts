@@ -128,10 +128,6 @@ async function main() {
 
     console.log(`\n# Review ${round}\n${review}\n`);
 
-    if (review.startsWith("APPROVED")) {
-      break;
-    }
-
     const edit = await modifier.run(
       MODIFIER_PROMPT(skillPath, checkedMetaskillPath, review),
     );
