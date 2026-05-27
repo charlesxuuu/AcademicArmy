@@ -6,7 +6,7 @@ coding plan应该尽可能详细，尤其是模块要分好，给后面具体代
 
 skill输出的coding plan为英文，skill本身也是英文，并且让skill以用户对话的语言输出对coding plan的解释和思考流程。
 
-coding plan文件名为coding_plan.md，coding plan解释文件名为coding_plan.explain.md，都是markdown格式。coding plan里就只放论文蓝图，coding plan解释里就只放coding plan解释，要在skill里明确。
+coding plan文件名为coding_plan.md，coding plan解释文件名为coding_plan.explain.md，都是markdown格式。coding plan里就只放coding plan，coding plan解释里就只放coding plan解释，要在skill里明确。
 
 我已经有了一个deepresearch的mcp工具（其实就是输入prompt通过openai API转发给gpt-5.5+web search的API）所以有些可以现场搜索得到的信息不需要保存在skill里。
 
@@ -17,3 +17,5 @@ coding plan里需要考虑论文蓝图和experiment plan中所提到的那些可
 coding plan里除了要把系统分为具体的功能模块，还需要确定一些harness方案。具体来说，每个harness是一个测试方案，其指示了代码中的一个优化点，通过修改代码库中某个模块的代码进行某方面性能的优化，有几个对应的性能指标。这个性能通常是论文里要关注的性能，比如我们要从可选的methods里选定一个method，那这个method肯定是效果好的那一个，而且我们选好了method肯定不能naive的直接用因为这样没有创新点，而是需要根据我们的应用场景对现有的方法进行修改，那不同的method可能有不同的潜力，得改完测试才能知道哪个method改完效果最好，就作为本文的主打方法，其他的方法就把没修改的naive方法作为baseline。那这种情况下，就需要有评价体系确定什么样才叫效果好。harness这种测试方案就是这样的评价体系，指示修改范围和测试方法，之后的写代码skill就可以不断执行“修改->测试”的过程，不断筛选出效果好的method。你可以上网搜一下harness的思想，看看coding plan skill里怎么写比较好
 
 写代码完成后，还会有更多的skill会根据实验结果画图和写论文，所以coding plan中还需要确定实验结果怎么从系统里导出。最好是以对系统内部逻辑影响尽可能小的方式导出最原始的数据，不要把数据转换的逻辑写在代码库里，并在coding plan里说明一下experiment plan需要的那些实验结果如何从这些原始数据进行数据转换得到
+
+上网搜索一下AI生成文本中的defensive现象，在编写这个skill的时候不要过度defensive，要通过正向语言严格限制skill只能做什么，而不是加反向的限制条件限制skill不能做什么，看看如何修改这个skill
