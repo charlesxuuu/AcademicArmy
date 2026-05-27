@@ -464,7 +464,7 @@ Use concise evidence-facing prose.
 Create the explanation ledger:
 
 ```markdown
-## 用户已经明确的内容 / Confirmed User Inputs
+## Confirmed User Inputs
 
 - Target system:
 - Target venue / field:
@@ -475,17 +475,17 @@ Create the explanation ledger:
 - Confirmed baselines:
 - Confirmed exclusions:
 
-## 论文蓝图中已经确定的内容 / Blueprint-Confirmed Inputs
+## Blueprint-Confirmed Inputs
 
-## 已有草稿、笔记或结果中已经确定的内容 / Existing Evidence Inputs
+## Existing Evidence Inputs
 
-## 本次 live research 更新的外部背景 / Live-Research Context Used
+## Live-Research Context Used
 
-## 基于上述内容推导出的实验安排 / Skill-Derived Experiment Arrangements
+## Skill-Derived Experiment Arrangements
 
-## 本轮修改已经关闭的规划项 / Planning Items Closed in This Revision
+## Planning Items Closed in This Revision
 
-## 剩余开放规划项 / Remaining Open Planning Items
+## Remaining Open Planning Items
 ```
 
 Use the user's conversation language for headings and prose. If no strategic
@@ -725,31 +725,31 @@ Use this structure, translated naturally when appropriate:
 ```markdown
 # Experiment Plan Explanation: <Paper/System Name>
 
-## 用户已经明确的内容
+## Confirmed User Inputs
 
-## 论文蓝图中已经确定的内容
+## Blueprint-Confirmed Inputs
 
-## 已有草稿、笔记或结果中已经确定的内容
+## Existing Evidence Inputs
 
-## 本次 live research 更新的外部背景
+## Live-Research Context Used
 
-## 基于上述内容推导出的实验安排
+## Skill-Derived Experiment Arrangements
 
-## 本轮修改已经关闭的规划项
+## Planning Items Closed in This Revision
 
-## 剩余开放规划项
+## Remaining Open Planning Items
 
-## 当前领域和目标 venue 的实验模式
+## Current Field and Target-Venue Experiment Patterns
 
-## 核心实验逻辑
+## Core Experimental Logic
 
-## 每个 Objective 的推导
+## Derivation of Each Objective
 
 ### <Objective name>
 
-## Objective 之间的证据链关系
+## Evidence Chain Across Objectives
 
-## 用户审核这份计划时应重点看的地方
+## What the User Should Review in This Plan
 ```
 
 For each objective, explain in prose:
