@@ -1,4 +1,4 @@
-import { Codex } from "@openai/codex-sdk";
+import { Codex, type Thread } from "@openai/codex-sdk";
 import { mkdir, readFile, rm, stat } from "node:fs/promises";
 import path from "node:path";
 import { parseArgs } from "node:util";
@@ -96,6 +96,31 @@ const modifier = codex.startThread({
   sandboxMode: "workspace-write",
 });
 
+async function runAndPrint(thread: Thread, prompt: string) {
+  const { events } = await thread.runStreamed(prompt);
+  let finalResponse = "";
+
+  for await (const event of events) {
+    if (event.type !== "item.completed") {
+      continue;
+    }
+
+    const item = event.item;
+
+    if (item.type === "agent_message") {
+      console.log(item.text);
+      finalResponse = item.text;
+    }
+
+    if (item.type === "command_execution") {
+      console.log(`$ ${item.command}`);
+      console.log(item.aggregated_output);
+    }
+  }
+
+  return finalResponse;
+}
+
 async function main() {
   const runnerTask = await readFile(checkedRunnerTaskPath, "utf8");
   const evaluatorExtraPrompt = evaluatorExtraPromptPath
@@ -111,29 +136,32 @@ async function main() {
       sandboxMode: "workspace-write",
     });
 
-    await runner.run(
+    await runAndPrint(
+      runner,
       RUNNER_PROMPT(skillName, artifactPath, runnerTask),
     );
 
     await stat(artifactPath);
 
     const review = (
-      await evaluator.run(
+      await runAndPrint(
+        evaluator,
         EVALUATOR_PROMPT(
           artifactPath,
           checkedMetaskillPath,
           evaluatorExtraPrompt,
         ),
       )
-    ).finalResponse.trim();
+    ).trim();
 
     console.log(`\n# Review ${round}\n${review}\n`);
 
-    const edit = await modifier.run(
+    const edit = await runAndPrint(
+      modifier,
       MODIFIER_PROMPT(skillPath, checkedMetaskillPath, review),
     );
 
-    console.log(`# Edit ${round}\n${edit.finalResponse}\n`);
+    console.log(`# Edit ${round}\n${edit}\n`);
   }
 }
 
