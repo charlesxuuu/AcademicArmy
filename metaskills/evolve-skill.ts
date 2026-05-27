@@ -34,7 +34,7 @@ const MODIFIER_PROMPT = (
 Following is feedback on ${skillPath} based on a artifact produced by that skill.
 Please revise this skill according to the feedback.
 The metaskill at ${metaskillPath} contains the design goals and tips of this skill.
-Consider these design goals and tips when revising it.
+Consider these design goals and tips when revising.
 
 ${review}
 `;
