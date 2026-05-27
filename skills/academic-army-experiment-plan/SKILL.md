@@ -77,23 +77,25 @@ explanation file:
 - `source`: title and link
 - `date`: publication date, submission date, or metadata date visible in the
   source
-- `venue_status`: one of `verified`, `arxiv_only`, `project_claim`,
-  `classic_background`, or `unverified`
+- `venue_status`: one of `official_proceedings`, `arxiv_only`,
+  `project_page_claim`, `secondary_metadata`, or `classic_background`
 - `why_it_affects_this_plan`: the planning decision it changes
 
-Use `verified` only when the venue is confirmed by source metadata from the
-venue, publisher, proceedings, author PDF, or institutional publication page.
-Use `arxiv_only` when only arXiv metadata is visible. Use `project_claim` when a
-venue or artifact claim appears on a project, lab, or author page but is not
-confirmed by proceedings metadata. Use `classic_background` for older
-foundational baselines or precedent papers that explain evaluation lineage but
-do not establish current protocol freshness. Use `unverified` for sources whose
-metadata is incomplete or inconsistent.
+Use `official_proceedings` when the venue is confirmed by conference,
+proceedings, publisher, or DOI metadata. Use `arxiv_only` when the visible
+metadata is an arXiv record or arXiv paper. Use `project_page_claim` when a
+venue or artifact claim appears only on a project, lab, or author page. Use
+`secondary_metadata` for aggregator or institutional metadata pages that are not
+primary proceedings records. Use `classic_background` for older foundational
+baselines or precedent papers that explain evaluation lineage but do not
+establish current protocol freshness.
 
-Prefer primary papers, proceedings pages, publisher pages, DOIs, official arXiv
-records, and author-hosted PDFs over secondary summaries. Keep current
-3DGS/volumetric evidence anchors separate from classic ABR or networking
-background anchors in the explanation file.
+Prefer official proceedings, arXiv records, DOI/publisher pages, conference
+pages, and author-hosted PDFs. Secondary metadata may support background
+context, but it should not be used as the highest-confidence venue status when a
+primary source is available. Keep current 3DGS/volumetric evidence anchors
+separate from classic ABR or networking background anchors in the explanation
+file.
 
 ## Inputs to Extract
 
@@ -201,6 +203,11 @@ Replace negative boundary structures with evidential roles:
 Use this evidence-role field pair instead of a negative boundary field in the
 main plan.
 
+Use positive limitation language. Prefer `limitation regime`, `unsupported
+regime`, `claim boundary`, `stress sensitivity`, and `adaptation attribution`.
+Use `failure` or `failure-mode attribution` only when the objective is explicitly
+diagnostic and the paper needs a failure diagnosis artifact.
+
 ## Goal-Oriented Objective Design
 
 Start every objective from a paper claim, not from a generic evaluation
@@ -225,6 +232,7 @@ Valid story roles include:
 - mechanism/ablation
 - robustness/stress
 - generalization
+- contribution boundary
 - human/perceptual evidence
 - deployment realism
 - cost/scalability/reproducibility protocol
@@ -246,6 +254,11 @@ scene classes, mobile-device profiles, multi-client contention, deployment
 profiles, or extra dataset families when they broaden the claim rather than
 support the core thesis. Mark their trigger as `claim_expansion_module` and
 state which claim scope they would expand.
+
+For substrate-boundary or adaptation-attribution objectives, use the story role
+`mechanism/ablation; contribution boundary`. Put generalization,
+cost/scalability, and deployment scope into optional claim-expansion modules
+unless those claims are part of the confirmed core thesis.
 
 ## Motivation and Design-Insight Experiments
 
@@ -302,7 +315,7 @@ Use compact baseline entries:
 
 ```markdown
 - `baseline_id`:
-  - Role: required | diagnostic | oracle
+  - Burden: minimum | diagnostic | optional_expensive
   - Comparison purpose:
   - Fairness principle:
 ```
@@ -313,6 +326,14 @@ details in the optional execution contract when needed.
 
 Objectives own baseline usage through their `Comparators` field. The baseline
 registry defines each baseline family once and does not list objective usage.
+
+Apply the baseline burden rule:
+
+- `minimum`: small comparator set required to substantiate the core claim.
+- `diagnostic`: comparator used to isolate mechanism, attribution, or claim
+  boundary.
+- `optional_expensive`: costly, hard-to-implement, or broad-scope comparator
+  such as RL policies, complex oracle bounds, or full recent-system ports.
 
 Objectives reference comparators as:
 
@@ -337,6 +358,11 @@ candidates or leave it out.
 Use a workload registry, not an ID-only research context list. Add a compact
 generated index only when the plan becomes long enough that downstream skills
 would otherwise struggle to locate identifiers.
+
+Name workload classes, not implementation commitments. For trace classes, use
+phrasing such as `real, replayed, or collected if unavailable` unless the user,
+blueprint, or existing evidence already confirms exact trace sources or new
+data collection.
 
 ## Objective Redundancy Check
 
@@ -413,7 +439,7 @@ Separate current field evidence from classic background precedent.
 ## 5. Baseline Registry
 
 - `<baseline_id>`:
-  - Role:
+  - Burden:
   - Comparison purpose:
   - Fairness principle:
 
@@ -503,17 +529,26 @@ Before finalizing, check:
   fields, implementation owners, or concrete output paths.
 - The plan defines metric and baseline registries once and references IDs in
   objectives.
+- Every baseline has `Burden: minimum | diagnostic | optional_expensive`.
 - Objective-level metric and comparator fields do not repeat registry
   definitions.
 - Objectives use `Evidence scope`, `Evidence role`, and `Handled by later
   skills`.
+- Substrate-boundary objectives use `mechanism/ablation; contribution boundary`
+  unless generalization or deployment is part of the confirmed core thesis.
 - `Expected evidence outputs` uses logical artifact names, not filenames.
+- Workloads name strategic classes and do not commit to new trace collection or
+  exact datasets unless confirmed.
 - Open planning items appear only in the explanation file.
 - A fact resolved by user input, blueprint, existing evidence, or live research
   is not restated as an open question.
 - Every live-research anchor in the explanation has source, date,
   `venue_status`, and why it affects the plan.
 - Venue labels are not upgraded beyond the source confidence available.
+- `venue_status` uses only `official_proceedings`, `arxiv_only`,
+  `project_page_claim`, `secondary_metadata`, or `classic_background`.
+- The plan uses `limitation regime`, `unsupported regime`, and `claim boundary`
+  instead of repeated failure language except in explicit diagnostic objectives.
 - The explanation is causal and readable, not an administrative checklist.
 - The explanation uses the user's language and begins with the confirmation
   ledger.

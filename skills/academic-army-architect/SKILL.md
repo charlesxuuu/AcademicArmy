@@ -38,7 +38,7 @@ The blueprint answers:
 - what evidence-level phenomena the paper must establish
 - what content, method, experiment, and figure planning must inherit
 
-The blueprint is not a user-facing explanation. Do not put user-confirmation ledgers, research-process notes, review-defense language, source analysis, or rationale paragraphs in this file.
+The blueprint is not a user-facing explanation. Do not put user-confirmation ledgers, research-process notes, review-support rationale, source analysis, or rationale paragraphs in this file.
 
 `Open Strategic Variables` may appear in the blueprint, but only as planning state. Do not write user-facing confirmation prompts there. State the default propagation rule once at the start of the section, then use this format for each variable:
 
@@ -60,7 +60,7 @@ This file is a user-language validation companion. Its function is to help the u
 
 Allowed content:
 
-1. A short first-check summary of unresolved strategic decisions
+1. A short current-default stance summary
 2. Confirmation state, with separate buckets for confirmed facts, preferences not locked, and unresolved strategic variables
 3. Working assumptions, separated from confirmed facts and preferences
 4. Research signals used, compressed to load-bearing sources and grouped by source role
@@ -94,7 +94,7 @@ The final Markdown files should contain paper-level conclusions derived from evi
 
 ## Confirmed-Inputs Mechanism
 
-Start `paper_blueprint.explain.md` with a short first-check summary, then a confirmation-state section with the user's-language equivalents of `Confirmed`, `Preferred but Not Locked`, and `Still to Confirm`. Translate all generic labels in these sections; do not leave English headings such as `Role`, `What it showed`, or `User-Confirmed Inputs` in a Chinese or other non-English explanation unless they are paper terms.
+Start `paper_blueprint.explain.md` with a short current-default stance summary, then a confirmation-state section with the user's-language equivalents of `Confirmed`, `Preferred but Not Locked`, and `Still to Confirm`. Translate all generic labels in these sections; do not leave English headings such as `Role`, `What it showed`, or `User-Confirmed Inputs` in a Chinese or other non-English explanation unless they are paper terms.
 
 For Chinese explanations, use these bucket labels: `已确认`, `偏好但未锁定`, and `仍需确认`.
 
@@ -129,14 +129,16 @@ Examples:
 - Working assumption: prototype-anchored systems paper; segment/chunk-level plus visible-region control until granularity is resolved.
 - Open strategic variable: deployment boundary, control granularity, dynamic-scene breadth, claim strength.
 
-Before writing any remaining confirmation question, check whether `Confirmed` already covers it. If a fact appears in `Confirmed`, treat it as settled context everywhere in the explanation. Do not ask the user to confirm it again in the first-check summary, item rationales, open-variable explanations, or remaining choices.
+Before writing any remaining confirmation question, check whether `Confirmed` already covers it. If a fact appears in `Confirmed`, treat it as settled context everywhere in the explanation. Do not ask the user to confirm it again in the current-default stance summary, item rationales, open-variable explanations, or remaining choices.
 
-The first-check summary should shrink as the confirmed-inputs ledger grows. It may contain:
+The current-default stance summary should state the current default stance implied by confirmed facts, preferences, and unresolved variables. It may contain:
 
-- unresolved strategic variables that still affect paper identity, claim scope, or downstream contracts
-- derived consequences of confirmed inputs that the user may want to inspect for reasonableness
+- the default paper positioning
+- the default novelty boundary
+- the default evidence posture
+- the default scope or deployment posture
 
-It should not contain direct re-confirmation of confirmed inputs. Keep it to 3-5 short lines that summarize the unresolved decision space. Put the detailed reasoning, confirmed portion, default stance, and downstream impact only in `Remaining Strategic Choices for Confirmation`. Do not phrase the same unresolved decision twice.
+It should not contain confirmation questions, lists of unresolved choices, confirmed/unconfirmed breakdowns, or downstream impact details. Keep it to 3-5 short lines that summarize the current default stance. Put the detailed unresolved-choice logic only in `Remaining Strategic Choices for Confirmation`.
 
 Question filtering:
 
@@ -206,9 +208,9 @@ Use this filter before writing blueprint content:
 
 Examples:
 
-- Blueprint-level: `The method must model deadline feasibility across server rendering, transfer, restoration, and display.`
+- Blueprint-level: `Represent deadline feasibility across server rendering, transfer, restoration, and display.`
 - Too tactical: `Use robust MPC, Lyapunov optimization, online primal-dual, or structured bandit/RL.`
-- Blueprint-level: `Evidence must isolate the marginal value of joint adaptation across Gaussian resources and reference resources.`
+- Blueprint-level: `Preserve evidence that isolates the marginal value of joint adaptation across Gaussian resources and reference resources.`
 - Too tactical: `Compare against fixed-FoV reference, perfect-viewport oracle, and bandwidth oracle.`
 - Blueprint-level: `Baseline families should separate substrate benefit from adaptation benefit.`
 - Too tactical: `Include baseline A, B, C, and D with exact oracle variants.`
@@ -236,6 +238,8 @@ Use positive constraint language in `paper_blueprint.md`, especially in goals an
 - `Preserve the Gaussian/reference resource tradeoff as the first visible abstraction.`
 
 Limit `must` to strict machine-contract invariants where a downstream skill would otherwise violate the paper identity. Replace defensive forms such as `must be X rather than Y`, `not restoration`, `not generic ABR`, and `not graphics-only` with positive boundaries such as `Frame as X`, `Treat Y as substrate`, `Scope the claim to Z`, or `Calibrate breadth by evidence`.
+
+Prefer verbs such as `support`, `preserve`, `evaluate`, `calibrate`, `separate evidence for`, `route`, `frame`, and `treat as substrate`. In the explanation, replace adversarial review wording such as `defend`, `defense`, `防线`, or `反驳准备` with evidence-support language such as `support venue fit`, `support novelty boundary`, `support baseline fairness`, or `准备支撑 venue fit、novelty boundary、baseline fairness 的证据`.
 
 ## Source-Use Rules
 
@@ -272,8 +276,19 @@ Write research signals pattern-first. Each load-bearing signal should contribute
 
 If a source only supports background context and does not yield a reusable pattern, move it to `Additional background signals` or omit it. Example pattern: strong INFOCOM-style systems papers make a new resource-control abstraction visible before implementation details, then use evidence to calibrate claim breadth.
 
+Add a short cross-paper synthesis before source-by-source signals. This synthesis should combine recent/high-impact exemplars into 3-5 reusable patterns, such as:
+
+- strong systems papers expose a new control surface early
+- they separate substrate benefit from control benefit
+- they calibrate claim strength to evidence breadth
+- they turn risk, waste, or failure modes into measured contribution boundaries
+- they make the first visual or opening claim carry the core abstraction
+
+Source-by-source entries should then support or nuance these cross-paper patterns instead of repeating isolated summaries.
+
 Source budget rule for the explanation:
 
+- The `Research Signals Used` section should start with `Cross-paper patterns` or its user-language equivalent.
 - The main `Research Signals Used` section should contain at most 6-8 load-bearing signals.
 - Each load-bearing signal must state localized equivalents of `role`, `what it showed`, `persuasive pattern`, and `which blueprint choice it influenced`.
 - Additional sources should be compressed into `Additional background signals` with at most one sentence per role, or omitted when they do not change a blueprint choice.
@@ -337,6 +352,8 @@ Claim calibration rule: do not repeat claim breadth logic in multiple places. If
 The final claim level is governed by Open Strategic Variable: Claim strength. Evidence planning should preserve enough measurement coverage to distinguish among the allowed claim-strength resolutions.
 ```
 
+After this single statement, reference `claim-strength calibration` by handle in evidence objectives, remaining choices, and evidence-dependent claim calibration. Do not recreate the same claim ladder in multiple sections.
+
 Baseline fairness rule: baseline families may be listed strategically, but baseline instantiation details are delegated. If classic ABR baselines are mentioned, specify that they require a fair mapping from bitrate choices to Gaussian/reference resource choices.
 
 For RefABR-like blueprints, include `Control granularity` as an open strategic variable when not user-confirmed:
@@ -376,6 +393,18 @@ Use the relevant subset of these contract areas:
 The contract should not repeat full goal definitions. It should reference goal titles or concise strategic phrases already defined in `Core Strategic Goals`. Merge or omit contracts whose preserve lists would substantially duplicate another contract. In particular, do not create both content-planning and writing-planning contracts merely to repeat venue-facing story, abstract framing, introduction framing, or related-work organization.
 
 Contract closure rule: every downstream skill area named anywhere in the blueprint must have a corresponding contract in `Downstream Skill Contract`, or the obligation must be explicitly routed into a defined contract. For example, baseline-planning obligations usually belong under `Experiment-Planning Contract` unless the user has a separate baseline-planning skill. If the blueprint mentions review planning, include `Review-Planning Contract` or remove the review-planning reference. Do not leave undefined downstream names such as `Baseline planning`, `Review planning`, or `Writing planning` in goals or evidence objectives without a matching contract or routing sentence.
+
+Use this routing table when a concept is not a real downstream planning stage:
+
+| Mentioned obligation | Default routing |
+|---|---|
+| `Baseline planning` | `Experiment-Planning Contract` |
+| `Writing planning` | `Content-Planning Contract`, unless a distinct writing stage is explicitly included |
+| `Claim calibration` | `Claim and Scope Architecture`, `Evidence Objectives`, or `Open Strategic Variables`; not a downstream contract by default |
+| `Review planning` | `Review-Planning Contract` only when requested or explicitly referenced as a downstream stage |
+| `Related-work planning` | `Content-Planning Contract` unless a distinct writing contract is defined |
+
+When checking contract closure, search for `<Name> planning`, `<Name>-Planning`, and `<Name> Contract` across the blueprint. Each hit should be either a defined contract heading or a routed obligation in one of the defined contracts.
 
 For `Writing-Planning Contract`, prefer venue-fit and contribution-legibility phrasing:
 
@@ -490,7 +519,7 @@ Use this structure in the user's language. The English names below are semantic 
 ```markdown
 # <User-language title equivalent to "Paper Blueprint Explanation">: <Working Title>
 
-## 0. <User-language title equivalent to "What You Should Check First">
+## 0. <User-language title equivalent to "Current Default Stance">
 
 ## 1. <User-language title equivalent to "Confirmation State">
 ### <User-language title equivalent to "Confirmed">
@@ -500,6 +529,7 @@ Use this structure in the user's language. The English names below are semantic 
 ## 2. <User-language title equivalent to "Working Assumptions">
 
 ## 3. <User-language title equivalent to "Research Signals Used">
+### <User-language title equivalent to "Cross-paper patterns">
 ### <User-language title equivalent to "Load-bearing signals">
 ### <User-language title equivalent to "Additional background signals">
 
@@ -514,7 +544,7 @@ Use this structure in the user's language. The English names below are semantic 
 ## 8. <User-language title equivalent to "Evidence-Dependent Claim Calibration">
 ```
 
-`What You Should Check First` should be a 3-5 line strategic status snapshot, not a second confirmation section. Summarize the unresolved decision space in compact prose or bullets. Do not include detailed rationale, confirmed portions, downstream impacts, or direct confirmation wording here; those belong in `Remaining Strategic Choices for Confirmation`.
+`Current Default Stance` should be a 3-5 line snapshot of the blueprint's default position, not a second confirmation section. Summarize the current default paper positioning, novelty boundary, evidence posture, and scope/deployment posture. Do not list unresolved choices, detailed rationale, confirmed portions, downstream impacts, or direct confirmation wording here; those belong in `Remaining Strategic Choices for Confirmation`.
 
 The confirmation-state section must use three visible buckets in the user's language:
 
@@ -532,18 +562,20 @@ For each core starting point, include:
 
 For each important blueprint item, first restate the blueprint content in the user's language, then explain:
 
-1. which core starting point produced it
+1. which confirmed fact, preference, working assumption, unresolved variable, or research pattern produced it
 2. how it supports the paper strategy
 3. which other blueprint items it constrains
-4. which downstream skills must inherit it
+4. which downstream skills inherit it
 5. what strategic confirmation point remains, if any and only if not already confirmed
 
-`Blueprint Items and Rationale` must explain at item level, not only section level. Include separate explanation items for:
+`Blueprint Items and Rationale` should be synthetic rather than exhaustive. Explain decision-bearing items at item level, not every minor subheading. Include separate explanation items for:
 
 - each top-level blueprint section
 - each core strategic goal
 - each open strategic variable
 - each downstream contract
+
+At the start of this section, include a short derivation map: `confirmed inputs + preferences + working assumptions + unresolved variables + research patterns -> blueprint strategy`. Use it to show the user how disagreements can be traced back to an input bucket, a default assumption, or a research pattern.
 
 Write these explanations as short prose blocks, not as a fixed five-line template. Each block should naturally:
 
@@ -595,7 +627,7 @@ Research brief:
 Target venue:
 [VENUE]
 
-Return six sections:
+Return seven sections:
 
 1. Venue posture
    Summarize current venue expectations, likely contribution categories, evidence standards, and recent accepted-paper storytelling patterns.
@@ -609,10 +641,13 @@ Return six sections:
 4. Storytelling exemplars
    Use recent target-venue or adjacent top-venue papers when available. Extract persuasive patterns: control abstraction, first-figure or opening-claim legibility, claim calibration, substrate-vs-contribution separation, and evidence style.
 
-5. Method and evaluation precedents
+5. Cross-paper synthesis
+   Combine the strongest recent/high-impact signals into reusable paper-quality patterns. Include patterns about control-surface legibility, substrate-vs-control separation, claim calibration, evidence breadth, and measured failure or waste behavior when relevant.
+
+6. Method and evaluation precedents
    Summarize canonical and recent precedents that affect method posture, evaluation posture, metrics, workloads, and comparison families.
 
-6. Source-role table
+7. Source-role table
    For each source, include title, venue/year when available, source link, role among closest technical substrate / venue posture / closest competing system / storytelling exemplar / method precedent / evaluation precedent, persuasive pattern when relevant, and the lesson for blueprint design.
 
 Use concise evidence-facing prose.
@@ -656,6 +691,8 @@ Run a deduplication pass across both files before finalizing:
 - `Default propagation rule` appears once globally in `Open Strategic Variables`
 - confirmation questions appear only in the opening check list or remaining strategic choices, and only for unresolved strategic variables
 
+Compression rule: when a concept appears in thesis, goals, claim architecture, and evidence objectives, give it a short handle at the first full statement, then reuse the handle later. Examples: `Gaussian/reference substitution`, `clean substrate boundary`, `claim-strength calibration`, `baseline fairness`, or `resource-control surface`. Later mentions should state how the section uses the concept, not restate the concept.
+
 ### Tactical Leakage Check
 
 If the blueprint names a concrete algorithm family, controller proof option, dataset, trace, metric formula, figure count, required figure, statistical test, device setup, reference-generation alternative, exact baseline, or concrete spatial partition such as tiles, verify that the user explicitly specified it and that it affects strategic identity. If not, move it to an open tactical choice in the downstream contract or to the explanation as delegated detail.
@@ -690,6 +727,7 @@ Rewrite defensive language into positive scope and claim calibration:
 - `avoid` -> `communication priority` or `scope priority`
 - `downgrade` -> `claim calibration` or `evidence-dependent scope`
 - `reviewers can reject` -> `acceptance target` or `evidence standard`
+- `defend`, `defense`, `防线`, `反驳准备` -> `evidence supporting venue fit, novelty boundary, and baseline fairness`
 
 ### Question Deduplication Check
 
@@ -713,15 +751,15 @@ A remaining strategic choice cannot ask for something already confirmed. If part
 
 ### Source Budget and Freshness Check
 
-The main `Research Signals Used` section contains at most 6-8 load-bearing signals. Storytelling exemplars are recent and influence story movement; older works are used only as method or evaluation precedents.
+The main `Research Signals Used` section starts with a 3-5 bullet cross-paper synthesis, then contains at most 6-8 load-bearing signals. Storytelling exemplars are recent and influence story movement; older works are used only as method or evaluation precedents.
 
 ### Skill-Meta Language Check
 
 Remove phrases that explain the skill implementation, such as `from the skill's terminology stabilization rule`, `from the skill file contract`, `this skill decided`, or equivalent translations. Explain the paper rationale instead.
 
-### Item-Level Explanation Check
+### Synthetic Explanation Check
 
-Every top-level blueprint section, every core strategic goal, every open strategic variable, and every downstream contract has a corresponding explanation item.
+Every top-level blueprint section, every core strategic goal, every open strategic variable, and every downstream contract has a corresponding explanation item when it changes a decision or constraint. Minor subheadings can be compressed when they only instantiate an already-explained concept. The explanation shows how each decision follows from confirmed inputs, preferences, working assumptions, unresolved variables, or cross-paper research patterns.
 
 ### Evidence-vs-Input Separation Check
 
@@ -737,12 +775,15 @@ Before delivery, audit the generated files as artifacts, not only as prose:
 
 - filenames are exactly `paper_blueprint.md` and `paper_blueprint.explain.md`
 - `paper_blueprint.md` is English and AI-facing; `paper_blueprint.explain.md` uses the user's dialogue language for headings, labels, and explanatory prose
-- the explanation's first-check summary is 3-5 short lines and does not duplicate the detailed `Remaining Strategic Choices for Confirmation`
+- the explanation's current-default stance summary is 3-5 short lines and does not duplicate the detailed `Remaining Strategic Choices for Confirmation`
 - confirmed facts, preferences not locked, unresolved variables, and working assumptions are mutually exclusive
 - no confirmed fact is repeated as a question
 - every downstream skill area referenced anywhere in the blueprint has a matching contract or is explicitly routed into a defined contract
+- every contract corresponds to a real downstream planning stage or is removed
 - baseline obligations are routed through experiment planning unless a baseline-planning contract is explicitly defined
 - review-planning references appear only when a review-planning contract is present or the user requested review planning
+- `Claim calibration` is treated as a claim/evidence/open-variable concept, not as an undefined downstream skill
+- there is only one detailed remaining-choices section in the explanation
 - repeated metric lists, novelty-boundary statements, Gaussian/reference substitution statements, and confirmation prompts have been merged or replaced by references
 - blueprint constraints use positive boundaries and strategic verbs; `must` appears only for strict machine-contract invariants
 
@@ -764,13 +805,13 @@ Before finalizing `paper_blueprint.md`, check that:
 Before finalizing `paper_blueprint.explain.md`, check that:
 
 - it is in the user's language
-- it starts with a localized first-check summary, then a localized confirmation-state section with `Confirmed`, `Preferred but Not Locked`, and `Still to Confirm`
+- it starts with a localized current-default stance summary, then a localized confirmation-state section with `Confirmed`, `Preferred but Not Locked`, and `Still to Confirm`
 - all generic headings, labels, and table columns are in the user's language
 - confirmed facts, preferences not locked, unresolved variables, and working assumptions are separated
 - output paths and execution metadata are absent from the explanation file
-- research signals are limited to load-bearing sources, categorized by role, and linked to blueprint choices
+- research signals start with cross-paper patterns, then use load-bearing sources categorized by role and linked to blueprint choices
 - each major blueprint item is restated before its rationale
-- every core goal, open variable, and downstream contract receives item-level explanation
+- every decision-bearing core goal, open variable, and downstream contract receives item-level explanation
 - the explanation helps the user locate disagreement at the starting-point, derivation, or downstream-contract level
 - remaining strategic choices state confirmed part, unresolved part, current default, and impact
 - evidence-dependent claim calibration is separate from user-input change impact
