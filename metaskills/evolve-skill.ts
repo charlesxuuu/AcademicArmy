@@ -6,11 +6,11 @@ import { parseArgs } from "node:util";
 const RUNNER_PROMPT = (
   skillName: string,
   artifactPath: string,
-  extraPrompt: string,
+  runnerTask: string,
 ) => `
 Use ${skillName} to complete the task below. Write the final artifact to ${artifactPath}.
 
-${extraPrompt}
+${runnerTask}
 `;
 
 const EVALUATOR_PROMPT = (
@@ -43,7 +43,7 @@ const { values } = parseArgs({
     "skill-path": { type: "string" },
     "artifact-path": { type: "string" },
     "metaskill-path": { type: "string" },
-    "runner-extra-prompt-path": { type: "string" },
+    "runner-task-path": { type: "string" },
     "evaluator-extra-prompt-path": { type: "string" },
     rounds: { type: "string" },
   },
@@ -53,17 +53,18 @@ const repo = process.cwd();
 const rawSkillPath = values["skill-path"];
 const rawArtifactPath = values["artifact-path"];
 const metaskillPath = values["metaskill-path"];
-const runnerExtraPromptPath = values["runner-extra-prompt-path"];
+const runnerTaskPath = values["runner-task-path"];
 const evaluatorExtraPromptPath = values["evaluator-extra-prompt-path"];
 const rounds = Number(values.rounds);
 
 if (
   !rawSkillPath ||
   !rawArtifactPath ||
-  !metaskillPath
+  !metaskillPath ||
+  !runnerTaskPath
 ) {
   throw new Error(
-    "Usage: npm run evolve-skill -- --skill-path <path> --artifact-path <path> --metaskill-path <path> [--runner-extra-prompt-path <path>] [--evaluator-extra-prompt-path <path>] [--rounds <positive-integer>]",
+    "Usage: npm run evolve-skill -- --skill-path <path> --artifact-path <path> --metaskill-path <path> --runner-task-path <path> [--evaluator-extra-prompt-path <path>] [--rounds <positive-integer>]",
   );
 }
 
@@ -76,6 +77,7 @@ if (!Number.isInteger(checkedRounds) || checkedRounds < 1) {
 const skillPath = rawSkillPath;
 const artifactPath = rawArtifactPath;
 const checkedMetaskillPath = metaskillPath;
+const checkedRunnerTaskPath = runnerTaskPath;
 const skillName = path.basename(skillPath);
 const codex = new Codex();
 const commonThreadOptions = {
@@ -94,9 +96,7 @@ const modifier = codex.startThread({
 });
 
 async function main() {
-  const runnerExtraPrompt = runnerExtraPromptPath
-    ? await readFile(runnerExtraPromptPath, "utf8")
-    : "";
+  const runnerTask = await readFile(checkedRunnerTaskPath, "utf8");
   const evaluatorExtraPrompt = evaluatorExtraPromptPath
     ? await readFile(evaluatorExtraPromptPath, "utf8")
     : "";
@@ -111,7 +111,7 @@ async function main() {
     });
 
     await runner.run(
-      RUNNER_PROMPT(skillName, artifactPath, runnerExtraPrompt),
+      RUNNER_PROMPT(skillName, artifactPath, runnerTask),
     );
 
     await stat(artifactPath);
