@@ -4,11 +4,11 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 
 const RUNNER_PROMPT = (
-  skillName: string,
+  skillPath: string,
   artifactPath: string,
   runnerTask: string,
 ) => `
-Use the ${skillName} skill to help me complete the following task, and output the related files to the ${artifactPath} folder.
+Use the skill at ${skillPath} to help me complete the following task, and output the related files to the ${artifactPath} folder.
 
 ${runnerTask}
 `;
@@ -79,7 +79,6 @@ const skillPath = rawSkillPath;
 const artifactPath = rawArtifactPath;
 const checkedMetaskillPath = metaskillPath;
 const checkedRunnerTaskPath = runnerTaskPath;
-const skillName = path.basename(skillPath);
 const codex = new Codex();
 const commonThreadOptions = {
   workingDirectory: repo,
@@ -138,7 +137,7 @@ async function main() {
 
     await runAndPrint(
       runner,
-      RUNNER_PROMPT(skillName, artifactPath, runnerTask),
+      RUNNER_PROMPT(skillPath, artifactPath, runnerTask),
     );
 
     await stat(artifactPath);
