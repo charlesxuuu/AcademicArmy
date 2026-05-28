@@ -160,6 +160,7 @@ async function saveResponseArchive(response: string) {
 }
 
 async function main() {
+  await mkdir(codebasePath, { recursive: true });
   await ensureCodeOverview(codeOverviewPath);
 
   for (let round = 1; round <= maxRounds; round++) {
