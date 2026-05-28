@@ -6,6 +6,7 @@ import { parseArgs } from "node:util";
 const START_PROMPT = (
   codingPlanPath: string,
   codeOverviewPath: string,
+  extraPrompt: string,
 ) => `
 Read the coding plan at ${codingPlanPath} and the code overview at ${codeOverviewPath}.
 Implement one core unfinished feature from the coding plan.
@@ -13,6 +14,8 @@ Implement one core unfinished feature from the coding plan.
 Update the code overview concisely.
 Besides modifying or adding descriptions of implemented behavior, explain how the implemented feature can support future features.
 Future plans may not predict the simplest and clearest code design, so revise unreasonable future-feature notes when needed.
+
+${extraPrompt}
 
 At the end, if there are no more features from the coding plan left to implement, your final response must be exactly:
 Finished
@@ -24,6 +27,7 @@ const CONTINUE_PROMPT = (
   codingPlanPath: string,
   codeOverviewPath: string,
   previousResponse: string,
+  extraPrompt: string,
 ) => `
 Read the coding plan at ${codingPlanPath}, the code overview at ${codeOverviewPath}, the current codebase, and the previous response below.
 
@@ -34,6 +38,8 @@ Reconcile that handoff with the current code, the coding plan, and the code over
 Do not redo work that is already implemented unless it is necessary to fix or complete it.
 
 Update the code overview concisely. Besides modifying or adding descriptions of implemented behavior, explain how the implemented feature can support future features. Future plans may not predict the simplest and clearest code design, so revise unreasonable future-feature notes when needed.
+
+${extraPrompt}
 
 At the end, if there are no more features from the coding plan left to implement, your final response must be exactly:
 Finished
@@ -48,6 +54,7 @@ const { values } = parseArgs({
     "code-overview-path": { type: "string" },
     "response-path": { type: "string" },
     "response-archive-path": { type: "string" },
+    "extra-prompt-path": { type: "string" },
     "max-rounds": { type: "string" },
   },
 });
@@ -58,6 +65,7 @@ const rawCodingPlanPath = values["coding-plan-path"];
 const rawCodeOverviewPath = values["code-overview-path"];
 const rawResponsePath = values["response-path"];
 const rawResponseArchivePath = values["response-archive-path"];
+const rawExtraPromptPath = values["extra-prompt-path"];
 const maxRounds = values["max-rounds"] ? Number(values["max-rounds"]) : 10;
 
 if (
@@ -68,7 +76,7 @@ if (
   !rawResponseArchivePath
 ) {
   throw new Error(
-    "Usage: npm run developing-loop -- --codebase-path <path> --coding-plan-path <path> --code-overview-path <path> --response-path <path> --response-archive-path <folder> [--max-rounds <positive-integer>]",
+    "Usage: npm run developing-loop -- --codebase-path <path> --coding-plan-path <path> --code-overview-path <path> --response-path <path> --response-archive-path <folder> [--extra-prompt-path <path>] [--max-rounds <positive-integer>]",
   );
 }
 
@@ -81,6 +89,9 @@ const codingPlanPath = path.resolve(repo, rawCodingPlanPath);
 const codeOverviewPath = path.resolve(repo, rawCodeOverviewPath);
 const responsePath = path.resolve(repo, rawResponsePath);
 const responseArchivePath = path.resolve(repo, rawResponseArchivePath);
+const extraPromptPath = rawExtraPromptPath
+  ? path.resolve(repo, rawExtraPromptPath)
+  : undefined;
 const relativeCodingPlanPath = path.relative(codebasePath, codingPlanPath);
 const relativeCodeOverviewPath = path.relative(codebasePath, codeOverviewPath);
 const codex = new Codex();
@@ -162,12 +173,24 @@ async function saveResponseArchive(response: string) {
 async function main() {
   await mkdir(codebasePath, { recursive: true });
   await ensureCodeOverview(codeOverviewPath);
+  const extraPrompt = extraPromptPath
+    ? await readFile(extraPromptPath, "utf8")
+    : "";
 
   for (let round = 1; round <= maxRounds; round++) {
     const previousResponse = (await readOptionalText(responsePath)).trim();
     const prompt = previousResponse
-      ? CONTINUE_PROMPT(relativeCodingPlanPath, relativeCodeOverviewPath, previousResponse)
-      : START_PROMPT(relativeCodingPlanPath, relativeCodeOverviewPath);
+      ? CONTINUE_PROMPT(
+        relativeCodingPlanPath,
+        relativeCodeOverviewPath,
+        previousResponse,
+        extraPrompt,
+      )
+      : START_PROMPT(
+        relativeCodingPlanPath,
+        relativeCodeOverviewPath,
+        extraPrompt,
+      );
 
     console.log(`\n# Developing round ${round}\n`);
 
