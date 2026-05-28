@@ -1,6 +1,7 @@
 {
   "type": "module",
   "scripts": {
+    "developing-loop": "tsx loops/developing/developing-loop.ts",
     "evolve-skill": "tsx metaskills/evolve-skill.ts",
     "typecheck": "tsc --noEmit"
   },

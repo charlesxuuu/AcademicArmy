@@ -9,5 +9,5 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["metaskills/**/*.ts"]
+  "include": ["metaskills/**/*.ts", "loops/**/*.ts"]
 }
