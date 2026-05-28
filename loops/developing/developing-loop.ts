@@ -47,6 +47,7 @@ const { values } = parseArgs({
     "coding-plan-path": { type: "string" },
     "code-overview-path": { type: "string" },
     "response-path": { type: "string" },
+    "response-archive-path": { type: "string" },
     "max-rounds": { type: "string" },
   },
 });
@@ -56,16 +57,18 @@ const rawCodebasePath = values["codebase-path"];
 const rawCodingPlanPath = values["coding-plan-path"];
 const rawCodeOverviewPath = values["code-overview-path"];
 const rawResponsePath = values["response-path"];
+const rawResponseArchivePath = values["response-archive-path"];
 const maxRounds = values["max-rounds"] ? Number(values["max-rounds"]) : 10;
 
 if (
   !rawCodebasePath ||
   !rawCodingPlanPath ||
   !rawCodeOverviewPath ||
-  !rawResponsePath
+  !rawResponsePath ||
+  !rawResponseArchivePath
 ) {
   throw new Error(
-    "Usage: npm run developing-loop -- --codebase-path <path> --coding-plan-path <path> --code-overview-path <path> --response-path <path> [--max-rounds <positive-integer>]",
+    "Usage: npm run developing-loop -- --codebase-path <path> --coding-plan-path <path> --code-overview-path <path> --response-path <path> --response-archive-path <folder> [--max-rounds <positive-integer>]",
   );
 }
 
@@ -77,6 +80,7 @@ const codebasePath = path.resolve(repo, rawCodebasePath);
 const codingPlanPath = path.resolve(repo, rawCodingPlanPath);
 const codeOverviewPath = path.resolve(repo, rawCodeOverviewPath);
 const responsePath = path.resolve(repo, rawResponsePath);
+const responseArchivePath = path.resolve(repo, rawResponseArchivePath);
 const relativeCodingPlanPath = path.relative(codebasePath, codingPlanPath);
 const relativeCodeOverviewPath = path.relative(codebasePath, codeOverviewPath);
 const codex = new Codex();
@@ -142,6 +146,19 @@ async function runAndPrint(thread: Thread, prompt: string) {
   return finalResponse;
 }
 
+
+async function saveResponseArchive(response: string) {
+  await mkdir(responseArchivePath, { recursive: true });
+
+  const archiveFile = path.join(
+    responseArchivePath,
+    `${(new Date()).toISOString().replace(/[:.]/g, "-")}.md`,
+  );
+
+  await writeFile(archiveFile, `${response}\n`, "utf8");
+  return archiveFile;
+}
+
 async function main() {
   await ensureCodeOverview(codeOverviewPath);
 
@@ -170,6 +187,10 @@ async function main() {
     await writeFile(responsePath, `${response}\n`, "utf8");
 
     console.log(`\n# Saved response ${round} to ${responsePath}\n`);
+
+    const archiveFile = await saveResponseArchive(response);
+
+    console.log(`\n# Archived response ${round} to ${archiveFile}\n`);
   }
 
   throw new Error(
