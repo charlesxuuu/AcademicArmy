@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Coding Plan"
   short_description: "Modular coding plan with harnesses and raw result contracts"
-  default_prompt: "Create an English coding_plan.md and user-language coding_plan.explain.md with $academic-army-coding-plan from the available paper blueprint, experiment plan, and repository context."
+  default_prompt: "Create an English coding_plan.md and user-language coding_plan.explain.md with $academic-army-coding-plan from the available paper blueprint, experiment plan, repository context, and mandatory pre-planning deepresearch. Use canonical registries once, reference IDs thereafter, keep harness sections compact, include a short research-impact table, and separate raw, metadata, metric, and analysis outputs."
 
 dependencies:
   tools:
