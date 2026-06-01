@@ -8,9 +8,9 @@ import type {
 } from "./agents/index.js";
 
 export type EvolveSkillAgentVariables = {
-  runner: SkillRunnerVariables;
-  evaluator: SkillEvaluatorVariables;
-  modifier: SkillModifierVariables;
+  "skill-runner": SkillRunnerVariables;
+  "skill-evaluator": SkillEvaluatorVariables;
+  "skill-modifier": SkillModifierVariables;
 };
 
 export type EvolveSkillOptions = {
@@ -33,7 +33,7 @@ export async function evolveSkill(
     await rm(options.artifactPath, { recursive: true, force: true });
     await mkdir(options.artifactPath, { recursive: true });
 
-    const runner = await team.createAgent("runner");
+    const runner = await team.createAgent("skill-runner");
     await runner.runStreamed(
       {
         skillPath: options.skillPath,
@@ -45,7 +45,7 @@ export async function evolveSkill(
 
     const review = (
       await team.runStreamed(
-        "evaluator",
+        "skill-evaluator",
         {
           artifactPath: options.artifactPath,
           metaskillPath: options.metaskillPath,
@@ -57,7 +57,7 @@ export async function evolveSkill(
     console.log(`\n# Review ${round}\n${review}\n`);
 
     const edit = await team.runStreamed(
-      "modifier",
+      "skill-modifier",
       {
         skillPath: options.skillPath,
         metaskillPath: options.metaskillPath,
