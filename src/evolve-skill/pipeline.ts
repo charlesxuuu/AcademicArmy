@@ -1,6 +1,11 @@
-import { type AgentTeam, type RecordCallback } from "coding-agent-forge";
+import {
+  AgentTeam,
+  mergeConfig,
+  type PlainObject,
+  type RecordCallback,
+} from "coding-agent-forge";
 import { mkdir, rm } from "node:fs/promises";
-
+import { agentFactories } from "./agents/index.js";
 import type {
   SkillEvaluatorVariables,
   SkillModifierVariables,
@@ -20,6 +25,27 @@ export type EvolveSkillOptions = {
   taskPath: string;
   rounds: number;
 };
+
+export function buildEvolveSkillAgentTeam(
+  rawConfig: PlainObject,
+): AgentTeam<EvolveSkillAgentVariables> {
+  return new AgentTeam<EvolveSkillAgentVariables>(
+    mergeConfig(rawConfig, {
+      agents: {
+        "skill-runner": {
+          kind: "skill-runner",
+        },
+        "skill-evaluator": {
+          kind: "skill-evaluator",
+        },
+        "skill-modifier": {
+          kind: "skill-modifier",
+        },
+      },
+    }),
+    agentFactories,
+  );
+}
 
 export async function evolveSkill(
   team: AgentTeam<EvolveSkillAgentVariables>,
