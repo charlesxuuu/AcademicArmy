@@ -6,7 +6,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@openai/codex-sdk": "^0.134.0"
+    "@openai/codex-sdk": "^0.134.0",
+    "coding-agent-forge": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
