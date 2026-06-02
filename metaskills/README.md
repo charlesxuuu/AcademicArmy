@@ -8,7 +8,7 @@ A normal skill describes how an agent should complete a research-planning task. 
 
 ## Evolve Runner
 
-`evolve-skill.ts` is the shared Codex SDK runner for this self-evolve loop.
+The `evolve-skill` pipeline is the shared Codex SDK runner for this self-evolve loop.
 
 It keeps two long-lived Codex threads:
 
@@ -21,10 +21,11 @@ Run it directly from the repository root:
 
 ```bash
 npm run evolve-skill -- \
+  --config agent-forge.yaml \
   --skill-path skills/academic-army-architect \
   --artifact-path output/evolve-academic-army-architect \
   --metaskill-path metaskills/academic-army-architect/METASKILL.md \
-  --runner-task-path metaskills/academic-army-architect/ENVOLVETASK.md
+  --task-path metaskills/academic-army-architect/ENVOLVETASK.md
 ```
 
 Required arguments:
@@ -33,7 +34,7 @@ Required arguments:
 --skill-path       The skill directory or file to revise.
 --artifact-path    The output folder cleared and reused by each runner round.
 --metaskill-path   The metaskill design document used by evaluator and modifier.
---runner-task-path The fixed task used by the runner to test the skill.
+--task-path        The fixed task used by the runner to test the skill.
 ```
 
 Optional arguments:
@@ -41,12 +42,9 @@ Optional arguments:
 ```text
 --rounds 5
   Number of self-evolve rounds to run.
-
---evaluator-extra-prompt-path path/to/evaluator-extra.md
-  Extra evaluator instructions appended to the default evaluator prompt.
 ```
 
-`--rounds` defaults to `3`. The evaluator extra prompt defaults to an empty string.
+`--rounds` defaults to `3`.
 
 ## Directory Layout
 
@@ -66,9 +64,9 @@ metaskills/
 
 `envolve.sh` runs the evolution loop for that skill. The file name is kept as `envolve.sh` to match the current project convention.
 
-`evolve-skill.ts` lives at the root of `metaskills` as the shared runner described above. It is not part of each individual skill's metaskill folder.
+The shared runner is the `evolve-skill` pipeline, not part of each individual skill's metaskill folder.
 
-In this structure, `METASKILL.md` and `ENVOLVETASK.md` provide the required inputs to `evolve-skill.ts`. The local `envolve.sh` file is only a convenience command that fills in those paths for one specific skill, including the artifact output folder.
+In this structure, `METASKILL.md` and `ENVOLVETASK.md` provide the required inputs to the `evolve-skill` pipeline. The local `envolve.sh` file is only a convenience command that fills in those paths for one specific skill, including the artifact output folder.
 
 ## Loop Behavior
 
@@ -97,7 +95,7 @@ Run a prepared skill evolution script from the repository root:
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
-The prepared script calls `evolve-skill.ts` with that skill's paths. The runner clears the artifact output path at the start of each round, so keep the artifact path inside a dedicated output directory.
+The prepared script calls the `evolve-skill` pipeline with that skill's paths. The runner clears the artifact output path at the start of each round, so keep the artifact path inside a dedicated output directory.
 
 ## Adding A New Metaskill
 

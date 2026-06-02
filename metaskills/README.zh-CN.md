@@ -8,7 +8,7 @@
 
 ## Evolve Runner
 
-`evolve-skill.ts` 是实现 self-evolve loop 的共享 Codex SDK runner。
+`evolve-skill` pipeline 是实现 self-evolve loop 的共享 Codex SDK runner。
 
 它保留两个长生命周期 Codex thread：
 
@@ -21,10 +21,11 @@
 
 ```bash
 npm run evolve-skill -- \
+  --config agent-forge.yaml \
   --skill-path skills/academic-army-architect \
   --artifact-path output/evolve-academic-army-architect \
   --metaskill-path metaskills/academic-army-architect/METASKILL.md \
-  --runner-task-path metaskills/academic-army-architect/ENVOLVETASK.md
+  --task-path metaskills/academic-army-architect/ENVOLVETASK.md
 ```
 
 必填参数：
@@ -33,7 +34,7 @@ npm run evolve-skill -- \
 --skill-path       要修改的 skill 目录或文件。
 --artifact-path    每轮 runner 清空并复用的输出文件夹。
 --metaskill-path   evaluator 和 modifier 使用的 metaskill 设计文档。
---runner-task-path runner 用来测试 skill 的固定任务文件。
+--task-path        runner 用来测试 skill 的固定任务文件。
 ```
 
 可选参数：
@@ -41,12 +42,9 @@ npm run evolve-skill -- \
 ```text
 --rounds 5
   要运行的 self-evolve 轮数。
-
---evaluator-extra-prompt-path path/to/evaluator-extra.md
-  追加到默认 evaluator prompt 后面的额外评价指令。
 ```
 
-`--rounds` 默认是 `3`。evaluator extra prompt 默认是空字符串。
+`--rounds` 默认是 `3`。
 
 ## 目录结构
 
@@ -66,9 +64,9 @@ metaskills/
 
 `envolve.sh` 用来运行这个 skill 的 evolution loop。文件名保留为 `envolve.sh`，和当前项目约定一致。
 
-`evolve-skill.ts` 位于 `metaskills` 根目录，是上面说明的共享 runner，不属于每个 skill 自己的 metaskill 目录。
+共享 runner 是 `evolve-skill` pipeline，不属于每个 skill 自己的 metaskill 目录。
 
-在这个目录结构里，`METASKILL.md` 和 `ENVOLVETASK.md` 为 `evolve-skill.ts` 提供必需输入。当前目录下的 `envolve.sh` 只是一个便捷命令：它把某个具体 skill 的 `--skill-path`、`--artifact-path` 输出文件夹、`--metaskill-path` 和 `--runner-task-path` 填好，然后调用共享 runner。
+在这个目录结构里，`METASKILL.md` 和 `ENVOLVETASK.md` 为 `evolve-skill` pipeline 提供必需输入。当前目录下的 `envolve.sh` 只是一个便捷命令：它把某个具体 skill 的 `--skill-path`、`--artifact-path` 输出文件夹、`--metaskill-path` 和 `--task-path` 填好，然后调用共享 runner。
 
 ## Loop 行为
 
@@ -97,7 +95,7 @@ npm install
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
-这个脚本会用该 skill 对应的路径调用 `evolve-skill.ts`。runner 会在每轮开始时清空 artifact 输出文件夹，所以 `--artifact-path` 应该指向一个专用输出文件夹。
+这个脚本会用该 skill 对应的路径调用 `evolve-skill` pipeline。runner 会在每轮开始时清空 artifact 输出文件夹，所以 `--artifact-path` 应该指向一个专用输出文件夹。
 
 ## 新增 Metaskill
 
