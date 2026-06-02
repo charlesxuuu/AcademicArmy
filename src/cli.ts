@@ -10,7 +10,11 @@ function defineCli<
   description: string;
   definition: PipelineDefinition<VariablesByName, Options>;
 }) {
-  return entry;
+  return {
+    name: entry.name,
+    description: entry.description,
+    run: (args: readonly string[]) => runPipelineCli(entry.definition, args),
+  };
 }
 
 const cliDefinitions = [
@@ -41,5 +45,5 @@ if (pipelineDefinition === undefined) {
   console.log(buildHelp());
   process.exitCode = 1;
 } else {
-  await runPipelineCli(pipelineDefinition.definition, pipelineArgs);
+  await pipelineDefinition.run(pipelineArgs);
 }
