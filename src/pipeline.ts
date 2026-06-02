@@ -33,7 +33,7 @@ export async function runPipelineCli<
   Options,
 >(
   definition: PipelineDefinition<VariablesByName, Options>,
-  args = process.argv.slice(2),
+  args: readonly string[],
 ): Promise<void> {
   const { configPaths, runningOptions } = definition.parseArgs(args);
   const rawConfig = await loadYamls(...configPaths);

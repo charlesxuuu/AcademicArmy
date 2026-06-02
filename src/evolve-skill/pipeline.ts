@@ -31,7 +31,7 @@ export type EvolveSkillOptions = {
 const USAGE =
   "Usage: npm run evolve-skill -- --config <path> --skill-path <path> --artifact-path <folder> --metaskill-path <path> --task-path <path> [--rounds <positive-integer>]";
 
-function parseEvolveSkillArgs(args: readonly string[]) {
+export function parseEvolveSkillArgs(args: readonly string[]) {
   const { values } = parseArgs({
     args: [...args],
     options: {
