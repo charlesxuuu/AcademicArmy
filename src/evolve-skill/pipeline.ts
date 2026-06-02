@@ -5,6 +5,8 @@ import {
   type RecordCallback,
 } from "coding-agent-forge";
 import { mkdir, rm } from "node:fs/promises";
+import { parseArgs } from "node:util";
+import { definePipeline } from "../pipeline.js";
 import { agentFactories } from "./agents/index.js";
 import type {
   SkillEvaluatorVariables,
@@ -25,6 +27,51 @@ export type EvolveSkillOptions = {
   taskPath: string;
   rounds: number;
 };
+
+const USAGE =
+  "Usage: npm run evolve-skill -- --config <path> --skill-path <path> --artifact-path <folder> --metaskill-path <path> --task-path <path> [--rounds <positive-integer>]";
+
+function parseEvolveSkillArgs(args: readonly string[]) {
+  const { values } = parseArgs({
+    args: [...args],
+    options: {
+      config: { type: "string", multiple: true },
+      "skill-path": { type: "string" },
+      "artifact-path": { type: "string" },
+      "metaskill-path": { type: "string" },
+      "task-path": { type: "string" },
+      rounds: { type: "string" },
+    },
+  });
+
+  const {
+    config,
+    "skill-path": skillPath,
+    "artifact-path": artifactPath,
+    "metaskill-path": metaskillPath,
+    "task-path": taskPath,
+    rounds,
+  } = values;
+
+  if (
+    [config, skillPath, artifactPath, metaskillPath, taskPath].some(
+      (value) => value === undefined,
+    )
+  ) {
+    throw new Error(USAGE);
+  }
+
+  return {
+    configPaths: config!,
+    runningOptions: {
+      skillPath: skillPath!,
+      artifactPath: artifactPath!,
+      metaskillPath: metaskillPath!,
+      taskPath: taskPath!,
+      rounds: Number(rounds ?? 3),
+    },
+  };
+}
 
 export function buildEvolveSkillAgentTeam(
   rawConfig: PlainObject,
@@ -95,3 +142,9 @@ export async function evolveSkill(
     console.log(`# Edit ${round}\n${edit}\n`);
   }
 }
+
+export const evolveSkillPipeline = definePipeline({
+  parseArgs: parseEvolveSkillArgs,
+  buildAgentTeam: buildEvolveSkillAgentTeam,
+  run: evolveSkill,
+});
