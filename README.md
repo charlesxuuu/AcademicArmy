@@ -59,7 +59,21 @@ cd <repo>
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-The Codex agents use the `academic_army_mcp_tools` server through `agent-forge.yaml`. That config launches the server as `python -m mcp-server` with `PYTHONPATH=.` from the repository root, so no separate Codex MCP installation step is needed.
+The project pipelines use the `academic_army_mcp_tools` server through `agent-forge.yaml`. That config launches the server as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.` from the repository root, so the evolve/developing runners do not need a separate Codex MCP installation step.
+
+When running AcademicArmy skills directly in Codex, install the same MCP server into Codex so the skill can call `academic_army_mcp_tools.deepresearch` outside the project pipeline:
+
+```powershell
+python install_mcp.py
+```
+
+The installer refreshes the Codex `academic_army_mcp_tools` entry, registers the current Python executable with `-m mcp-server`, sets the repository root as the MCP working directory, reads `.env`, and forwards those values to the MCP server.
+
+To override or add environment variables directly, repeat `-e/--env NAME=VALUE`:
+
+```powershell
+python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
+```
 
 Agents should call the `deepresearch` tool with a single self-contained prompt. For example:
 

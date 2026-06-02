@@ -60,7 +60,21 @@ cd <repo>
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-Codex agents 会通过 `agent-forge.yaml` 使用 `academic_army_mcp_tools`。该配置会在仓库根目录以 `PYTHONPATH=.` 运行 `python -m mcp-server`，因此不需要额外执行 Codex MCP 安装步骤。
+项目 pipeline 会通过 `agent-forge.yaml` 使用 `academic_army_mcp_tools`。该配置会在仓库根目录以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`，因此 evolve/developing runner 不需要额外执行 Codex MCP 安装步骤。
+
+如果直接在 Codex 中运行 AcademicArmy skills，需要把同一个 MCP server 安装到 Codex 里，这样 skill 才能在项目 pipeline 之外调用 `academic_army_mcp_tools.deepresearch`：
+
+```powershell
+python install_mcp.py
+```
+
+安装脚本会刷新 Codex 中的 `academic_army_mcp_tools` 配置项，注册当前 Python 可执行文件和 `-m mcp-server`，把仓库根目录设置为 MCP 工作目录，读取 `.env`，并把这些环境变量传给 MCP server。
+
+如果需要覆盖或补充环境变量，可以重复使用 `-e/--env NAME=VALUE`：
+
+```powershell
+python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
+```
 
 使用时只需要让 agent 给 `deepresearch` 传入一个自包含 prompt，例如：
 
