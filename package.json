@@ -2,13 +2,13 @@
   "type": "module",
   "scripts": {
     "developing-loop": "tsx loops/developing/developing-loop.ts",
-    "evolve-skill": "tsx metaskills/evolve-skill.ts",
+    "cli": "tsx src/cli.ts",
+    "evolve-skill": "tsx src/cli.ts evolve-skill",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@openai/codex-sdk": "^0.134.0",
-    "coding-agent-forge": "^1.2.5",
-    "yaml": "^2.9.0"
+    "coding-agent-forge": "^1.2.5"
   },
   "devDependencies": {
     "@types/node": "^25.9.1",
