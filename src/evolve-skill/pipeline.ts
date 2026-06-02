@@ -7,6 +7,7 @@ import {
 import { mkdir, rm } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { definePipeline } from "../pipeline.js";
+import type { ParsedPipelineArgs } from "../pipeline.js";
 import { agentFactories } from "./agents/index.js";
 import type {
   SkillEvaluatorVariables,
@@ -31,7 +32,9 @@ export type EvolveSkillOptions = {
 const USAGE =
   "Usage: npm run evolve-skill -- --config <path> --skill-path <path> --artifact-path <folder> --metaskill-path <path> --task-path <path> [--rounds <positive-integer>]";
 
-export function parseEvolveSkillArgs(args: readonly string[]) {
+export function parseEvolveSkillArgs(
+  args: readonly string[],
+): ParsedPipelineArgs<EvolveSkillOptions> {
   const { values } = parseArgs({
     args: [...args],
     options: {
