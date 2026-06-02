@@ -1,0 +1,37 @@
+runtimes:
+  codex:
+    kind: codex
+    options:
+      config:
+        mcp_servers:
+          academic_army_mcp_tools:
+            command: python
+            args:
+              - -m
+              - mcp-server
+            cwd: .
+            env:
+              PYTHONPATH: .
+            tool_timeout_sec: 3600
+
+threads:
+  codex-runner-full-access:
+    runtime: codex
+    options:
+      model: gpt-5.5
+      workingDirectory: .
+      sandboxMode: danger-full-access
+  codex-runner-read-only:
+    runtime: codex
+    options:
+      model: gpt-5.5
+      workingDirectory: .
+      sandboxMode: read-only
+
+agents:
+  skill-runner:
+    thread: codex-runner-full-access
+  skill-evaluator:
+    thread: codex-runner-read-only
+  skill-modifier:
+    thread: codex-runner-full-access

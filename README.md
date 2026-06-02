@@ -42,43 +42,22 @@ AcademicArmy includes a local stdio MCP implementation in the `mcp-server` direc
 
 - `deepresearch(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5-pro`, high reasoning, web search, background mode, and source inclusion.
 
-Before registering it, create `.env` in the repository root:
+Create `.env` in the repository root:
 
 ```env
 OPENAI_API_KEY=your_api_key_here
 ```
 
-Install dependencies in the bundled virtual environment if needed:
+Install MCP server dependencies if needed:
 
 ```powershell
 cd <repo>
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-Register the MCP server in Codex:
+The Codex agents use the `academic_army_mcp_tools` server through `agent-forge.yaml`. That config launches the server as `python -m mcp-server` with `PYTHONPATH=.` from the repository root, so no separate Codex MCP installation step is needed.
 
-```powershell
-python install_mcp.py
-```
-
-The installer refreshes the `academic_army_mcp_tools` Codex entry with the Python executable that runs the installer. It also reads `.env` from the repository root and passes those values to the MCP server through Codex `--env`.
-
-To override or add environment variables directly, repeat `-e/--env NAME=VALUE`:
-
-```powershell
-python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
-```
-
-For another MCP client, register it as a stdio server:
-
-- Name: `academic_army_mcp_tools`
-- Command: `python`
-- Arguments: `-m mcp-server`
-- Working directory: `<repo>`
-
-Make sure the MCP client's working directory is the repository root, because the server loads `.env` from the current directory. You can also pass environment variables directly with `-e/--env NAME=VALUE`; these values are applied after `.env` is loaded, so they override matching values from `.env`.
-
-After registration, restart the MCP client. Then call the `deepresearch` tool with a single self-contained prompt. For example:
+Agents should call the `deepresearch` tool with a single self-contained prompt. For example:
 
 ```text
 Use deepresearch with prompt:

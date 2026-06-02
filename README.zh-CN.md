@@ -43,43 +43,22 @@ AcademicArmy 在 `mcp-server` 目录下提供了本地 stdio MCP 实现。它只
 
 - `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5-pro`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
 
-注册前，先在仓库根目录创建 `.env`：
+先在仓库根目录创建 `.env`：
 
 ```env
 OPENAI_API_KEY=your_api_key_here
 ```
 
-如有需要，安装虚拟环境依赖：
+如有需要，安装 MCP server 依赖：
 
 ```powershell
 cd <repo>
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-注册到 Codex：
+Codex agents 会通过 `agent-forge.yaml` 使用 `academic_army_mcp_tools`。该配置会在仓库根目录以 `PYTHONPATH=.` 运行 `python -m mcp-server`，因此不需要额外执行 Codex MCP 安装步骤。
 
-```powershell
-python install_mcp.py
-```
-
-安装脚本会刷新 Codex 中的 `academic_army_mcp_tools` 配置项，然后用运行脚本的 Python 可执行文件注册它。它还会从仓库根目录读取 `.env`，并通过 Codex `--env` 把这些值传给 MCP server。
-
-如果需要覆盖或补充环境变量，可以重复使用 `-e/--env NAME=VALUE`：
-
-```powershell
-python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
-```
-
-在其它 MCP client 中把它注册成 stdio server：
-
-- 名称：`academic_army_mcp_tools`
-- 命令：`python`
-- 参数：`-m mcp-server`
-- 工作目录：`<repo>`
-
-注意 MCP client 的工作目录必须是仓库根目录，因为 server 会从当前目录加载 `.env`。也可以通过 `-e/--env NAME=VALUE` 直接传入环境变量；这些值会在 `.env` 加载之后写入，因此会覆盖 `.env` 中同名配置。
-
-注册后重启 MCP client。使用时只需要给 `deepresearch` 传入一个自包含 prompt，例如：
+使用时只需要让 agent 给 `deepresearch` 传入一个自包含 prompt，例如：
 
 ```text
 Use deepresearch with prompt:
