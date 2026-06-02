@@ -25,16 +25,44 @@ skill应现场分析相关高质量代码库的设计思路、代码结构和优
 每个实验阶段应尽量设计成可以一键调用的命令。
 同一套实验流程应能通过不同命令行参数在不同数据上运行，并输出对应实验结果。
 
-`coding plan`除了划分系统功能模块，还需要规划harness方案。
-每个harness是一个测试方案，用来指示代码中的某个优化点、对应的可修改模块、测试方法和性能指标。
-harness关注的性能应与论文中真正关心的性能一致。
-当论文需要从多个候选methods中选择主方法时，harness应帮助比较不同method在当前应用场景下经过修改后的潜力。
-候选method不应只被naive使用；需要根据当前应用场景对现有方法进行修改，并通过harness测试修改后的效果。
-不同method可能有不同优化潜力，需要通过“修改—测试”的过程判断哪个method修改后效果最好。
-最终效果最好的修改后method可以作为本文主打方法，其他未修改或naive方法可以作为baseline。
-harness应提供评价体系，说明什么样的结果才算“效果好”。
-harness应让后续写代码skill能够围绕明确的修改范围和测试方法持续执行“修改—测试—筛选”的过程。
-skill应使用deepresearch调研harness相关思想，现场分析哪些harness设计方式适合当前coding plan，而不是把某种harness模板写死。
+`coding plan`除了划分系统功能模块，还需要明确区分两类执行结构：`harness structure`和`testing structure`。
+`harness structure`服务论文实验目标，回答“某个module change、method variant或optimization是否帮助达成论文目标指标”。
+`testing structure`服务功能正确性，回答“代码的数据处理、接口、配置、metric计算、结果导出和CLI入口是否按预期工作”。
+这两类结构都需要在`coding_plan.md`中单独成节规划，并在`coding_plan.explain.md`中解释它们如何承接`paper_blueprint`和`experiment plan`。
+
+`harness structure`不是泛泛的单元测试或回归测试，而是面向论文优化目标的可执行评测结构。
+skill应吸收传统test harness中stubs、drivers、test data、execution tools等受控执行环境思想，也应吸收OpenAI Evals、EleutherAI lm-evaluation-harness、SWE-bench等evaluation harness中输入、执行环境、评价逻辑、指标和结果记录分离的思想。
+skill应使用deepresearch现场调研与当前项目相关的evaluation harness、benchmark harness、paper code、工程化实验框架和测试组织方式，再决定当前coding plan中harness的具体结构。
+每个harness都应对应一个清晰的研究或实验目标；该目标应能通过运行某个命令或脚本后得到明确结果，而不是停留在“改进效果”“提升性能”这类抽象描述。
+在学术论文场景中，harness目标通常对应会影响最终论文结果的性能指标，例如accuracy、latency、throughput、memory、cost、robustness、generalization、sample efficiency、quality score或领域特定metric；具体指标由`paper_blueprint`和`experiment plan`决定。
+每个harness应明确它关联论文中的哪个claim、实验问题或方法选择问题，例如“选择哪个candidate method作为主方法”“某个模块改动是否提升关键metric”“某个优化是否值得进入最终系统”。
+每个harness应明确要优化的目标模块、可修改范围、需要保持稳定的接口、运行入口、输入数据、评价指标、结果输出和比较方式。
+候选methods和baselines应尽量映射到可替换模块结构中，使harness可以在相同输入、相同流程、相同metric下比较不同method或method variant。
+当论文需要从多个候选methods中选择主方法时，harness应支持“naive method / modified method / baseline method”的可比运行方式，帮助判断哪个method在当前应用场景下经过修改后最有潜力。
+harness应支持后续写代码skill反复执行“修改模块 -> 运行harness -> 读取结果 -> 再修改”的循环，因此需要稳定的命令入口、固定的输入协议、可解析的输出格式和清晰的metric定义。
+每个harness应在`coding plan`中说明推荐的运行命令形式，例如通过相对路径脚本和命令行参数指定method、dataset、split、seed、config和output directory；具体命令格式由项目语言和工程结构决定。
+harness应尽量固定非目标变量，例如数据切分、随机种子、评估协议、资源预算和metric计算方式，以便比较结果主要反映被修改模块的差异。
+harness输出应包括最原始、最小加工的运行结果，例如per-example prediction、raw score、timing trace、resource usage、intermediate decision、error case和log metadata。
+harness应明确结果文件的相对路径、文件格式和最小字段，例如method name、variant name、config id、dataset、split、seed、commit or run id、timestamp、metric values和raw artifact paths。
+面向论文图表的数据聚合和转换应留给后续分析或绘图skill；harness只负责稳定运行、记录原始结果和输出可解析artifact。
+对复杂实验，harness可以按阶段组织，例如data preparation、candidate method run、module-level optimization run、full-system evaluation、ablation run、stress or robustness run；阶段划分由`experiment plan`决定。
+每个阶段应尽量有一键调用入口，并能通过命令行参数在不同数据、method、config或seed上复用同一套流程。
+`coding plan`应说明不同harness之间的关系，例如哪些harness用于早期快速筛选，哪些harness用于最终主实验，哪些harness用于ablation或diagnostic analysis。
+
+`testing structure`应独立于harness规划；testing关注功能正确性，harness关注研究目标、性能指标和方法筛选。
+`coding plan`应把项目的功能目标具体化为一批测试脚本，使后续写代码skill在写好或改好代码后可以运行测试确认功能没有坏。
+测试脚本应从功能模块出发组织，例如data loading、preprocessing、model or method interface、training or inference pipeline、metric computation、result export、configuration parsing、CLI entrypoints等；具体模块由coding plan中的系统结构决定。
+每个功能测试应说明它验证什么功能、调用哪个模块或命令、使用什么最小输入、期望什么输出或行为。
+testing structure应覆盖核心功能路径，而不是只测试最终实验指标；例如数据能否正确读取、method接口是否返回预期格式、metric计算是否正确、结果导出字段是否完整、命令行参数是否能正确传递。
+测试脚本应尽量使用小型fixture、toy data、mock data或最小样例，保证测试运行快、失败原因清晰、适合后续写代码skill频繁调用。
+测试结构可以包含不同粒度的测试，例如模块级测试、集成级测试、CLI smoke test和结果导出测试；具体粒度由项目复杂度决定。
+testing structure应明确推荐的测试命令，例如运行全部测试、运行某个模块测试、运行某个CLI smoke test；pytest等工具的测试发现、fixture、setup/teardown和命令行选择机制可以作为组织测试命令的参考。
+测试应有明确pass/fail标准；功能正确性测试验证代码行为、接口契约、数据格式和结果导出是否正确，不用论文性能是否达到最好作为通过标准。
+当harness依赖某些关键模块时，testing structure应包含这些模块的功能测试，避免harness结果异常时无法判断是method效果不好还是代码功能错误。
+testing structure应规划测试数据和真实实验数据的关系：测试数据用于快速验证功能，真实实验数据用于harness和正式实验。
+testing structure应说明测试输出如何记录，例如terminal output、test report、temporary artifact或minimal log；这些输出主要服务debug，应和论文实验结果分开管理。
+`coding plan`应让后续写代码skill形成基本开发循环：先通过功能测试保证模块正确，再运行harness评估模块修改对论文目标的影响。
+testing structure和harness structure都应使用项目顶层目录下的相对路径，不应依赖代码仓库的绝对顶层路径。
 
 写代码完成后，还会有更多skill根据实验结果画图和写论文，因此`coding plan`需要规划实验结果如何从系统中导出。
 结果导出应尽量以对系统内部逻辑影响小的方式进行。
@@ -50,7 +78,7 @@ skill应使用deepresearch调研harness相关思想，现场分析哪些harness�
 skill应优先用正向语言严格描述它应该生成什么、服务什么目标、输出到哪里、包含哪些规划信息。
 skill应减少堆叠反向限制条件，避免把输出写成大量“不要做什么”的防御性规则。
 必要边界应尽量转化为正向约束，例如“本skill只输出coding plan和中文解释，代码实现交给后续skill”。
-skill里包含目标、输入输出边界、规划对象和关键机制；具体学习哪些代码库、采用哪些工程模式、如何设计模块和harness，应由skill通过deepresearch现场分析后决定。
+skill里包含目标、输入输出边界、规划对象和关键机制；具体学习哪些代码库、采用哪些工程模式、如何设计模块、harness structure和testing structure，应由skill通过deepresearch现场分析后决定。
 
-`coding plan`解释文件应说明当前coding plan为什么这样组织模块、阶段、harness、结果导出和相对路径。
-`coding plan`解释文件应帮助用户理解该计划如何承接`paper_blueprint`和`experiment plan`，以及如何为后续写代码、实验执行、画图和论文写作skill提供基础。
+`coding plan`解释文件应说明当前coding plan为什么这样组织模块、阶段、harness structure、testing structure、结果导出和相对路径。
+`coding plan`解释文件应帮助用户理解该计划如何承接`paper_blueprint`和`experiment plan`，以及如何为后续写代码、功能测试、实验执行、画图和论文写作skill提供基础。
