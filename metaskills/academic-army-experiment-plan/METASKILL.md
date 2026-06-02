@@ -50,7 +50,7 @@ experiment plan中不应出现`Assumptions to validate`、`Artifact cautions`、
 skill中应明确两个文件的内容边界，避免experiment plan中混入解释，也避免解释文件中混入skill内部流程说明或模板说明。
 
 experiment plan解释文件的功能是让用户确认`experiment_plan.md`中的项目是否合理，而不是单纯解释字段含义。
-experment plan解释文件应让用户理解整个论文的核心出发点，也就是“为什么要这么设计实验”。
+experiment plan解释文件应让用户理解整个论文的核心出发点，也就是“为什么要这么设计实验”。
 experiment plan解释文件应说明experiment plan中的每个重要细节如何从论文核心出发点、论文蓝图、目标venue偏好和实验目标推导出来。
 用户发现experiment plan中某个实验不合理时，应能通过解释文件判断是哪个核心出发点有问题，还是从核心出发点推导到具体实验安排的中间环节有问题。
 experiment plan解释文件应展示experiment plan中每条重要内容与其他内容的关系，避免让用户自己猜实验安排之间的逻辑。
