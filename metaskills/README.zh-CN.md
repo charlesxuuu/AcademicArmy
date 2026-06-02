@@ -6,6 +6,10 @@
 
 普通 skill 描述 agent 应该如何完成某个研究规划任务。metaskill 描述这个 skill 本身应该如何设计：它的目标、写作方式、预期输出，以及修改时需要重点检查的问题。在 self-evolve 中，evaluator 用 metaskill 作为评价 artifact 的标准，modifier 用 metaskill 作为修改 skill 的标准。
 
+## 语言契约
+
+metaskill 在设计或修改规划类 skill 时，固定采用同一个产物语言契约：面向 AI 执行的主计划使用英文，面向用户确认的解释文件使用中文。当前规划类 skills 中，`paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md` 保持 English-only；`paper_blueprint.explain.md`、`experiment_plan.explain.md` 和 `coding_plan.explain.md` 使用中文解释，并在有助于准确表达时保留英文技术标识符。
+
 ## Evolve Runner
 
 `evolve-skill` pipeline 是实现 self-evolve loop 的共享 Codex SDK runner。

@@ -6,6 +6,10 @@ The core design idea is skill self-evolve: use one evaluator agent to judge the 
 
 A normal skill describes how an agent should complete a research-planning task. A metaskill describes how that skill itself should be designed: its goals, writing style, expected outputs, and the issues to watch for when revising it. During self-evolve, the evaluator uses the metaskill as the standard for judging the artifact, and the modifier uses it as the standard for revising the skill.
 
+## Language Contract
+
+When a metaskill designs or revises a planning skill, keep the artifact-language contract fixed: the AI-facing plan is English, and the human-facing explanation is Chinese. For the current planning skills this means `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` stay English-only, while `paper_blueprint.explain.md`, `experiment_plan.explain.md`, and `coding_plan.explain.md` use Chinese explanations with English technical identifiers preserved when useful.
+
 ## Evolve Runner
 
 The `evolve-skill` pipeline is the shared Codex SDK runner for this self-evolve loop.

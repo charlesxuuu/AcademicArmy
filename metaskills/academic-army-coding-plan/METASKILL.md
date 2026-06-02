@@ -4,7 +4,7 @@
 
 coding plan应该尽可能详细，尤其是模块要分好，给后面具体代码的skill提供一个坚实的基础。
 
-skill输出的coding plan为英文，skill本身也是英文，并且让skill以用户对话的语言输出对coding plan的解释和思考流程。
+skill输出的coding plan为英文，coding plan解释固定为中文，解释中可以保留必要的英文仓库名、方法名、数据集、benchmark、metric、文件路径、命令和代码标识符。网上查一查怎么让中文英文输出文本更加自然
 
 coding plan文件名为coding_plan.md，coding plan解释文件名为coding_plan.explain.md，都是markdown格式。coding plan里就只放coding plan，coding plan解释里就只放coding plan解释，要在skill里明确。
 
@@ -23,3 +23,4 @@ coding plan里除了要把系统分为具体的功能模块，还需要确定一
 在开始规划之前应该先用deepresearch上网查一下相关代码通常都是以什么样的结构组织的（注意一定要找高度工程化的代码库，不要找质量不好的代码库），学习一下他们的思路，提取他们的优秀设计模式和代码结构，据此组织自己的代码
 
 coding plan不应该知道代码的顶层目录路径，所有路径都是在顶层目录下的相对路径
+

@@ -16,6 +16,10 @@ AcademicArmy 的主体核心可以概括为一句话：按图施工。
 
 ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”，具体到各岗位可以直接上手执行，而不是在执行阶段重新设计项目。AcademicArmy 按照这份图纸完成一篇论文及其支撑材料。
 
+## 规划产物语言
+
+规划类 skills 使用固定语言分工。面向后续 AI 执行的产物，例如 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`，统一使用英文，并且只放方案或规范本身。配套解释文件，例如 `paper_blueprint.explain.md`、`experiment_plan.explain.md` 和 `coding_plan.explain.md`，统一使用中文，用来帮助用户确认推导逻辑、关键取舍和当前确认状态。论文标题、会议名、数据集、benchmark、method、路径、命令和代码标识符等技术内容，可以在中文解释中保留英文。
+
 ## 设计 Tips
 
 需要精细调研的部分，主要通过会使用 API 的 skill 调用 Deep Research 来完成。这样可以避免为了检索而在本地保存大量数据，让项目更轻量，也方便后续刷新调研结果。

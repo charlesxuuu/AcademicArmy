@@ -16,6 +16,10 @@ The central principle of AcademicArmy is: build according to the blueprint.
 
 The blueprint produced by ProductManager should be specific enough for each role to start working without needing to redesign the project. AcademicArmy then follows that standardized plan to complete the paper and its supporting artifacts.
 
+## Planning Artifact Language
+
+Planning skills use a fixed language split. AI-facing artifacts such as `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` are written in English and contain only the plan or specification. Their companion explanation files, such as `paper_blueprint.explain.md`, `experiment_plan.explain.md`, and `coding_plan.explain.md`, are written in Chinese so the user can review the reasoning, trade-offs, and confirmation state. Technical terms, paper titles, venue names, datasets, benchmarks, methods, paths, commands, and code identifiers may remain in English when that is clearer.
+
 ## Design Tips
 
 Parts that require fine-grained research should mainly be handled by skills that know how to call Deep Research through APIs. This avoids saving large amounts of local data only for retrieval, keeping the project lighter and making research updates easier to refresh.
