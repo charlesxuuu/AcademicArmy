@@ -3,10 +3,7 @@ import { type PipelineDefinition, runPipelineCli } from "./pipeline.js";
 import { developingPipeline } from "./developing/index.js";
 import { evolveSkillPipeline } from "./evolve-skill/index.js";
 
-function defineCli<
-  VariablesByName extends AgentVariablesByName,
-  Options,
->(entry: {
+function defineCli<VariablesByName extends AgentVariablesByName, Options>(entry: {
   name: string;
   description: string;
   definition: PipelineDefinition<VariablesByName, Options>;
@@ -43,9 +40,7 @@ ${pipelineList}`;
 }
 
 const [pipelineName, ...pipelineArgs] = process.argv.slice(2);
-const pipelineDefinition = cliDefinitions.find(
-  (pipeline) => pipeline.name === pipelineName,
-);
+const pipelineDefinition = cliDefinitions.find((pipeline) => pipeline.name === pipelineName);
 
 if (pipelineDefinition === undefined) {
   console.log(buildHelp());

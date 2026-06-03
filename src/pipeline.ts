@@ -13,28 +13,19 @@ export type ParsedPipelineArgs<Options> = {
   runningOptions: Options;
 };
 
-export type PipelineDefinition<
-  VariablesByName extends AgentVariablesByName,
-  Options,
-> = {
+export type PipelineDefinition<VariablesByName extends AgentVariablesByName, Options> = {
   agentFactories: AgentFactoryMap;
   parseArgs: (args: readonly string[]) => ParsedPipelineArgs<Options>;
   run: (team: AgentTeam<VariablesByName>, options: Options) => Promise<void>;
 };
 
-export function definePipeline<
-  VariablesByName extends AgentVariablesByName,
-  Options,
->(
+export function definePipeline<VariablesByName extends AgentVariablesByName, Options>(
   definition: PipelineDefinition<VariablesByName, Options>,
 ): PipelineDefinition<VariablesByName, Options> {
   return definition;
 }
 
-function buildPipelineAgentTeam<
-  VariablesByName extends AgentVariablesByName,
-  Options,
->(
+function buildPipelineAgentTeam<VariablesByName extends AgentVariablesByName, Options>(
   rawConfig: PlainObject,
   definition: PipelineDefinition<VariablesByName, Options>,
 ): AgentTeam<VariablesByName> {
@@ -42,29 +33,23 @@ function buildPipelineAgentTeam<
     throw new Error("Config must define an agents object");
   }
 
-  for (const name of Object.keys(rawConfig.agents)) {
-    if (!Object.hasOwn(definition.agentFactories, name)) {
-      delete rawConfig.agents[name];
-    }
-  }
+  const configuredAgents = Object.fromEntries(
+    Object.entries(rawConfig.agents).filter(([name]) =>
+      Object.hasOwn(definition.agentFactories, name),
+    ),
+  );
 
   const agents = Object.fromEntries(
-    Object.keys(definition.agentFactories).map((name) => [
-      name,
-      { kind: name },
-    ]),
+    Object.keys(definition.agentFactories).map((name) => [name, { kind: name }]),
   );
 
   return new AgentTeam<VariablesByName>(
-    mergeConfig(rawConfig, { agents }),
+    mergeConfig({ ...rawConfig, agents: configuredAgents }, { agents }),
     definition.agentFactories,
   );
 }
 
-export async function runPipelineCli<
-  VariablesByName extends AgentVariablesByName,
-  Options,
->(
+export async function runPipelineCli<VariablesByName extends AgentVariablesByName, Options>(
   definition: PipelineDefinition<VariablesByName, Options>,
   args: readonly string[],
 ): Promise<void> {

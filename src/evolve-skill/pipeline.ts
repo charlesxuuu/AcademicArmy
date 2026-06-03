@@ -52,20 +52,22 @@ export function parseEvolveSkillArgs(
   });
 
   if (
-    [config, skillPath, artifactPath, metaskillPath, taskPath].some(
-      (value) => value === undefined,
-    )
+    config === undefined ||
+    skillPath === undefined ||
+    artifactPath === undefined ||
+    metaskillPath === undefined ||
+    taskPath === undefined
   ) {
     throw new Error(USAGE);
   }
 
   return {
-    configPaths: config!,
+    configPaths: config,
     runningOptions: {
-      skillPath: skillPath!,
-      artifactPath: artifactPath!,
-      metaskillPath: metaskillPath!,
-      taskPath: taskPath!,
+      skillPath,
+      artifactPath,
+      metaskillPath,
+      taskPath,
       rounds: Number(rounds ?? 3),
     },
   };
@@ -104,7 +106,7 @@ export async function evolveSkill(
       )
     ).trim();
 
-    console.log(`\n# Review ${round}\n${review}\n`);
+    console.log(`\n# Review\n${review}\n`);
 
     const edit = await team.runStreamed(
       "skill-modifier",
@@ -116,7 +118,7 @@ export async function evolveSkill(
       logRecord,
     );
 
-    console.log(`# Edit ${round}\n${edit}\n`);
+    console.log(`# Edit\n${edit}\n`);
   }
 }
 

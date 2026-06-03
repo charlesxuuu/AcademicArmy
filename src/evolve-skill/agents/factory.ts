@@ -5,10 +5,7 @@ import { SkillModifierAgent } from "./modifier.js";
 import { SkillRunnerAgent } from "./runner.js";
 
 export const agentFactories: AgentFactoryMap = {
-  "skill-runner": (thread, constants) =>
-    new SkillRunnerAgent(thread, constants),
-  "skill-evaluator": (thread, constants) =>
-    new SkillEvaluatorAgent(thread, constants),
-  "skill-modifier": (thread, constants) =>
-    new SkillModifierAgent(thread, constants),
+  "skill-runner": (thread, constants) => new SkillRunnerAgent(thread, constants),
+  "skill-evaluator": (thread, constants) => new SkillEvaluatorAgent(thread, constants),
+  "skill-modifier": (thread, constants) => new SkillModifierAgent(thread, constants),
 };
