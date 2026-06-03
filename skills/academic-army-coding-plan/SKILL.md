@@ -25,21 +25,70 @@ Produce exactly two Markdown files in the requested output directory:
 - `coding_plan.explain.md`: Chinese, human-facing, and only the explanation
   and decision rationale for the coding plan.
 
-This skill writes planning artifacts only. Code implementation, plotting, and
-paper prose belong to later skills.
+This skill writes planning artifacts only. Code implementation, plotting, paper
+prose, and final figure/table formatting belong to later skills.
 
-## Core Output Style
+## Artifact Delivery
 
-Write both files so a reader can understand them without chasing abstract
-number systems.
+Always write both files to the requested output directory and read them back
+before responding.
+
+For outputs under `output/evolve-*`, include a dedicated `Review Handoff`
+section in the final response after a concise validation summary. Paste the
+complete read-back contents of both files under their relative path headings.
+Evolve outputs are often reviewed outside the local filesystem, so the pasted
+handoff is part of the deliverable, not a convenience summary.
+
+Also include the same complete handoff when the user, reviewer, or evaluator
+says the artifacts cannot be inspected locally, or when the user asks to paste,
+inline, or include the artifact contents.
+
+Treat artifact-access feedback as sticky for the next successful generation in
+the same thread. If prior feedback says the reviewer could not inspect
+`coding_plan.md` or `coding_plan.explain.md`, the next final response for this
+skill must paste both complete files even when local read-back succeeds.
+If artifact-access feedback recurs, keep the same rule and make the handoff
+more prominent rather than adding local troubleshooting notes to the artifacts.
+
+Use five-backtick fences for full-file handoffs so embedded command fences
+remain readable:
+
+````markdown
+## output/.../coding_plan.md
+
+`````markdown
+<full coding_plan.md content>
+`````
+
+## output/.../coding_plan.explain.md
+
+`````markdown
+<full coding_plan.explain.md content>
+`````
+````
+
+For evolve outputs, keep the files detailed enough to guide coding and compact
+enough to paste completely. Prefer dense semantic tables, concise bullets, and
+clear ownership rules over repeated boilerplate. If the full handoff would be
+too long to paste, shorten the artifacts and read them back again; do not
+replace the handoff with a paths-only or summary-only response.
+
+When pasting an evolve handoff, paste the read-back file contents, not a
+regenerated approximation. The final response should remain reviewable even if
+the reviewer cannot access the filesystem at all.
+
+## Output Style
+
+Write both files so a reader can understand them through semantic names and
+local context rather than a global numbering system.
 
 Use:
 
-- Semantic section names, module names, method names, harness names, test names,
-  output paths, and natural short names.
+- Semantic section names, module names, method names, harness names, test
+  names, output paths, and natural short names.
 - Short paragraphs and bullets.
 - Tables when they clarify parallel entities.
-- Numbered lists only for real order, such as implementation sequence,
+- Numbered lists only for real sequence, such as implementation order,
   experiment stages, priority, or step-by-step commands.
 
 Prefer names such as:
@@ -52,29 +101,27 @@ Prefer names such as:
 - `Result Export Tests`
 - `CLI Smoke Tests`
 
-Avoid making the plan depend on abstract global IDs such as `C1`, `C2`, `B1`,
-`H1`, `T1`, or `P1`. If the existing repository already uses short registry
-keys, preserve them as aliases beside the semantic name, but make the semantic
-name the primary anchor. Example: `Full-System Trace Evaluation Harness
-(existing alias: H3)`.
+When the existing repository already uses short registry keys such as `H3` or
+`B2`, preserve them only as aliases beside the semantic name. The semantic name
+is the primary anchor in headings, tables, cross-references, and the Chinese
+explanation. For example: `Full-System Trace Evaluation Harness (existing
+alias: H3)`.
 
-In `coding_plan.explain.md`, explain in natural Chinese. Preserve English
+In `coding_plan.explain.md`, use natural Chinese sentences. Preserve English
 method names, repository names, dataset names, benchmark names, metric names,
 file paths, commands, and code identifiers when exact spelling matters. When
-explaining a design choice, briefly summarize the corresponding plan content
-before explaining why it was chosen.
+explaining a design choice, first summarize the corresponding plan content,
+then explain why it was chosen.
 
 ## Workflow
 
 ### Gather Local Context
 
-Read the user-provided paths first. Then inspect nearby local context when
-present:
+Read the user-provided `paper_blueprint` and `experiment_plan` first. Then
+inspect nearby repository context when present:
 
-- `paper_blueprint.md`
 - `paper_blueprint.explain.md`
-- `experiment_plan.md`
-- `experiment_plan_explanation.*.md`
+- `experiment_plan.explain.md` or `experiment_plan_explanation.*.md`
 - existing coding plans, implementation notes, and code overviews
 - repository README files
 - package metadata such as `pyproject.toml`, `package.json`,
@@ -88,31 +135,31 @@ Use repository-relative paths in both output files. Treat the project root as
 the working-directory anchor. If implementation code is nested under an output
 directory, name that relative implementation root, such as `output/codebase`.
 
-If the paper blueprint or experiment plan is missing after checking obvious
-local paths and user-provided text, ask for the missing content before writing a
-final plan.
+If the blueprint or experiment plan is missing after checking the user-provided
+paths and obvious local paths, ask for the missing content before writing the
+plan.
 
-### Run Required Pre-Planning Research
+### Run Pre-Planning DeepResearch
 
 Before drafting `coding_plan.md`, run
 `academic_army_mcp_tools.deepresearch` unless the provided context already
-contains a fresh lookup artifact that clearly covers the current paper domain,
-method family, experiment style, and repository design questions.
+contains a fresh lookup artifact covering the current paper domain, method
+family, experiment style, and repository design questions.
 
-A fresh lookup artifact must include:
+A reusable lookup artifact should include:
 
 - lookup topic or query
 - sources or repository examples
 - source date, release version, or commit hash when available
 - takeaways about highly engineered related codebases
 - design choices affected in the coding plan
-- visible retrieval date or context when available
+- visible retrieval date or context
 
 Use DeepResearch to inspect high-quality related codebases and benchmark
-artifacts. Do not hardcode a fixed source list in the skill. Let the lookup
-choose relevant mature repositories, official benchmark artifacts, evaluation
-harnesses, experiment frameworks, paper artifacts, configuration systems, and
-result-logging conventions for the current domain.
+artifacts. Let the lookup choose relevant mature repositories, official
+benchmark artifacts, evaluation harnesses, experiment frameworks, paper
+artifacts, configuration systems, and result-logging conventions for the
+current domain. Do not hardcode a fixed source list in the skill output.
 
 Prompt shape:
 
@@ -142,27 +189,27 @@ Return concise implementation-planning evidence:
   and the planning decision it affects.
 ```
 
-Put only planning consequences in `coding_plan.md`. Put lookup topic, sources,
+Put planning consequences in `coding_plan.md`. Put lookup topic, sources,
 source dates or versions, takeaways, evidence type, affected design choices,
 confidence, and remaining uncertainty in `coding_plan.explain.md`.
 
-### Draft the English Coding Plan
+## Draft `coding_plan.md`
 
-`coding_plan.md` should be an engineering contract, not a design memo. Include
-the sections that apply to the project:
+Write `coding_plan.md` as an engineering contract for the downstream coding
+skill. Include the sections that apply to the project:
 
 - scope and working-directory assumptions
 - inputs read and planning assumptions
 - environment setup and executable entry points
 - repository alignment and implementation root
 - core domain model and shared interfaces
-- package layout and module boundaries
+- package layout and semantic module boundaries
 - replaceable method and baseline placement
 - workload, dataset, trace, and config placement
 - metric definitions and decision rules
 - staged experiment pipeline with reusable CLI commands
-- paper-goal harness structure
-- functional testing structure
+- harness structure for paper goals
+- testing structure for functional correctness
 - method selection and freeze protocol
 - experiment execution matrix or staged run matrix
 - raw-first result export contract
@@ -174,29 +221,29 @@ the sections that apply to the project:
 Use existing repository patterns when present. Extend the local architecture
 instead of inventing a parallel system.
 
-### Draft the Chinese Explanation
+## Draft `coding_plan.explain.md`
 
-`coding_plan.explain.md` should make the plan reviewable. Use Chinese headings,
-Chinese body text, and natural Chinese explanation. Preserve technical English
-identifiers when exact spelling is useful.
+Write `coding_plan.explain.md` as a Chinese explanation of the coding plan and
+its decision rationale. Use Chinese headings and Chinese body text. Preserve
+technical English identifiers when exact spelling is useful.
 
 Explain:
 
 - which local files or user-provided contents were read
 - what requirements were extracted from the paper blueprint and experiment plan
+- what DeepResearch found and how it affected the design
 - why modules are separated this way
 - why candidate methods and baselines are replaceable components
 - why the experiment stages and CLI entry points are structured this way
 - why each harness exists and what paper claim, method-selection question, or
   optimization question it supports
 - why testing is separate from harness execution
-- why raw-first exports are enough for later plotting, tables, and writing
+- why raw-first exports support later plotting, tables, and writing
 - why paths and commands are relative
-- what DeepResearch found and how it affected the design
 - which assumptions remain and what they block
 - how a downstream coding skill should use the plan
 
-Prefer explanation in this shape:
+Recommended shape:
 
 ```markdown
 # 编码计划说明：<Paper/System Name>
@@ -233,9 +280,9 @@ when semantic headings would be clearer.
 
 ### Core Domain Model and Shared Interfaces
 
-When the planned system has interacting loaders, simulation/replay,
-controllers, methods, baselines, evaluators, harnesses, and exporters, include
-a `Core Domain Model and Shared Interfaces` section before module details.
+When the system has interacting loaders, replay, controllers, methods,
+baselines, evaluators, harnesses, and exporters, include a shared-domain-model
+section before module details.
 
 For each shared type, specify:
 
@@ -247,7 +294,7 @@ For each shared type, specify:
 - consumers
 - raw export mapping when applicable
 
-Use shared domain types to prevent duplicate schemas across loaders, methods,
+Use shared domain types to keep schemas consistent across loaders, methods,
 evaluators, harnesses, and export writers.
 
 ### Methods and Baselines as Replaceable Modules
@@ -262,7 +309,7 @@ For each method or baseline, specify:
   diagnostic baseline, ablation, calibration-only method, or oracle
 - module path
 - config path
-- registry key when the repository uses one
+- existing registry key, only as an alias when the repository uses one
 - shared interface it implements
 - raw outputs needed for comparison
 - harnesses or experiment stages that use it
@@ -280,7 +327,7 @@ or paper-output derivation, define:
 - unit
 - direction: `higher_is_better` or `lower_is_better`
 - computation procedure or formula
-- numerator and denominator only for ratio metrics
+- numerator and denominator for ratio metrics
 - raw required fields
 - upstream metric dependencies when any
 - derived outputs
@@ -304,8 +351,8 @@ harness, specify:
 
 - purpose and associated paper claim, experiment question, method-selection
   question, or optimization question
-- role, such as development, candidate selection, final validation,
-  diagnostic analysis, regression, or claim calibration
+- role, such as development, candidate selection, final validation, diagnostic
+  analysis, regression, or claim calibration
 - target module or replaceable method area
 - allowed modification scope
 - stable interfaces and frozen variables
@@ -362,7 +409,7 @@ For each test group, specify:
 - harness dependency covered
 
 Tests should use small fixtures or mock data and store debug artifacts under a
-test-specific temporary path, not under paper run-result directories.
+test-specific temporary path, separated from paper run-result directories.
 
 ### Experiment Stages and Commands
 
@@ -379,9 +426,9 @@ For complex experiments, plan staged commands. Typical stages include:
 - method freeze
 - paper-output derivation
 
-Every command should be executable under the stated environment setup and use
-relative paths. The same stage should be reusable across methods, datasets,
-splits, seeds, and configs through command-line parameters or config overrides.
+Every command should use relative paths. The same stage should be reusable
+across methods, datasets, splits, seeds, and configs through command-line
+parameters or config overrides.
 
 ### Method Selection and Freeze Protocol
 
@@ -396,8 +443,8 @@ variants exist, include a method-selection and freeze protocol:
 - how final split contamination is prevented
 
 Paper-facing final evaluation should use a frozen method. Development,
-calibration, and candidate-selection harnesses can inform the method, but final
-validation results should be separated from unrestricted tuning runs.
+calibration, and candidate-selection harnesses can inform the method, while
+final validation results stay separated from unrestricted tuning runs.
 
 ### Raw-First Result Export
 
@@ -431,8 +478,8 @@ For each important export, specify:
 
 Metadata should live at the run root or under `metadata/`. Raw observations
 should live under `raw/`. Derived metrics should live under `metrics/`.
-Counterfactual analyses and attributions should live under `analysis/` unless
-they are direct oracle outputs with explicit provenance.
+Analyses and attributions should live under `analysis/` unless a repository has
+an established raw-oracle provenance convention.
 
 ### Paper Result Derivations
 
@@ -451,153 +498,48 @@ Map each required paper table, figure, or claim to exported artifacts:
 Keep paper-specific plotting and table formatting outside the core experiment
 system.
 
-## Readability and Positive Language Pass
+## Readability Pass
 
 Before writing files, revise for readability:
 
-- Replace abstract global IDs with semantic names or existing repository keys
-  used only as aliases.
-- Replace cross-file references such as `see H2` with natural references such
-  as `the Reference Lifecycle Stress Harness`.
+- Use semantic names as primary anchors for methods, modules, harnesses, tests,
+  exports, and stages.
+- Keep existing short registry keys only as aliases beside semantic names.
+- Replace alias-only cross-references with natural references such as
+  `the Reference Lifecycle Stress Harness`.
 - Use numbered lists only for actual sequence or priority.
 - Make `coding_plan.explain.md` understandable without repeatedly checking
   `coding_plan.md`.
-- Prefer positive constraints: state what to build, where to place it, how to
-  run it, and how to validate it.
-- Convert necessary boundaries into ownership rules, such as `Store derived
-  metrics under metrics/` and `Route code implementation to the downstream
-  coding skill`.
+- Express boundaries as ownership rules, such as `Store derived metrics under
+  metrics/` and `Route code implementation to the downstream coding skill`.
+- Keep local execution troubleshooting details out of both generated artifacts.
 
-## Internal Validation
+## Validation
 
-Run a self-audit before the final response.
+Before the final response, confirm:
 
-### File Contract Check
-
-- `coding_plan.md` exists.
-- `coding_plan.explain.md` exists.
+- `coding_plan.md` exists and is English-only coding plan content.
+- `coding_plan.explain.md` exists and is Chinese-first explanation content.
 - The output directory contains exactly these two files unless the user
   explicitly requested additional artifacts.
-- `coding_plan.md` is English and contains only the coding plan.
-- `coding_plan.explain.md` is Chinese-first and contains only explanation and
-  decision rationale.
 - Both files use project-relative paths.
-
-### Required Content Check
-
-Confirm the plan includes:
-
-- environment and entry-point assumptions
-- core domain model when shared schemas are needed
-- module boundaries
-- replaceable methods and baselines
-- metrics and decision rules
-- harness structure separate from testing structure
-- testing structure with fast functional tests
-- staged CLI or script commands
-- method selection and freeze protocol when methods are candidates
-- raw-first export contract
-- paper-output derivation map
-- implementation order
-- acceptance criteria
-- assumptions and open coding questions
-
-### Harness Quality Check
-
-For every harness, confirm:
-
-- the name states the purpose
-- it maps to a paper claim, experiment objective, method-selection question, or
-  module-optimization question
-- modification scope is explicit
-- stable inputs, seeds, splits, resource budgets, and metric backends are
-  declared
-- command examples are relative and reusable
-- raw output fields are parseable
-- metrics and decision rule are concrete or blocked by a named open question
-- development, selection, diagnostic, and final-validation roles are separated
-
-### Testing Quality Check
-
-For every test group, confirm:
-
-- test path is under `tests/`
-- fixture or mock input is small and local
-- command is provided
-- pass/fail criterion is functional, not paper-performance based
-- temporary outputs are separate from paper results
-- critical harness dependencies have corresponding functional tests
-
-### Raw Export Check
-
-Confirm:
-
-- metadata files are at the run root or under `metadata/`
-- direct observations are under `raw/`
-- derived metrics are under `metrics/`
-- analyses are under `analysis/`
-- summaries are under `summary/`
-- paper outputs can be derived from raw and metric artifacts
-- no required table, figure, or claim lacks a source artifact path
-
-### DeepResearch Check
-
-Confirm:
-
 - DeepResearch was run or a fresh lookup artifact was reused.
-- The lookup inspected highly engineered related codebases, benchmark
-  artifacts, or evaluation frameworks.
-- `coding_plan.explain.md` records lookup topic, sources, dates or versions
-  when visible, takeaways, evidence type, affected design choices, confidence,
-  and remaining uncertainty.
-
-### Artifact Read-Back Check
-
-After writing the files, read both Markdown files back with local tools.
-Record:
-
-- file names
-- line counts or word counts
-- required section presence
-- whether the output directory contains exactly the expected files
-
-If read-back fails, fix the path or file write before responding.
-
-### Review Handoff Check
-
-If the user, reviewer, or evaluator says they cannot access local files, the
-sandbox cannot read artifacts, MCP resources do not expose the output path, or
-they ask to paste the artifacts, include the full contents of both files in the
-response under clear path headings and fenced Markdown blocks.
-
-Treat this accessibility signal as sticky within the same conversation. If any
-prior feedback in the thread mentions a local-read failure, sandbox read
-failure, missing MCP resource, unavailable artifact, or a request to paste the
-two files, then the next successful generation or revision of `coding_plan.md`
-and `coding_plan.explain.md` should include a review handoff in the final
-response. The handoff should paste both complete files after the concise
-validation summary, even when the newest user request only asks to regenerate
-the artifacts.
-
-Use this shape:
-
-````markdown
-## output/.../coding_plan.md
-
-```markdown
-<full coding_plan.md content>
-```
-
-## output/.../coding_plan.explain.md
-
-```markdown
-<full coding_plan.explain.md content>
-```
-````
-
-When artifact contents are not available in the current session, ask for the
-exact missing text and withhold concrete quality claims until the contents are
-available.
+- The plan includes environment assumptions, semantic module boundaries,
+  replaceable methods and baselines, metrics and decision rules, harness
+  structure, testing structure, staged commands, method freeze protocol when
+  needed, raw-first exports, paper-output derivations, implementation order,
+  acceptance criteria, and open coding questions.
+- Every harness has a semantic name, paper-goal mapping, modification scope,
+  stable inputs, relative command, parseable raw outputs, metric rule, and
+  relationship to other harnesses.
+- Every test group has a path under `tests/`, small fixtures, a command,
+  functional pass/fail criteria, and temporary outputs separated from paper
+  results.
+- Paper outputs can be derived from raw and metric artifacts without rerunning
+  experiments.
+- For `output/evolve-*` outputs or sticky artifact-access feedback, the final
+  response includes a `Review Handoff` section with both complete read-back
+  files under their relative path headings.
 
 ## Final Response
 
@@ -608,7 +550,9 @@ After writing and validating the files, summarize:
 - high-blocking open questions
 - validation performed, including read-back result
 
-When the current request or any prior feedback in the conversation says the
-reviewer could not read local artifacts, paste the two artifact contents or
-request them before making concrete quality claims. This applies to the next
-generation run as well as to explicit review or evaluation requests.
+For `output/evolve-*` outputs or when artifact access feedback requests pasted
+contents, add a `Review Handoff` heading after the concise summary and paste
+the complete read-back contents of both files using the five-backtick handoff
+format from `Artifact Delivery`. A final response that only reports paths,
+line counts, validation status, or partial excerpts is incomplete for those
+cases.

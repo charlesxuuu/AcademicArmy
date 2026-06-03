@@ -231,6 +231,12 @@ Allowed resolutions: <short strategy-level alternatives>.
 
 ## Chinese Explanation Schema
 
+`paper_blueprint.explain.md` is a Chinese-language rationale file. Use Chinese
+sentences as the default. Keep English paper titles, venue names, dataset names,
+benchmark names, method names, and technical terms only when those names are
+the conventional field form. Do not mix in English workflow explanation,
+template rationale, or runtime/tooling commentary.
+
 Use this default structure:
 
 ```markdown
@@ -300,13 +306,20 @@ artifact notes, workflow commentary, and unsupported best-result claims should
 be represented only as contribution boundaries, downstream contracts, evidence
 needs, candidate-route conditions, or claim-calibration rules.
 
+Remove sections or phrases that read like user reminders or artifact/runtime
+warnings, including `Artifact cautions`, `Assumptions to validate`, `Do not
+assume reviewers will run code`, access notes, tool-fallback notes, template
+explanations, and process logs. If a reproducibility, artifact, or assumption
+issue affects the paper strategy, express it as an evidence need, deployment
+boundary, open strategic variable, or downstream planning contract.
+
 ## Final Audit
 
 Check:
 
 - exactly two Markdown files exist in the requested output directory
 - `paper_blueprint.md` is English-only, declarative, strategic, and AI-facing
-- `paper_blueprint.explain.md` is Chinese-first, preserves conventional
+- `paper_blueprint.explain.md` is Chinese-language, preserves conventional
   English technical names naturally, is self-contained, and focuses on
   paper-design rationale
 - accumulated user facts appear only in the Chinese explanation
@@ -326,4 +339,7 @@ Check:
 - tactical choices are delegated
 - recent storytelling exemplars and load-bearing sources influence the Chinese
   explanation
-- both files can be read back
+- venue/high-quality-paper analysis is used to justify concrete blueprint
+  decisions rather than dumped as generic background
+- no artifact cautions, workflow explanations, tool-rationale text, access
+  notes, or user to-do reminders remain in either artifact

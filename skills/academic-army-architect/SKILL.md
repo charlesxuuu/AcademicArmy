@@ -8,11 +8,9 @@ description: >-
   existing blueprint, or hand off stable paper strategy to downstream content,
   method, experiment, figure, writing, or review-planning skills. Always create
   exactly two Markdown artifacts: English-only `paper_blueprint.md` and
-  Chinese-first `paper_blueprint.explain.md`. Use
+  Chinese-language `paper_blueprint.explain.md`. Use
   `academic_army_mcp_tools.deepresearch` for live venue, literature,
   high-quality-paper, method, benchmark, and autoresearch-workflow evidence.
-  Include a portable artifact payload by default so evaluator or sandbox
-  sessions can inspect local blueprint files without filesystem access.
 ---
 
 # Academic Army Architect
@@ -41,7 +39,10 @@ Before drafting or auditing output, read
 Write exactly two Markdown files in the requested output directory:
 
 - `paper_blueprint.md`: English-only, AI-facing paper strategy blueprint.
-- `paper_blueprint.explain.md`: Chinese-first validation companion for the user.
+- `paper_blueprint.explain.md`: Chinese-language validation companion for the
+  user. It uses Chinese sentences as the default and preserves conventional
+  English titles, venue names, dataset names, benchmark names, method names,
+  and technical terms when those names are standard in the field.
 
 Keep the output directory limited to these two Markdown artifacts.
 
@@ -51,12 +52,12 @@ requirements, downstream inheritance contracts, and open strategic variables.
 It should be usable by later AI skills without reading the Chinese explanation.
 
 `paper_blueprint.explain.md` helps the user validate why the blueprint is
-reasonable. Use Chinese sentences as the default, while preserving conventional
-English titles, venue names, dataset names, benchmark names, method names, and
-technical terms. Restate each important blueprint decision before explaining its
-rationale. Explain paper-design decisions only: idea positioning, venue fit,
-claim logic, evidence chain, source-backed patterns, candidate-method reasoning,
-and open-variable status.
+reasonable. It records user-specified facts, restates each important blueprint
+decision before explaining its rationale, and explains paper-design decisions
+only: idea positioning, venue fit, claim logic, evidence chain,
+source-backed patterns, candidate-method reasoning, and open-variable status.
+It should not explain the skill workflow, template choices, tool calls,
+artifact access, or runtime environment.
 
 ## Strategic Level
 
@@ -206,7 +207,9 @@ Research should cover:
 - source-backed evaluation patterns affecting the minimum evidence chain
 - autoresearch, paper-writing, literature-review, scientific-discovery,
   workflow-agent, prompt-template, benchmark, and open-source-tool patterns that
-  improve this blueprint as a downstream AI-planning artifact
+  improve this blueprint as a downstream AI-planning artifact. Use these
+  findings to improve the blueprint's role as an inheritable planning object;
+  do not dump generic autoresearch background into either artifact.
 
 For storytelling and writing-style patterns, prefer recent papers from the last
 one to three years. For methods, datasets, benchmarks, baselines, and technical
@@ -256,8 +259,8 @@ blueprint choice it influences.
 3. Shrink candidate open variables using the open-variable policy.
 4. Run `academic_army_mcp_tools.deepresearch`.
 5. Synthesize venue fit, prior-work boundary, storytelling patterns, method
-   families, benchmark expectations, evidence precedents, and autoresearch
-   workflow implications.
+   families, benchmark expectations, evidence precedents, and blueprint-design
+   implications from autoresearch workflow evidence.
 6. Commit to the best-supported thesis, paper goals, contribution strategy,
    one to three claims, novelty boundary, and minimum sufficient evidence chain.
 7. Build a candidate method space when method superiority depends on future
@@ -265,10 +268,8 @@ blueprint choice it influences.
 8. Retain only genuinely unresolved strategic variables.
 9. Draft both Markdown files.
 10. Audit for language separation, strategic level, source support, candidate
-    method routing, open-variable shrinkage, downstream inheritance, and
-    readback.
-11. Confirm exactly two Markdown files exist in the output directory and read
-    both files back.
+    method routing, open-variable shrinkage, and downstream inheritance.
+11. Confirm exactly two Markdown files exist in the output directory.
 
 ## Quality Bar
 
@@ -318,37 +319,18 @@ Keep user-facing explanation at the paper-design layer. Explain why the paper
 strategy is selected; leave skill workflow, tool rationale, template choices,
 and artifact-management details out of the two blueprint files.
 
-## Delivery and Access Fallback
+Before delivery, remove or rewrite user-facing reminders such as `Artifact
+cautions`, `Assumptions to validate`, `Do not assume reviewers will run code`,
+workflow notes, access caveats, or implementation to-do lists. If such content
+is relevant to the paper, express it as an objective design constraint,
+evidence requirement, open strategic variable, claim-calibration rule, or
+downstream planning contract.
 
-Return clickable paths, a short identity summary, unresolved strategic-variable
-names when present, candidate method-space status when present, the readback
-result, and a portable artifact payload.
+## Final Response
 
-Portable payload is the default delivery mode for this skill because these two
-Markdown files are often evaluated by agents that cannot inspect the local
-workspace. Use path-only delivery only when the user explicitly asks for
-path-only or summary-only output.
-
-Treat portable delivery as mandatory when any current or prior request, quoted
-feedback, evaluator note, downstream-agent note, separate sandbox, or local
-shell reports inability to read the files. Access-failure triggers include
-phrases such as `blocked by policy`, `windows sandbox`, `spawn setup refresh`,
-`cannot read`, `file readback failure`, `cannot inspect`, MCP resource absence,
-or requests to paste artifact contents.
-
-When portable delivery is active, append:
-
-1. the artifact-directory file list
-2. the complete contents of `paper_blueprint.md`
-3. the complete contents of `paper_blueprint.explain.md`
-4. readback state: `verified` if local readback succeeded, otherwise
-   `unverified`
-
-When the user asks to revise this skill based on artifact feedback and the
-feedback reports artifact-access failure, complete the skill revision and
-include the portable artifact payload in the same final response. If the caller
-or evaluator explicitly requests skill-implementation context, also include the
-complete revised `SKILL.md`, loaded schema references, and blueprint artifacts.
-
-Portable delivery is response content, not an additional output artifact. Keep
-the artifact directory unchanged.
+Return a concise completion note with the two artifact paths, the paper identity
+summary, unresolved strategic-variable names when present, and candidate
+method-space status when present. Paste artifact contents only when the current
+user explicitly requests pasted contents or when the surrounding task contract
+outside this skill requires it. Do not add any extra files to the artifact
+directory.

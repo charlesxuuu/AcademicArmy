@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Experiment Plan"
   short_description: "Strategic claim-to-evidence experiment plan plus Chinese rationale"
-  default_prompt: "Create an English experiment_plan.md and Chinese experiment_plan.explain.md with $academic-army-experiment-plan. Read the available blueprint, prior artifacts, artifact output directories, metaskill context, and revision feedback first; use academic_army_mcp_tools.deepresearch for live venue and recent-paper experiment patterns; make decisive planning choices when the inputs and research are sufficient."
+  default_prompt: "Create an English experiment_plan.md and Chinese experiment_plan.explain.md with $academic-army-experiment-plan. Use the available blueprint, prior plans or artifacts, metaskill context, existing evidence, and revision feedback; use academic_army_mcp_tools.deepresearch for live venue and recent-paper experiment patterns; make the plan claim-derived rather than template-derived, and make decisive planning choices when the inputs and research are sufficient."
 
 dependencies:
   tools:
