@@ -66,6 +66,12 @@ Ask deepresearch for concise planning lessons, not a literature review. Include:
   experiment-automation workflow lessons when they improve the skill's planning
   behavior or handoff structure
 
+Do not run deepresearch for access/provenance-only reviews that contain no
+artifact-specific defect and do not change experiment choices. In that case,
+first perform local readback and file-contract checks; use deepresearch only if
+substantive planning, venue, baseline, workload, metric, or evidence-style
+choices need to be revised.
+
 For each live-research anchor that changes the plan, record this in
 `experiment_plan.explain.md`:
 
@@ -133,6 +139,13 @@ read them, do not ask the user to paste them and do not change experiments,
 baselines, workloads, or metrics from that access report. If an artifact or
 skill revision is still needed, limit it to provenance, file-contract,
 readback, or missing-context instructions.
+
+Treat "please paste the files because my shell/node/MCP access failed" as a
+complete access-only report unless it also names a concrete defect in the
+artifact contents. Examples include `blocked by policy`, `windows sandbox:
+spawn setup refresh`, failed `Get-Location`, failed directory listing, or failed
+node-based reads. The current agent's successful local readback supersedes the
+other reviewer access failure.
 
 ## What To Extract
 
@@ -486,6 +499,11 @@ When revising an artifact:
   the contract, report that no artifact-content change is implied. Do not revise
   experiment objectives, output schema, filenames, language split, or open
   variables solely from access-only feedback.
+- When the user asks to revise this skill from access-only feedback, revise only
+  the readback, missing-context, or access-gate instructions if they are weak.
+  Do not add new experiment objectives, output files, schema fields, open
+  questions, fallback sections, or defensive artifact warnings to answer a
+  review that never inspected the artifacts.
 - Stop repeated access-only feedback loops. When the same access-only report
   recurs and this agent can read the artifacts, treat it as non-controlling
   after local inspection. Do not keep adding access-handling layers, changing
