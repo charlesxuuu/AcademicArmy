@@ -2,6 +2,7 @@
 论文蓝图主要是给后续AI规划skill读取和继承的，不是主要给人看的；因此蓝图应像一份可实施的论文战略方案，客观描述论文方案、核心信息、目标、约束和开放变量。
 skill应默认承担战略判断责任，但不应伪造实验结论；凡是能由用户已明确内容和deepresearch推出明显最优选择的项目，应直接形成蓝图决策，凡是必须通过实验比较才能判断的方法组合或改进路线，应形成候选方法空间并交给后续实验规划skill收敛，而不是作为用户开放验证项反复询问。
 后续还会运行论文内容编排规划、实验规划、绘图规划等更具体的skill；本skill只负责明确能支撑后续规划的核心论文信息，不应提前细化section段落、实验表、figure layout、实现步骤或战术级选择。
+paper blueprint skill只定义论文蓝图生成这一项任务的领域逻辑；工具权限、沙盒限制、文件读取方式、MCP故障、命令fallback等运行环境问题属于上层agent/tooling规范，不应写进skill，也不应出现在任何输出文件中。
 
 skill应明确使用来自`academic_army_mcp_tools`的deepresearch工具；这个工具本质是把prompt通过OpenAI API转发给带web search能力的GPT-5.5，因此目标venue、高引论文、近期写作风格、autoresearch工具现状等动态信息应现场检索，不必硬编码进skill。
 

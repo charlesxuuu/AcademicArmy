@@ -1,5 +1,6 @@
 这个skill属于一套基于Codex的autoresearch工具链，当前要编写的是为论文制定实验方案的`academic-army-experiment-plan` skill。
 skill应生成战略层面的experiment plan，而不是直接执行实验、写代码、跑实验、生成最终图表或替代后续更具体的实验执行skill。
+skill只定义experiment plan生成所需的学术任务逻辑、文件输出边界、语言要求、解释要求、deepresearch学术调研要求和质量标准；文件访问、工具选择、沙盒权限、命令执行、fallback策略等运行机制由外层agent环境负责，不写入skill正文，也不进入`experiment_plan.md`或`experiment_plan.explain.md`。
 
 编写skill时应使用`academic_army_mcp_tools.deepresearch`进行调研；该工具本质是把prompt通过OpenAI API转发给带web search能力的GPT-5.5，因此现场能搜索到的信息不需要硬编码保存在skill里。
 deepresearch调研不应只限于相关autoresearch工具，也可以包括autoresearch论文、open-source code、paper-writing agent、scientific discovery agent、experiment automation workflow、benchmark、prompt template和其他任何对skill设计有启发的资料。

@@ -28,6 +28,7 @@ testing结构可以用功能目标命名，例如`Data Loading Tests`、`Metric 
 如果某个编号只是在生成过程中方便模型组织思路，但不提升最终读者理解，最终输出时应改写为标题、bullet或自然段落。
 skill应在输出前检查是否存在过度编号、抽象编号引用、跨文件编号依赖或需要反复跳转才能理解的表达，并将其改写为自然标题和语义化名称。
 核心原则是：编号可以帮助表达顺序，但不应成为理解`coding plan`的主要机制；`coding_plan.md`和`coding_plan.explain.md`都应靠清晰标题、语义化名称和自然引用来保持可读性。
+coding plan skill只沉淀“如何把论文蓝图和实验计划转化为代码规划”的领域方法；工具调用、文件访问、沙盒权限、fallback路径和运行故障恢复属于外层runtime/orchestrator，不进入skill，也不进入`coding_plan.md`或`coding_plan.explain.md`。
 
 已有的deepresearch MCP工具来自`academic_army_mcp_tools`，本质是把prompt通过OpenAI API转发给带web search能力的GPT-5.5。
 可以现场搜索得到的信息不需要硬编码保存在skill里。
