@@ -28,6 +28,23 @@ Produce exactly two Markdown files in the requested output directory:
 This skill writes planning artifacts only. Code implementation, plotting, paper
 prose, and final figure/table formatting belong to later skills.
 
+## Review Feedback Intake
+
+When revising this skill from artifact feedback, distinguish between observed
+artifact defects and artifact-access feedback.
+
+If the reviewer provides concrete file contents or specific defects, translate
+those defects into stronger generation, readability, validation, or delivery
+rules. If the reviewer says the artifacts could not be inspected because of a
+read failure, sandbox issue, missing mount, or unavailable files, treat that as
+delivery feedback: strengthen the read-back handoff and artifact self-audit
+rules, but do not invent artifact-specific failures.
+
+For future generated artifacts, make the response self-contained whenever
+artifact access has failed in the thread. The generated files stay focused on
+the coding plan and Chinese rationale; access status and review handoff details
+belong in the final response.
+
 ## Artifact Delivery
 
 Always write both files to the requested output directory and read them back
@@ -43,12 +60,23 @@ Also include the same complete handoff when the user, reviewer, or evaluator
 says the artifacts cannot be inspected locally, or when the user asks to paste,
 inline, or include the artifact contents.
 
+A reviewer-side read failure, sandbox failure, missing artifact mount, or
+message such as "I cannot evaluate the artifact without seeing the files"
+counts as artifact-access feedback even when local write and read-back
+succeeded. In that situation, make the next successful response self-contained:
+paste the complete read-back contents of both files and do not rely on path
+visibility in the review environment.
+
 Treat artifact-access feedback as sticky for the next successful generation in
 the same thread. If prior feedback says the reviewer could not inspect
 `coding_plan.md` or `coding_plan.explain.md`, the next final response for this
 skill must paste both complete files even when local read-back succeeds.
 If artifact-access feedback recurs, keep the same rule and make the handoff
-more prominent rather than adding local troubleshooting notes to the artifacts.
+more prominent and self-contained. Do not ask the reviewer to paste the files
+back when this skill has just generated them; paste the complete read-back
+handoff yourself. Keep access-status notes in the final response only; the
+generated `coding_plan.md` and `coding_plan.explain.md` should stay focused on
+the coding plan and its rationale.
 
 Use five-backtick fences for full-file handoffs so embedded command fences
 remain readable:
@@ -81,6 +109,17 @@ the reviewer cannot access the filesystem at all.
 
 Write both files so a reader can understand them through semantic names and
 local context rather than a global numbering system.
+
+Use positive, task-facing language. State what the coding plan includes, which
+module owns each concern, what each harness evaluates, and how artifacts flow
+to later skills. Necessary boundaries should read as ownership rules such as
+`Code implementation belongs to the downstream coding skill` or `Plotting
+consumes exported artifacts later`, rather than long defensive lists.
+
+Keep the skill and generated artifacts concrete rather than defensive. Prefer
+actionable statements like `Store raw frame outcomes in raw/frame_outcomes.jsonl`
+and `Run CLI smoke tests against tiny fixtures` over repeated warnings about
+what the plan should avoid. Reserve negative checks for the final self-audit.
 
 Use:
 
@@ -200,7 +239,7 @@ skill. Include the sections that apply to the project:
 
 - scope and working-directory assumptions
 - inputs read and planning assumptions
-- environment setup and executable entry points
+- execution assumptions, dependencies, and reproducible entry points
 - repository alignment and implementation root
 - core domain model and shared interfaces
 - package layout and semantic module boundaries
@@ -512,7 +551,42 @@ Before writing files, revise for readability:
   `coding_plan.md`.
 - Express boundaries as ownership rules, such as `Store derived metrics under
   metrics/` and `Route code implementation to the downstream coding skill`.
-- Keep local execution troubleshooting details out of both generated artifacts.
+- Keep runtime, sandbox, tool-call, fallback-path, and local execution
+  troubleshooting details out of both generated artifacts. If those details
+  affect delivery, report them in the final response handoff status instead.
+
+## Artifact Quality Self-Audit
+
+Before writing files and again after read-back, check the artifacts against
+these concrete failure modes:
+
+- `coding_plan.md` contains only the English coding plan: no Chinese
+  explanation, runtime/tooling notes, implementation code, review chatter, or
+  meta-skill commentary.
+- `coding_plan.explain.md` is a Chinese-first explanation in natural sentences,
+  not a template index, numbered lookup table, or field-by-field restatement of
+  `coding_plan.md`. Each major explanation should briefly summarize the
+  corresponding plan choice before explaining why that choice supports the
+  blueprint and experiment plan.
+- Abstract IDs such as `C1`, `B2`, `H3`, or `T4` are not the primary way to
+  understand the plan. If existing registry aliases are useful, place them
+  beside semantic names and use the semantic names for cross-references.
+- Harnesses are research-facing evaluation loops with explicit goals, inputs,
+  stable variables, commands, metrics, raw outputs, and comparison logic.
+- Harness names, test names, method names, module names, and output directory
+  names are semantic enough to stand alone without a separate ID legend.
+- Testing remains separate from harness structure and focuses on functional
+  correctness of loaders, interfaces, configs, metrics, exports, and CLI
+  entry points.
+- Candidate methods and baselines map to replaceable modules or policy
+  boundaries, and shared pipeline code is clearly owned elsewhere.
+- Result exports are raw and parseable first; paper-figure/table derivations
+  are described as downstream analysis artifacts rather than core-system
+  logic.
+- Commands, module names, config paths, output paths, and acceptance criteria
+  are specific enough for the downstream coding skill to implement.
+- The files are project-specific and avoid repeating the skill rules as
+  defensive boilerplate.
 
 ## Validation
 
@@ -537,6 +611,9 @@ Before the final response, confirm:
   results.
 - Paper outputs can be derived from raw and metric artifacts without rerunning
   experiments.
+- The Artifact Quality Self-Audit passes, especially the separation between
+  coding plan content, Chinese explanation, harnesses, tests, and result
+  exports.
 - For `output/evolve-*` outputs or sticky artifact-access feedback, the final
   response includes a `Review Handoff` section with both complete read-back
   files under their relative path headings.
