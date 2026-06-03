@@ -1,487 +1,317 @@
 ---
 name: academic-army-experiment-plan
 description: >-
-  Create a concise strategic academic experiment plan from a research idea,
-  paper_blueprint.md, paper claims, storytelling blueprint, target venue,
-  existing notes/results, or revision feedback. Produces an English,
-  AI-facing experiment_plan.md organized around claim-to-evidence objectives
-  and a user-language experiment_plan_explanation.LANG.md that explains the
-  causal reasoning behind the plan. Uses academic_army_mcp_tools.deepresearch
-  for current venue, baseline, dataset, metric, benchmark, artifact,
-  motivation-pattern, and reviewer-expectation research when those facts affect
-  the plan.
+  Create a strategic, evidence-driven academic experiment plan from a research
+  idea, paper_blueprint.md, paper claims, storytelling blueprint, target venue,
+  existing results, prior plans, or revision feedback. Produces exactly two
+  Markdown files: an English AI-facing experiment_plan.md and a Chinese
+  human-facing experiment_plan.explain.md. Uses
+  academic_army_mcp_tools.deepresearch for live target-venue, influential-paper,
+  baseline, dataset/workload, metric, artifact, autoresearch, and reviewer
+  expectation research before making claim-to-evidence planning choices.
 ---
 
 # Academic Army Experiment Plan
 
-## Purpose
+## Contract
 
-Create a strategic experiment plan that lets downstream AI skills decide how to
-run, implement, plot, and write experiments without overfitting to premature
-execution details.
+Create a strategic experiment plan for an academic paper. The plan is for later
+AI skills that will implement code, run experiments, plan figures, and write
+paper sections. This skill designs the evidence strategy; it does not execute
+experiments, write code, fabricate results, prescribe shell commands, or produce
+final figures.
 
-The main plan is not a runbook. It states what evidence the paper needs, why
-that evidence exists, what claims it supports, which current protocols shape the
-choice, and how objectives depend on each other.
-
-## Required Outputs
-
-Create exactly two required Markdown files:
+Create exactly two Markdown files in the requested output directory:
 
 1. `experiment_plan.md`
    - English.
    - AI-facing.
-   - Contains only the strategic experiment specification.
-   - Uses compact, stable fields for downstream skills.
+   - Contains only the strategic experiment plan.
+   - Uses stable experiment names, registries, and fields that downstream skills
+     can inherit.
 
-2. `experiment_plan_explanation.<lang>.md`
-   - Uses the user's conversation language for headings, table titles, field
-     labels, and body text.
-   - Human-facing confirmation companion.
-   - Explains how the plan follows from user inputs, the paper blueprint,
-     existing evidence, live research, and the paper's core thesis.
+2. `experiment_plan.explain.md`
+   - Chinese.
+   - Human-facing.
+   - Explains why the experiment portfolio is reasonable for the paper.
+   - Starts with the concrete inputs and artifacts actually read.
+   - Explains choices from the paper thesis, blueprint, target venue, live
+     research, existing evidence, and storytelling needs.
 
-Create an optional `experiment_plan_execution_contract.md` only when the user
-explicitly asks for execution contracts or when an existing workflow artifact
-already requires one. Put metric implementation handles, logging schemas,
-output file paths, manifest fields, owners, and concrete artifact paths there,
-not in `experiment_plan.md`.
+Do not create `experiment_plan_explanation.<lang>.md`. Do not put provenance,
+source summaries, user-facing review notes, or skill-internal process comments
+inside `experiment_plan.md`.
 
-The explanation file should also make the run reviewable. At the start of the
-confirmation ledger, record the concrete local or supplied inputs that were
-actually read, including paper blueprint paths, prior plan/explanation files,
-artifact feedback, and live-research anchors. This provenance belongs only in
-the explanation file; never place it in `experiment_plan.md`.
+## Required Research
 
-## Research Tool
-
-Use `academic_army_mcp_tools.deepresearch` when venue-, field-, or date-sensitive
-facts affect the plan.
+Use `academic_army_mcp_tools.deepresearch` for every nontrivial plan or revision
+after local paper/artifact context is available.
 
 - Server: `academic_army_mcp_tools`
 - Tool: `deepresearch`
-- Canonical Codex MCP name when exposed:
+- Canonical MCP name when exposed:
   `mcp__academic_army_mcp_tools__deepresearch`
 
-Use live research for:
+Ask deepresearch for concise planning lessons, not a literature review. Include:
 
-- recent target-venue and adjacent-venue experiment patterns
-- current baselines, datasets, traces, metrics, benchmarks, and protocols
-- reviewer expectations for artifacts, scale, user/perceptual evidence,
-  deployment realism, and reproducibility
-- motivation or design-insight experiment patterns that make a core intuition
+- current or recent target-venue experiment expectations
+- high-impact or high-citation papers from the target venue and adjacent top
+  venues such as SIGGRAPH, CVPR, SIGCOMM, NSDI, INFOCOM, MMSys, CHI, NeurIPS,
+  ICML, ICLR, ACL, or domain-specific venues when relevant
+- recent methods, datasets, workloads, baselines, metrics, benchmarks, artifacts,
+  and result-presentation patterns in the paper's subfield
+- motivation or design-insight experiment patterns that make the core intuition
   visible before full-system evaluation
+- autoresearch, scientific-discovery, paper-writing-agent, benchmark, and
+  experiment-automation workflow lessons when they improve the skill's planning
+  behavior or handoff structure
 
-The plan should contain only the resulting planning commitments and stable IDs.
-Put source summaries, provenance, and confidence in the explanation file.
-
-## Source Confidence Rule
-
-For every live-research anchor that shapes the plan, record this in the
-explanation file:
+For each live-research anchor that changes the plan, record this in
+`experiment_plan.explain.md`:
 
 - `source`: title and link
-- `date`: publication date, submission date, or metadata date visible in the
-  source
+- `date`: visible publication, submission, event, metadata, or page date
 - `venue_status`: one of `official_proceedings`, `arxiv_only`,
   `project_page_claim`, `secondary_metadata`, or `classic_background`
-- `why_it_affects_this_plan`: the planning decision it changes
+- `影响到的规划决定`: the baseline, metric, workload, experiment placement,
+  evidence style, artifact expectation, or claim boundary it changed
 
-Use `official_proceedings` when the venue is confirmed by conference,
-proceedings, publisher, or DOI metadata. Use `arxiv_only` when the visible
-metadata is an arXiv record or arXiv paper. Use `project_page_claim` when a
-venue or artifact claim appears only on a project, lab, or author page. Use
-`secondary_metadata` for aggregator or institutional metadata pages that are not
-primary proceedings records. Use `classic_background` for older foundational
-baselines or precedent papers that explain evaluation lineage but do not
-establish current protocol freshness.
+Use `official_proceedings` only when the venue is confirmed by conference,
+proceedings, publisher, DOI metadata, or official venue pages. Use
+`arxiv_only` for arXiv records. Use `project_page_claim` for author/lab/project
+claims not confirmed elsewhere. Use `secondary_metadata` for aggregators or
+institutional pages. Use `classic_background` for older foundational precedents.
 
-Prefer official proceedings, arXiv records, DOI/publisher pages, conference
-pages, and author-hosted PDFs. Secondary metadata may support background
-context, but it should not be used as the highest-confidence venue status when a
-primary source is available. Keep current 3DGS/volumetric evidence anchors
-separate from classic ABR or networking background anchors in the explanation
-file.
+## Context Acquisition
 
-## Inputs to Extract
-
-Read `paper_blueprint.md` first when present. Extract:
-
-- top-level paper goal
-- central research bet
-- main claims and novelty boundary
-- strategic evidence posture
-- storytelling and communication posture
-- motivation points and method insights
-- experiment-planning interface, if present
-
-Also extract or infer:
-
-- target venue, track, and submission context
-- field and subfield
-- target system, method, dataset, benchmark, or theoretical object
-- available resources: code, data, models, compute, hardware, traces,
-  deployment access, annotation access, or user-study access
-- known constraints: compute, time, privacy, inaccessible data, required public
-  benchmarks, mandatory baselines, unavailable baselines
-- existing notes, drafts, preliminary results, prior plans, prior explanation
-  files, or revision feedback
-- user conversation language and output directory
-
-## Context Acquisition and Missing-Input Handling
-
-Before planning or revising, actively gather the required local context instead
-of assuming it is unavailable.
+Read local and supplied context before planning.
 
 1. Read `paper_blueprint.md` first when present.
-2. Read prior `experiment_plan.md`, prior explanation files, revision feedback,
-   and current artifact directories when the task is a revision or evolution.
-   If the artifact path is a directory such as
-   `output/evolve-academic-army-experiment-plan`, enumerate it and read every
-   Markdown file under it before judging the produced artifact.
-3. When invoked through a metaskill/evolution workflow, read the relevant
-   metaskill or runner-task file if its path is provided or obvious from the
-   task.
-4. Use MCP fallback tools when local shell/file access is unavailable and a
-   suitable repository-file MCP resource is available.
+2. Read prior `experiment_plan.md`, prior `experiment_plan.explain.md`,
+   previous explanation variants, preliminary results, revision feedback, and
+   current artifact directories when the task is a revision or evolution.
+3. If the target artifact path is a directory, enumerate it and read every
+   Markdown file under it before judging or revising the produced artifact.
+4. When invoked through a metaskill or runner-task workflow, read the relevant
+   metaskill, task file, or pasted design goals when available.
+5. Use MCP resource fallbacks only when local shell/file access is unavailable
+   and a suitable repository-file MCP resource exists.
 
-If a required input cannot be read after the available local and MCP paths have
-been tried, stop before producing or revising the plan and ask the user to paste
-the missing contents. Name the exact missing files or directories. Do not
-generate placeholder plans, simulated reviews, or broad generic advice from
-memory when the missing input controls the paper thesis, objective structure,
-or artifact revision.
+Treat access failures as provenance facts, not as evidence about the plan. A
+shell, MCP, permission, sandbox, or path error means the contents could not be
+read through that channel; it does not mean the artifact is absent or defective.
+Retry through the available local channels before asking the user to paste
+anything.
 
-Treat local-access failures such as shell spawn/setup errors, empty MCP
-resource listings, missing repository templates, or cancelled repository
-fallbacks as evidence that the artifact contents are unavailable in that run.
-Live research and `deepresearch` can supply field knowledge, but they cannot
-replace missing local files such as a metaskill, blueprint, prior plan, or
-artifact directory.
+Ask for pasted contents only when all are true:
 
-For repeated access-failure feedback, do not keep cycling through the same
-attempted reads or produce a new non-review. Give a concise stop response with:
+- the required local contents cannot be read after available local and MCP paths
+  have been tried
+- the missing contents are indispensable to the thesis, revision, or artifact
+  judgment
+- a defensible plan or revision cannot be inferred from already available
+  context
+- the request names the smallest necessary files or excerpts
 
-- `missing_required_contents`: exact file paths and directories needed
-- `attempts_already_made`: local shell, artifact directory listing, MCP
-  resources/templates, repository MCP fallback, or other attempted channels
-- `why_no_revision_can_be_inferred`: the missing contents control artifact
-  language, content gaps, redundancy checks, or skill optimization decisions
-- `paste_bundle_request`: a copy-ready request for the metaskill text and all
-  Markdown files under the named artifact output directory
+Do not use live research as a substitute for unavailable paper blueprints, prior
+artifacts, metaskill text, or revision artifacts. Use live research to improve
+methodology, baselines, metrics, and evidence style after the project-specific
+context has been acquired or explicitly bounded.
 
-If feedback only says the reviewer lacked access to local files, treat that as
-an access/provenance issue rather than a substantive experiment-plan critique.
-Resolve it by reading the named files yourself when possible; otherwise ask for
-their contents. Do not change objectives, baselines, workloads, or metrics based
-solely on a missing-context report.
+For repeated access failures, return a concise structured request:
 
-## Confirmation-State Model
+- `missing_required_contents`: exact file paths and directories
+- `attempts_already_made`: shell, artifact listing, MCP resources/templates, or
+  other attempted channels
+- `why_no_revision_can_be_inferred`: which missing contents control the plan
+- `paste_bundle_request`: copy-ready request for the missing Markdown files and
+  metaskill text
 
-Before writing, build or update a confirmation ledger in the explanation file.
-Classify candidate planning items as:
+If feedback only says another reviewer could not inspect local files, treat it
+as access/provenance feedback. Read the files yourself when possible. If you can
+read them, do not ask the user to paste them and do not change experiments,
+baselines, workloads, or metrics from that access report. If an artifact or
+skill revision is still needed, limit it to provenance, file-contract,
+readback, or missing-context instructions.
 
-- `resolved_by_user_instruction`
-- `resolved_by_paper_blueprint`
-- `resolved_by_existing_evidence`
-- `resolved_by_live_research`
-- `downstream_execution_detail`
-- `remaining_open_planning_item`
-- `non_controlling_ambiguity`
+## What To Extract
 
-A fact resolved by the user, blueprint, existing evidence, or live research
-becomes a planning commitment. A downstream execution detail is omitted from the
-main plan unless it changes the strategic objective. A remaining open planning
-item appears only in the explanation file and only when it affects objective
-design, story placement, required resources, or claim coverage.
+From the paper blueprint or supplied context, extract:
 
-As revisions add confirmed facts, retire matching open items rather than
-restating them.
+- paper goal, title, field, subfield, and target venue
+- central research bet and novelty boundary
+- main claims and expected reviewer concerns
+- storytelling posture: motivation, method insight, main evidence, claim
+  boundary, and reader journey
+- required or preferred datasets, workloads, baselines, metrics, hardware,
+  traces, code, artifact, or deployment access
+- known constraints: compute, privacy, data access, unavailable baselines,
+  human-subject constraints, deadline, target track, or reproducibility needs
+- existing evidence: preliminary numbers, pilot studies, prior figures, logs,
+  notes, old experiment plans, reviews, rebuttal feedback, or artifact feedback
 
-For revision tasks, add a compact `artifact_feedback_consumed` entry in the
-ledger. Separate:
+Infer missing nonblocking details from the blueprint, venue norms, live research,
+and paper goals. Ask only when the missing fact blocks a defensible plan.
 
-- substantive feedback that changes the plan
-- access/provenance feedback that only changes how inputs are documented
-- non-controlling feedback that does not affect the experiment strategy
+## Decision Sufficiency Policy
 
-This prevents "could not inspect the artifact" messages from being converted
-into artificial open experiment questions.
+Make goal-oriented choices. Do not transfer obvious decisions to the user.
+
+When user input, the blueprint, existing evidence, and deepresearch make one
+choice clearly better for the paper, write that choice into `experiment_plan.md`
+and explain the reasoning in Chinese in `experiment_plan.explain.md`.
+
+Keep open validation items only when all are true:
+
+- the information cannot be inferred reliably from current inputs or live
+  research
+- the choice materially changes experiment objectives, claim coverage, workload
+  scale, baseline fairness, ethics, or story placement
+- downstream skills cannot proceed sensibly without inheriting the uncertainty
+
+Do not create broad lists of "questions to validate". Represent nonblocking
+unknowns as assumptions, dependencies, optional claim-expansion modules, or
+handoff notes. As user-confirmed content and research accumulate, open items
+should shrink.
 
 ## Strategic Plan Boundary
 
 `experiment_plan.md` should include:
 
 - experimental thesis, primary comparison, and operating conditions
+- venue/storytelling evidence posture
 - claim-to-evidence map
-- workload registry
+- workload or dataset registry
 - metric registry
 - baseline registry
-- core objective definitions
-- optional claim-expansion objective definitions when they affect scope
+- experiment objectives organized by evidence role
+- ablation, sensitivity, robustness, and claim-boundary objectives when needed
+- optional claim-expansion modules for broader scope
+- main-paper versus supplemental presentation intent at a strategic level
 - objective dependency graph
 
 `experiment_plan.md` should not include:
 
-- source prose or literature-review notes
-- confirmed-input ledger
-- user-review guidance
+- source summaries or literature review prose
+- confirmed-input ledger or user-facing explanation
 - implementation owners
-- concrete output file paths
-- logging schemas
-- manifest fields
-- detailed metric implementation contracts
-- repeated metric or baseline lists inside every objective
-- ID-only summaries that duplicate registries
+- shell commands, scripts, hyperparameter grids, exact run matrices, or code
+- concrete output paths, logging schemas, manifest fields, or final figure files
+- fabricated numeric results or claims that experiments have succeeded
+- user reminders, disclaimers, or sections such as `Assumptions to validate`,
+  `Artifact cautions`, or `Do not assume reviewers will run code`
 
-Represent execution-level detail with logical handles. Let downstream skills
-choose concrete filenames, logs, schemas, owners, and implementation layouts.
+Use logical handles for outputs, such as `substitution_surface`,
+`main_qoe_table`, or `stress_regime_matrix`. Later skills choose concrete file
+names, logging formats, implementation details, and plotting layouts.
 
-## Positive Evidence Language
+## Objective Design
 
-Write the plan as a positive evidence specification. The purpose is to make the
-paper's intuition, mechanism, and claims visible and credible.
+Start from paper claims, not a generic evaluation checklist. For each experiment
+objective, decide:
 
-Prefer fields such as:
+- which claim it supports
+- which reviewer concern it answers
+- where it belongs in the paper story: motivation, method insight, main
+  evaluation, mechanism/ablation, robustness, generalization, contribution
+  boundary, human/perceptual evidence, deployment realism, cost/scalability, or
+  reproducibility
+- what evidence output downstream plotting/writing should produce
+- how readers should interpret the result
+- which workloads, metrics, baselines, controlled factors, and comparators are
+  necessary
+- which choices are strategic and which belong to execution skills
 
-- `Evidence scope`
-- `Evidence role`
-- `Handled by later skills`
-- `Claim calibration output`
-- `Expected evidence outputs`
-- `Target evidence pattern`
+Motivation and design-insight experiments should make the core intuition visible
+early. Use them to show an existing-system defect or a core-mechanism feasibility
+signal before full-system evaluation. Their planned result should be immediately
+readable: a curve separation, small table, heatmap, qualitative grid, timeline,
+breakdown, representative case, or before/after panel.
 
-Avoid defensive or user-facing planning language in `experiment_plan.md`.
-Replace negative boundary structures with evidential roles:
+Merge objectives that do not have a distinct claim, story role, reader takeaway,
+or primary evidence output. Represent secondary needs as metric slices,
+reporting views, or shared protocols.
 
-```markdown
-- Evidence scope:
-  - Measures per-state marginal utility under controlled candidate states.
-- Evidence role:
-  - Establishes when references are useful online state.
-- Handled by later skills:
-  - Concrete logging schema.
-  - Exact figure filenames.
-```
+## Registries
 
-Use this evidence-role field pair instead of a negative boundary field in the
-main plan.
+Define shared registries once and reference IDs in objectives.
 
-Use positive limitation language. Prefer `limitation regime`, `unsupported
-regime`, `claim boundary`, `stress sensitivity`, and `adaptation attribution`.
-Use `failure` or `failure-mode attribution` only when the objective is explicitly
-diagnostic and the paper needs a failure diagnosis artifact.
+### Workload or Dataset Registry
 
-## Goal-Oriented Objective Design
+Separate:
 
-Start every objective from a paper claim, not from a generic evaluation
-checklist.
+- `Required workloads/datasets`: committed by user input, blueprint, existing
+  evidence, or live-research-selected venue protocol.
+- `Scope-extension candidates`: broaden scene, data, benchmark, substrate,
+  device, deployment, user-study, or contention claims.
 
-For each candidate objective, decide:
-
-- Which claim does it support?
-- What story role does it serve?
-- What evidence output should downstream plotting or writing produce?
-- What target evidence pattern should the output make visible?
-- What claim-calibration signals should it export?
-- Which registry metrics, registry baselines, workloads, controlled factors,
-  and comparators are necessary?
-- Which details are strategic, and which belong to later execution skills?
-
-Valid story roles include:
-
-- motivation/problem definition
-- method design insight
-- main end-to-end effectiveness
-- mechanism/ablation
-- robustness/stress
-- generalization
-- contribution boundary
-- human/perceptual evidence
-- deployment realism
-- cost/scalability/reproducibility protocol
-
-Merge objectives that do not support an independent claim, story role, or
-primary evidence output. Represent secondary needs as reporting views, metric
-slices, or shared protocol entries.
-
-Separate objectives into:
-
-- `core_objectives`: required evidence for the current paper thesis and claim
-  scope.
-- `optional_claim_expansion_objectives`: conditional scope-calibration modules
-  that expand supported scene, workload, substrate, deployment, or contention
-  claims.
-
-Use `optional_claim_expansion_objectives` for workloads such as new dynamic
-scene classes, mobile-device profiles, multi-client contention, deployment
-profiles, or extra dataset families when they broaden the claim rather than
-support the core thesis. Mark their trigger as `claim_expansion_module` and
-state which claim scope they would expand.
-
-For substrate-boundary or adaptation-attribution objectives, use the story role
-`mechanism/ablation; contribution boundary`. Put generalization,
-cost/scalability, and deployment scope into optional claim-expansion modules
-unless those claims are part of the confirmed core thesis.
-
-## Motivation and Design-Insight Experiments
-
-A motivation or design-insight objective makes a core intuition, current-system
-defect, or method mechanism directly observable before full-system evaluation.
-
-Use two main forms:
-
-- `Existing-system defect demonstration`: show a structural weakness in current
-  systems, metrics, schedulers, pipelines, or protocols.
-- `Core-mechanism feasibility demonstration`: show that the proposed mechanism
-  captures the important structure in a minimal faithful setting.
-
-Place these objectives in the Introduction, Motivation, Method opening, or
-Method design justification. Their expected evidence output should be readable
-at a glance: figure, compact table, case study, trace timeline, qualitative
-grid, heatmap, breakdown, curve separation, before/after panel, or diagnostic
-example.
-
-## Registry Rules
-
-Define shared registries once, then reference IDs in objectives.
+Name workload classes or dataset families unless exact datasets are confirmed or
+venue norms make a dataset clearly required. Do not use fallback phrases like
+`when available` in the main plan; place non-required items under scope-extension
+candidates or open items in the explanation.
 
 ### Metric Registry
 
-Use compact metric entries:
+Group metrics by evidence role, for example:
 
-```markdown
-- `metric_id`: <what it measures; unit/range if strategically important;
-  aggregation policy if it changes interpretation>
-```
-
-Group metrics by role:
-
-- quality/perceptual quality
+- primary claim quality/effectiveness
 - latency/deadline/responsiveness
-- resource/cost
-- waste/inefficiency
-- control/action behavior
+- cost/resource/efficiency
+- robustness/stress/generalization
+- mechanism/control/action behavior
 - statistical reporting
-- user/perceptual study signal, when relevant
+- human/perceptual signal, when relevant
 
-Objectives reference metrics as:
-
-```markdown
-- Metrics: [`qoe_score`, `deadline_miss_ratio`, `bandwidth_cost`]
-```
-
-Do not repeat metric definitions inside objectives.
+Objectives reference metric IDs only. Do not repeat definitions inside every
+objective.
 
 ### Baseline Registry
 
-Use compact baseline entries:
+Use compact entries:
 
 ```markdown
 - `baseline_id`:
   - Burden: minimum | diagnostic | optional_expensive
+  - Baseline role: canonical | recent_strong | simple | ablated_self | status_quo | oracle | deployment
   - Comparison purpose:
   - Fairness principle:
 ```
 
-Keep observation access, action space, resource budget, and implementation owner
-out of the main plan unless they change the strategic comparison. Put those
-details in the optional execution contract when needed.
+Use baseline ladders:
 
-Objectives own baseline usage through their `Comparators` field. The baseline
-registry defines each baseline family once and does not list objective usage.
+- canonical baselines expected by reviewers
+- recent strong baselines from live research
+- simple baselines that test whether complexity is justified
+- ablated self-baselines that isolate mechanism
+- status-quo or deployment baselines for systems papers
+- oracle or upper-bound baselines only when they clarify headroom
 
-Apply the baseline burden rule:
+Objectives own baseline usage through their `Comparators` field. The registry
+defines each baseline once.
 
-- `minimum`: small comparator set required to substantiate the core claim.
-- `diagnostic`: comparator used to isolate mechanism, attribution, or claim
-  boundary.
-- `optional_expensive`: costly, hard-to-implement, or broad-scope comparator
-  such as RL policies, complex oracle bounds, or full recent-system ports.
+## Positive Evidence Language
 
-Objectives reference comparators as:
+Write the main plan as a positive evidence specification. Use fields such as:
 
-```markdown
-- Comparators: [`required_networking_baselines`, `reference_diagnostics`,
-  `oracle_bounds`]
-```
+- `Evidence goal`
+- `Evidence scope`
+- `Evidence role`
+- `Story placement`
+- `Reviewer concern answered`
+- `Presentation intent`
+- `Reader takeaway`
+- `Claim calibration output`
+- `Expected evidence outputs`
+- `Handled by later skills`
 
-### Workload Context
+Use positive limitation language: `limitation regime`, `unsupported regime`,
+`claim boundary`, `stress sensitivity`, and `adaptation attribution`. Use
+`failure` only for explicit diagnostic objectives where a failure analysis
+artifact is part of the evidence.
 
-Define:
-
-- `Required workloads`: workloads committed by user input, blueprint, existing
-  evidence, or live-research-selected venue protocol.
-- `Scope-extension workload candidates`: workloads that would extend claim
-  scope and whose provenance is explained in the explanation file.
-
-Do not use fallback phrases such as `when available` for workloads. If a
-workload is not strategically required, place it under scope-extension
-candidates or leave it out.
-
-Use a workload registry, not an ID-only research context list. Add a compact
-generated index only when the plan becomes long enough that downstream skills
-would otherwise struggle to locate identifiers.
-
-Name workload classes, not implementation commitments. For trace classes, use
-phrasing such as `real, replayed, or collected if unavailable` unless the user,
-blueprint, or existing evidence already confirms exact trace sources or new
-data collection.
-
-## Objective Redundancy Check
-
-Before finalizing, merge or demote objectives that share more than half of their
-controlled factors, workloads, metrics, comparators, or expected evidence
-outputs.
-
-Common reductions:
-
-- Reference usefulness and substitution feasibility often become one objective
-  with two evidence outputs.
-- End-to-end QoE and deadline reliability often become one main objective with
-  quality and responsiveness reporting views.
-- Resource efficiency, waste, artifact readiness, and reproducibility usually
-  become shared protocols or reporting views unless they support a distinct
-  paper claim.
-
-Keep objectives separate only when they have distinct claim support, story role,
-and primary evidence output.
-
-## Live Research Prompt Shape
-
-Use the smallest set of deepresearch passes needed. Ask for current protocols,
-recent evidence patterns, motivation/design-insight patterns, and planning
-commitments for this paper. Require each source to include title, link, date,
-visible venue metadata, provenance category, relevance, and planning lesson.
-Separate current field evidence from classic background precedent.
-
-## Workflow
-
-0. Gather required context. Read the paper blueprint, prior artifacts, provided
-   feedback, and metaskill/runner-task files when they are part of the current
-   request. If required contents cannot be accessed, ask for the exact missing
-   contents before writing outputs. For artifact-review or skill-evolution
-   requests, read the metaskill and every file in the named artifact output
-   directory before deciding which skill instructions to change. If the same
-   access failure has already been reported, return the structured
-   `missing_required_contents` paste request and stop.
-1. Build the explanation ledger in the user's language. Localize headings,
-   table titles, and field labels. For Chinese, use headings such as
-   `已确认的用户输入`, `论文蓝图已确认的信息`, `现有证据输入`,
-   `本轮读取的工件与反馈`, `本轮使用的实时研究背景`,
-   `Skill 推导出的规划承诺`, and `剩余开放规划项`.
-2. Normalize the thesis into `Experimental thesis`, `Primary comparison`, and
-   `Operating conditions`.
-3. Build the claim-to-evidence map with only claim, objective, story role, and
-   expected evidence output.
-4. Define workload, metric, and baseline registries once. Avoid ID-only
-   summaries unless the plan is long enough to need a generated index.
-5. Write required evidence under `Core Objectives`. Put conditional scope
-   modules under `Optional Claim-Expansion Objectives` with `Module type:
-   claim_expansion_module`, `Scope expanded`, and `Activation condition`.
-6. Write the explanation causally. Include compact localized traceability
-   tables for baseline families, metric families, workload classes, and open
-   variables that affect experiment scale or claim coverage.
+For engineering papers, do not organize the plan around fallback paths or weak
+results. Plan how the core intuition should be shown and verified. Express risks
+as dependencies, open variables, stress regimes, or claim-boundary objectives.
 
 ## `experiment_plan.md` Template
 
@@ -493,16 +323,17 @@ Separate current field evidence from classic background precedent.
 - Experimental thesis:
 - Primary comparison:
 - Operating conditions:
+- Venue/story evidence posture:
 
 ## 2. Claim-to-Evidence Map
 
-| Claim | Evidence Objective | Story Role | Expected Evidence Output |
-|---|---|---|---|
+| Claim | Reviewer Concern | Evidence Objective | Story Placement | Expected Evidence Output |
+|---|---|---|---|---|
 
-## 3. Workload Registry
+## 3. Workload and Dataset Registry
 
-- Required workloads:
-- Scope-extension workload candidates:
+- Required workloads/datasets:
+- Scope-extension candidates:
 
 ## 4. Metric Registry
 
@@ -512,130 +343,205 @@ Separate current field evidence from classic background precedent.
 
 - `<baseline_id>`:
   - Burden:
+  - Baseline role:
   - Comparison purpose:
   - Fairness principle:
 
 ## 6. Resource, Cost, and Reproducibility Principles
 
 - Resource/cost reporting:
-- Reproducibility/artifact principle:
+- Statistical reporting:
+- Artifact/reproducibility principle:
 
-## 7. Core Objectives
+## 7. Core Experiment Objectives
 
-### Objective 1: <Name>
+### <Experiment Name>
 
-- Story role:
+- Story placement:
 - Evidence goal:
 - Claims supported:
+- Reviewer concern answered:
 - Evidence scope:
 - Evidence role:
-- Claim calibration output:
-- Workloads:
+- Workloads/datasets:
 - Controlled factors:
 - Comparators:
 - Metrics:
+- Presentation intent:
 - Expected evidence outputs:
-- Target evidence pattern:
+- Reader takeaway:
+- Claim calibration output:
 - Handled by later skills:
 - Dependencies:
 - Priority:
 
-## 8. Optional Claim-Expansion Objectives
+## 8. Optional Claim-Expansion Modules
 
-### Optional Module 1: <Name>
+### <Module Name>
 
 - Module type: claim_expansion_module
 - Scope expanded:
 - Activation condition:
-- Use the same objective fields as core objectives when the module is activated.
+- Use objective fields only when the module is activated.
 
 ## 9. Objective Dependency Graph
 
-- <objective/output> -> <objective/output>:
+- <experiment/output> -> <experiment/output>:
 ```
 
-Omit empty optional fields. Keep the dependency graph short.
+Omit empty sections. Keep identifiers natural and readable; avoid abstract ID
+systems such as `c1`, `c2`, `b1`, or `m1` unless the source paper already uses
+them.
 
-## `experiment_plan_explanation.<lang>.md` Template
+## `experiment_plan.explain.md` Template
 
-Translate every heading, table title, and field label into the user's
-conversation language. For Chinese, use Chinese headings rather than English.
+Write this file in natural Chinese. English paper titles, venue names, method
+names, datasets, benchmarks, and technical terms may remain in English when that
+is clearer.
 
 ```markdown
-# <Localized title>: <Paper/System Name>
+# 实验计划说明：<论文/系统名>
 
-## <localized confirmed-input ledger sections>
+## 用户已经明确的内容
 
-## <localized current field and target-venue experiment patterns>
+记录本轮实际读取的本地文件、用户指令、论文蓝图、旧计划、反馈、工件目录和实时调研入口。
 
-## <localized core experimental logic>
+## 论文核心出发点
 
-## <localized why these baselines are necessary>
-| <baseline family> | <reviewer concern answered> | <link to plan> |
+解释这篇论文想让审稿人相信什么，以及为什么实验必须围绕这些论点组织。
 
-## <localized why these metrics are necessary>
-| <metric family> | <claim or evidence role> | <link to plan> |
+## 实时调研如何影响实验取舍
 
-## <localized which workloads change scope>
-| <workload class> | <scope decision affected> | <plan treatment> |
+| 来源 | 日期 | venue_status | 影响到的规划决定 |
+|---|---:|---|---|
 
-## <localized which open variables change experiment scale>
-| <open variable> | <effect on experiment scale or claim coverage> |
+## 实验故事线
 
-## <localized derivation of each objective>
+用自然语言说明 motivation、method insight、main evaluation、ablation、
+robustness、boundary、artifact evidence 如何串起来。
 
-## <localized evidence chain across objectives>
+## 为什么选择这些实验
+
+逐个实验解释：它支撑哪个 claim、解决哪个 reviewer concern、放在论文哪个叙事位置、预期结果如何帮助读者理解核心思想。
+
+## 为什么选择这些基线
+
+说明 canonical、recent strong、simple、self-ablation、status quo、oracle 等基线各自排除哪个疑虑。
+
+## 为什么选择这些指标和工作负载
+
+解释指标和 workload 如何服务论文论点，不要只解释字段含义。
+
+## 结果展示策略
+
+说明哪些结果适合主文，哪些适合补充材料；只做战略层面的图表/表格/案例意图，不设计最终图。
+
+## 仍需继承的开放变量
+
+只列真正影响实验规模、claim 覆盖、伦理/数据访问、baseline 公平性或 story placement 的未知项，并说明为什么当前信息不足以决定。
 ```
 
-For each objective, write readable prose rather than numbered cross-reference
-logic. Explain the causal chain from thesis to claim, from claim to evidence
-need, and from evidence need to objective design.
+The explanation is for user confirmation, not for downstream execution. It
+should let the user identify whether a questionable experiment comes from the
+core thesis, target-venue prior, live-research pattern, or an inference step.
+When access or provenance issues affect a revision, record only the relevant
+readback facts in this explanation: what files were actually read, what could
+not be read, and which planning choices were left unchanged because the feedback
+was access-only. Do not copy full artifact contents into the explanation unless
+the user explicitly asks for a pasted bundle.
+
+## Workflow
+
+1. Gather context and read required local files.
+2. If local context needed for the thesis or revision is unavailable, stop with
+   the structured missing-content request.
+3. Run deepresearch for venue norms, influential papers, current baselines,
+   workloads, metrics, result-presentation patterns, and relevant autoresearch
+   workflow lessons.
+4. Build a sufficiency ledger for yourself: resolved by user, blueprint,
+   existing evidence, live research, or clear inference; downstream execution
+   detail; genuinely open variable.
+5. Normalize the paper into an experimental thesis, primary comparison,
+   operating conditions, and venue/story evidence posture.
+6. Build the claim-to-evidence map before writing individual objectives.
+7. Define workload, metric, and baseline registries once.
+8. Write core objectives and optional claim-expansion modules.
+9. Write the Chinese explanation as causal rationale, not as field definitions.
+10. Run the lint rules below before finalizing.
+
+## Revision Behavior
+
+When revising an artifact:
+
+- Read all Markdown files in the artifact directory before deciding what to
+  change.
+- Classify feedback as substantive, access/provenance, file-contract,
+  over-defensive/open-question, language/filename, or non-controlling.
+- Apply a reviewer access-failure gate before changing plan content. If the
+  feedback only says another reviewer could not inspect local files, shell or
+  fallback tools failed, or the user should paste files, and it names no
+  concrete defect in the artifact contents, classify it as access-only feedback.
+  Then inspect `experiment_plan.md` and `experiment_plan.explain.md` yourself
+  through available local/MCP channels. If you can read them and they satisfy
+  the contract, report that no artifact-content change is implied. Do not revise
+  experiment objectives, output schema, filenames, language split, or open
+  variables solely from access-only feedback.
+- Stop repeated access-only feedback loops. When the same access-only report
+  recurs and this agent can read the artifacts, treat it as non-controlling
+  after local inspection. Do not keep adding access-handling layers, changing
+  plan/schema content, or asking for pasted files. Report that the local files
+  are readable in this session and that no substantive artifact defect was
+  provided.
+- Make the smallest skill or artifact change that addresses the feedback.
+- If feedback says files could not be read, first try to read those exact files
+  locally and through available MCP fallbacks. If you can read them, classify
+  the feedback as access/provenance, document that fact in the explanation or
+  final response, and avoid any paste request.
+- If feedback asks the user to paste artifact contents because another agent's
+  tools failed, do not echo that request unless your own local and MCP access
+  also fail and the contents are indispensable.
+- If access-only feedback reveals that the skill prompt encouraged premature
+  paste requests or unclear file provenance, revise the skill's
+  missing-context/readback instructions rather than the experiment portfolio.
+- Do not change experiments, baselines, workloads, or metrics based only on an
+  access failure report.
 
 ## Lint Rules
 
 Before finalizing, check:
 
+- Exactly two Markdown files are produced: `experiment_plan.md` and
+  `experiment_plan.explain.md`.
 - `experiment_plan.md` is English-only and contains only the strategic plan.
-- The plan does not contain the confirmation ledger, source explanations,
-  literature-review prose, user-review checklists, logging schemas, manifest
-  fields, implementation owners, or concrete output paths.
-- The plan defines metric and baseline registries once and references IDs in
-  objectives.
+- `experiment_plan.explain.md` is Chinese-first and begins with actual inputs
+  read.
+- The main plan defines workload/dataset, metric, and baseline registries once.
+- Objectives reference registry IDs rather than redefining baselines or metrics.
 - Every baseline has `Burden: minimum | diagnostic | optional_expensive`.
-- Objective-level metric and comparator fields do not repeat registry
-  definitions.
-- Objectives use `Evidence scope`, `Evidence role`, and `Handled by later
-  skills`.
-- Substrate-boundary objectives use `mechanism/ablation; contribution boundary`
-  unless generalization or deployment is part of the confirmed core thesis.
-- `Expected evidence outputs` uses logical artifact names, not filenames.
-- Workloads name strategic classes and do not commit to new trace collection or
-  exact datasets unless confirmed.
-- Open planning items appear only in the explanation file.
-- A fact resolved by user input, blueprint, existing evidence, or live research
-  is not restated as an open question.
+- Every objective has claim support, story placement, reviewer concern,
+  presentation intent, expected evidence output, reader takeaway, and priority.
+- Motivation/design-insight experiments make the core intuition visible before
+  full evaluation when the paper needs them.
+- Main-paper versus supplemental presentation intent is strategic, not a final
+  figure design.
+- Open variables appear only in the explanation and only when they materially
+  affect plan quality.
+- Facts resolved by user input, blueprint, existing evidence, live research, or
+  clear inference are not restated as user questions.
 - Every live-research anchor in the explanation has source, date,
-  `venue_status`, and why it affects the plan.
-- Venue labels are not upgraded beyond the source confidence available.
-- `venue_status` uses only `official_proceedings`, `arxiv_only`,
-  `project_page_claim`, `secondary_metadata`, or `classic_background`.
-- The plan uses `limitation regime`, `unsupported regime`, and `claim boundary`
-  instead of repeated failure language except in explicit diagnostic objectives.
-- The explanation is causal and readable, not an administrative checklist.
-- The explanation uses the user's language and begins with the confirmation
-  ledger.
-- The explanation names the concrete blueprint, prior artifacts, feedback, and
-  metaskill/runner-task files that shaped the run, or explicitly says which
-  required contents were unavailable and stops before fabricating a plan.
-- Missing local artifact access is treated as provenance feedback, not as a
-  reason to invent new experiment objectives or open research questions.
-- Live research is not used as a substitute for unavailable repository files;
-  it only supplies current external venue, baseline, dataset, metric, and
-  reviewer-expectation context after the local paper/artifact inputs are known.
-- Artifact-review revisions enumerate and read all Markdown files under the
-  referenced output directory before making concrete skill changes.
-- Repeated access-failure reviews return a structured missing-content request
-  with paths, attempted channels, and paste-bundle instructions, instead of
-  producing a generic critique or another paraphrase of the same failure.
-- Each objective has a distinct claim, story role, or primary evidence output.
-- Overlapping objectives are merged or represented as reporting views.
+  `venue_status`, and the planning decision it changed.
+- The plan contains no source prose, literature review, user-facing warnings,
+  shell commands, code, fabricated results, concrete output paths, logging
+  schemas, manifest fields, implementation owners, or exact run scripts.
+- Objectives with overlapping claims, workloads, metrics, comparators, and
+  outputs are merged or represented as reporting views.
+- Access-failure feedback is handled as provenance/file-contract feedback, not
+  as substantive experiment-plan criticism.
+- Access-only review feedback with no concrete artifact-content defect does not
+  trigger output-schema, filename, language-boundary, experiment-objective, or
+  open-variable changes.
+- Repeated access-only feedback is stopped as non-controlling after the current
+  agent verifies that the artifacts are locally readable and no content defect
+  is supplied.
+- Paste requests are only issued after the access threshold is met and name the
+  smallest indispensable files or excerpts.
