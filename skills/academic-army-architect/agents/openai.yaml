@@ -1,11 +1,11 @@
 interface:
   display_name: "Academic Army Architect"
-  short_description: "AI-facing paper strategy blueprint plus user-language validation explanation"
-  default_prompt: "Create an English AI-facing strategic paper blueprint and user-language validation explanation with $academic-army-architect."
+  short_description: "Strategic paper blueprint with Chinese rationale"
+  default_prompt: "Use $academic-army-architect to refine this paper idea into an evidence-grounded strategic blueprint for downstream planning."
 
 dependencies:
   tools:
     - type: "mcp"
       value: "academic_army_mcp_tools"
-      description: "Provides academic_army_mcp_tools.deepresearch for live venue, literature, exemplar-paper, evaluation-expectation, and reviewer-context evidence."
+      description: "Provides academic_army_mcp_tools.deepresearch for live venue, literature, exemplar-paper, evaluation-precedent, and reviewer-context evidence."
       transport: "stdio"
