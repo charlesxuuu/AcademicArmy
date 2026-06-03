@@ -11,6 +11,24 @@
 `coding_plan.md`和`coding_plan.explain.md`都是Markdown格式。
 `coding_plan.md`里只放`coding plan`，`coding_plan.explain.md`里只放`coding plan`解释，skill中要明确两个文件的内容边界。
 
+`coding_plan.md`和`coding_plan.explain.md`都应使用自然、可读的写法，通过清晰标题、语义化名称、短段落和bullet组织内容，不应依赖复杂编号系统来维持理解。
+编号只作为局部组织工具使用；只有在表达执行顺序、阶段顺序、优先级或步骤关系时，才使用编号列表。
+对并列模块、候选method、baseline、harness、测试脚本、结果导出项等内容，应优先使用标题、短段落和bullet，而不是强行编号。
+每个section内部可以使用自己的局部`1、2、3`，但这些编号只服务当前section内部的阅读，不应扩展成跨section或跨文件的引用系统。
+`coding_plan.md`和`coding_plan.explain.md`都应避免使用`C1/C2/C3/B1/B2/B3/H1/H2/T1/T2`这类抽象编号系统，因为这种编号会迫使读者反复跳转查找含义。
+如果需要跨部分引用，应优先使用section标题、模块名、harness名称、测试名称、method名称、输出目录名或自然简称，而不是抽象编号。
+`coding_plan.explain.md`应优先用自然简称指代蓝图内容，例如“method替换模块”“candidate筛选harness”“result export layer”“CLI smoke tests”等表达，而不是写“见H2”“对应T3”。
+`coding_plan.explain.md`解释某个设计时，应先简要复述或概括对应的`coding_plan.md`内容，再说明为什么这样设计，减少用户对照两个文件来回查找的成本。
+`coding_plan.explain.md`可以按`coding_plan.md`的主要标题顺序解释，但解释文字应像自然说明文，而不是模板字段说明或编号索引表。
+如果多个内容之间有紧密关系，解释文件应直接用自然语言说明关系，例如“candidate筛选harness依赖method替换模块提供统一接口”，而不是写“C2依赖M1并服务H3”。
+`coding plan`中的命名应尽量语义化：模块名、harness名、测试名和输出目录名本身应能表达用途，减少额外编号解释的需要。
+harness结构可以用有意义的名称组织，例如`Candidate Method Selection Harness`、`Module Optimization Harness`、`Full-System Evaluation Harness`，而不是`Harness H1/H2/H3`。
+testing结构可以用功能目标命名，例如`Data Loading Tests`、`Metric Computation Tests`、`Result Export Tests`、`CLI Smoke Tests`，而不是`Test T1/T2/T3`。
+对复杂实验阶段，可以在某个section内部使用局部阶段编号，例如`1. Data preparation`、`2. Candidate run`、`3. Evaluation export`，但不要把这些编号变成全局交叉引用系统。
+如果某个编号只是在生成过程中方便模型组织思路，但不提升最终读者理解，最终输出时应改写为标题、bullet或自然段落。
+skill应在输出前检查是否存在过度编号、抽象编号引用、跨文件编号依赖或需要反复跳转才能理解的表达，并将其改写为自然标题和语义化名称。
+核心原则是：编号可以帮助表达顺序，但不应成为理解`coding plan`的主要机制；`coding_plan.md`和`coding_plan.explain.md`都应靠清晰标题、语义化名称和自然引用来保持可读性。
+
 已有的deepresearch MCP工具来自`academic_army_mcp_tools`，本质是把prompt通过OpenAI API转发给带web search能力的GPT-5.5。
 可以现场搜索得到的信息不需要硬编码保存在skill里。
 在开始制定`coding plan`之前，应先用`academic_army_mcp_tools`中的deepresearch调研相关代码通常如何组织。
