@@ -15,7 +15,7 @@
     "format": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --write",
     "format:check": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --check",
     "cli": "tsx src/cli.ts",
-    "developing-loop": "tsx src/cli.ts developing",
+    "developing": "tsx src/cli.ts developing",
     "evolve-skill": "tsx src/cli.ts evolve-skill"
   },
   "dependencies": {
