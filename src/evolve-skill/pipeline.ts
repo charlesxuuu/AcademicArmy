@@ -30,7 +30,16 @@ const USAGE =
 export function parseEvolveSkillArgs(
   args: readonly string[],
 ): ParsedPipelineArgs<EvolveSkillOptions> {
-  const { values } = parseArgs({
+  const {
+    values: {
+      config,
+      "skill-path": skillPath,
+      "artifact-path": artifactPath,
+      "metaskill-path": metaskillPath,
+      "task-path": taskPath,
+      rounds,
+    },
+  } = parseArgs({
     args: [...args],
     options: {
       config: { type: "string", multiple: true },
@@ -41,15 +50,6 @@ export function parseEvolveSkillArgs(
       rounds: { type: "string" },
     },
   });
-
-  const {
-    config,
-    "skill-path": skillPath,
-    "artifact-path": artifactPath,
-    "metaskill-path": metaskillPath,
-    "task-path": taskPath,
-    rounds,
-  } = values;
 
   if (
     [config, skillPath, artifactPath, metaskillPath, taskPath].some(
