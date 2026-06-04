@@ -21,13 +21,13 @@ threads:
       model: gpt-5.5
       workingDirectory: &developerWorkspacePath output/codebase
       sandboxMode: danger-full-access
-  codex-runner-full-access:
+  codex-skill-runner-full-access:
     runtime: codex
     options:
       model: gpt-5.5
       workingDirectory: .
       sandboxMode: danger-full-access
-  codex-runner-read-only:
+  codex-skill-runner-read-only:
     runtime: codex
     options:
       model: gpt-5.5
@@ -40,8 +40,8 @@ agents:
     constants:
       workspacePath: *developerWorkspacePath
   skill-runner:
-    thread: codex-runner-full-access
+    thread: codex-skill-runner-full-access
   skill-evaluator:
-    thread: codex-runner-read-only
+    thread: codex-skill-runner-read-only
   skill-modifier:
-    thread: codex-runner-full-access
+    thread: codex-skill-runner-full-access
