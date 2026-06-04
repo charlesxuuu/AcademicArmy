@@ -15,12 +15,18 @@ runtimes:
             tool_timeout_sec: 3600
 
 threads:
-  codex-developer:
+  codex-develop-full-access:
     runtime: codex
     options:
       model: gpt-5.5
       workingDirectory: &developerWorkspacePath output/codebase
       sandboxMode: danger-full-access
+  codex-develop-reader:
+    runtime: codex
+    options:
+      model: gpt-5.5
+      workingDirectory: *developerWorkspacePath
+      sandboxMode: read-only
   codex-skill-runner-full-access:
     runtime: codex
     options:
@@ -35,8 +41,28 @@ threads:
       sandboxMode: read-only
 
 agents:
+  coding-plan-interpreter:
+    thread: codex-develop-reader
+    constants:
+      workspacePath: *developerWorkspacePath
   developer:
-    thread: codex-developer
+    thread: codex-develop-full-access
+    constants:
+      workspacePath: *developerWorkspacePath
+  harness-engineer:
+    thread: codex-develop-full-access
+    constants:
+      workspacePath: *developerWorkspacePath
+  code-reviewer:
+    thread: codex-develop-reader
+    constants:
+      workspacePath: *developerWorkspacePath
+  experiment-contract-auditor:
+    thread: codex-develop-reader
+    constants:
+      workspacePath: *developerWorkspacePath
+  integration-manager:
+    thread: codex-develop-full-access
     constants:
       workspacePath: *developerWorkspacePath
   skill-runner:
