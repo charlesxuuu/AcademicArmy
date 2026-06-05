@@ -11,7 +11,7 @@ export class SkillRunnerAgent extends Agent<SkillRunnerVariables> {
   protected buildPrompt(variables: Readonly<SkillRunnerVariables>): string {
     const task = readFileSync(variables.taskPath, "utf8");
     return `
-Use the skill at ${variables.skillPath} to help me complete the following task, and output the related files to the ${variables.artifactPath} folder.
+Use the skill at ${variables.skillPath} to complete the task below. Save all relevant output files in ${variables.artifactPath}.
 
 ${task}
 `;
