@@ -30,6 +30,11 @@ skill应在输出前检查是否存在过度编号、抽象编号引用、跨文
 核心原则是：编号可以帮助表达顺序，但不应成为理解`coding plan`的主要机制；`coding_plan.md`和`coding_plan.explain.md`都应靠清晰标题、语义化名称和自然引用来保持可读性。
 coding plan skill只沉淀“如何把论文蓝图和实验计划转化为代码规划”的领域方法；工具调用、文件访问、沙盒权限、fallback路径和运行故障恢复属于外层runtime/orchestrator，不进入skill，也不进入`coding_plan.md`或`coding_plan.explain.md`。
 
+skill应采用“最小任务上下文”策略：本地任务输入只来自`paper_blueprint`和`experiment plan`；开始时先根据用户路径、约定文件名或明确语义匹配定位这两个文件，确认后只读取这两个文件。
+定位输入的文件识别只服务于确认必要输入，不扩展为当前目录、子目录、历史计划、日志、README、草稿、运行输出、旧`coding_plan`或其他中间产物的探索；如果多个候选同时存在，优先选择用户显式指定、命名最匹配或语义最直接相关的文件。
+当前目录其他内容只有在`paper_blueprint`或`experiment plan`明确引用且对`coding plan`必不可少时，才作为显式依赖处理；缺失的通用工程模式、harness思想或外部经验应通过deepresearch补充，而不是从无关本地文件中猜测。
+输出前做一次input hygiene检查：`coding plan`是否只依赖`paper_blueprint`、`experiment plan`和必要deepresearch结果，是否混入当前目录无关内容；如有，应移除噪声，并把真正影响计划的缺口标记为开放变量。
+
 已有的deepresearch MCP工具来自`academic_army_mcp_tools`，本质是把prompt通过OpenAI API转发给带web search能力的GPT-5.5。
 可以现场搜索得到的信息不需要硬编码保存在skill里。
 在开始制定`coding plan`之前，应先用`academic_army_mcp_tools`中的deepresearch调研相关代码通常如何组织。
