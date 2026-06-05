@@ -2,14 +2,14 @@
 name: academic-army-coding-plan
 description: >-
   Create an English coding_plan.md and a Chinese coding_plan.explain.md from a
-  paper blueprint, experiment plan, repository context, candidate methods,
-  baselines, datasets, metrics, and paper-result requirements. Use when Codex
-  needs to translate research and experiment requirements into a detailed,
-  readable implementation plan for downstream coding, with semantic module
-  boundaries, replaceable method/baseline locations, staged CLI execution,
-  paper-goal harnesses, separate functional tests, raw-first result exports,
-  method-freeze protocol, relative-path commands, and mandatory pre-planning
-  deepresearch.
+  paper blueprint and experiment plan, including candidate methods, baselines,
+  datasets, metrics, and paper-result requirements. Use when Codex needs to
+  translate research and experiment requirements into a detailed, readable
+  implementation plan for downstream coding, with semantic module boundaries,
+  replaceable method/baseline locations, staged CLI execution, paper-goal
+  harnesses, separate functional tests, raw-first result exports, method-freeze
+  protocol, relative-path commands, minimal local input hygiene, and mandatory
+  pre-planning deepresearch.
 ---
 
 # Academic Army Coding Plan
@@ -30,53 +30,53 @@ prose, and final figure/table formatting belong to later skills.
 
 ## Review Feedback Intake
 
-When revising this skill from artifact feedback, distinguish between observed
-artifact defects and artifact-access feedback.
+Classify feedback before changing the skill:
 
-If the reviewer provides concrete file contents or specific defects, translate
-those defects into stronger generation, readability, validation, or delivery
-rules. If the reviewer says the artifacts could not be inspected because of a
-read failure, sandbox issue, missing mount, or unavailable files, treat that as
-delivery feedback: strengthen the read-back handoff and artifact self-audit
-rules, but do not invent artifact-specific failures.
+- `Artifact-content feedback`: the reviewer quotes file contents or names a
+  concrete defect in `coding_plan.md` or `coding_plan.explain.md`. Convert the
+  defect into stronger generation, readability, validation, or self-audit
+  rules.
+- `Artifact-access feedback`: the reviewer could not inspect the files because
+  local commands, Node REPL, MCP resources, mounted paths, or connectors failed.
+  Process-spawn errors such as `windows sandbox: spawn setup refresh` are
+  access feedback even when they happen before any file listing starts.
 
-For future generated artifacts, make the response self-contained whenever
-artifact access has failed in the thread. The generated files stay focused on
-the coding plan and Chinese rationale; access status and review handoff details
-belong in the final response.
+Access feedback changes delivery behavior, not the coding-plan schema. Preserve
+the existing plan requirements unless concrete artifact contents reveal a real
+content problem. When access feedback recurs, treat filesystem visibility as an
+unreliable review channel for the next successful generation and make the final
+response self-contained.
 
 ## Artifact Delivery
 
-Always write both files to the requested output directory and read them back
-before responding.
+Write both files to the requested output directory and read them back before
+responding.
 
-For outputs under `output/evolve-*`, include a dedicated `Review Handoff`
-section in the final response after a concise validation summary. Paste the
-complete read-back contents of both files under their relative path headings.
-Evolve outputs are often reviewed outside the local filesystem, so the pasted
-handoff is part of the deliverable, not a convenience summary.
+For `output/evolve-*` outputs, or whenever artifact-access feedback is active
+in the thread, the final response must be directly reviewable without local
+filesystem access:
 
-Also include the same complete handoff when the user, reviewer, or evaluator
-says the artifacts cannot be inspected locally, or when the user asks to paste,
-inline, or include the artifact contents.
+1. Start with one concise validation sentence.
+2. Add `Review Handoff` immediately after that sentence.
+3. Paste the complete read-back contents of both files under relative path
+   headings.
+4. Put any optional status notes after the handoff.
 
-A reviewer-side read failure, sandbox failure, missing artifact mount, or
-message such as "I cannot evaluate the artifact without seeing the files"
-counts as artifact-access feedback even when local write and read-back
-succeeded. In that situation, make the next successful response self-contained:
-paste the complete read-back contents of both files and do not rely on path
-visibility in the review environment.
+Use the same handoff whenever the user or reviewer asks to paste, inline, or
+include the artifact contents. The handoff is the review channel for access-
+limited workflows; a path-only response is not sufficient.
 
-Treat artifact-access feedback as sticky for the next successful generation in
-the same thread. If prior feedback says the reviewer could not inspect
-`coding_plan.md` or `coding_plan.explain.md`, the next final response for this
-skill must paste both complete files even when local read-back succeeds.
-If artifact-access feedback recurs, keep the same rule and make the handoff
-more prominent and self-contained. Do not ask the reviewer to paste the files
-back when this skill has just generated them; paste the complete read-back
-handoff yourself. Keep access-status notes in the final response only; the
-generated `coding_plan.md` and `coding_plan.explain.md` should stay focused on
-the coding plan and its rationale.
+When files are long, make the read-back reliable before composing the handoff:
+read each file with a method that returns the complete content, or read it in
+bounded chunks and assemble the handoff from those chunks. If a terminal or
+tool display truncates the middle of a read-back, use another complete read
+method before finalizing.
+
+If local read-back itself fails after writing, do not claim successful
+validation. Try another available local read mechanism when the environment
+offers one. If no read-back is possible, report the read-back failure clearly
+and mark the delivery blocked rather than presenting unverified file contents
+as read-back artifacts.
 
 Use five-backtick fences for full-file handoffs so embedded command fences
 remain readable:
@@ -98,12 +98,10 @@ remain readable:
 For evolve outputs, keep the files detailed enough to guide coding and compact
 enough to paste completely. Prefer dense semantic tables, concise bullets, and
 clear ownership rules over repeated boilerplate. If the full handoff would be
-too long to paste, shorten the artifacts and read them back again; do not
-replace the handoff with a paths-only or summary-only response.
+too long to paste, shorten the artifacts and read them back again.
 
 When pasting an evolve handoff, paste the read-back file contents, not a
-regenerated approximation. The final response should remain reviewable even if
-the reviewer cannot access the filesystem at all.
+regenerated approximation.
 
 ## Output Style
 
@@ -156,19 +154,18 @@ then explain why it was chosen.
 
 ### Gather Local Context
 
-Read the user-provided `paper_blueprint` and `experiment_plan` first. Then
-inspect nearby repository context when present:
+Read only the user-provided `paper_blueprint` and `experiment_plan` as the
+local task inputs. Locate them from explicit user paths, conventional names, or
+the closest semantic match. If several candidates exist, prefer the files named
+by the user.
 
-- `paper_blueprint.explain.md`
-- `experiment_plan.explain.md` or `experiment_plan_explanation.*.md`
-- existing coding plans, implementation notes, and code overviews
-- repository README files
-- package metadata such as `pyproject.toml`, `package.json`,
-  `requirements.txt`, `setup.py`, `Cargo.toml`, or equivalent
-- existing `src`, `configs`, `scripts`, `tests`, `notebooks`,
-  `experiments`, `data`, `runs`, and `artifacts` directories
-- user-provided method lists, baseline lists, metric lists, compute
-  constraints, dataset constraints, and output requirements
+Use nearby local files only when the blueprint or experiment plan explicitly
+references them as required implementation context, or when the user provides
+them as part of the task. Do not broaden local context by reading old plans,
+logs, repository README files, package metadata, source trees, runs, notebooks,
+or historical artifacts merely because they are nearby. Missing general
+engineering patterns should be supplied by DeepResearch, not by unrelated local
+files.
 
 Use repository-relative paths in both output files. Treat the project root as
 the working-directory anchor. If implementation code is nested under an output
@@ -177,6 +174,12 @@ directory, name that relative implementation root, such as `output/codebase`.
 If the blueprint or experiment plan is missing after checking the user-provided
 paths and obvious local paths, ask for the missing content before writing the
 plan.
+
+Before drafting, perform an input-hygiene check: the planned artifacts should
+depend only on the blueprint, experiment plan, user-provided task constraints,
+and necessary DeepResearch evidence. If extra local context slipped in, remove
+it unless it is explicitly referenced by the inputs; record any truly blocking
+missing local dependency as an open coding question.
 
 ### Run Pre-Planning DeepResearch
 
@@ -633,3 +636,8 @@ the complete read-back contents of both files using the five-backtick handoff
 format from `Artifact Delivery`. A final response that only reports paths,
 line counts, validation status, or partial excerpts is incomplete for those
 cases.
+
+If artifact-access feedback has recurred in the thread, keep the concise
+summary to one or two sentences and put `Review Handoff` immediately after it.
+Do not ask the reviewer to make the workspace readable again as the primary
+remedy after this skill has just produced and read back the files.
