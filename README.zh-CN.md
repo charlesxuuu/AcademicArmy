@@ -16,7 +16,7 @@ AcademicArmy 是一个用于完成研究论文的 multi-agent 系统。它的核
 
 1. `academic-army-architect` 生成 `paper_blueprint.md`，也就是论文战略蓝图，用来固定论文身份、目标 venue 姿态、核心 claims、贡献边界、候选方法空间、证据需求和下游约束。
 2. `academic-army-experiment-plan` 生成 `experiment_plan.md`，也就是实验策略，把论文 claims 映射到证据链、数据集或 workload、指标、baselines、消融、鲁棒性检查和审稿人关心的验证点。
-3. `academic-army-coding-plan` 生成 `coding_plan.md`，也就是代码实现契约，把论文蓝图和实验方案转成模块边界、CLI、实验 harness、测试、raw result 导出和 method freeze 规则。
+3. `academic-army-coding-plan` 生成 `coding_plan.md`，也就是代码实现契约，把论文蓝图和实验方案转成逻辑模块边界、接口与 entrypoint 语义、实验 harness、测试类别、raw result artifact schema 和 method freeze 规则。
 
 每个规划类 skill 还会同时生成一份中文 `*.explain.md` 解释文件，方便用户审阅；但后续开发 runner 读取的是上面三份英文 Markdown。
 
@@ -36,7 +36,7 @@ ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”�
 
 ## 规划产物语言
 
-规划类 skills 使用固定语言分工。面向后续 AI 执行的产物，例如 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`，统一使用英文，并且只放方案或规范本身。配套解释文件，例如 `paper_blueprint.explain.md`、`experiment_plan.explain.md` 和 `coding_plan.explain.md`，统一使用中文，用来帮助用户确认推导逻辑、关键取舍和当前确认状态。论文标题、会议名、数据集、benchmark、method、路径、命令和代码标识符等技术内容，可以在中文解释中保留英文。
+规划类 skills 使用固定语言分工。面向后续 AI 执行的产物，例如 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`，统一使用英文，并且只放方案或规范本身。配套解释文件，例如 `paper_blueprint.explain.md`、`experiment_plan.explain.md` 和 `coding_plan.explain.md`，统一使用中文，用来帮助用户确认推导逻辑、关键取舍和当前确认状态。论文标题、会议名、数据集、benchmark、method、entrypoint 语义、代码标识符和用户明确给出的既有路径等技术内容，可以在中文解释中保留英文。
 
 ## 设计 Tips
 

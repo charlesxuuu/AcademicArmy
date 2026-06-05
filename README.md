@@ -16,7 +16,7 @@ The current project workflow first uses three planning skills to produce three A
 
 1. `academic-army-architect` creates `paper_blueprint.md`, the strategic paper blueprint that fixes the paper identity, target venue posture, claims, contribution boundary, candidate method space, evidence needs, and downstream constraints.
 2. `academic-army-experiment-plan` creates `experiment_plan.md`, the experiment strategy that maps paper claims to evidence, datasets or workloads, metrics, baselines, ablations, robustness checks, and reviewer-facing validation needs.
-3. `academic-army-coding-plan` creates `coding_plan.md`, the implementation contract that turns the blueprint and experiment plan into module boundaries, CLIs, harnesses, tests, raw-result exports, and method-freeze rules.
+3. `academic-army-coding-plan` creates `coding_plan.md`, the implementation contract that turns the blueprint and experiment plan into logical module boundaries, interface and entrypoint semantics, harnesses, testing categories, raw-result artifact schemas, and method-freeze rules.
 
 Each planning skill also writes a Chinese `*.explain.md` companion for human review, but the development runner consumes the three English Markdown files above.
 
@@ -36,7 +36,7 @@ The blueprint produced by ProductManager should be specific enough for each role
 
 ## Planning Artifact Language
 
-Planning skills use a fixed language split. AI-facing artifacts such as `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` are written in English and contain only the plan or specification. Their companion explanation files, such as `paper_blueprint.explain.md`, `experiment_plan.explain.md`, and `coding_plan.explain.md`, are written in Chinese so the user can review the reasoning, trade-offs, and confirmation state. Technical terms, paper titles, venue names, datasets, benchmarks, methods, paths, commands, and code identifiers may remain in English when that is clearer.
+Planning skills use a fixed language split. AI-facing artifacts such as `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` are written in English and contain only the plan or specification. Their companion explanation files, such as `paper_blueprint.explain.md`, `experiment_plan.explain.md`, and `coding_plan.explain.md`, are written in Chinese so the user can review the reasoning, trade-offs, and confirmation state. Technical terms, paper titles, venue names, datasets, benchmarks, methods, entrypoint semantics, code identifiers, and user-provided existing paths may remain in English when that is clearer.
 
 ## Design Tips
 
