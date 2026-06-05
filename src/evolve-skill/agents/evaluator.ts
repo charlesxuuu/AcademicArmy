@@ -10,8 +10,9 @@ export class SkillEvaluatorAgent extends Agent<SkillEvaluatorVariables> {
   protected buildPrompt(variables: Readonly<SkillEvaluatorVariables>): string {
     const metaskill = readFileSync(variables.metaskillPath, "utf8");
     return `
-Evaluate the artifact at ${variables.artifactPath}. This artifact was produced by a skill.
-The following metaskill contains the design goals and tips of this skill:
+Evaluate the artifact at ${variables.artifactPath}. It was produced by a skill.
+
+The metaskill below contains the design goals and tips of this skill:
 
 ${metaskill}
 
