@@ -20,12 +20,12 @@ export type EvolveSkillOptions = {
   skillPath: string;
   artifactPath: string;
   metaskillPath: string;
-  taskPath: string;
+  taskPaths: readonly string[];
   rounds: number;
 };
 
 const USAGE =
-  "Usage: npm run evolve-skill -- --config <path> --skill-path <path> --artifact-path <folder> --metaskill-path <path> --task-path <path> [--rounds <positive-integer>]";
+  "Usage: npm run evolve-skill -- --config <path> --skill-path <path> --artifact-path <folder> --metaskill-path <path> --task-path <path> [--task-path <path> ...] [--rounds <positive-integer>]";
 
 export function parseEvolveSkillArgs(
   args: readonly string[],
@@ -46,7 +46,7 @@ export function parseEvolveSkillArgs(
       "skill-path": { type: "string" },
       "artifact-path": { type: "string" },
       "metaskill-path": { type: "string" },
-      "task-path": { type: "string" },
+      "task-path": { type: "string", multiple: true },
       rounds: { type: "string" },
     },
   });
@@ -67,7 +67,7 @@ export function parseEvolveSkillArgs(
       skillPath,
       artifactPath,
       metaskillPath,
-      taskPath,
+      taskPaths: taskPath,
       rounds: Number(rounds ?? 3),
     },
   };
@@ -85,15 +85,17 @@ export async function evolveSkill(
     await rm(options.artifactPath, { recursive: true, force: true });
     await mkdir(options.artifactPath, { recursive: true });
 
-    const runner = await team.createAgent("skill-runner");
-    await runner.runStreamed(
-      {
-        skillPath: options.skillPath,
-        artifactPath: options.artifactPath,
-        taskPath: options.taskPath,
-      },
-      logRecord,
-    );
+    for (const taskPath of options.taskPaths) {
+      const runner = await team.createAgent("skill-runner");
+      await runner.runStreamed(
+        {
+          skillPath: options.skillPath,
+          artifactPath: options.artifactPath,
+          taskPath,
+        },
+        logRecord,
+      );
+    }
 
     const review = (
       await team.runStreamed(
