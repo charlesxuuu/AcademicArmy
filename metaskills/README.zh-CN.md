@@ -6,49 +6,46 @@
 
 普通 skill 描述 agent 应该如何完成某个研究规划任务。metaskill 描述这个 skill 本身应该如何设计：它的目标、写作方式、预期输出，以及修改时需要重点检查的问题。在 self-evolve 中，evaluator 用 metaskill 作为评价 artifact 的标准，modifier 用 metaskill 作为修改 skill 的标准。
 
+## AcademicArmy 如何制作 Skill
+
+AcademicArmy 的 skill 不是一次性写完就固定下来，而是通过一套 meta-skill 迭代流程逐步打磨。
+
+我们会先初步编写一个 skill。这个阶段用到的相关 prompt 和记录保存在对应的 [`metaskills`](.) 目录中，方便读者查看这个 skill 最初是如何被制作出来的。
+
+随后，我们选择一个固定选题，并围绕这个选题反复运行下面的循环：
+
+1. 执行当前版本的 skill。
+2. 把 skill 的输出和 `metaskills` 中的相关记录一起交给 evaluator agent。
+3. 让 evaluator agent 仔细分析当前 skill 存在哪些问题：有没有冗余的地方，语言是否清晰，内容是否完整，结构是否适合后续 agent 稳定执行。
+4. 把修改意见交给 Codex，让 Codex 修改 skill。
+5. 再次执行修改后的 skill，并继续用同一个固定选题检验效果。
+
+这个循环的作用是让不同版本的 skill 在稳定任务条件下可比较。我们的目标是逐步减少冗余、修正表达和内容问题，并让每个 skill 更容易被后续 agent 一致地执行。
+
+## 优化已有 Skill
+
+如果觉得某个 skill 的输出不满意，先修改对应的 metaskill，而不是凭模糊印象直接改 skill。
+
+1. 打开对应的 metaskill 文件；三个主要路径见下面的链接。
+2. 在里面补充具体 tips：这次 artifact 哪里不好、后续应该更偏向什么写法、应该避免什么问题。
+3. 在仓库根目录运行对应的 evolution 脚本；三个主要脚本见下面的链接。
+4. 检查新一轮 artifact；如果还不稳定，就继续补充 tips 并再次运行。
+
+三个主要规划类 skill 对应关系如下：
+
+- `academic-army-architect`：修改 [`metaskills/academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh)。
+- `academic-army-experiment-plan`：修改 [`metaskills/academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh)。
+- `academic-army-coding-plan`：修改 [`metaskills/academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh)。
+
+这些已链接的 evolution 脚本会调用 TypeScript 的 `evolve-skill` pipeline。TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](../src/README.zh-CN.md)，skill evolution loop 的实现见 [`src/evolve-skill/README.zh-CN.md`](../src/evolve-skill/README.zh-CN.md)。
+
 ## 语言契约
 
 metaskill 在设计或修改规划类 skill 时，固定采用同一个产物语言契约：面向 AI 执行的主计划使用英文，面向用户确认的解释文件使用中文。当前规划类 skills 中，`paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md` 保持 English-only；`paper_blueprint.explain.md`、`experiment_plan.explain.md` 和 `coding_plan.explain.md` 使用中文解释，并在有助于准确表达时保留英文技术标识符。
 
 ## Evolve Runner
 
-`evolve-skill` pipeline 是实现 self-evolve loop 的共享 Codex SDK runner。
-
-它保留两个长生命周期 Codex thread：
-
-1. `evaluator`：跨轮次评价 artifact。
-2. `modifier`：跨轮次修改目标 skill。
-
-每一轮还会新建一个一次性的 runner thread。runner 不保留上一轮上下文，避免旧 artifact 或旧对话污染下一轮输出。
-
-可以在仓库根目录直接运行：
-
-```bash
-npm run evolve-skill -- \
-  --config agent-forge.yaml \
-  --skill-path skills/academic-army-architect \
-  --artifact-path output/evolve-academic-army-architect \
-  --metaskill-path metaskills/academic-army-architect/METASKILL.md \
-  --task-path metaskills/academic-army-architect/ENVOLVETASK.md
-```
-
-必填参数：
-
-```text
---skill-path       要修改的 skill 目录或文件。
---artifact-path    每轮 runner 清空并复用的输出文件夹。
---metaskill-path   evaluator 和 modifier 使用的 metaskill 设计文档。
---task-path        runner 用来测试 skill 的固定任务文件。
-```
-
-可选参数：
-
-```text
---rounds 5
-  要运行的 self-evolve 轮数。
-```
-
-`--rounds` 默认是 `3`。
+共享 runner 是 TypeScript 的 `evolve-skill` pipeline。CLI 参数、loop 行为和实现细节见 [`src/evolve-skill/README.zh-CN.md`](../src/evolve-skill/README.zh-CN.md)。
 
 ## 目录结构
 
@@ -62,28 +59,15 @@ metaskills/
     envolve.sh
 ```
 
-`METASKILL.md` 记录这个 skill 的设计目标和 tips。
+[`METASKILL.md`](academic-army-architect/METASKILL.md) 记录这个 skill 的设计目标和 tips。
 
-`ENVOLVETASK.md` 是 evolution 时固定使用的测试任务。
+[`ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md) 是 evolution 时固定使用的测试任务。
 
-`envolve.sh` 用来运行这个 skill 的 evolution loop。文件名保留为 `envolve.sh`，和当前项目约定一致。
+[`envolve.sh`](academic-army-architect/envolve.sh) 用来运行这个 skill 的 evolution loop。文件名保留为 `envolve.sh`，和当前项目约定一致。
 
-共享 runner 是 `evolve-skill` pipeline，不属于每个 skill 自己的 metaskill 目录。
+共享 runner 是 `evolve-skill` pipeline，不属于每个 skill 自己的 metaskill 目录。TypeScript 实现见 [`src/evolve-skill/README.zh-CN.md`](../src/evolve-skill/README.zh-CN.md)。
 
-在这个目录结构里，`METASKILL.md` 和 `ENVOLVETASK.md` 为 `evolve-skill` pipeline 提供必需输入。当前目录下的 `envolve.sh` 只是一个便捷命令：它把某个具体 skill 的 `--skill-path`、`--artifact-path` 输出文件夹、`--metaskill-path` 和 `--task-path` 填好，然后调用共享 runner。
-
-## Loop 行为
-
-metaskills 的作用是让 skill 的迭代有稳定依据。我们不凭模糊感觉重写 skill，而是让 skill 在一个固定任务上产出 artifact，再根据 metaskill 检查这个 artifact，最后让 Codex 根据具体反馈修改 skill。
-
-整个 loop 保持简单：
-
-1. 新建一次性的 runner thread，运行目标 skill，并把产物写入输出文件夹。
-2. 长生命周期的 evaluator thread 根据 metaskill 评价 artifact。
-3. 长生命周期的 modifier thread 根据评价修改 skill。
-4. 下一轮重新新建 runner thread，避免上一轮产物和上下文污染下一轮。
-
-这里刻意不引入 LangGraph、状态机、registry 或复杂的 defensive wrapper。关键状态只保留在 evaluator/modifier 两个长期 Codex session 里，以及被修改的文件里。
+在这个目录结构里，[`METASKILL.md`](academic-army-architect/METASKILL.md) 和 [`ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md) 为 `evolve-skill` pipeline 提供必需输入。当前目录下的 [`envolve.sh`](academic-army-architect/envolve.sh) 只是一个便捷命令：它把某个具体 skill 的 `--skill-path`、`--artifact-path` 输出文件夹、`--metaskill-path` 和 `--task-path` 填好，然后调用共享 runner。
 
 ## 预设指令
 
@@ -99,7 +83,7 @@ npm install
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
-这个脚本会用该 skill 对应的路径调用 `evolve-skill` pipeline。runner 会在每轮开始时清空 artifact 输出文件夹，所以 `--artifact-path` 应该指向一个专用输出文件夹。
+这个脚本会用该 skill 对应的路径调用 `evolve-skill` pipeline。脚本实际运行内容和 loop 行为见 [`src/evolve-skill/README.zh-CN.md`](../src/evolve-skill/README.zh-CN.md)。
 
 ## 新增 Metaskill
 
@@ -111,8 +95,8 @@ ENVOLVETASK.md
 envolve.sh
 ```
 
-`METASKILL.md` 应该写成目标 skill 的设计文档，说明这个 skill 想产出什么、什么样的输出算好、哪些常见失败模式需要避免，以及哪些内容不应该写进 skill。
+metaskill 设计文档应该说明目标 skill 想产出什么、什么样的输出算好、哪些常见失败模式需要避免，以及哪些内容不应该写进 skill。
 
-`ENVOLVETASK.md` 应该是一个有代表性的固定任务，方便不同版本的 skill 在多轮迭代中进行对比。
+固定 evolution task 应该是一个有代表性的固定任务，方便不同版本的 skill 在多轮迭代中进行对比。
 
-可以复制已有的 `envolve.sh`，然后修改其中的路径。
+可以复制已有的 [`envolve.sh`](academic-army-architect/envolve.sh)，然后修改其中的路径。

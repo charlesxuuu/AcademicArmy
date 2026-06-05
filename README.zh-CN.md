@@ -10,6 +10,24 @@ AcademicArmy 是一个用于完成研究论文的 multi-agent 系统。它的核
 
 当你对论文蓝图满意后，项目才正式进入 AcademicArmy 的运行流程。此时论文蓝图成为项目起点，后续各岗位根据它完成论文文本、实验代码、测试、优化、插图、实验结果图和论文评审等工作。
 
+## 运行流程
+
+当前项目流程会先和三个规划类 skill 交互，得到三份面向 AI 执行的 Markdown 产物：
+
+1. `academic-army-architect` 生成 `paper_blueprint.md`，也就是论文战略蓝图，用来固定论文身份、目标 venue 姿态、核心 claims、贡献边界、候选方法空间、证据需求和下游约束。
+2. `academic-army-experiment-plan` 生成 `experiment_plan.md`，也就是实验策略，把论文 claims 映射到证据链、数据集或 workload、指标、baselines、消融、鲁棒性检查和审稿人关心的验证点。
+3. `academic-army-coding-plan` 生成 `coding_plan.md`，也就是代码实现契约，把论文蓝图和实验方案转成模块边界、CLI、实验 harness、测试、raw result 导出和 method freeze 规则。
+
+每个规划类 skill 还会同时生成一份中文 `*.explain.md` 解释文件，方便用户审阅；但后续开发 runner 读取的是上面三份英文 Markdown。
+
+三份规划产物准备好后，运行：
+
+```bash
+bash runs/develop.sh
+```
+
+[`runs/develop.sh`](runs/develop.sh) 会调用 TypeScript 的 `developing` pipeline，读取三份规划产物，并在 `output/codebase` 下迭代写代码。TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)，开发循环实现见 [`src/developing/README.zh-CN.md`](src/developing/README.zh-CN.md)。
+
 ## 指导思想
 
 AcademicArmy 的主体核心可以概括为一句话：按图施工。
@@ -24,26 +42,13 @@ ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”�
 
 需要精细调研的部分，主要通过会使用 API 的 skill 调用 Deep Research 来完成。这样可以避免为了检索而在本地保存大量数据，让项目更轻量，也方便后续刷新调研结果。
 
-## Skill 制作流程
+## Skill 开发
 
-AcademicArmy 的 skill 不是一次性写完就固定下来，而是通过一套 meta-skill 迭代流程逐步打磨。
-
-我们会先初步编写一个 skill。这个阶段用到的相关 prompt 和记录保存在 `metaskills` 文件夹中，方便读者查看这个 skill 最初是如何被制作出来的。
-
-随后，我们选择一个固定选题，并围绕这个选题反复运行下面的循环：
-
-1. 执行当前版本的 skill。
-2. 把 skill 的输出和 `metaskills` 中的相关记录一起交给另一个 agent。
-3. 让这个 agent 仔细分析当前 skill 存在哪些问题：有没有冗余的地方，语言是否清晰，内容是否完整，结构是否适合后续 agent 稳定执行。
-4. 根据这个分析，总结出 skill 可以如何优化。
-5. 把修改意见交给 Codex，让 Codex 修改 skill。
-6. 再次执行修改后的 skill，并继续用同一个固定选题检验效果。
-
-这个循环的作用是让不同版本的 skill 在稳定任务条件下可比较。我们的目标是逐步减少冗余、修正表达和内容问题，并让每个 skill 更容易被后续 agent 一致地执行。
+AcademicArmy 制作和迭代 skill 的 meta-skill 工作流见 [`metaskills/README.zh-CN.md`](metaskills/README.zh-CN.md)。
 
 ## DeepResearch MCP
 
-AcademicArmy 在 `mcp-server` 目录下提供了本地 stdio MCP 实现。它只暴露一个工具：
+AcademicArmy 在 [`mcp-server`](mcp-server) 目录下提供了本地 stdio MCP 实现。它只暴露一个工具：
 
 - `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5-pro`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
 
@@ -53,16 +58,16 @@ AcademicArmy 在 `mcp-server` 目录下提供了本地 stdio MCP 实现。它只
 OPENAI_API_KEY=your_api_key_here
 ```
 
-如有需要，安装 MCP server 依赖：
+如有需要，从 [`mcp-server/requirements.txt`](mcp-server/requirements.txt) 安装 MCP server 依赖：
 
 ```powershell
 cd <repo>
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-项目 pipeline 会通过 `agent-forge.yaml` 使用 `academic_army_mcp_tools`。该配置会在仓库根目录以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`，因此 evolve/developing runner 不需要额外执行 Codex MCP 安装步骤。
+项目 pipeline 会通过 [`agent-forge.yaml`](agent-forge.yaml) 使用 `academic_army_mcp_tools`。该配置会在仓库根目录以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`，因此 evolve/developing runner 不需要额外执行 Codex MCP 安装步骤。
 
-如果直接在 Codex 中运行 AcademicArmy skills，需要把同一个 MCP server 安装到 Codex 里，这样 skill 才能在项目 pipeline 之外调用 `academic_army_mcp_tools.deepresearch`：
+如果直接在 Codex 中运行 AcademicArmy skills，需要用 [`install_mcp.py`](install_mcp.py) 把同一个 MCP server 安装到 Codex 里，这样 skill 才能在项目 pipeline 之外调用 `academic_army_mcp_tools.deepresearch`：
 
 ```powershell
 python install_mcp.py
@@ -85,4 +90,6 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## 项目结构
 
-Agent 和团队结构见 `AcademicArmy/README.zh-CN.md`。
+Agent 和团队结构见 [`AcademicArmy/README.zh-CN.md`](AcademicArmy/README.zh-CN.md)。
+
+TypeScript pipeline 的目录结构和实现说明见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。

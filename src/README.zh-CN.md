@@ -1,0 +1,24 @@
+# TypeScript Pipelines
+
+`src` 存放 AcademicArmy 的 TypeScript runner，用来把规划产物转成可重复运行的 agent workflow。
+
+CLI 入口是 [`cli.ts`](cli.ts)。它通过 [`package.json`](../package.json) scripts 暴露两个 pipeline：
+
+- `npm run developing`：运行 `developing/` 中实现的代码开发循环。
+- `npm run evolve-skill`：运行 `evolve-skill/` 中实现的 skill self-evolution 循环。
+
+[`pipeline.ts`](pipeline.ts) 是两个命令共用的封装层。它解析各 pipeline 自己的参数，使用 `coding-agent-forge` 加载一个或多个 YAML 配置文件，根据配置好的 factories 创建 `AgentTeam`，运行选中的 pipeline，并在结束后关闭 team。
+
+## 目录说明
+
+- [`cli.ts`](cli.ts)：根据名称选择 pipeline，并把剩余 CLI 参数传给对应 pipeline。
+- [`pipeline.ts`](pipeline.ts)：共享的 pipeline 定义、配置加载、agent team 构建和清理逻辑。
+- [`developing/`](developing/)：读取 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`，然后迭代实现目标代码库。详见 [`developing/README.zh-CN.md`](developing/README.zh-CN.md)。
+- [`evolve-skill/`](evolve-skill/)：在固定任务上运行某个 skill，根据 metaskill 评价产物，并让 modifier agent 修改 skill。详见 [`evolve-skill/README.zh-CN.md`](evolve-skill/README.zh-CN.md)。
+
+## 和 Shell 脚本的关系
+
+[`runs/`](../runs/) 和 [`metaskills/README.zh-CN.md`](../metaskills/README.zh-CN.md) 中说明的 metaskill scripts 是这些 TypeScript pipeline 的便捷包装。
+
+- [`runs/develop.sh`](../runs/develop.sh) 调用 `npm run developing`。
+- [`metaskills/README.zh-CN.md`](../metaskills/README.zh-CN.md) 中说明的 `metaskills/*/envolve.sh` 调用 `npm run evolve-skill`。
