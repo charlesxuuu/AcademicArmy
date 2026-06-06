@@ -1,5 +1,5 @@
 import { AgentTeam, type RecordCallback } from "coding-agent-forge";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir, readFile, rm } from "node:fs/promises";
 import { parseArgs } from "node:util";
 import { definePipeline } from "../pipeline.js";
 import type { ParsedPipelineArgs } from "../pipeline.js";
@@ -80,6 +80,14 @@ export async function evolveSkill(
   const logRecord: RecordCallback = (thread, record) => {
     console.log(thread.recordToPrettyString(record));
   };
+  const taskDescriptions = (
+    await Promise.all(
+      options.taskPaths.map(async (taskPath, index) => {
+        const task = await readFile(taskPath, "utf8");
+        return `Task ${String(index + 1)}: ${task}`;
+      }),
+    )
+  ).join("\n\n");
 
   for (let round = 1; round <= options.rounds; round++) {
     await rm(options.artifactPath, { recursive: true, force: true });
@@ -103,6 +111,7 @@ export async function evolveSkill(
         {
           artifactPath: options.artifactPath,
           metaskillPath: options.metaskillPath,
+          taskDescriptions,
         },
         logRecord,
       )

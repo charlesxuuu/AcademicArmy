@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 export type SkillEvaluatorVariables = {
   artifactPath: string;
   metaskillPath: string;
+  taskDescriptions: string;
 };
 
 export class SkillEvaluatorAgent extends Agent<SkillEvaluatorVariables> {
@@ -11,6 +12,10 @@ export class SkillEvaluatorAgent extends Agent<SkillEvaluatorVariables> {
     const metaskill = readFileSync(variables.metaskillPath, "utf8");
     return `
 Evaluate the artifact at ${variables.artifactPath}. It was produced by a skill.
+
+The artifacts were created based on the following task descriptions:
+
+${variables.taskDescriptions}
 
 The metaskill below contains the design goals and tips of this skill:
 
