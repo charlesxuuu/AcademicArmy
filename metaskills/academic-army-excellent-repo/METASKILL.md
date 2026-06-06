@@ -30,6 +30,34 @@ skill应把“工具选型”和“代码复制”区分清楚：可安装、维
 skill应记录外部工具选择理由，例如为什么某工具适合作为依赖、为什么某工具只适合参考、为什么当前框架适合该实验体系。
 skill不应把deepresearch查到的某个优秀代码库结构机械照搬；应根据当前论文需求、实验流程、harness和test结构进行适配。
 
+开源代码参考与复用tips：
+skill应使用`academic_army_mcp_tools`里的deepresearch搜索并下载相关高质量开源代码作为参考，而不是只凭空生成初始代码框架。
+参考代码来源可以包括高质量公开库、论文官方代码、benchmark实现、harness实现、实验框架、工具库、工程化模板和目标生态中的成熟项目；具体参考对象由deepresearch现场决定。
+skill应优先参考维护良好、工程化程度高、license明确、结构清晰、与当前论文实验系统接近的公开代码库。
+skill下载开源代码的目的包括学习文件结构、接口设计、harness组织、test组织、配置方式、结果导出方式、抽象边界和代码风格。
+skill不应机械照搬某个公开库的整体结构；应分析哪些代码和结构真正适合当前`paper_blueprint`、`experiment plan`和`coding plan`。
+对现有代码的使用应按优先级处理：packaging良好且接口稳定的工具优先作为依赖安装调用；可复用但不适合作为依赖的代码可以在license允许的前提下小范围复制、改写或移植；不适合复用的代码只作为设计参考。
+skill应判断一个开源工具是“适合直接依赖调用”还是“只适合参考或复制片段”：判断依据包括packaging质量、API稳定性、维护状态、依赖复杂度、license兼容性、与当前框架的耦合成本和后续维护成本。
+能合法、合适、低维护成本复用现有实现时，skill应优先复用成熟代码，不要为了“从零生成”而重复实现已有可靠功能。
+复用方式优先级是直接依赖、适配调用、小范围复制或改写、自己重写；越靠后的方式越需要明确理由、license检查和维护成本判断。
+如果某个外部工具packaging做得好，skill应优先把它作为依赖，而不是复制其内部实现；这样可以减少维护成本、license处理复杂度和后续同步成本。
+如果某个外部工具packaging较差，但其中少量代码对当前框架有明显价值，skill可以在license允许的前提下复制或改写必要片段，并在注释和第三方说明文件中记录来源和修改。
+如果某个外部项目代码质量高但license、依赖或架构不适合当前仓库，skill可以只学习其设计模式，不复制代码。
+复制或改写开源代码时，应只复制当前框架真正需要的小范围代码片段，不应把整个无关项目塞进初始仓库。
+复制或改写代码前，skill应检查源代码license；没有明确license或license不兼容的代码，只作为阅读参考，不作为可复制代码来源。
+license决定代码能否被使用、修改、复制、分发和再授权；公开仓库只有在license允许他人使用、修改和分发代码时，才真正具备可复用的open source语义。
+复制或改写代码时，应保留原license要求的copyright notice、license notice或其他必要声明。
+例如MIT License允许copy、modify、merge、publish、distribute等复用方式，但要求保留copyright notice和permission notice。
+抄来的代码、改写的代码或从外部实现移植的代码，都应在相关代码注释中标注来源。
+来源标注应尽量包含原项目名、原仓库URL、原文件或模块、原license、参考的commit/tag/version、复用方式和本项目做了哪些修改。
+如果代码是改写而不是原样复制，注释中应说明“adapted from”“inspired by”或“ported from”，并简要说明主要改动，例如接口适配、依赖移除、数据结构修改、错误处理修改、metric逻辑修改或与本框架harness对接。
+如果某段代码只是借鉴设计思路，没有复制具体表达，可以在`FRAMEWORK.md`或developer notes中说明参考来源和设计影响，而不必把它写成逐行代码来源注释。
+如果复制或改写了多个外部来源的代码，仓库中应创建或维护一个第三方来源说明文件，例如`THIRD_PARTY.md`或等价文档，用于集中记录外部代码来源、license和修改概况。
+skill应避免复制会显著增加当前仓库复杂度的代码，例如重依赖、大型框架入口、与当前任务无关的抽象层、复杂build逻辑或难以维护的工具链。
+skill应把“复用现有代码”与“保持低摩擦框架”结合起来判断：复用代码应让当前框架更规整、更可靠、更快落地，而不是带来额外配置、过度封装或调用方负担。
+skill应把“复用现有代码”与“change locality”结合起来判断：复制或适配的代码应放在语义明确的小范围内，后续修改某个功能时不应牵动多个无关区域。
+skill输出的初始仓库应既能吸收成熟开源实现，又保持当前论文实验框架的清晰边界；外部代码服务于当前框架，而不是让当前框架被外部项目结构反向牵引。
+
 确定编程语言和基本框架逻辑后，skill应再次用deepresearch搜索该语言和框架的最佳实践。
 语言和框架最佳实践调研应服务代码规整性，例如项目结构、dependency management、配置组织、测试组织、CLI设计、logging、typing、formatting、linting、documentation和result artifact管理。
 skill不应把某一种语言、框架、包管理器、测试框架或目录模板写死；应根据论文任务、experiment plan、coding plan和deepresearch结果现场选择。
@@ -117,8 +145,11 @@ repo除了`README.md`外，还应在仓库根目录创建或维护`FRAMEWORK.md`
 `FRAMEWORK.zh-CN.md`应使用自然中文表达，中英混排时保持术语稳定，例如统一使用同一个harness名称、模块名称、metric名称和artifact名称。
 `README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`中的命令、路径和文件引用都应使用仓库内相对路径，不应出现用户机器上的绝对路径。
 如果deepresearch发现了可直接安装调用的工具，`FRAMEWORK.md`应简要说明这些依赖的用途；如果某些工具只被参考或只复用了许可允许的代码片段，也应在`FRAMEWORK.md`、`FRAMEWORK.zh-CN.md`或相应说明中记录来源和用途。
+`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`应说明当前框架参考了哪些类型的公开代码、哪些部分直接依赖外部工具、哪些部分复制或改写了外部代码片段、为什么这样复用。
+`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`中不应只写“参考了开源代码”，而应说明参考代码如何影响当前框架的模块边界、harness结构、test结构、结果导出和扩展点设计。
 如果仓库结构因deepresearch和项目选型发生变化，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`也应同步反映最终结构，而不是保留预设模板描述。
 如果仓库复制或改写了外部代码片段，应在合适的文档或源文件注释中保留来源、license和必要attribution。
+如果仓库复制、改写或移植了多个外部来源的代码，应创建或维护`THIRD_PARTY.md`或等价第三方来源说明文件，集中记录外部代码来源、license、复用方式和修改概况。
 文档中解释结构时，应优先用模块名、harness名、test名、method名或自然简称指代内容，而不是依赖抽象编号互相引用。
 
 创建或改造repo前，skill应形成简短的内部仓库结构决策，明确语言和框架选择、固定实验目录、生态源码结构、harness目录、test目录、配置机制、接口抽象、artifact schema和静态检查方式。
@@ -243,6 +274,8 @@ skill应在静态检查阶段确认`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`已经�
 skill应在静态检查阶段确认`README.md`保持简洁入口定位，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`只描述实际创建或明确预留的目录、模块、命令和功能，不引用仓库外绝对路径，不把placeholder写成已完成实现。
 skill应进行Friction audit检查：静态检查是否存在不必要的导入配置、路径别名、额外环境变量、重复注册点、过长调用链、薄wrapper、过度拆分模块或让harness/test变复杂的抽象；如果存在，应优先改成更直接、更低配置成本的结构。
 skill应在静态检查阶段确认默认导入、默认测试入口、默认harness入口和预期运行路径不依赖隐藏路径假设或大量全局配置。
+skill应在静态检查阶段检查外部代码来源标注是否完整：复制或改写代码是否有注释来源，第三方说明文件是否记录license和修改，文档是否解释复用决策。
+skill应在静态检查阶段检查是否有未标注来源的外部代码片段、疑似无license来源代码、或大段无关复制代码；如果有，应补充来源说明、移除不必要代码或改成从依赖调用。
 如果需要运行安装、测试、harness或实验，应交给后续代码实现、测试执行或实验执行skill。
 
 本skill应保持论文目标驱动：每个核心模块、harness和test都应能追溯到论文蓝图、experiment plan或coding plan中的需求。
@@ -262,6 +295,7 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 **Hybrid repository layout原则**：repo采用“固定实验目录 + 动态生态结构”的混合布局；`data/`、`output/`、`results/`、`harness/`、`test/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`作为论文实验工作流的固定顶层结构，源码目录、packaging文件、构建配置、测试框架配置和语言生态目录由deepresearch现场调研高质量公开库和官方最佳实践后确定。
 **No hardcoded language layout原则**：skill不得预设任何具体语言、运行时、框架、包管理器、测试框架、配置文件或目录布局；selected stack相关结构必须来自用户指定、deepresearch调研和当前实验系统需求的共同判断。
 **Research-informed structure原则**：仓库结构不是套模板，而是根据论文蓝图、experiment plan、coding plan、目标语言、框架生态、packaging质量和高质量公开库结构综合设计。
+**Open-source reuse原则**：初始代码仓库应主动通过deepresearch查找、下载和分析高质量开源代码；能合法、合适、低维护成本复用的成熟实现应优先复用，复用方式优先选择直接依赖或适配调用，其次才是license允许的小范围复制或改写；所有复制、改写或移植的代码都必须在代码注释和第三方说明中标注来源、license和修改内容。
 **Documentation handoff原则**：`README.md`负责快速介绍repo，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`负责把代码框架的设计思路、使用方式、harness/test组织、结果导出和后续扩展点讲清楚，帮助后续写代码skill和用户理解如何在这个框架上继续实现。
 **Low-friction framework原则**：repo应在符合目标语言和框架最佳实践的前提下，优先选择低配置、低样板、低调用成本的结构；任何目录布局、packaging方式、抽象层、registry、adapter、config系统或runner设计，都应经过“是否让运行、测试、harness或后续method实现变得更复杂”的检查。
 **Minimal direct code原则**：代码应短、直、少层级；能内联就内联，能删除helper就删除helper，能直接传递就不要转换。
@@ -275,4 +309,4 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 **Stable state only原则**：只有长期稳定、跨边界仍有意义的状态才进入模型；临时状态留在局部。
 **Review for deletion原则**：审阅时优先发现可删除、可内联、可移动、可改名的结构，而不是默认建议新增抽象。
 **Task-specific style section原则**：代码风格规则只沉淀会影响代码形态的规则，不包含代码运行、工具使用、环境处理或项目管理规则。
-**Excellent repo总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成或改造成一个静态、规整、低摩擦、可扩展、可维护的优秀代码仓库；它应在用户指定路径内创建或修改真实文件结构，为固定实验目录、harness、test、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具和最佳实践，并用少抽象、强命名、强边界、强顺序一致性的代码风格保证repo长期可读、可改、可验证。
+**Excellent repo总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成或改造成一个静态、规整、低摩擦、可扩展、可维护的优秀代码仓库；它应在用户指定路径内创建或修改真实文件结构，为固定实验目录、harness、test、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具、最佳实践和可复用开源实现，并用少抽象、强命名、强边界、强顺序一致性的代码风格保证repo长期可读、可改、可验证。
