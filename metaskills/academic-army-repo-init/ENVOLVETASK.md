@@ -1,0 +1,1 @@
+Create an initial research code repository skeleton at `output/repository` according to `output/paper_blueprint.md`, `output/experiment_plan.md`, and `output/coding_plan.md`.
