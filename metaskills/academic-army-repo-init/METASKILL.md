@@ -39,6 +39,13 @@ skill不应把“Python必须用某个目录布局”或“TypeScript必须用�
 deepresearch调研文件结构时应优先参考维护良好、工程化程度高、与当前任务接近的公开库，而不是随意参考小型demo、教程仓库或一次性脚本项目。
 deepresearch应分析公开库中哪些结构是语言生态惯例，哪些结构是该项目特有选择，哪些结构适合当前论文实验系统，哪些结构不应迁移。
 skill应避免机械照搬某个公开库的完整结构；应从多个高质量公开库和官方最佳实践中提炼适合当前论文实验系统的结构。
+skill在选择代码库文件结构时，应分析该结构是否会引入不必要的配置项、额外安装步骤、额外import设置、额外环境变量或额外测试配置。
+skill不应机械采用某种公开库结构；即使某种结构在高质量公开库中常见，也要判断它是否适合当前论文实验仓库的运行方式、测试方式和后续实现方式。
+对Python项目，`src layout`和`flat layout`都应作为可选结构被分析；`src layout`有其packaging和import隔离优势，但如果当前仓库主要是论文实验系统、harness入口和本地迭代，而`src/`会导致额外editable install、`PYTHONPATH`或pytest配置，则应考虑更低配置成本的结构。
+对任何语言或框架，skill都应优先选择“符合生态最佳实践且运行路径简单”的结构；最佳结构不是最复杂或最标准化的结构，而是能让后续代码skill、harness、test和用户以最少配置理解和运行的结构。
+skill应在deepresearch调研高质量公开库时额外观察：这些库的结构是否依赖复杂build配置、path alias、module resolution、custom loader、workspace配置、test runner配置或命令包装；如果这些复杂性对当前项目没有必要，不应迁移。
+如果某种目录布局、packaging方式或框架会让简单命令变成必须带多个配置参数，skill应在选型时把它视为结构成本，并考虑替代方案。
+skill应把“减少不必要配置项”作为代码库初始化质量标准之一：默认运行、默认导入、默认测试、默认harness入口应尽量清晰，不应依赖隐藏路径假设或大量全局配置。
 
 初始代码仓库应区分核心系统逻辑、实验执行逻辑、harness逻辑、testing逻辑和结果导出逻辑，避免把所有内容混在一个脚本里。
 仓库应尽量保持模块低耦合：method实现不直接控制实验全流程，harness不直接嵌入图表逻辑，testing不依赖真实大规模实验数据。
@@ -95,6 +102,7 @@ artifact schema应使用稳定字段命名，并与论文蓝图、experiment pla
 `FRAMEWORK.md`应面向后续写代码skill和人类开发者，说明该框架如何承接`paper_blueprint`、experiment plan和coding plan，以及哪些设计是为了支持后续method实现、harness评测、功能测试、结果导出和论文实验迭代。
 `FRAMEWORK.md`应解释固定实验目录的含义，例如`data/`用于输入数据，`output/`用于程序运行输出，`results/`用于实验结果记录，`harness/`用于harness，`test/`用于功能测试。
 `FRAMEWORK.md`应解释语言和框架相关的源码结构为什么这样组织；这个解释应基于deepresearch得到的目标语言最佳实践和高质量公开库结构，而不是写成“skill规定如此”。
+`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`应简要说明为什么选择当前源码布局，以及该布局如何减少不必要配置、降低运行和测试成本。
 `FRAMEWORK.md`应说明核心逻辑模块的职责、模块之间的关系、主要接口、可替换method和baseline的接入方式，以及后续实现应该在哪些抽象点继续扩展。
 `FRAMEWORK.md`应说明harness结构：每种harness服务什么论文目标、修改哪个逻辑模块、如何运行、关注哪些metric、输出哪些raw artifact，以及如何支持“修改模块 -> 运行harness -> 读取结果 -> 再修改”的循环。
 `FRAMEWORK.md`应说明testing结构：每类test验证什么功能目标、使用什么最小输入、期望什么行为、如何区分功能正确性测试和论文目标评测。
@@ -127,6 +135,16 @@ skill可以在内部先形成“为什么选择这种目录结构”的决策，
 不要创建只负责转手、改名、包装、拆包或重新组装数据的helper；不要创建“拆开又合上”的中间结构。
 初始仓库可以预留接口和extension point，但这些抽象必须有真实语义价值，例如稳定method接口、baseline接口、metric接口、artifact writer或harness runner边界。
 不要为了未来可能扩展而提前引入复杂结构；当前简单结构能表达清楚时，就保持简单。
+skill在设计代码抽象时，应分析每个抽象是否会让调用方代码、配置文件、harness入口、test脚本或method实现变得更长、更绕或更难维护。
+skill应优先采用能减少重复、稳定接口、缩短调用路径的抽象；如果一个抽象只把复杂度从模块内部转移到每个调用方，不应采用。
+对每个核心抽象，例如registry、adapter、factory、config object、runner、pipeline、plugin interface，skill应评估它带来的收益和代价：是否减少重复实现，是否让method替换更清晰，是否让harness更容易运行，是否让测试更简单。
+如果某个抽象会导致大量样板代码，例如每新增一个method都要改多个注册点、写多个配置块、补多个wrapper，skill应考虑更直接的设计。
+如果某个接口设计会让所有调用方都需要传入过多参数，skill应考虑把稳定上下文收敛到配置对象、run context或明确的数据结构中，但不要因此引入过重框架。
+如果某个配置系统会让简单实验必须写大量配置文件，skill应考虑更轻量的默认值、局部覆盖或命令行参数语义。
+如果某个模块拆分会导致大量跨模块转发函数、薄wrapper或只调用一次的抽象层，skill应合并或简化这些模块。
+如果某个设计会让test脚本和harness脚本为了调用核心逻辑而写大量准备代码，skill应改进入口和接口，使测试和harness能够直接表达目标。
+skill应避免为了“预留扩展性”而过早引入多层抽象；扩展点应围绕论文实验中真实存在的变化点，例如candidate method、baseline、metric、dataset、harness和result artifact。
+skill应区分必要复杂度和偶然复杂度：论文实验本身需要的method替换、harness评测、结果导出属于必要复杂度；由目录布局、导入路径、过度封装或配置系统带来的额外负担属于应尽量减少的复杂度。
 公共层只放真正公共、稳定、跨多个地方共享的内容；只在局部使用的helper、数据结构、配置、状态或特殊逻辑应放在使用点附近。
 共享基础结构只承载所有使用方共同需要的能力，不承载少数使用方的特殊逻辑。
 特殊case应尽量留在特殊case的使用位置，不要为了少数情况污染公共层。
@@ -186,6 +204,8 @@ skill应在静态检查阶段确认没有把Python、TypeScript或任何其他�
 skill应在静态检查阶段确认`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`都存在，并且其中描述的目录、模块、harness、test和结果artifact与实际仓库结构一致。
 skill应在静态检查阶段确认`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`已经覆盖框架描述、设计思路、目录说明、核心模块、harness说明、test说明、结果导出说明、后续扩展点和基本使用方式。
 skill应在静态检查阶段确认`README.md`保持简洁入口定位，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`只描述实际创建或明确预留的目录、模块、命令和功能，不引用仓库外绝对路径，不把placeholder写成已完成实现。
+skill应进行Friction audit检查：静态检查是否存在不必要的导入配置、路径别名、额外环境变量、重复注册点、过长调用链、薄wrapper、过度拆分模块或让harness/test变复杂的抽象；如果存在，应优先改成更直接、更低配置成本的结构。
+skill应在静态检查阶段确认默认导入、默认测试入口、默认harness入口和预期运行路径不依赖隐藏路径假设或大量全局配置。
 如果需要运行安装、测试、harness或实验，应交给后续代码实现、测试执行或实验执行skill。
 
 本skill应保持论文目标驱动：每个核心模块、harness和test都应能追溯到论文蓝图、experiment plan或coding plan中的需求。
@@ -199,4 +219,5 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 **No hardcoded language layout原则**：skill不得预设Python、TypeScript或其他语言的固定文件树；语言相关结构必须来自用户指定、deepresearch调研和当前实验系统需求的共同判断。
 **Research-informed structure原则**：仓库结构不是套模板，而是根据论文蓝图、experiment plan、coding plan、目标语言、框架生态、packaging质量和高质量公开库结构综合设计。
 **Documentation handoff原则**：`README.md`负责快速介绍仓库，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`负责把初始代码框架的设计思路、使用方式、harness/test组织、结果导出和后续扩展点讲清楚，帮助后续写代码skill和用户理解如何在这个框架上继续实现。
+**Low-friction framework原则**：初始代码仓库应在符合目标语言和框架最佳实践的前提下，优先选择低配置、低样板、低调用成本的结构；任何目录布局、packaging方式、抽象层、registry、adapter、config系统或runner设计，都应经过“是否让运行、测试、harness或后续method实现变得更复杂”的检查。
 **总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成一个静态、规整、可扩展的初始代码仓库；它应在用户指定路径内创建真实文件结构，为固定实验目录、harness、test、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具和最佳实践。
