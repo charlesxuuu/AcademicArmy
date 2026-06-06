@@ -1,0 +1,11 @@
+interface:
+  display_name: "Academic Army Repo Init"
+  short_description: "Research-code repository skeletons with framework docs, harnesses, tests, self-audit, and static audit"
+  default_prompt: "Use $academic-army-repo-init to initialize a static research-code repository skeleton from my paper blueprint, experiment plan, coding plan, and target repo path, including framework handoff docs, a self-audit manifest, and deterministic static audit."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "academic_army_mcp_tools"
+      description: "Provides academic_army_mcp_tools.deepresearch for repository, framework, harness, testing, packaging, and artifact-management evidence."
+      transport: "stdio"
