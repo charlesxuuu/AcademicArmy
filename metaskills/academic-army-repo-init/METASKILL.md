@@ -29,22 +29,21 @@ skill不应把deepresearch查到的某个优秀代码库结构机械照搬；应
 确定编程语言和基本框架逻辑后，skill应再次用deepresearch搜索该语言和框架的最佳实践。
 语言和框架最佳实践调研应服务代码规整性，例如项目结构、dependency management、配置组织、测试组织、CLI设计、logging、typing、formatting、linting、documentation和result artifact管理。
 skill不应把某一种语言、框架、包管理器、测试框架或目录模板写死；应根据论文任务、experiment plan、coding plan和deepresearch结果现场选择。
-如果论文实验明显适合某种语言或生态，skill可以据此选型；如果用户已经指定语言、框架或依赖，应优先遵守用户指定内容。
-公开最佳实践可以作为调研方向，例如Python packaging规范、pytest fixture组织方式、Cookiecutter Data Science式数据科学项目结构、静态分析工具和语言生态文档，但具体语言、框架和工具链必须由skill结合当前任务现场选型。
+如果论文实验明显适合某种语言、运行时或生态，skill可以据此选型；如果用户已经指定语言、框架或依赖，应优先遵守用户指定内容。
+公开最佳实践可以作为调研方向，例如目标生态的官方规范、测试组织文档、研究项目结构规范、静态分析资料和高质量公开库文档，但具体语言、框架和工具链必须由用户输入和deepresearch现场确定。
 初始代码仓库的整体文件夹结构应结合目标语言、框架、packaging生态、论文实验需求和deepresearch找到的高质量公开库来确定，不应在skill里预先写死某一种语言或框架的目录模板。
 skill应在创建仓库前用deepresearch调研目标语言和框架的最佳实践，以及相关高质量公开库的真实结构，再据此决定源码目录、配置文件、依赖声明文件、入口组织和辅助工具配置。
-Python项目可能采用`src/<package_name>/`、`<package_name>/`、`pyproject.toml`、`setup.py`等不同组织方式；TypeScript项目可能采用`src/`、`package.json`、`tsconfig.json`等不同组织方式；这些只能作为现场调研时的候选参考，不应写成固定规则。
-skill不应把“Python必须用某个目录布局”或“TypeScript必须用某个目录布局”写死；应根据deepresearch结果、用户指定、实验系统复杂度、packaging需求和后续可维护性选择合适结构。
+skill不应在tips或skill正文中提到任何具体编程语言、具体框架、具体包管理器、具体测试框架、具体目录布局案例或具体配置文件名；这些信息应由用户输入和deepresearch现场确定。
+skill不应把任何目标语言、运行时或框架生态的目录布局写死；应根据deepresearch结果、用户指定、实验系统复杂度、packaging需求和后续可维护性选择合适结构。
 如果用户已经指定语言、框架或项目风格，skill应优先围绕用户指定内容调研该生态的最佳实践；如果用户没有指定，则skill应根据论文蓝图、experiment plan和coding plan选择最合适的语言与框架逻辑。
 deepresearch调研文件结构时应优先参考维护良好、工程化程度高、与当前任务接近的公开库，而不是随意参考小型demo、教程仓库或一次性脚本项目。
 deepresearch应分析公开库中哪些结构是语言生态惯例，哪些结构是该项目特有选择，哪些结构适合当前论文实验系统，哪些结构不应迁移。
 skill应避免机械照搬某个公开库的完整结构；应从多个高质量公开库和官方最佳实践中提炼适合当前论文实验系统的结构。
-skill在选择代码库文件结构时，应分析该结构是否会引入不必要的配置项、额外安装步骤、额外import设置、额外环境变量或额外测试配置。
-skill不应机械采用某种公开库结构；即使某种结构在高质量公开库中常见，也要判断它是否适合当前论文实验仓库的运行方式、测试方式和后续实现方式。
-对Python项目，`src layout`和`flat layout`都应作为可选结构被分析；`src layout`有其packaging和import隔离优势，但如果当前仓库主要是论文实验系统、harness入口和本地迭代，而`src/`会导致额外editable install、`PYTHONPATH`或pytest配置，则应考虑更低配置成本的结构。
-对任何语言或框架，skill都应优先选择“符合生态最佳实践且运行路径简单”的结构；最佳结构不是最复杂或最标准化的结构，而是能让后续代码skill、harness、test和用户以最少配置理解和运行的结构。
-skill应在deepresearch调研高质量公开库时额外观察：这些库的结构是否依赖复杂build配置、path alias、module resolution、custom loader、workspace配置、test runner配置或命令包装；如果这些复杂性对当前项目没有必要，不应迁移。
-如果某种目录布局、packaging方式或框架会让简单命令变成必须带多个配置参数，skill应在选型时把它视为结构成本，并考虑替代方案。
+skill在选择代码库文件结构时，应分析该结构是否会引入不必要的配置项、额外安装步骤、额外导入设置、额外环境变量、额外测试配置或额外命令包装。
+skill不应机械采用某种公开库结构；即使某种结构在高质量公开库中常见，也要判断它是否适合当前论文实验仓库的运行方式、测试方式、harness方式和后续实现方式。
+对任何目标语言、运行时或框架生态，skill都应优先选择“符合该生态最佳实践且运行路径简单”的结构；最佳结构不是最复杂或最流行的结构，而是能让后续代码skill、harness、test和用户以较少配置理解和运行的结构。
+skill应在deepresearch调研高质量公开库时观察：这些库的结构是否依赖复杂build配置、路径别名、module resolution、custom loader、workspace配置、test runner配置或命令包装；如果这些复杂性对当前项目没有必要，不应迁移。
+如果某种目录布局、packaging方式、框架组织或工具链会让简单运行命令必须附带多个配置参数，skill应在选型时把它视为结构成本，并考虑更低摩擦的替代方案。
 skill应把“减少不必要配置项”作为代码库初始化质量标准之一：默认运行、默认导入、默认测试、默认harness入口应尽量清晰，不应依赖隐藏路径假设或大量全局配置。
 
 初始代码仓库应区分核心系统逻辑、实验执行逻辑、harness逻辑、testing逻辑和结果导出逻辑，避免把所有内容混在一个脚本里。
@@ -77,7 +76,7 @@ harness不应把面向论文图表的数据聚合和转换写进核心逻辑；�
 testing结构应承接coding plan中的testing设计，把项目功能目标具体化为可运行测试脚本。
 test应覆盖数据读取、配置解析、method接口、baseline接口、metric计算、结果导出、CLI入口和核心模块交互等功能正确性问题；具体覆盖范围由coding plan决定。
 test应使用小型fixture、toy data、mock data或最小样例，为后续开发提供快速反馈。
-pytest fixture这类模式可以作为测试组织调研参考，但具体测试框架应根据语言、项目选型和deepresearch结果决定。
+目标生态中的fixture、setup/teardown、mock data和测试发现机制可以作为测试组织调研参考，但具体测试框架应根据用户输入、项目选型和deepresearch结果决定。
 testing应有明确pass/fail标准，验证代码行为、接口契约、数据格式和结果导出是否正确，而不是用论文性能是否最好作为通过标准。
 testing输出主要服务debug和开发反馈，应和论文实验结果artifact分开管理。
 
@@ -200,7 +199,7 @@ Prompt文本应短、明确、任务导向，不展示skill内部流程，也不
 静态检查应根据目标语言和框架选择合适工具或检查方式；静态分析的核心是“不执行程序而检查源码或配置”，具体工具由deepresearch现场决定。
 静态检查完成后，skill应确认固定顶层结构存在，即`data/`、`output/`、`results/`、`harness/`、`test/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`，并确认关键文件、依赖声明、配置入口、模块接口和结果artifact约定都已经创建。
 skill应在静态检查阶段确认语言和框架相关结构与deepresearch得到的最佳实践一致。
-skill应在静态检查阶段确认没有把Python、TypeScript或任何其他语言的示例结构当成无条件模板；最终结构应能追溯到用户输入、项目选型、deepresearch结论和论文实验需求。
+skill应在静态检查阶段确认没有把任何具体语言、框架、目录布局案例或公开库示例结构当成无条件模板；最终结构应能追溯到用户输入、项目选型、deepresearch结论和论文实验需求。
 skill应在静态检查阶段确认`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`都存在，并且其中描述的目录、模块、harness、test和结果artifact与实际仓库结构一致。
 skill应在静态检查阶段确认`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`已经覆盖框架描述、设计思路、目录说明、核心模块、harness说明、test说明、结果导出说明、后续扩展点和基本使用方式。
 skill应在静态检查阶段确认`README.md`保持简洁入口定位，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`只描述实际创建或明确预留的目录、模块、命令和功能，不引用仓库外绝对路径，不把placeholder写成已完成实现。
@@ -216,7 +215,7 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 如果需要给用户说明结果，应只说明创建了哪些仓库能力、哪些抽象已预留、后续写代码skill应从哪里继续，而不是解释runtime操作细节。
 
 **Hybrid repository layout原则**：初始代码仓库采用“固定实验目录 + 动态生态结构”的混合布局；`data/`、`output/`、`results/`、`harness/`、`test/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`作为论文实验工作流的固定顶层结构，源码目录、packaging文件、构建配置、测试框架配置和语言生态目录由deepresearch现场调研高质量公开库和官方最佳实践后确定。
-**No hardcoded language layout原则**：skill不得预设Python、TypeScript或其他语言的固定文件树；语言相关结构必须来自用户指定、deepresearch调研和当前实验系统需求的共同判断。
+**No hardcoded language layout原则**：skill不得预设任何具体语言、运行时、框架、包管理器、测试框架、配置文件或目录布局；selected stack相关结构必须来自用户指定、deepresearch调研和当前实验系统需求的共同判断。
 **Research-informed structure原则**：仓库结构不是套模板，而是根据论文蓝图、experiment plan、coding plan、目标语言、框架生态、packaging质量和高质量公开库结构综合设计。
 **Documentation handoff原则**：`README.md`负责快速介绍仓库，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`负责把初始代码框架的设计思路、使用方式、harness/test组织、结果导出和后续扩展点讲清楚，帮助后续写代码skill和用户理解如何在这个框架上继续实现。
 **Low-friction framework原则**：初始代码仓库应在符合目标语言和框架最佳实践的前提下，优先选择低配置、低样板、低调用成本的结构；任何目录布局、packaging方式、抽象层、registry、adapter、config系统或runner设计，都应经过“是否让运行、测试、harness或后续method实现变得更复杂”的检查。
