@@ -84,7 +84,10 @@ task.
 For documentation-only tasks, do not use the docs to backfill missing code.
 State what exists, what is explicitly reserved, and what remains a placeholder.
 Avoid adding commands, entrypoints, harness loops, test claims, dependencies, or
-result-artifact behavior that the repository cannot currently support.
+result-artifact behavior that the repository cannot currently support. If a
+docs-only readback exposes a mismatch in a source file, harness definition, test,
+export contract, or TODO record, report it as a separate follow-up defect unless
+the current task explicitly authorizes editing that surface.
 
 ## Repository Integrity
 
@@ -271,6 +274,18 @@ folder should identify its research goal, target module or replaceable method
 area, input protocol, metrics, result artifacts, and intended development loop.
 Create those subfolders only when harness definitions are in scope; a reserved
 top-level `harness/` directory is enough for a fixed scaffold task.
+
+For static harness definition tasks, treat the definition file as a contract
+index, not as a runnable harness. If the user limits the fields, include only
+those fields even when the general harness template would normally mention more.
+When a definition contains paper-output mappings, every mapping must reference
+only raw artifacts and metrics declared by that same definition. Cross-check the
+mapping against the experiment plan and coding plan derivation table before
+reporting completion; if a paper output needs lifecycle events or lifecycle
+rates, declare those top-level artifacts or metrics instead of leaving an
+unresolvable mapping. Do not add loaders, registries, tests, or result files
+just to make a static definition look complete unless existing discovery would
+otherwise ingest the file incorrectly.
 
 For non-harness static metadata that belongs near harness work, use
 contract-specific filenames or explicitly scoped discovery so existing
@@ -621,6 +636,12 @@ change made `README.md`, `FRAMEWORK.md`, or `FRAMEWORK.zh-CN.md` stale. If so,
 promote a docs-only sync as the next bounded task. That sync should describe the
 accepted repository surface without adding code, tests, harness definitions,
 entrypoints, artifact writers, execution claims, or paper-result claims.
+This applies to static harness definition files even when they are not public
+source code: if root docs still describe `harness/` as only reserved, record a
+docs-only sync before any loader, CLI, metric, runtime, or next-harness task.
+If the docs already match and the next useful work would require execution,
+metrics, algorithms, real data, or artifact generation, pause instead of
+inventing a repository task.
 
 Use this static trajectory order when the repository is still a scaffold:
 
@@ -643,7 +664,9 @@ Use this static trajectory order when the repository is still a scaffold:
 8. Raw-first export schemas and provenance fields, without writing real
    experiment outputs.
 9. Static harness definitions for the earliest paper objectives, without
-   harness execution.
+   harness execution. After an accepted static harness definition task, sync
+   root docs if they are stale; otherwise pause unless the user explicitly asks
+   for the next bounded static contract.
 10. Pause or hand off when the next useful work requires algorithms, real data,
     metrics, simulator execution, baseline implementation, or paper-result
     claims.
@@ -655,6 +678,11 @@ scheduling, metric computation, harness runs, or result generation. If a next
 task asks for test files, say that the files may be authored but not run by this
 skill. Do not set a code or test task as "next" from a docs-only scaffold unless
 the user or orchestrator explicitly asks for continued implementation.
+For accepted harness definitions, record the exact definition paths and accepted
+scope, then choose a docs-only sync when root handoff docs omit those paths or
+still present the harness directory as empty or only reserved. Do not promote a
+definition-loader, schema-normalizer, bundle validator, CLI, metric, or result
+export task merely because definition files now exist.
 If a next task uses broad verbs such as normalize, load, run, export, or
 validate, bind the verb to the intended static scope in the task wording. For
 example, say "manifest-only normalization of in-memory metadata" and repeat that
@@ -692,6 +720,11 @@ next plausible work would require execution, data, metrics, algorithms,
 baselines, harness runs, or paper-result claims, mark the next task as finished
 or paused instead of inventing another repository task. Record that execution-
 oriented work needs a new explicit user request or a different skill.
+After an accepted docs-only sync, re-read the root docs and the current
+repository inventory. If the docs now describe the accepted static surface and
+the remaining upstream work is execution-oriented, set the next developer task
+to `FINISHED` or an explicit pause marker rather than proposing another static
+contract task.
 
 ## Static Validation
 
@@ -739,12 +772,22 @@ the exported implementation that users will call.
 For documentation-only syncs, static validation is a readback and scope check:
 the referenced repository-relative paths exist, the docs describe only the
 current source/test/harness/artifact surface, and the diff contains only the
-requested documentation files.
+requested documentation files. Also check that the docs do not claim execution,
+loader discovery, test execution, generated artifacts, or metric/paper-output
+derivation when those surfaces are only reserved or metadata-only.
 
 For cleanup revisions, static validation is an exact absence check plus a
 surface-consistency check: deleted files are absent on disk, public exports do
 not import them, root docs do not list them as current files, tests do not import
 them, and generated caches from the cleanup are absent.
+
+For static harness definitions, validate local derivability: each paper-output
+mapping references only the definition's declared raw artifacts and required
+metrics, the artifact and metric names match the upstream plan terminology and
+existing export contracts where present, and no mapping silently depends on an
+undeclared lifecycle, timing, decision, frame, or resource record. This is a
+readback check only unless the task explicitly asks for a static consistency
+test.
 
 Validate:
 
@@ -802,6 +845,8 @@ Validate:
   closed vocabulary
 - static definitions with different schemas are not accidentally matched by the
   same wildcard loader, glob, registry, or test expectation
+- static harness definitions with paper-output mappings are internally
+  derivable from their declared raw artifacts and required metrics
 - artifact schemas use stable fields aligned with method, metric, dataset,
   split, seed, harness, and stage names
 - reproducibility and workload-coverage manifests preserve split and seed

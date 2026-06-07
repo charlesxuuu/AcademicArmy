@@ -59,7 +59,7 @@ skill应把“复用现有代码”与“change locality”结合起来判断：
 skill输出的初始仓库应既能吸收成熟开源实现，又保持当前论文实验框架的清晰边界；外部代码服务于当前框架，而不是让当前框架被外部项目结构反向牵引。
 
 确定编程语言和基本框架逻辑后，skill应再次用deepresearch搜索该语言和框架的最佳实践。
-语言和框架最佳实践调研应服务代码规整性，例如项目结构、dependency management、配置组织、测试组织、CLI设计、logging、typing、formatting、linting、documentation和result artifact管理。
+语言和框架最佳实践调研应服务代码规整性，例如项目结构、dependency management、配置组织、测试组织、文件粒度、模块拆分、CLI设计、logging、typing、formatting、linting、documentation和result artifact管理。
 skill不应把某一种语言、框架、包管理器、测试框架或目录模板写死；应根据论文任务、experiment plan、coding plan和deepresearch结果现场选择。
 如果论文实验明显适合某种语言、运行时或生态，skill可以据此选型；如果用户已经指定语言、框架、依赖或项目风格，应优先遵守用户指定内容。
 公开最佳实践可以作为调研方向，例如目标生态的官方规范、测试组织文档、研究项目结构规范、静态分析资料和高质量公开库文档，但具体语言、框架和工具链必须由用户输入和deepresearch现场确定。
@@ -75,8 +75,28 @@ skill在选择代码库文件结构时，应分析该结构是否会引入不必
 即使某种结构在高质量公开库中常见，也要判断它是否适合当前论文实验仓库的运行方式、测试方式、harness方式和后续实现方式。
 对任何目标语言、运行时或框架生态，skill都应优先选择“符合该生态最佳实践且运行路径简单”的结构；最佳结构不是最复杂或最流行的结构，而是能让后续代码skill、harness、test和用户以较少配置理解和运行的结构。
 skill应在deepresearch调研高质量公开库时观察：这些库的结构是否依赖复杂build配置、路径别名、module resolution、custom loader、workspace配置、test runner配置或命令包装；如果这些复杂性对当前项目没有必要，不应迁移。
+skill应使用deepresearch调研目标语言和框架生态中高质量公开库的文件粒度和模块拆分风格，并把这些风格转化为当前repo的结构决策。
+skill下载或参考开源代码时，也应分析其文件粒度：如果参考库把复杂逻辑拆得清楚，可以学习其拆分方式；如果参考库存在过长文件或历史包袱，不应机械复制。
 如果某种目录布局、packaging方式、框架组织或工具链会让简单运行命令必须附带多个配置参数，skill应在选型时把它视为结构成本，并考虑更低摩擦的替代方案。
 skill应把“减少不必要配置项”作为repo质量标准之一：默认运行、默认导入、默认测试、默认harness入口应尽量清晰，不应依赖隐藏路径假设或大量全局配置。
+
+文件长度 / 模块粒度 / 子功能拆分tips：
+初始代码仓库不应生成过长、过重、职责混杂的文件；复杂功能应拆成语义清晰的子功能模块，并放在各自合适的文件中。
+skill应把“文件是否过长”理解为设计信号，而不是简单行数问题；如果一个文件包含多个职责、多个变化原因、多个抽象层级或多个实验流程，就应考虑拆分。
+skill不应在tips中写死固定最大行数；具体文件长度应结合目标语言、框架生态、deepresearch到的高质量公开库风格和当前功能复杂度判断。
+每个文件应有清晰的单一主题，例如一个文件主要承载一个接口、一类adapter、一类metric、一段数据处理逻辑、一个harness入口、一个测试类别或一个结果artifact定义。
+如果某个文件同时包含配置解析、数据处理、method实现、metric计算、harness运行和结果导出，应拆成多个更小的逻辑文件或模块。
+复杂功能应先拆成子功能，再决定文件组织；例如先识别输入解析、核心处理、外部调用、结果计算、artifact导出、错误处理和测试支持等子职责，再把相关内容放入合适模块。
+需要一起变化的代码应尽量放近；不因同一原因变化的代码应分开，避免一个功能修改牵动无关文件。
+skill应避免生成“god file”“mega runner”“all-in-one utils”“misc helpers”这类低内聚文件；通用工具文件只应包含稳定、窄职责、确实被多处复用的代码。
+如果某个工具文件开始承载多个不相关helper，应按语义拆成更具体的模块，而不是继续堆在同一个文件里。
+harness相关代码应按每种harness拆在`harness/`下对应子文件夹内；一个harness内部如果包含多个复杂步骤，也应拆出清晰子模块或支持文件。
+test相关代码应按每类test拆在`test/`下对应子文件夹内；测试fixture、mock data、test helper和具体测试逻辑应按目标生态最佳实践组织，不要塞进一个巨大测试文件。
+method、baseline、metric、dataset、result artifact、configuration、runner、exporter等常见变化点应尽量有各自清晰的模块边界，使后续新增或修改功能时只改小范围文件。
+如果一个文件的修改会频繁影响多个无关功能，skill应重新审视文件边界，并优先拆分为更高内聚的文件。
+如果多个文件之间出现大量薄wrapper、纯转发函数或为了拆分而拆分的间接层，skill应合并或简化；拆分的目标是提升内聚和局部修改能力，不是制造更多文件。
+外部复制或改写来的代码如果本身过长或职责混杂，skill应在license允许的前提下做适配性拆分，并在注释或第三方说明中记录来源和主要改动。
+职责应按工作类型分离，复杂流程应保持高内聚、低耦合；紧耦合会导致变更扩散，高内聚和低耦合能提升可理解性、可维护性和后续局部修改能力。
 
 优秀repo应区分核心系统逻辑、实验执行逻辑、harness逻辑、testing逻辑和结果导出逻辑，避免把所有内容混在一个脚本里。
 仓库应尽量保持模块低耦合：method实现不直接控制实验全流程，harness不直接嵌入图表逻辑，testing不依赖真实大规模实验数据。
@@ -147,6 +167,9 @@ repo除了`README.md`外，还应在仓库根目录创建或维护`FRAMEWORK.md`
 如果deepresearch发现了可直接安装调用的工具，`FRAMEWORK.md`应简要说明这些依赖的用途；如果某些工具只被参考或只复用了许可允许的代码片段，也应在`FRAMEWORK.md`、`FRAMEWORK.zh-CN.md`或相应说明中记录来源和用途。
 `FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`应说明当前框架参考了哪些类型的公开代码、哪些部分直接依赖外部工具、哪些部分复制或改写了外部代码片段、为什么这样复用。
 `FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`中不应只写“参考了开源代码”，而应说明参考代码如何影响当前框架的模块边界、harness结构、test结构、结果导出和扩展点设计。
+`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`应说明复杂功能如何被拆成子功能模块，以及这种拆分如何支持高内聚、低耦合和后续局部修改。
+文档中应根据`paper_blueprint`、`experiment plan`和`coding plan`说明后续可能新增或修改的功能分别落在哪些小范围模块内，而不是只列目录树。
+文档应说明哪些文件是稳定接口，哪些文件是后续实现点，哪些文件承载具体method、baseline、metric、harness或test扩展。
 如果仓库结构因deepresearch和项目选型发生变化，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`也应同步反映最终结构，而不是保留预设模板描述。
 如果仓库复制或改写了外部代码片段，应在合适的文档或源文件注释中保留来源、license和必要attribution。
 如果仓库复制、改写或移植了多个外部来源的代码，应创建或维护`THIRD_PARTY.md`或等价第三方来源说明文件，集中记录外部代码来源、license、复用方式和修改概况。
@@ -276,6 +299,9 @@ skill应进行Friction audit检查：静态检查是否存在不必要的导入�
 skill应在静态检查阶段确认默认导入、默认测试入口、默认harness入口和预期运行路径不依赖隐藏路径假设或大量全局配置。
 skill应在静态检查阶段检查外部代码来源标注是否完整：复制或改写代码是否有注释来源，第三方说明文件是否记录license和修改，文档是否解释复用决策。
 skill应在静态检查阶段检查是否有未标注来源的外部代码片段、疑似无license来源代码、或大段无关复制代码；如果有，应补充来源说明、移除不必要代码或改成从依赖调用。
+skill应在创建仓库后做一次`large file and module granularity audit`，静态检查是否存在职责过多的文件、过长的runner、过大的utils、混杂的harness/test文件、重复样板代码或明显应该拆分的子功能。
+`large file and module granularity audit`应同时检查反方向问题：是否存在过度拆分、空壳文件、薄wrapper、只被调用一次的抽象层或让调用链变长的碎片化模块。
+如果静态检查发现某个复杂功能没有被拆成清晰子功能，skill应调整仓库结构和文件内容，而不是只在文档里提示后续再改。
 如果需要运行安装、测试、harness或实验，应交给后续代码实现、测试执行或实验执行skill。
 
 本skill应保持论文目标驱动：每个核心模块、harness和test都应能追溯到论文蓝图、experiment plan或coding plan中的需求。
@@ -296,6 +322,8 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 **No hardcoded language layout原则**：skill不得预设任何具体语言、运行时、框架、包管理器、测试框架、配置文件或目录布局；selected stack相关结构必须来自用户指定、deepresearch调研和当前实验系统需求的共同判断。
 **Research-informed structure原则**：仓库结构不是套模板，而是根据论文蓝图、experiment plan、coding plan、目标语言、框架生态、packaging质量和高质量公开库结构综合设计。
 **Open-source reuse原则**：初始代码仓库应主动通过deepresearch查找、下载和分析高质量开源代码；能合法、合适、低维护成本复用的成熟实现应优先复用，复用方式优先选择直接依赖或适配调用，其次才是license允许的小范围复制或改写；所有复制、改写或移植的代码都必须在代码注释和第三方说明中标注来源、license和修改内容。
+**File granularity原则**：一个优秀的初始repo应避免长文件和职责混杂文件；复杂功能先拆成清晰子功能，再映射到文件和模块，使每个文件主题明确、变化原因清晰、后续修改局部化。
+**Balanced modularity原则**：拆分应服务高内聚、低耦合和change locality；既不要把多个复杂职责塞进一个文件，也不要为了形式化模块化制造大量薄wrapper和碎片化文件。
 **Documentation handoff原则**：`README.md`负责快速介绍repo，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`负责把代码框架的设计思路、使用方式、harness/test组织、结果导出和后续扩展点讲清楚，帮助后续写代码skill和用户理解如何在这个框架上继续实现。
 **Low-friction framework原则**：repo应在符合目标语言和框架最佳实践的前提下，优先选择低配置、低样板、低调用成本的结构；任何目录布局、packaging方式、抽象层、registry、adapter、config系统或runner设计，都应经过“是否让运行、测试、harness或后续method实现变得更复杂”的检查。
 **Minimal direct code原则**：代码应短、直、少层级；能内联就内联，能删除helper就删除helper，能直接传递就不要转换。
@@ -309,4 +337,4 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 **Stable state only原则**：只有长期稳定、跨边界仍有意义的状态才进入模型；临时状态留在局部。
 **Review for deletion原则**：审阅时优先发现可删除、可内联、可移动、可改名的结构，而不是默认建议新增抽象。
 **Task-specific style section原则**：代码风格规则只沉淀会影响代码形态的规则，不包含代码运行、工具使用、环境处理或项目管理规则。
-**Excellent repo总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成或改造成一个静态、规整、低摩擦、可扩展、可维护的优秀代码仓库；它应在用户指定路径内创建或修改真实文件结构，为固定实验目录、harness、test、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具、最佳实践和可复用开源实现，并用少抽象、强命名、强边界、强顺序一致性的代码风格保证repo长期可读、可改、可验证。
+**Excellent repo总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成或改造成一个静态、规整、低摩擦、可扩展、可维护的优秀代码仓库；它应在用户指定路径内创建或修改真实文件结构，为固定实验目录、harness、test、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具、最佳实践、文件粒度和可复用开源实现，并用少抽象、强命名、强边界、强顺序一致性的代码风格保证repo长期可读、可改、可验证。
