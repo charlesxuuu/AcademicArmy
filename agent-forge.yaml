@@ -20,7 +20,7 @@ runtimes:
       model: deepseek-reasoner
       env:
         OPENAI_BASE_URL: https://api.deepseek.com
-        OPENAI_MODEL: deepseek-reasoner
+        OPENAI_MODEL: deepseek-v4-pro
         OPENAI_REASONING_EFFORT: high
 
 threads:
