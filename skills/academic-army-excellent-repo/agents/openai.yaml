@@ -1,7 +1,7 @@
 interface:
   display_name: "Academic Army Excellent Repo"
-  short_description: "Build maintainable research repo skeletons"
-  default_prompt: "Use $academic-army-excellent-repo to create or improve a low-friction research code repository from the paper blueprint, experiment plan, coding plan, and the repository path I provide."
+  short_description: "Build and revise maintainable research repos"
+  default_prompt: "Use $academic-army-excellent-repo to create or make a focused improvement to a low-friction research code repository from the paper blueprint, experiment plan, coding plan, and the repository path I provide."
 
 dependencies:
   tools:
