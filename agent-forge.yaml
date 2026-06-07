@@ -24,16 +24,34 @@ runtimes:
         OPENAI_REASONING_EFFORT: high
 
 threads:
-  codex-develop-full-access:
+  codex-5.5-full-access:
     runtime: codex
     options:
       model: gpt-5.5
-      workingDirectory: &developerWorkspacePath output/codebase
       sandboxMode: danger-full-access
-  codex-develop-reader:
+      workingDirectory: .
+  codex-5.5-read-only:
     runtime: codex
     options:
       model: gpt-5.5
+      sandboxMode: danger-full-access # read-only
+      workingDirectory: .
+  codex-develop-5.5-full-access:
+    runtime: codex
+    options:
+      model: gpt-5.5
+      sandboxMode: danger-full-access
+      workingDirectory: &developerWorkspacePath output/codebase
+  codex-develop-5.5-read-only:
+    runtime: codex
+    options:
+      model: gpt-5.5
+      sandboxMode: danger-full-access # read-only
+      workingDirectory: *developerWorkspacePath
+  codex-develop-5.3-full-access:
+    runtime: codex
+    options:
+      model: gpt-5.3-codex-spark
       workingDirectory: *developerWorkspacePath
       sandboxMode: danger-full-access
   qwen-develop-full-access:
@@ -41,37 +59,25 @@ threads:
     options:
       cwd: *developerWorkspacePath
       permissionMode: yolo
-  codex-skill-runner-full-access:
-    runtime: codex
-    options:
-      model: gpt-5.5
-      workingDirectory: .
-      sandboxMode: danger-full-access
-  codex-skill-runner-read-only:
-    runtime: codex
-    options:
-      model: gpt-5.5
-      workingDirectory: .
-      sandboxMode: danger-full-access
 
 agents:
+  skill-runner:
+    thread: codex-5.5-full-access
+  skill-evaluator:
+    thread: codex-5.5-read-only
+  skill-modifier:
+    thread: codex-5.5-full-access
   coding-manager:
-    thread: codex-develop-full-access
+    thread: codex-develop-5.5-full-access
     constants:
       workspacePath: *developerWorkspacePath
   developer:
-    thread: qwen-develop-full-access
+    thread: codex-develop-5.3-full-access
     constants:
       workspacePath: *developerWorkspacePath
   code-reviewer:
-    thread: codex-develop-reader
+    thread: codex-develop-5.5-read-only
     constants:
       workspacePath: *developerWorkspacePath
-  skill-runner:
-    thread: codex-skill-runner-full-access
-  skill-evaluator:
-    thread: codex-skill-runner-read-only
-  skill-modifier:
-    thread: codex-skill-runner-full-access
   trajectory-optimizer:
-    thread: codex-skill-runner-full-access
+    thread: codex-5.5-full-access
