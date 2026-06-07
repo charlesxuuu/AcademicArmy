@@ -59,3 +59,5 @@ agents:
     thread: codex-skill-runner-read-only
   skill-modifier:
     thread: codex-skill-runner-full-access
+  trajectory-optimizer:
+    thread: codex-skill-runner-full-access

@@ -1,6 +1,6 @@
 import { type AgentVariablesByName } from "coding-agent-forge";
 import { type PipelineDefinition, runPipelineCli } from "./pipeline.js";
-import { developingPipeline } from "./developing/index.js";
+import { developingPipeline, developingSkillPipeline } from "./developing/index.js";
 import { evolveSkillPipeline } from "./evolve-skill/index.js";
 
 function defineCli<VariablesByName extends AgentVariablesByName, Options>(entry: {
@@ -20,6 +20,11 @@ const cliDefinitions = [
     name: "developing",
     description: "Run the code development loop.",
     definition: developingPipeline,
+  }),
+  defineCli({
+    name: "developing-skill",
+    description: "Run the code development loop and evolve its skill.",
+    definition: developingSkillPipeline,
   }),
   defineCli({
     name: "evolve-skill",

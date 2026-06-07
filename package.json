@@ -16,6 +16,7 @@
     "format:check": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --check",
     "cli": "tsx src/cli.ts",
     "developing": "tsx src/cli.ts developing",
+    "developing-skill": "tsx src/cli.ts developing-skill",
     "evolve-skill": "tsx src/cli.ts evolve-skill"
   },
   "dependencies": {
