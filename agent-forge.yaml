@@ -13,6 +13,15 @@ runtimes:
             env:
               PYTHONPATH: .
             tool_timeout_sec: 3600
+  qwen:
+    kind: qwen
+    options:
+      authType: openai
+      model: deepseek-reasoner
+      env:
+        OPENAI_BASE_URL: https://api.deepseek.com
+        OPENAI_MODEL: deepseek-reasoner
+        OPENAI_REASONING_EFFORT: high
 
 threads:
   codex-develop-full-access:
@@ -26,7 +35,12 @@ threads:
     options:
       model: gpt-5.5
       workingDirectory: *developerWorkspacePath
-      sandboxMode: read-only
+      sandboxMode: danger-full-access
+  qwen-develop-full-access:
+    runtime: qwen
+    options:
+      cwd: *developerWorkspacePath
+      permissionMode: yolo
   codex-skill-runner-full-access:
     runtime: codex
     options:
@@ -38,7 +52,7 @@ threads:
     options:
       model: gpt-5.5
       workingDirectory: .
-      sandboxMode: read-only
+      sandboxMode: danger-full-access
 
 agents:
   coding-manager:
@@ -46,7 +60,7 @@ agents:
     constants:
       workspacePath: *developerWorkspacePath
   developer:
-    thread: codex-develop-full-access
+    thread: qwen-develop-full-access
     constants:
       workspacePath: *developerWorkspacePath
   code-reviewer:
