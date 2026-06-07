@@ -91,7 +91,7 @@ skill不应在tips中写死固定最大行数；具体文件长度应结合目�
 skill应避免生成“god file”“mega runner”“all-in-one utils”“misc helpers”这类低内聚文件；通用工具文件只应包含稳定、窄职责、确实被多处复用的代码。
 如果某个工具文件开始承载多个不相关helper，应按语义拆成更具体的模块，而不是继续堆在同一个文件里。
 harness相关代码应按每种harness拆在`harness/`下对应子文件夹内；一个harness内部如果包含多个复杂步骤，也应拆出清晰子模块或支持文件。
-test相关代码应按每类test拆在`test/`下对应子文件夹内；测试fixture、mock data、test helper和具体测试逻辑应按目标生态最佳实践组织，不要塞进一个巨大测试文件。
+test相关代码应跟随模板生成结果、目标语言生态测试结构和deepresearch调研到的高质量公开repo组织；测试fixture、mock data、test helper和具体测试逻辑应放在模板或生态决定的测试区域内，不要为了统一目录强行塞进固定顶层`test/`。
 method、baseline、metric、dataset、result artifact、configuration、runner、exporter等常见变化点应尽量有各自清晰的模块边界，使后续新增或修改功能时只改小范围文件。
 如果一个文件的修改会频繁影响多个无关功能，skill应重新审视文件边界，并优先拆分为更高内聚的文件。
 如果多个文件之间出现大量薄wrapper、纯转发函数或为了拆分而拆分的间接层，skill应合并或简化；拆分的目标是提升内聚和局部修改能力，不是制造更多文件。
@@ -106,17 +106,21 @@ method、baseline、metric、dataset、result artifact、configuration、runner�
 仓库应支持多阶段实验流程，例如data preparation、method execution、harness evaluation、full-system evaluation、ablation或result export；具体阶段由coding plan决定。
 每个实验阶段的代码结构应能被后续实现扩展，而不是只服务一次固定实验。
 
-repo采用两层文件夹结构规则：第一层是与autoresearch论文实验强相关的固定顶层目录；第二层是语言、框架、packaging、源码布局和配置文件结构，由deepresearch现场调研最佳实践和高质量公开库后决定。
-与论文实验系统强相关的顶层结构应固定保留：`data/`用于输入数据，`output/`用于运行输出，`results/`用于实验结果记录，`harness/`用于所有harness，`test/`用于所有test，`README.md`用于仓库入口说明，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`用于框架设计与使用说明。
-固定目录只规定实验系统的顶层约定，不规定语言生态内部的源码布局；源码放在哪里、package如何命名、配置文件如何组织、构建文件采用什么格式，应由deepresearch和项目选型决定。
+repo采用两层文件夹结构规则：第一层是与autoresearch论文实验强相关且不依赖目标语言生态的固定顶层目录；第二层是语言、框架、packaging、源码布局、测试结构和配置文件结构，由模板生成结果、deepresearch现场调研最佳实践和高质量公开库后决定。
+与论文实验系统强相关的顶层结构应固定保留：`data/`用于输入数据，`output/`用于运行输出，`results/`用于实验结果记录，`harness/`用于所有论文实验harness，`README.md`用于仓库入口说明，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`用于框架设计与使用说明。
+固定目录只规定实验系统的顶层约定，不规定语言生态内部的源码布局或测试目录布局；源码放在哪里、package如何命名、测试文件放在哪里、配置文件如何组织、构建文件采用什么格式，应由deepresearch、模板生成结果和项目选型决定。
 skill应把“固定实验目录”和“生态最佳实践目录”协调起来：固定目录服务论文实验工作流，语言和框架目录服务代码可维护性、packaging、依赖管理和工程规范。
 repo应同时满足两类要求：对外看起来符合目标语言和框架生态的工程规范，对内能清晰承接论文蓝图、experiment plan、coding plan、harness、test和结果导出需求。
 `harness/`下面应为每一种harness单独设置一个子文件夹，用于放置该harness相关的入口、配置、说明、样例输入、schema或其他必要内容。
-`test/`下面应为每一种test单独设置一个子文件夹，用于放置该类功能测试相关的测试脚本、fixtures、mock data、最小样例或说明内容。
-harness目录和test目录应在职责上分离：harness服务论文目标、性能评估、method筛选和优化循环；test服务功能正确性、接口契约、数据格式和基础行为验证。
-harness和test各自的子文件夹名称应表达用途，例如围绕候选方法筛选、模块优化、全系统评估、数据加载测试、metric计算测试、结果导出测试等语义命名；具体名称由当前项目决定。
+测试目录不再固定为顶层`test/`；测试文件、测试目录和测试配置应跟随模板工具、目标生态最佳实践和deepresearch调研到的高质量公开repo结构。
+如果模板已经生成了测试目录或测试入口，skill应把coding plan中的test类别映射到模板现有测试结构中，而不是额外创建固定顶层`test/`。
+如果模板没有生成测试结构，skill应通过deepresearch调研目标生态的常见测试组织方式，并按该生态最佳实践创建测试结构。
+每一种test仍然需要单独的说明位置或语义化测试区域，但该位置应放在模板或目标生态决定的测试结构下。
+harness结构和test结构应在职责上分离：`harness/`服务论文目标、性能评估、method筛选和优化循环；test结构服务功能正确性、接口契约、数据格式和基础行为验证，并遵循目标生态的模板布局。
+harness子文件夹和test说明位置的名称应表达用途，例如围绕候选方法筛选、模块优化、全系统评估、数据加载测试、metric计算测试、结果导出测试等语义命名；具体名称由当前项目和模板生态决定。
 `data/`、`output/`和`results/`的内部结构可以根据实验计划和目标生态最佳实践进一步细分，但顶层语义应保持稳定：`data/`承载输入数据，`output/`承载程序运行产生的输出artifact，`results/`承载实验结果记录和可供后续分析的数据。
-如果目标语言或测试框架默认使用某个目录名，但本skill要求顶层测试目录为`test/`，skill应通过该生态支持的配置方式使测试工具识别`test/`，而不是把顶层目录改成其他名称。
+如果模板测试结构与coding plan中的test类别不完全匹配，skill应在不破坏模板生态规范的前提下轻量扩展，例如在模板测试区域内增加语义化子目录、说明文件或最小样例。
+skill不应为了统一目录而修改模板的测试体系；如果模板已有测试运行约定，应尽量保持其原生结构，避免引入额外配置成本。
 
 harness结构应承接coding plan中的harness设计，每个harness都应对应明确的研究目标、目标模块、可修改范围、输入协议、评价指标和结果artifact。
 每个harness应关联论文蓝图或experiment plan中的claim、实验问题或方法选择问题，说明它服务哪个研究目标。
@@ -151,12 +155,12 @@ repo除了`README.md`外，还应在仓库根目录创建或维护`FRAMEWORK.md`
 `README.md`应保持简洁，说明仓库用途、快速入口和主要目录；`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`应更系统地说明这个代码框架的结构、思路、用法和扩展方式。
 `FRAMEWORK.md`应描述实际生成或改造出来的仓库框架，而不是描述通用模板；其中提到的目录、模块、harness、test和artifact结构应与当前仓库真实内容一致。
 `FRAMEWORK.md`应面向后续写代码skill和人类开发者，说明该框架如何承接`paper_blueprint`、experiment plan和coding plan，以及哪些设计是为了支持后续method实现、harness评测、功能测试、结果导出和论文实验迭代。
-`FRAMEWORK.md`应解释固定实验目录的含义，例如`data/`用于输入数据，`output/`用于程序运行输出，`results/`用于实验结果记录，`harness/`用于harness，`test/`用于功能测试。
+`FRAMEWORK.md`应解释固定实验目录的含义，例如`data/`用于输入数据，`output/`用于程序运行输出，`results/`用于实验结果记录，`harness/`用于论文实验harness，并说明test结构遵循模板生成结果和目标生态最佳实践。
 `FRAMEWORK.md`应解释语言和框架相关的源码结构为什么这样组织；这个解释应基于deepresearch得到的目标语言最佳实践和高质量公开库结构，而不是写成“skill规定如此”。
 `FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`应简要说明为什么选择当前源码布局，以及该布局如何减少不必要配置、降低运行和测试成本。
 `FRAMEWORK.md`应说明核心逻辑模块的职责、模块之间的关系、主要接口、可替换method和baseline的接入方式，以及后续实现应该在哪些抽象点继续扩展。
 `FRAMEWORK.md`应说明harness结构：每种harness服务什么论文目标、修改哪个逻辑模块、如何运行、关注哪些metric、输出哪些raw artifact，以及如何支持“修改模块 -> 运行harness -> 读取结果 -> 再修改”的循环。
-`FRAMEWORK.md`应说明testing结构：每类test验证什么功能目标、使用什么最小输入、期望什么行为、如何区分功能正确性测试和论文目标评测。
+`FRAMEWORK.md`应说明testing结构：每类test验证什么功能目标、使用什么最小输入、期望什么行为、测试说明或测试文件位于模板决定的哪个测试区域，以及如何区分功能正确性测试和论文目标评测。
 `FRAMEWORK.md`应说明结果导出思路：系统应优先导出原始、低加工artifact，后续绘图和论文写作skill再从这些artifact转换出图表、统计结果和论文表格。
 `FRAMEWORK.md`可以包含命令用法或命令语义说明，但应只写当前框架真实支持或预留的入口，不应虚构尚未实现的完整实验命令。
 `FRAMEWORK.md`应说明placeholder和extension point的含义，明确哪些部分是初始框架已经搭好的，哪些部分是后续写代码skill需要补全的。
@@ -175,7 +179,7 @@ repo除了`README.md`外，还应在仓库根目录创建或维护`FRAMEWORK.md`
 如果仓库复制、改写或移植了多个外部来源的代码，应创建或维护`THIRD_PARTY.md`或等价第三方来源说明文件，集中记录外部代码来源、license、复用方式和修改概况。
 文档中解释结构时，应优先用模块名、harness名、test名、method名或自然简称指代内容，而不是依赖抽象编号互相引用。
 
-创建或改造repo前，skill应形成简短的内部仓库结构决策，明确语言和框架选择、固定实验目录、生态源码结构、harness目录、test目录、配置机制、接口抽象、artifact schema和静态检查方式。
+创建或改造repo前，skill应形成简短的内部仓库结构决策，明确语言和框架选择、固定实验目录、生态源码结构、harness目录、模板或目标生态决定的测试结构、配置机制、接口抽象、artifact schema和静态检查方式。
 最终输出应体现为实际仓库文件，而不是只生成计划。
 skill创建或修改仓库时应优先使用自然、语义化的文件夹和模块命名，不应使用`c1/c2/c3/b1/b2/b3`这类抽象编号系统。
 文件内容应简洁但可扩展，避免为了显得完整而生成大量无实际作用的模板代码。
@@ -289,14 +293,16 @@ Prompt文本应短、明确、任务导向，不展示skill内部流程，也不
 本skill只做静态检查，不运行安装命令、不执行测试、不运行harness、不跑实验。
 静态检查可以包括文件是否创建完整、路径是否都在目标仓库内、语法层面是否自洽、配置文件是否存在、接口命名是否一致、文档和代码结构是否匹配等。
 静态检查应根据目标语言和框架选择合适工具或检查方式；静态分析的核心是“不执行程序而检查源码或配置”，具体工具由deepresearch现场决定。
-静态检查完成后，skill应确认固定顶层结构存在，即`data/`、`output/`、`results/`、`harness/`、`test/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`，并确认关键文件、依赖声明、配置入口、模块接口和结果artifact约定都已经创建。
+静态检查完成后，skill应确认固定顶层结构存在，即`data/`、`output/`、`results/`、`harness/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`，并确认关键文件、依赖声明、配置入口、模块接口、模板或目标生态决定的测试结构和结果artifact约定都已经创建。
 skill应在静态检查阶段确认语言和框架相关结构与deepresearch得到的最佳实践一致。
 skill应在静态检查阶段确认没有把任何具体语言、框架、目录布局案例或公开库示例结构当成无条件模板；最终结构应能追溯到用户输入、项目选型、deepresearch结论和论文实验需求。
-skill应在静态检查阶段确认`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`都存在，并且其中描述的目录、模块、harness、test和结果artifact与实际仓库结构一致。
+skill应在静态检查阶段确认`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`都存在，并且其中描述的目录、模块、harness、模板测试结构、test说明位置和结果artifact与实际仓库结构一致。
 skill应在静态检查阶段确认`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`已经覆盖框架描述、设计思路、目录说明、核心模块、harness说明、test说明、结果导出说明、后续扩展点和基本使用方式。
 skill应在静态检查阶段确认`README.md`保持简洁入口定位，`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`只描述实际创建或明确预留的目录、模块、命令和功能，不引用仓库外绝对路径，不把placeholder写成已完成实现。
 skill应进行Friction audit检查：静态检查是否存在不必要的导入配置、路径别名、额外环境变量、重复注册点、过长调用链、薄wrapper、过度拆分模块或让harness/test变复杂的抽象；如果存在，应优先改成更直接、更低配置成本的结构。
-skill应在静态检查阶段确认默认导入、默认测试入口、默认harness入口和预期运行路径不依赖隐藏路径假设或大量全局配置。
+skill应在静态检查阶段确认默认导入、模板或目标生态决定的默认测试入口、默认harness入口和预期运行路径不依赖隐藏路径假设或大量全局配置。
+静态检查不应要求存在固定顶层`test/`目录。
+如果最终repo同时存在模板测试结构和额外顶层`test/`，skill应检查这是否由模板或deepresearch明确支持；如果只是skill自行强加，应移除或改回模板结构。
 skill应在静态检查阶段检查外部代码来源标注是否完整：复制或改写代码是否有注释来源，第三方说明文件是否记录license和修改，文档是否解释复用决策。
 skill应在静态检查阶段检查是否有未标注来源的外部代码片段、疑似无license来源代码、或大段无关复制代码；如果有，应补充来源说明、移除不必要代码或改成从依赖调用。
 skill应在创建仓库后做一次`large file and module granularity audit`，静态检查是否存在职责过多的文件、过长的runner、过大的utils、混杂的harness/test文件、重复样板代码或明显应该拆分的子功能。
@@ -318,7 +324,8 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 修改说明应短，直接说明改了什么、为什么这样改，以及是否还有与代码本身相关的注意点。
 不写过多背景解释，不把简单修改包装成复杂设计说明。
 
-**Hybrid repository layout原则**：repo采用“固定实验目录 + 动态生态结构”的混合布局；`data/`、`output/`、`results/`、`harness/`、`test/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`作为论文实验工作流的固定顶层结构，源码目录、packaging文件、构建配置、测试框架配置和语言生态目录由deepresearch现场调研高质量公开库和官方最佳实践后确定。
+**Hybrid repository layout原则**：repo采用“固定实验目录 + 动态生态结构”的混合布局；`data/`、`output/`、`results/`、`harness/`、`README.md`、`FRAMEWORK.md`和`FRAMEWORK.zh-CN.md`作为论文实验工作流和文档交接的固定顶层结构，源码目录、packaging文件、构建配置、测试框架配置、测试目录和语言生态目录由模板生成结果、deepresearch现场调研高质量公开库和官方最佳实践后确定。
+**Template-first test layout原则**：测试文件放在哪里、如何分层、如何命名、如何被测试工具发现，都应优先遵守模板生成的项目结构和目标生态最佳实践；skill只把coding plan中的test目标映射进去，不强行改造测试目录。
 **No hardcoded language layout原则**：skill不得预设任何具体语言、运行时、框架、包管理器、测试框架、配置文件或目录布局；selected stack相关结构必须来自用户指定、deepresearch调研和当前实验系统需求的共同判断。
 **Research-informed structure原则**：仓库结构不是套模板，而是根据论文蓝图、experiment plan、coding plan、目标语言、框架生态、packaging质量和高质量公开库结构综合设计。
 **Open-source reuse原则**：初始代码仓库应主动通过deepresearch查找、下载和分析高质量开源代码；能合法、合适、低维护成本复用的成熟实现应优先复用，复用方式优先选择直接依赖或适配调用，其次才是license允许的小范围复制或改写；所有复制、改写或移植的代码都必须在代码注释和第三方说明中标注来源、license和修改内容。
@@ -337,4 +344,4 @@ skill输出或报告中不应混入工具失败、权限绕过、文件读取方
 **Stable state only原则**：只有长期稳定、跨边界仍有意义的状态才进入模型；临时状态留在局部。
 **Review for deletion原则**：审阅时优先发现可删除、可内联、可移动、可改名的结构，而不是默认建议新增抽象。
 **Task-specific style section原则**：代码风格规则只沉淀会影响代码形态的规则，不包含代码运行、工具使用、环境处理或项目管理规则。
-**Excellent repo总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成或改造成一个静态、规整、低摩擦、可扩展、可维护的优秀代码仓库；它应在用户指定路径内创建或修改真实文件结构，为固定实验目录、harness、test、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具、最佳实践、文件粒度和可复用开源实现，并用少抽象、强命名、强边界、强顺序一致性的代码风格保证repo长期可读、可改、可验证。
+**Excellent repo总原则**：这个skill负责把论文蓝图、experiment plan和coding plan落成或改造成一个静态、规整、低摩擦、可扩展、可维护的优秀代码仓库；它应在用户指定路径内创建或修改真实文件结构，为固定实验目录、harness、模板或目标生态决定的测试结构、method实现、结果导出和后续代码实现预留清晰抽象，同时通过deepresearch现场选择合适语言、框架、工具、最佳实践、文件粒度和可复用开源实现，并用少抽象、强命名、强边界、强顺序一致性的代码风格保证repo长期可读、可改、可验证。
