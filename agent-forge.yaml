@@ -41,28 +41,16 @@ threads:
       sandboxMode: read-only
 
 agents:
-  coding-plan-interpreter:
-    thread: codex-develop-reader
+  coding-manager:
+    thread: codex-develop-full-access
     constants:
       workspacePath: *developerWorkspacePath
   developer:
     thread: codex-develop-full-access
     constants:
       workspacePath: *developerWorkspacePath
-  harness-engineer:
-    thread: codex-develop-full-access
-    constants:
-      workspacePath: *developerWorkspacePath
   code-reviewer:
     thread: codex-develop-reader
-    constants:
-      workspacePath: *developerWorkspacePath
-  experiment-contract-auditor:
-    thread: codex-develop-reader
-    constants:
-      workspacePath: *developerWorkspacePath
-  integration-manager:
-    thread: codex-develop-full-access
     constants:
       workspacePath: *developerWorkspacePath
   skill-runner:
