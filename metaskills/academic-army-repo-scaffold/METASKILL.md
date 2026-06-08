@@ -39,6 +39,16 @@ skill应避免从质量较差、过度复杂、长期不维护、license不明�
 模板生成出的源码目录、依赖声明、构建配置、测试配置、入口结构和生态相关文件应由模板工具和deepresearch结果决定，不应在skill里写死。
 skill应把生成出的模板结构与固定实验目录合并：模板结构保留目标生态的starter repo语义，固定实验目录保留论文实验工作流语义。
 如果模板已经生成了某些与固定目录语义相近的目录，skill应保留固定顶层约定，并在README中简要说明两者关系，避免目录语义混乱。
+skill正文中不应出现任何具体语言、框架、包管理器、依赖文件、构建文件、源码目录、测试目录或配置文件名的验证规则。
+skill编写时不要把具体技术栈文件名当作例子写进通用规则里；即使只是“例如”，模型也可能把它们当成必须验证的固定清单。
+如果需要说明某类文件，应使用功能角色名，例如“依赖声明文件”“项目元数据文件”“构建配置”“测试配置”“源码布局”，不要给出具体生态文件名。
+如果确实需要在运行中提到具体文件名，只能在已经选定模板并生成repo之后，根据实际仓库内容在README或REFERENCES里自然记录。
+
+选定模板后，skill应根据模板生成结果建立一个内部`project artifact registry`，记录实际存在的项目元数据、依赖声明、安装说明、源码布局、测试布局、harness目录和固定实验目录。
+后续依赖写入、README安装说明、REFERENCES记录和静态检查都应基于这个`project artifact registry`，而不是基于skill预设文件名。
+`project artifact registry`是skill内部工作清单，不需要作为单独文件输出；必要信息可以自然反映在README和REFERENCES中。
+具体要验证哪些文件，只能从三处动态获得：用户明确指定、deepresearch得到的目标生态最佳实践、模板工具实际生成的文件结构。
+Do not name or validate any ecosystem-specific files or directories in this skill. Identify dependency declarations, build configuration, source layout, and test layout from the selected template and generated repository, then validate those discovered artifacts by role.
 
 固定实验目录仍应存在：`data/`、`output/`、`results/`、`harness/`。
 `data/`用于输入数据，`output/`用于程序运行输出，`results/`用于实验结果记录，`harness/`用于所有论文实验harness。
@@ -126,7 +136,13 @@ GitHub关于Codespaces模板的文档也说明template repositories通常包含s
 skill只做脚手架静态检查。
 静态检查应确认模板生成确实发生过，最终repo中存在目标生态合理的基础代码库结构，而不只是手写README和空文件夹。
 静态检查应确认所有创建路径都位于目标仓库路径内。
-静态检查应确认模板生成出的源码目录、依赖声明、构建配置、测试配置、入口结构或生态相关文件没有被固定实验目录覆盖或破坏。
+静态检查应使用抽象角色描述验证对象，例如`dependency declaration artifact`、`project metadata artifact`、`build configuration artifact`、`source layout selected by the template`、`test layout selected by the template`、`installation instructions`，而不是写具体文件名。
+静态检查应确认模板生成的项目元数据、依赖声明、构建配置、源码布局、测试布局和安装说明彼此一致；这些具体对象应从模板生成结果中识别，而不是由skill预设名称。
+如果模板生成了某个依赖声明文件，skill应验证“模板选定的依赖声明文件已按目标生态方式更新”；不要在skill里预设这个文件叫什么。
+如果模板生成了某个源码目录，skill应验证“源码布局与选定模板和目标生态一致”；不要在skill里预设源码目录叫什么。
+如果模板生成了某个测试结构，skill应验证“test目标已映射到模板选定的测试结构中”；不要在skill里预设测试目录或测试文件路径。
+如果模板生成了某个构建、打包、运行或工具配置文件，skill应验证“配置与选定模板保持一致”；不要在skill里列举具体配置文件名。
+静态检查不应要求存在任何预设的语言文件、构建文件、依赖文件、源码目录或测试目录。
 静态检查应确认固定实验目录和文档已叠加到模板结构中：`data/`、`output/`、`results/`、`harness/`、`README.md`、`README.zh-CN.md`、`REFERENCES.md`、`REFERENCES.zh-CN.md`。
 静态检查应确认每种harness都在`harness/`下有独立子文件夹和说明文件。
 静态检查应确认每种test都已经被映射到模板决定的测试结构中，并有对应说明文件。
@@ -164,4 +180,7 @@ README、REFERENCES和harness/test说明文件应优先使用目录名、harness
 **Reference documentation原则**：`REFERENCES.md`和`REFERENCES.zh-CN.md`负责记录模板来源、生成工具、license、版本、采用方式、保留内容、调整内容和选择理由；模板阶段发现的外部代码实现只记录为后续参考，不在本阶段移植。
 **Dependency declaration原则**：项目初始化skill负责通过deepresearch选择可直接安装调用的开源库，并把它们写入当前模板生态的依赖配置；它不运行安装。不能直接安装调用的相关开源代码只进入`REFERENCES.md`和`REFERENCES.zh-CN.md`作为后续实现参考，不进入依赖配置。
 **Repo-local installation原则**：项目初始化skill应通过deepresearch确定目标生态的包管理和环境隔离最佳实践，把可直接安装调用的依赖写入项目依赖配置，并在`README.md`和`README.zh-CN.md`中写出尽量不影响全局环境的repo-local安装方法；skill只声明和说明安装，不实际运行安装。
+**No hardcoded ecosystem artifacts原则**：项目初始化skill不得在通用规则或静态检查中写死任何具体语言生态的文件名、目录名或配置名；所有生态相关artifact都必须来自用户输入、deepresearch、模板文档或模板实际生成结果。
+**Template-derived validation原则**：静态检查验证的是“选定模板生成的结构是否完整并与论文实验目录正确合并”，不是验证某个预设技术栈文件清单是否存在。
+**Role-based artifact naming原则**：skill内部规则使用功能角色描述文件，例如依赖声明、项目元数据、构建配置、源码布局、测试布局；具体文件名只在选定模板后由实际repo决定。
 **Repo scaffold总原则**：这个skill负责把论文蓝图、experiment plan和coding plan转化为一个真实starter repo加论文实验目录的项目脚手架；它通过deepresearch现场选择并调用初始化方式生成基础代码库结构，配置可直接安装调用的依赖，记录reference-only sources，写清楚repo-local安装方法，再叠加固定实验目录、README、REFERENCES和harness/test说明文件，让后续具体实现skill在真实脚手架上继续推进。
