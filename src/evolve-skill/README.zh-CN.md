@@ -25,7 +25,7 @@ npm run evolve-skill -- \
 --skill-path       要修改的 skill 目录或文件。
 --artifact-path    每轮 runner 清空并复用的输出文件夹。
 --metaskill-path   evaluator 和 modifier 使用的 metaskill 设计文档。
---task-path        runner 用来测试 skill 的固定任务文件。
+--task-path        runner 用来测试 skill 的固定任务文件；可重复传入多个固定任务。
 ```
 
 可选参数：
@@ -44,13 +44,13 @@ npm run evolve-skill -- \
 - `--skill-path`：要修改的 skill 目录或文件。
 - `--artifact-path`：每轮都会清空并复用的输出目录。
 - `--metaskill-path`：用于评价和修改 skill 的设计文档与 tips。
-- `--task-path`：用于测试 skill 的固定任务。
+- `--task-path`：用于测试 skill 的一个或多个固定任务。
 - `--rounds`：self-evolve 轮数，默认是 `3`。
 
 每一轮执行以下步骤：
 
 1. 清空并重新创建 `--artifact-path`。
-2. 创建新的 `skill-runner` agent，让目标 skill 在固定任务上运行并写出 artifacts。
+2. 对每个配置的 `--task-path` 创建新的 `skill-runner` agent，让目标 skill 在该固定任务上运行并写出 artifacts。
 3. 使用 `skill-evaluator` 根据当前 metaskill 指导文件评价 artifact。
 4. 把 evaluator review 交给 `skill-modifier`，让它基于同一份 metaskill 指导修改目标 skill。
 
@@ -69,7 +69,7 @@ pipeline 通过共享 team 保留两个长生命周期 Codex thread：
 
 整个 loop 保持简单：
 
-1. 新建一次性的 runner thread，运行目标 skill，并把产物写入输出文件夹。
+1. 针对每个配置的 task 新建一次性的 runner thread，运行目标 skill，并把产物写入输出文件夹。
 2. 长生命周期的 evaluator thread 根据 metaskill 评价 artifact。
 3. 长生命周期的 modifier thread 根据评价修改 skill。
 4. 下一轮重新新建 runner thread。
@@ -80,7 +80,7 @@ pipeline 通过共享 team 保留两个长生命周期 Codex thread：
 
 - [`pipeline.ts`](pipeline.ts)：参数解析和轮次编排。
 - [`agents/factory.ts`](agents/factory.ts)：注册 `skill-runner`、`skill-evaluator` 和 `skill-modifier`。
-- [`agents/runner.ts`](agents/runner.ts)：读取 `--task-path` 配置的固定任务文件，并要求目标 skill 写出 artifacts。
+- [`agents/runner.ts`](agents/runner.ts)：读取每个 `--task-path` 配置的固定任务文件，并要求目标 skill 写出 artifacts。
 - [`agents/evaluator.ts`](agents/evaluator.ts)：读取 `--metaskill-path` 配置的 metaskill 文件，并评价产出的 artifact。
 - [`agents/modifier.ts`](agents/modifier.ts)：读取 metaskill 文件和 evaluator review，然后修改目标 skill。
 

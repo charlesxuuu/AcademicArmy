@@ -25,7 +25,7 @@ Required arguments:
 --skill-path       The skill directory or file to revise.
 --artifact-path    The output folder cleared and reused by each runner round.
 --metaskill-path   The metaskill design document used by evaluator and modifier.
---task-path        The fixed task used by the runner to test the skill.
+--task-path        The fixed task used by the runner to test the skill. Repeat this option to run multiple fixed tasks per round.
 ```
 
 Optional arguments:
@@ -44,13 +44,13 @@ Optional arguments:
 - `--skill-path`: the skill directory or file to revise.
 - `--artifact-path`: the output directory cleared and reused each round.
 - `--metaskill-path`: the design document and tips used to judge and revise the skill.
-- `--task-path`: the fixed task used to test the skill.
+- `--task-path`: one or more fixed tasks used to test the skill.
 - `--rounds`: the number of self-evolve rounds, defaulting to `3`.
 
 Each round does the following:
 
 1. Clear and recreate `--artifact-path`.
-2. Create a fresh `skill-runner` agent to run the target skill on the fixed task and write artifacts.
+2. For each configured `--task-path`, create a fresh `skill-runner` agent to run the target skill on that fixed task and write artifacts.
 3. Use `skill-evaluator` to evaluate the artifact against the current metaskill guidance file.
 4. Pass the evaluator review to `skill-modifier`, which revises the target skill using the same metaskill guidance.
 
@@ -69,7 +69,7 @@ Each round also creates a fresh one-time `skill-runner` thread. The runner has n
 
 The loop deliberately stays simple:
 
-1. A fresh runner thread runs the target skill and writes artifacts to an output folder.
+1. A fresh runner thread runs the target skill for each configured task and writes artifacts to an output folder.
 2. A long-lived evaluator thread reviews the artifact using the metaskill.
 3. A long-lived modifier thread edits the skill according to the evaluator feedback.
 4. The next round starts with a fresh runner thread.
@@ -80,7 +80,7 @@ This avoids LangGraph, state machines, registries, and defensive wrapper code. T
 
 - [`pipeline.ts`](pipeline.ts): argument parsing and round orchestration.
 - [`agents/factory.ts`](agents/factory.ts): registers `skill-runner`, `skill-evaluator`, and `skill-modifier`.
-- [`agents/runner.ts`](agents/runner.ts): reads the fixed task file configured by `--task-path` and asks the target skill to write artifacts.
+- [`agents/runner.ts`](agents/runner.ts): reads each fixed task file configured by `--task-path` and asks the target skill to write artifacts.
 - [`agents/evaluator.ts`](agents/evaluator.ts): reads the metaskill file configured by `--metaskill-path` and critiques the produced artifact.
 - [`agents/modifier.ts`](agents/modifier.ts): reads the metaskill file and the evaluator review, then revises the target skill.
 

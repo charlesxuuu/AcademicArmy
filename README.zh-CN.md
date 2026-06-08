@@ -1,14 +1,14 @@
 # AcademicArmy
 
-AcademicArmy 是一个用于完成研究论文的 multi-agent 系统。它的核心思路是把想法整理、蓝图制定、论文写作、实验代码、测试优化、图表绘制和论文评审拆分给不同的专业岗位，并让所有岗位围绕同一份论文蓝图协作。
+AcademicArmy 是一个基于 Codex 的研究工作流，用来把研究想法转成结构化论文规划产物和可持续开发的实现代码库。当前核心由一组规划类 skills、一个仓库 scaffold skill，以及驱动开发和 skill evolution agents 的 TypeScript pipelines 组成。
 
 ## 项目用法
 
 项目从一个想法开始。这个想法可以很粗略，也可以比较详细，不需要一开始就是完整的研究方案。
 
-把这个想法交给 `ProductManager`。ProductManager 具备 AcademicArmy 运行模式的知识，会帮助你把想法组织成符合 AcademicArmy 规范的论文蓝图，也就是后续执行用的“施工图”。由于最初的想法通常还不够收敛，ProductManager 应该与你进行多轮交互，把论文蓝图逐步调整到你满意的状态。
+使用 `academic-army-architect` 把这个想法整理成 `paper_blueprint.md`，也就是后续执行用的核心“施工图”。由于最初的想法通常还不够收敛，这一步可以通过多轮澄清和修改，把论文蓝图逐步调整到足够支撑下游工作的状态。
 
-当你对论文蓝图满意后，项目才正式进入 AcademicArmy 的运行流程。此时论文蓝图成为项目起点，后续各岗位根据它完成论文文本、实验代码、测试、优化、插图、实验结果图和论文评审等工作。
+当你对论文蓝图满意后，后续规划类 skills 会继续生成 `experiment_plan.md` 和 `coding_plan.md`。这三份规划产物共同构成 AcademicArmy 的施工图，成为仓库初始化和迭代代码开发的项目起点。
 
 ## 运行流程
 
@@ -36,7 +36,7 @@ bash runs/develop.sh
 
 AcademicArmy 的主体核心可以概括为一句话：按图施工。
 
-ProductManager 给出的论文蓝图应该是“符合规范”的“图纸”，具体到各岗位可以直接上手执行，而不是在执行阶段重新设计项目。AcademicArmy 按照这份图纸完成一篇论文及其支撑材料。
+这里的“施工图”就是 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`。它们应该足够具体，让下游 agents 在实现阶段不需要重新设计研究方向、证据策略或代码契约。
 
 ## 规划产物语言
 
@@ -54,7 +54,7 @@ AcademicArmy 制作和迭代 skill 的 meta-skill 工作流见 [`metaskills/READ
 
 AcademicArmy 在 [`mcp-server`](mcp-server) 目录下提供了本地 stdio MCP 实现。它只暴露一个工具：
 
-- `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5-pro`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
+- `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
 
 先在仓库根目录创建 `.env`：
 
@@ -94,6 +94,8 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## 项目结构
 
-Agent 和团队结构见 [`AcademicArmy/README.zh-CN.md`](AcademicArmy/README.zh-CN.md)。
+Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。当前 TypeScript agents 分别实现于 [`src/developing/agents`](src/developing/agents) 和 [`src/evolve-skill/agents`](src/evolve-skill/agents)。
 
 TypeScript pipeline 的目录结构和实现说明见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。
+
+已准备的 AcademicArmy skills 位于 [`skills/`](skills/)，对应的 metaskill 设计与 evolution 文件位于 [`metaskills/`](metaskills/)。

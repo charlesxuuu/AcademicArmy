@@ -1,14 +1,14 @@
 # AcademicArmy
 
-AcademicArmy is a multi-agent system for producing research papers. Its core idea is to separate ideation, blueprinting, writing, coding, testing, optimization, visualization, and review into specialized roles that work from a shared paper blueprint.
+AcademicArmy is a Codex-based workflow for turning research ideas into structured paper-planning artifacts and an implementation codebase. Its current core is a sequence of planning skills, a repository scaffold skill, and TypeScript pipelines that run development and skill-evolution agents from those artifacts.
 
 ## How To Use
 
 Start with an idea. The idea can be rough or detailed; it does not need to be a complete research plan.
 
-Give the idea to `ProductManager`. ProductManager understands the AcademicArmy workflow and helps organize the idea into a paper blueprint, also called the construction plan. Because an early idea is usually underspecified, ProductManager should interact with you over multiple rounds to converge the blueprint toward what you actually want.
+Use `academic-army-architect` to turn the idea into `paper_blueprint.md`. Because an early idea is usually underspecified, this step may involve multiple rounds of clarification and revision before the blueprint is specific enough to guide downstream work.
 
-Once you are satisfied with the paper blueprint, the formal AcademicArmy workflow begins. The blueprint becomes the project starting point for writing the paper, implementing experiments, running tests, optimizing code, drawing illustrations, plotting results, and reviewing the manuscript.
+Once you are satisfied with the paper blueprint, the next planning skills derive `experiment_plan.md` and `coding_plan.md`. Those three artifacts become the project starting point for repository scaffolding and iterative code development.
 
 ## Running Workflow
 
@@ -34,9 +34,9 @@ bash runs/develop.sh
 
 ## Guiding Principle
 
-The central principle of AcademicArmy is: build according to the blueprint.
+The central principle of AcademicArmy is: build according to the planning artifacts.
 
-The blueprint produced by ProductManager should be specific enough for each role to start working without needing to redesign the project. AcademicArmy then follows that standardized plan to complete the paper and its supporting artifacts.
+`paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` should be specific enough that downstream agents can implement the project without redesigning its research direction, evidence strategy, or code contract during development.
 
 ## Planning Artifact Language
 
@@ -54,7 +54,7 @@ For the meta-skill workflow used to build and evolve AcademicArmy skills, see [`
 
 AcademicArmy includes a local stdio MCP implementation in the [`mcp-server`](mcp-server) directory. It exposes one tool:
 
-- `deepresearch(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5-pro`, high reasoning, web search, background mode, and source inclusion.
+- `deepresearch(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5`, high reasoning, web search, background mode, and source inclusion.
 
 Create `.env` in the repository root:
 
@@ -94,6 +94,8 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## Project Structure
 
-See [`AcademicArmy/README.md`](AcademicArmy/README.md) for the agent and team structure.
+Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The current TypeScript agents are implemented under [`src/developing/agents`](src/developing/agents) and [`src/evolve-skill/agents`](src/evolve-skill/agents).
 
 See [`src/README.md`](src/README.md) for the TypeScript pipeline structure and implementation notes.
+
+Prepared AcademicArmy skills live under [`skills/`](skills/), and their matching metaskill design/evolution files live under [`metaskills/`](metaskills/).
