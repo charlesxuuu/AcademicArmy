@@ -324,30 +324,29 @@ README files should be concise and user-facing. Include:
 
 - project purpose,
 - external planning inputs,
-- selected initialization method at a high level,
-- template-generated starter structure summary,
 - installation,
 - fixed experiment directory overview,
 - harness map,
-- test layout source and harness/test boundary,
-- pointer to REFERENCES for detailed provenance.
+- test layout responsibilities and harness/test boundary,
+- pointer to REFERENCES for external dependencies and source attributions.
 
-Keep detailed template comparison, dependency classification, installation
-source evidence, retained/adjusted template files, rejected candidates, and
-reference-only source warnings in REFERENCES, not in README.
+README files must present the repository as the project itself. They must not
+describe template selection, generator choice, DeepResearch, scaffold process,
+candidate comparison, rejected candidates, or internal decision flow.
 
-Open README with project purpose and starter-repository structure, not with
+Open README with project purpose and repository responsibilities, not with
 generation-stage status or omissions. Use present-state role language. Avoid
 documentation that reads as a stage note, placeholder note, or absence report.
 Do not use whole-word/whole-phrase terms such as `future`, `placeholder`,
 `scaffold stage`, `will be implemented later`, `to be filled`,
-`current boundary`, `reserved`, `reserved for`, `reserved package area`,
-`later`, `once`, `does not include`, `not included`, `no runnable`, or similar
-negative/temporal phrasing in README, REFERENCES, harness explanations, or
+`template`, `scaffold`, `generated from`, `starter`, `boilerplate`,
+`deepresearch`, `skill`, `Codex`, `initialization stage`, `current boundary`,
+`reserved`, `reserved for`, `reserved package area`, `later`, `once`,
+`does not include`, `not included`, `no runnable`, or similar process,
+negative, or temporal phrasing in README, REFERENCES, harness explanations, or
 test-layout notes. Match banned single words as whole words so terms such as
-`preserved` are not false positives. Do not claim
-unimplemented paper methods, experiments, metrics, runners, loaders, or
-exporters work.
+`preserved` are not false positives. Do not claim unimplemented paper methods,
+experiments, metrics, runners, loaders, or exporters work.
 
 Chinese README and REFERENCES should be polished Chinese technical
 documentation. Translate ordinary workflow terms; keep identifiers, package
@@ -357,19 +356,25 @@ Chinese field labels rather than English key dumps.
 
 REFERENCES must be category-driven and include:
 
-- selected template/source and generation method,
-- compact template comparison based on generated output shape,
-- retained and adjusted template artifacts,
 - unified Installable Dependencies registry with runtime and development/test
-  buckets, plus other template-native buckets if the generated dependency
+  buckets, plus other project dependency buckets if the generated dependency
   mechanism requires them,
 - package-management and installation strategy sources,
-- test layout provenance,
-- fixed experiment overlay provenance,
+- source attributions when files or license notices require attribution,
 - harness/benchmark references,
 - reference-only repositories,
-- implementation references,
-- rejected candidates.
+- implementation references.
+
+REFERENCES should record sources that the current project actually uses, depends
+on, needs to attribute, or cites as implementation/harness/benchmark references.
+Do not record template search history, rejected templates, DeepResearch
+scratchwork, generator rationale, or sources that did not affect project files,
+dependencies, attribution, or useful implementation references.
+
+If a template source or generated file must be attributed for license reasons,
+record it briefly under source attributions. If the template only provided
+structure and the retained files have been rewritten into project-specific
+content without attribution requirements, do not document the template process.
 
 For reference-only sources with unknown, unresolved, custom, restrictive,
 research-only, or incompatible licenses, include an explicit warning forbidding
@@ -377,9 +382,10 @@ copying, porting, or directly reusing code until license and compatibility are
 verified. Include an equivalent natural Chinese warning in
 `REFERENCES.zh-CN.md`.
 
-Use `consulted` for sources used only for ideas or vocabulary. Use
-`generated-from`, `retained`, or `adjusted` only when a source actually produced
-files in the repository or a generated file was scaffold-level modified.
+Use `consulted` only when a source has actual implementation, harness, benchmark,
+or dependency value for the current project. Use attribution or retained-file
+wording only when a source actually produced files in the repository or license
+terms require attribution.
 
 ## Workflow
 
@@ -453,22 +459,33 @@ Validation must confirm by role, using the project artifact registry:
   warnings,
 - README installation sections exist, use isolated/repo-local project dependency
   setup where available, and do not claim installation was run,
-- README and REFERENCES agree with the selected template source, generation
-  method, retained/adjusted artifacts, dependencies, installation strategy, test
-  layout, fixed directories, harness structure, and actual tree,
+- README and REFERENCES agree with project dependencies, source attributions,
+  installation strategy, test layout responsibilities, fixed directories,
+  harness structure, and actual tree,
 - external planning inputs are labeled without workspace-specific paths,
 - generated metadata has no personal author/email/local-path values unless
   supplied by the user,
 - README, REFERENCES, harness explanations, and test-layout notes use
-  present-state objective language and avoid banned stage, placeholder,
-  reservation, and absence phrases,
-- README begins with purpose and starter-repository structure rather than a list
+  present-state objective language and avoid banned process, template, stage,
+  placeholder, reservation, and absence phrases,
+- README begins with purpose and project structure rather than a list
   of missing implementation pieces,
 - harness explanation sections contain task-specific inputs, metrics, output
   artifacts, and result-record relationships rather than generic section text,
 - source package additions are template-generated, backed by starter files, or
   consolidated into a single package-layout note,
 - generated docs do not describe unimplemented functionality as working,
+- project-only documentation audit passes: repository docs describe the current
+  project, not template generation, scaffold process, DeepResearch, skill
+  execution, or internal decision flow,
+- REFERENCES contains only sources that are project dependencies, source
+  attributions, license notices, harness/benchmark references, or
+  implementation references with actual project value,
+- template default project names, template welcome text, sample-app
+  descriptions, tutorial links, and generator instructions are removed or
+  rewritten in project terms,
+- each retained documentation or source file can be explained by a current
+  project responsibility,
 - no active paper business logic, experiment workflow, harness execution, metric
   computation, loader/exporter code, or real test logic was implemented,
 - no dependency installation, resolution, package download, generated-code run,
@@ -484,7 +501,8 @@ Treat any of these as validation failures:
   declaration, only defer setup, or install project dependencies globally,
 - pip/manual fallback commands install package names or version ranges that do
   not match the dependency registry,
-- REFERENCES lacks category-driven structure or generated-structure comparison,
+- REFERENCES lacks category-driven structure focused on project dependencies,
+  source attributions, license notices, and actual references,
 - dependencies declared in configuration are missing from Installable
   Dependencies, or registry entries marked installable are missing from
   configuration,
@@ -499,6 +517,19 @@ Treat any of these as validation failures:
   terms or negative absence phrases such as `does not include`, `not included`,
   `current boundary`, whole-word `reserved`, `reserved for`,
   `reserved package area`, `later`, `once`, or `no runnable`,
+- README, REFERENCES, harness explanations, test notes, or retained template
+  documentation contain process words such as `template`, `scaffold`,
+  `generated from`, `starter`, `boilerplate`, `placeholder`,
+  `future implementation`, `deepresearch`, `skill`, `Codex`, or
+  `initialization stage`, unless the word is a project-domain term or legally
+  required attribution,
+- README or REFERENCES describes template selection, generator rationale,
+  DeepResearch process, rejected templates, or internal comparison workflow,
+- REFERENCES includes sources that were only searched or rejected and have no
+  dependency, attribution, license, benchmark, harness, or implementation value,
+- retained template files still contain default template project names, template
+  tutorials, template welcome prose, generator instructions, or unrelated sample
+  app descriptions,
 - harness explanations omit purpose, experiment objective, entrypoint semantics,
   inputs, metrics, output artifacts, or results relationship,
 - harness explanations include the required headings but not meaningful
@@ -513,9 +544,8 @@ Treat any of these as validation failures:
 Summarize:
 
 - target repository path,
-- selected language/runtime and generation method,
-- template or initializer source, version/commit, license, and why selected,
-- substantive starter artifacts retained or adjusted,
+- selected language/runtime,
+- substantive project artifacts retained or adjusted,
 - dependency declaration mechanism and selected installable dependencies, or
   explicit empty-bucket decisions,
 - reference-only sources recorded,
@@ -523,9 +553,9 @@ Summarize:
 - fixed experiment directories overlaid,
 - semantic harness folders created,
 - test layout source and any minimal note added,
-- static validation performed, including starter-layer, non-documentation,
-  installation, dependency/reference consistency, test-layout provenance,
-  harness schema, and scaffold-only checks,
+- static validation performed, including project-only documentation,
+  non-documentation, installation, dependency/reference consistency, test-layout
+  provenance, harness schema, and scaffold-only checks,
 - preservation decisions or skipped overwrites,
 - next implementation handoff point.
 

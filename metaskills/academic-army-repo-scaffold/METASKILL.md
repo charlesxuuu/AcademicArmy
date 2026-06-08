@@ -18,6 +18,10 @@ skill应基于这些输入判断项目需要的目标语言、运行时、框架
 这种判断只用于选择初始化方式、生成真实starter repo、配置可安装依赖、叠加固定实验目录、编写README/REFERENCES和创建harness/test说明文件，不用于实现具体method、metric、data loader、result exporter、配置解析或实验runner。
 skill不应主动探索当前目录下无关文件；如果需要外部知识，应通过deepresearch调研，而不是从目录噪声中猜上下文。
 skill不应把Codex运行环境、沙盒限制、文件读取失败、shell命令受限、MCP调用失败、依赖安装失败等runtime workaround写进skill内容、README或REFERENCES。
+生成出来的repo内容应只包含与当前项目本身相关的信息，不应暴露skill执行过程、模板生成过程、deepresearch过程或内部决策过程。
+skill可以在内部使用模板工具、官方初始化命令或template repository生成基本代码库结构，但生成后的repo不应呈现为“模板产物”，而应呈现为当前项目的代码库。
+README、README中文版、harness说明、test说明和其他项目文档都应以“这个项目是什么、怎么安装、目录承担什么职责、如何继续使用项目结构”为中心。
+repo文档中不应出现`template`、`scaffold`、`generated from`、`starter`、`boilerplate`、`placeholder`、`future implementation`、`deepresearch`、`skill`、`Codex`、`initialization stage`这类与项目本身无关的生成过程词汇。
 
 skill应使用`academic_army_mcp_tools`中的deepresearch调研当前目标生态通常如何初始化项目。
 deepresearch应重点搜索目标生态的官方初始化方式、高质量模板工具、template repository、starter project、boilerplate project、research code template、benchmark template、harness template和目标生态中的高质量公开repo。
@@ -66,7 +70,7 @@ skill应先用模板工具、官方初始化方式或template repository生成�
 测试结构属于模板和目标生态的一部分，不再由skill根据`coding plan`强行细分。
 初始化阶段不应在测试区域内为每种test创建详细子文件夹，因为具体代码尚未实现，很多测试对象、测试边界和测试粒度还不能可靠确定。
 不应根据猜测创建具体功能测试文件夹；这些应由后续具体代码实现skill在知道实际模块后再创建。
-如果需要记录测试意图，可以在模板测试区域放一个简短说明文件，或在README中用一段说明测试结构遵循模板；不要为每个尚未确定的测试类别创建目录。
+如果需要记录测试意图，可以在项目采用的测试区域放一个简短说明文件，或在README中用一段说明测试结构遵循当前项目的测试布局；不要为每个尚未确定的测试类别创建目录。
 test说明应保持轻量，只说明测试布局来自模板或目标生态，以及测试结构服务代码功能正确性；不要提前列出详细测试脚本树。
 说明文件只描述任务和结构职责，不实现具体harness逻辑或测试逻辑。
 skill不应为了统一目录而修改模板的测试体系；如果模板已有测试运行约定，应尽量保持其原生结构，避免引入额外配置成本。
@@ -86,7 +90,7 @@ skill不应在tips里写死任何具体语言、包管理器、依赖文件名�
 README必须包含一个`Installation`章节，`README.zh-CN.md`必须包含对应的中文“安装”章节。
 `README.md`和`README.zh-CN.md`应客观描述当前仓库的用途、安装方式、目录职责、harness位置、测试结构来源和参考来源，不描述skill生成阶段或内部状态。
 README中不要使用`future`、`placeholder`、`scaffold stage`、`will be implemented later`、`to be filled`这类阶段性或占位式措辞；应改为中性功能描述。
-README应使用现在时和功能性表述，例如“`data/` stores input datasets”，“`harness/` contains experiment harness specifications”，“the test layout follows the selected project template”。
+README应使用现在时和功能性表述，例如“`data/` stores input datasets”，“`harness/` contains experiment harness specifications”，“the test layout follows the project test structure”。
 README不应把“代码还没写完”作为主题；项目初始化阶段只需要说明仓库已经建立了哪些结构、这些结构分别服务什么任务。
 如果某个目录或文件只是为后续实现保留位置，README应从职责角度描述它，使用“承担什么职责、保存什么信息、服务什么工作流”这类表述，而不是写成阶段性占位说明。
 `Installation`章节应说明如何在当前repo下安装项目依赖和准备本地开发环境，但不应要求用户把项目依赖安装到全局环境中。
@@ -114,27 +118,30 @@ README应明确说明当前阶段已经声明依赖和安装步骤，但本skill
 如果某个开源库license不明确或不兼容，skill只能把它作为阅读参考，并在`REFERENCES.md`中明确标注不要复制或直接复用其代码；公开仓库并不自动等于他人可以自由使用、修改和分发代码，必须看license授权。
 如果某个依赖与当前论文实验强相关但安全性、维护状态或依赖治理存在风险，skill应在`REFERENCES.md`中记录这个风险，而不是只把它悄悄写进依赖配置。
 
-`README.md`和`README.zh-CN.md`应说明这是一个由模板工具、官方初始化方式或模板仓库初始化出的项目脚手架，并说明固定实验目录、harness结构和测试结构来源。
+`README.md`和`README.zh-CN.md`应客观描述当前仓库的用途、安装方式、目录职责、harness位置、测试结构职责和参考来源，不描述skill生成阶段、模板过程或内部状态。
 `README.md`使用英文，`README.zh-CN.md`使用中文。
 README应保持简洁，包含项目用途、安装、目录概览、harness说明、测试结构说明、REFERENCES说明即可；更细的内部推导不要写进README。
-README应简要说明项目用途、上游输入、最终采用的初始化方式、模板生成出的基础代码库结构、固定实验目录含义、模板生成或调研决定的测试结构、harness/test职责差异。
+README中的项目介绍应直接描述当前论文实验项目的目的、输入数据、实验harness、结果目录、安装方式和参考文档，不应描述“这个仓库是由某模板初始化的”。
+README中的目录说明应使用项目职责表述，例如说明输入数据、运行输出、实验结果和harness职责，而不是说明这些目录来自初始化流程。
 README可以简要说明“依赖已按目标生态写入配置，但本skill不会执行安装；后续实现或运行阶段再安装依赖”。
-README应说明`harness/`服务论文目标评测、method筛选和实验迭代；test结构服务代码功能正确性，并遵循目标生态的模板布局。
+README应说明`harness/`服务论文目标评测、method筛选和实验迭代；test结构服务代码功能正确性，并遵循当前项目采用的测试布局。
 README不应替代模板生成；如果最终仓库只有文档和空目录，没有模板生成出的基本代码库结构，应视为skill没有完成项目初始化任务。
 README不应声称具体论文方法、实验流程或功能代码已经实现。
-`README.zh-CN.md`应覆盖英文README的同样信息，用自然中文说明当前仓库结构和用法；可以保留必要英文目录名、模板名、harness名、metric和artifact术语。
+`README.zh-CN.md`应覆盖英文README的同样信息，用自然中文说明当前仓库结构和用法；可以保留必要英文目录名、harness名、metric和artifact术语。
 
-`REFERENCES.md`和`REFERENCES.zh-CN.md`应记录deepresearch调研过的模板工具、模板仓库、开源项目和最终选用的生成方式。
+`REFERENCES.md`和`REFERENCES.zh-CN.md`应以项目相关外部来源为中心：可安装依赖、外部参考代码、benchmark、harness参考、license要求和实现参考。
 `REFERENCES.md`使用英文，`REFERENCES.zh-CN.md`使用中文。
-`REFERENCES.md`中应把外部来源按用途分类，例如`Installable dependencies`、`Template sources`、`Reference-only repositories`、`Harness references`、`Benchmark references`、`Implementation references`。
-`REFERENCES.md`应明确记录最终采用的模板来源、生成工具、license、版本或commit、生成方式、保留了哪些模板内容、删除或调整了哪些内容、为什么选择它。
-`REFERENCES.md`应说明测试结构为什么采用模板中的位置，或在模板未提供测试结构时说明deepresearch依据了哪些目标生态最佳实践。
-`REFERENCES.md`和`REFERENCES.zh-CN.md`应记录包管理和安装方案的来源，包括目标生态最佳实践、模板工具、依赖配置方式、环境隔离方式和最终采用的安装策略。
+`REFERENCES.md`中应把外部来源按项目用途分类，例如`Installable dependencies`、`Source attributions`、`Reference-only repositories`、`Harness references`、`Benchmark references`、`Implementation references`。
+`REFERENCES.md`应记录“被当前项目实际使用或需要归因的来源”，而不是记录“skill搜索过什么”。
+`REFERENCES.md`中的每条记录都应能回答：这个来源与当前项目有什么实际关系？它是依赖、代码来源、license归因、benchmark参考、harness参考，还是实现参考？
+`REFERENCES.md`和`REFERENCES.zh-CN.md`应记录包管理和安装方案的来源，包括目标生态最佳实践、依赖配置方式、环境隔离方式和最终采用的安装策略。
 `REFERENCES.md`中每个installable dependency应记录项目名、来源链接、license、版本或推荐版本范围、用途、为什么适合直接安装调用、将被哪个模块或harness使用。
 `REFERENCES.md`中每个reference-only source应记录项目名、来源链接、license、参考内容、为什么不直接作为依赖、后续可能借鉴的结构或代码片段。
-如果调研了但没有采用某个候选模板，`REFERENCES.md`可以简要说明未采用原因，例如结构过重、维护不足、license不合适、与实验工作流不匹配或配置成本过高。
-如果模板自带文件被保留或改写，`REFERENCES.md`应说明这些文件来自哪个模板以及做了哪些脚手架层面的调整。
-`REFERENCES.zh-CN.md`不需要逐字翻译英文版，但应覆盖同样信息，使用户理解外部模板和开源项目如何影响当前脚手架。
+如果出于license或attribution要求，必须记录实际保留的模板来源或模板文件来源，可以在`REFERENCES.md`中用简短的`Attribution`条目记录项目实际继承的文件来源；除此之外不要展开模板过程。
+如果模板只用于生成目录结构、最终文件已经完全改写为当前项目内容，且license不要求在项目文档中保留模板说明，则`REFERENCES.md`不需要记录模板生成过程。
+如果某个外部代码库只是调研时看过但没有影响当前项目依赖、文件、结构或license归因，不要写进repo文档。
+不应在README里写“see REFERENCES for template selection rationale”；如果需要解释外部来源，只写“see REFERENCES for external dependencies and source attributions”。
+`REFERENCES.zh-CN.md`不需要逐字翻译英文版，但应覆盖同样信息，使用户理解外部依赖、归因和参考来源如何服务当前项目。
 `REFERENCES.zh-CN.md`应覆盖`REFERENCES.md`中的同样信息，用中文说明哪些开源库被配置为可安装依赖，哪些只是后续实现参考，以及为什么这样分类。
 
 模板阶段不复制具体业务逻辑代码。
@@ -142,6 +149,10 @@ README不应声称具体论文方法、实验流程或功能代码已经实现�
 如果模板本身自带starter code、boilerplate code或最小入口文件，可以保留这些模板生成内容；这些属于代码库脚手架的一部分，不等同于实现论文业务逻辑。
 GitHub关于Codespaces模板的文档也说明template repositories通常包含starter files和boilerplate code，帮助用户快速开始使用某个库、框架或技术；因此模板阶段可以保留模板自带的基础starter files，但不应生成论文方法实现。
 对license不明确或不兼容的项目，只能作为阅读参考，不应把其代码或模板文件复制进仓库。
+skill应在模板生成后清理默认模板文案，例如模板项目名、模板欢迎语、模板说明、示例应用介绍、示例测试描述、示例命令和与当前项目无关的演示内容。
+skill应把模板默认README替换为当前项目README，而不是在模板README上追加论文实验说明。
+skill应把模板默认示例代码、示例测试或示例文档按任务边界处理：模板阶段可以保留必要的生态基础文件，但应删除或改写与当前项目无关的示例说明。
+如果模板生成了示例测试内容，skill应避免让README描述示例测试本身；测试区域只保留符合当前项目语境的简要说明或模板原生最小结构。
 
 skill只做脚手架静态检查。
 静态检查应确认模板生成确实发生过，最终repo中存在目标生态合理的基础代码库结构，而不只是手写README和空文件夹。
@@ -170,9 +181,15 @@ skill只做脚手架静态检查。
 静态检查应确认安装章节优先使用repo-local或environment-isolated安装方式，而不是默认全局安装项目依赖。
 静态检查应确认依赖配置、README安装说明、REFERENCES依赖记录三者一致。
 静态检查应确认README中的安装章节与`REFERENCES.md`中的依赖分类保持一致：写入依赖配置的库应出现在installable dependency记录中，reference-only来源不应出现在安装命令或依赖配置里。
-静态检查应确认`README.md`、`README.zh-CN.md`、`REFERENCES.md`、`REFERENCES.zh-CN.md`描述的模板来源、生成方式和实际目录结构一致。
+静态检查应确认`README.md`、`README.zh-CN.md`、`REFERENCES.md`、`REFERENCES.zh-CN.md`描述的项目用途、安装方式、依赖分类、归因来源、harness结构、测试结构和实际目录结构一致。
 静态检查应确认README、REFERENCES和harness说明文件没有使用`future`、`placeholder`、`scaffold stage`、`will be implemented later`、`to be filled`等阶段性措辞。
 静态检查应确认仓库文档只客观描述当前repo结构、用途、安装方式和职责边界，没有把未实现内容包装成阶段性占位状态。
+静态检查应包含`project-only documentation audit`，确认repo文档只描述当前项目，不描述模板、脚手架、deepresearch、skill流程或生成阶段。
+`project-only documentation audit`应扫描README、README中文版、REFERENCES、REFERENCES中文版、harness说明、test说明和模板保留下来的文档，删除或改写与当前项目无关的模板文案。
+静态检查应确认README没有出现`template`、`scaffold`、`placeholder`、`future`、`generated`、`boilerplate`、`starter`等生成过程词汇，除非这些词是项目领域本身必须使用的术语。
+静态检查应确认REFERENCES只包含与当前项目实际有关的来源；没有采用、没有归因需求、没有依赖关系、没有实现参考价值的调研来源不应出现。
+静态检查应确认模板默认项目名、模板默认示例描述、模板教程链接和模板生成说明没有残留在最终repo文档中。
+静态检查应确认每个保留文件都能用当前项目职责解释；不能解释项目职责的模板文件应删除或改写。
 静态检查不运行代码、不安装依赖、不执行测试、不运行harness、不执行实验。
 
 推荐的skill流程是：读取`paper_blueprint`、`experiment plan`、`coding plan`和目标repo路径，只提取项目初始化所需的信息；用deepresearch判断目标语言、运行时和框架逻辑；用deepresearch搜索该目标生态的官方初始化方式、高质量模板工具和template repositories；比较候选模板或初始化方式，选择一个最适合当前论文实验仓库的生成方案；在目标repo路径下调用选定方案生成基本代码库结构；识别模板生成出的测试结构和依赖配置机制；用deepresearch区分installable dependencies和reference-only sources；把installable dependencies写入模板生态的依赖配置，把reference-only sources写入REFERENCES；用deepresearch确定目标生态repo-local安装和环境隔离最佳实践，并写入README的Installation章节和中文版README的安装章节；在生成出的结构上叠加固定实验目录；根据已确定harness创建独立子文件夹及说明文件；保留模板测试结构或创建最小生态测试入口说明；创建`README.md`、`README.zh-CN.md`、`REFERENCES.md`、`REFERENCES.zh-CN.md`；做脚手架静态检查，确认“模板生成的基本代码库结构 + 依赖配置 + repo-local安装说明 + 固定实验目录 + harness说明 + 模板测试结构说明 + README/REFERENCES文档”都存在且一致。
@@ -193,11 +210,14 @@ README、REFERENCES和harness/test说明文件应优先使用目录名、harness
 **Objective documentation原则**：初始化阶段文档只客观描述当前repo结构和用途，不暴露生成阶段、不写占位状态、不用future语气包装未实现内容。
 **Template-first test layout原则**：test结构跟随模板和目标生态，在代码实现前不细分测试目录；测试细分由后续代码实现skill根据实际模块决定。
 **Harness-specific scaffold原则**：harness是论文实验目标驱动的结构，可以在初始化阶段按已知harness创建子文件夹和说明文件；test是代码功能驱动的结构，不能在代码尚未实现时过早细分。
-**Reference documentation原则**：`REFERENCES.md`和`REFERENCES.zh-CN.md`负责记录模板来源、生成工具、license、版本、采用方式、保留内容、调整内容和选择理由；模板阶段发现的外部代码实现只记录为后续参考，不在本阶段移植。
+**Reference documentation原则**：`REFERENCES.md`和`REFERENCES.zh-CN.md`负责记录当前项目实际使用或需要归因的外部来源、license、版本、采用方式和项目关系；模板选择过程、未采用候选和内部调研流水不进入repo文档。
 **Dependency declaration原则**：项目初始化skill负责通过deepresearch选择可直接安装调用的开源库，并把它们写入当前模板生态的依赖配置；它不运行安装。不能直接安装调用的相关开源代码只进入`REFERENCES.md`和`REFERENCES.zh-CN.md`作为后续实现参考，不进入依赖配置。
 **Repo-local installation原则**：项目初始化skill应通过deepresearch确定目标生态的包管理和环境隔离最佳实践，把可直接安装调用的依赖写入项目依赖配置，并在`README.md`和`README.zh-CN.md`中写出尽量不影响全局环境的repo-local安装方法；skill只声明和说明安装，不实际运行安装。
 **No hardcoded ecosystem artifacts原则**：项目初始化skill不得在通用规则或静态检查中写死任何具体语言生态的文件名、目录名或配置名；所有生态相关artifact都必须来自用户输入、deepresearch、模板文档或模板实际生成结果。
 **Template-derived validation原则**：静态检查验证的是“选定模板生成的结构是否完整并与论文实验目录正确合并”，不是验证某个预设技术栈文件清单是否存在。
 **Role-based artifact naming原则**：skill内部规则使用功能角色描述文件，例如依赖声明、项目元数据、构建配置、源码布局、测试布局；具体文件名只在选定模板后由实际repo决定。
 **README present-state原则**：README只描述当前仓库已经具备的结构和使用入口，不描述“未来会做什么”、不标记“占位状态”、不解释“脚手架阶段”。
-**Repo scaffold总原则**：这个skill负责把论文蓝图、experiment plan和coding plan转化为一个真实starter repo加论文实验目录的项目脚手架；它通过deepresearch现场选择并调用初始化方式生成基础代码库结构，配置可直接安装调用的依赖，记录reference-only sources，写清楚repo-local安装方法，再叠加固定实验目录、README、REFERENCES和harness说明文件，让当前repo结构和职责边界清晰可用。
+**Project-only output原则**：skill可以用模板和deepresearch完成初始化，但最终repo只呈现当前项目本身；文档和说明文件不暴露模板生成、skill流程、scaffold阶段或内部调研过程。
+**Attribution-only exception原则**：模板、开源来源和外部代码只在它们与当前项目存在依赖、代码来源、license归因或实际参考价值时进入`REFERENCES.md`；模板选择过程和未采用候选不进入repo。
+**Template cleanup原则**：模板生成后必须清理模板默认文案和示例语境，把所有保留内容改写成当前论文实验项目语境。
+**Repo scaffold总原则**：这个skill负责把论文蓝图、experiment plan和coding plan转化为一个真实starter repo加论文实验目录的项目脚手架；它通过deepresearch现场选择并调用初始化方式生成基础代码库结构，配置可直接安装调用的依赖，记录项目实际使用或需要归因的外部来源，写清楚repo-local安装方法，再叠加固定实验目录、README、REFERENCES和harness说明文件，让当前repo结构和职责边界清晰可用。
