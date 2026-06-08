@@ -26,16 +26,17 @@ This loop lets us compare different versions under a stable task setting. The go
 
 If a skill's output is unsatisfactory, improve the matching metaskill first instead of editing the skill from vague impressions.
 
-1. Open the corresponding metaskill file; the three main paths are linked below.
+1. Open the corresponding metaskill file; the prepared paths are linked below.
 2. Add concrete tips about the failure mode: what the artifact did wrong, what the skill should prefer, and what it should avoid next time.
-3. Run the corresponding evolution script from the repository root; the three main scripts are linked below.
+3. Run the corresponding evolution script from the repository root; the prepared scripts are linked below.
 4. Inspect the new artifact and repeat if the skill is still not stable enough.
 
-For the three main planning skills:
+Prepared AcademicArmy skill metaskills:
 
 - `academic-army-architect`: edit [`metaskills/academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md), then run its script [`metaskills/academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh) with `bash`.
 - `academic-army-experiment-plan`: edit [`metaskills/academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md), then run its script [`metaskills/academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh) with `bash`.
 - `academic-army-coding-plan`: edit [`metaskills/academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md), then run its script [`metaskills/academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh) with `bash`.
+- `academic-army-repo-scaffold`: edit [`metaskills/academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md), then run its script [`metaskills/academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh) with `bash`. This metaskill defines the template-first repository initialization skill: generate a real starter repo from a selected initializer or template, overlay `data/`, `output/`, `results/`, and `harness/`, write repo-local installation instructions, configure installable dependencies without running installation, record reference-only sources, preserve the template's test layout, and keep README text objective and present-state.
 
 The linked evolution scripts call the TypeScript `evolve-skill` pipeline. See [`src/README.md`](../src/README.md) for the TypeScript entry points and [`src/evolve-skill/README.md`](../src/evolve-skill/README.md) for the evolution loop implementation.
 

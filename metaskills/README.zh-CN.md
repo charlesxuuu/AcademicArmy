@@ -26,16 +26,17 @@ AcademicArmy 的 skill 不是一次性写完就固定下来，而是通过一套
 
 如果觉得某个 skill 的输出不满意，先修改对应的 metaskill，而不是凭模糊印象直接改 skill。
 
-1. 打开对应的 metaskill 文件；三个主要路径见下面的链接。
+1. 打开对应的 metaskill 文件；已准备的路径见下面的链接。
 2. 在里面补充具体 tips：这次 artifact 哪里不好、后续应该更偏向什么写法、应该避免什么问题。
-3. 在仓库根目录运行对应的 evolution 脚本；三个主要脚本见下面的链接。
+3. 在仓库根目录运行对应的 evolution 脚本；已准备的脚本见下面的链接。
 4. 检查新一轮 artifact；如果还不稳定，就继续补充 tips 并再次运行。
 
-三个主要规划类 skill 对应关系如下：
+当前已准备的 AcademicArmy skill metaskill 如下：
 
 - `academic-army-architect`：修改 [`metaskills/academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh)。
 - `academic-army-experiment-plan`：修改 [`metaskills/academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh)。
 - `academic-army-coding-plan`：修改 [`metaskills/academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh)。
+- `academic-army-repo-scaffold`：修改 [`metaskills/academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh)。这个 metaskill 定义 template-first 的仓库初始化 skill：先用选定 initializer 或 template 生成真实 starter repo，再叠加 `data/`、`output/`、`results/` 和 `harness/`；写出 repo-local 安装说明；配置可安装依赖但不执行安装；记录只能作为参考的外部来源；保留模板决定的测试结构；README 只客观说明当前仓库结构和用法。
 
 这些已链接的 evolution 脚本会调用 TypeScript 的 `evolve-skill` pipeline。TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](../src/README.zh-CN.md)，skill evolution loop 的实现见 [`src/evolve-skill/README.zh-CN.md`](../src/evolve-skill/README.zh-CN.md)。
 

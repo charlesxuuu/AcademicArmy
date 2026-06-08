@@ -20,7 +20,11 @@ The current project workflow first uses three planning skills to produce three A
 
 Each planning skill also writes a Chinese `*.explain.md` companion for human review, but the development runner consumes the three English Markdown files above.
 
-After the three planning artifacts are ready, run:
+After the three planning artifacts are ready, `academic-army-repo-scaffold` can initialize a real starter repository for the codebase. It uses DeepResearch to choose a template, official initializer, or high-quality template repository, generates the starter repository, then adds the fixed experiment directories `data/`, `output/`, `results/`, and `harness/`. It writes dependency declarations and repo-local installation instructions, records installable dependencies and reference-only sources in `REFERENCES.md` and `REFERENCES.zh-CN.md`, preserves the template's test layout, and keeps README text focused on the current repository structure and usage.
+
+The repo scaffold skill does not implement paper methods, harness logic, tests, metrics, loaders, exporters, or experiment runners. Those belong to later implementation work.
+
+After the planning artifacts are ready, run:
 
 ```bash
 bash runs/develop.sh
