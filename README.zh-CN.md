@@ -20,6 +20,10 @@ AcademicArmy 是一个用于完成研究论文的 multi-agent 系统。它的核
 
 每个规划类 skill 还会同时生成一份中文 `*.explain.md` 解释文件，方便用户审阅；但后续开发 runner 读取的是上面三份英文 Markdown。
 
+三份规划产物准备好后，`academic-army-repo-scaffold` 可以为代码库初始化一个真实 starter repository。它会使用 DeepResearch 选择合适的 template、官方 initializer 或高质量 template repository，生成 starter repository，然后叠加固定实验目录 `data/`、`output/`、`results/` 和 `harness/`。它会写入依赖声明和 repo-local 安装说明，在 `REFERENCES.md` 和 `REFERENCES.zh-CN.md` 中记录可安装依赖和仅作参考的外部来源，保留模板决定的测试结构，并让 README 聚焦当前仓库结构和用法。
+
+repo scaffold skill 不实现论文方法、harness 逻辑、测试、metric、loader、exporter 或实验 runner；这些属于后续实现工作。
+
 三份规划产物准备好后，运行：
 
 ```bash
