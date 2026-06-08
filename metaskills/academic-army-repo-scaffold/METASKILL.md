@@ -54,15 +54,15 @@ Do not name or validate any ecosystem-specific files or directories in this skil
 `data/`用于输入数据，`output/`用于程序运行输出，`results/`用于实验结果记录，`harness/`用于所有论文实验harness。
 固定文档仍应存在：`README.md`、`README.zh-CN.md`、`REFERENCES.md`、`REFERENCES.zh-CN.md`。
 固定目录只规定论文实验工作流的顶层语义，不规定目标语言生态内部的源码布局。
-测试目录不再固定为顶层`test/`；测试文件、测试目录和测试配置应跟随模板工具、目标生态最佳实践和deepresearch调研到的高质量公开repo结构。
+测试目录不再固定为某个顶层测试目录；测试文件、测试目录和测试配置应跟随模板工具、目标生态最佳实践和deepresearch调研到的高质量公开repo结构。
 
 `harness/`下面应根据`coding plan`中的每种harness创建独立子文件夹，并在每个子文件夹中放置说明文件。
 每种harness的子文件夹名称应语义化，能表达其服务的任务，不应使用`c1/c2/c3/b1/b2/b3`这类抽象编号。
 每个harness说明文件应写清楚该harness的任务、关联实验目标、后续应实现的运行入口、输入、metric、输出artifact和实现占位。
 skill应先用模板工具、官方初始化方式或template repository生成真实代码库骨架，再识别模板生成出的测试结构。
-如果模板已经生成了测试目录或测试入口，skill应把`coding plan`中的test类别映射到模板现有测试结构中，而不是额外创建固定顶层`test/`。
+如果模板已经生成了测试目录或测试入口，skill应把`coding plan`中的test类别映射到模板现有测试结构中，而不是额外创建固定顶层测试目录。
 如果模板没有生成测试结构，skill应通过deepresearch调研目标生态的常见测试组织方式，并按该生态的最佳实践创建测试结构。
-每一种test仍然需要单独的说明位置，但该位置应放在模板或目标生态决定的测试结构下，而不是强制放在固定顶层`test/`下。
+每一种test仍然需要单独的说明位置，但该位置应放在模板或目标生态决定的测试结构下，而不是强制放在固定顶层测试目录下。
 每个test说明文件应写清楚该test类别验证什么功能、后续应覆盖哪些输入输出、pass/fail含义和实现占位。
 harness/test说明文件只描述任务和预留结构，不实现具体harness逻辑或测试逻辑。
 如果模板测试结构与`coding plan`中的test类别不完全匹配，skill应在不破坏模板生态规范的前提下进行轻量扩展，例如在模板测试区域内增加语义化子目录或说明文件。
@@ -146,8 +146,8 @@ skill只做脚手架静态检查。
 静态检查应确认固定实验目录和文档已叠加到模板结构中：`data/`、`output/`、`results/`、`harness/`、`README.md`、`README.zh-CN.md`、`REFERENCES.md`、`REFERENCES.zh-CN.md`。
 静态检查应确认每种harness都在`harness/`下有独立子文件夹和说明文件。
 静态检查应确认每种test都已经被映射到模板决定的测试结构中，并有对应说明文件。
-静态检查不应要求存在固定顶层`test/`目录。
-如果最终repo同时存在模板测试结构和额外顶层`test/`，skill应检查这是否由模板或deepresearch明确支持；如果只是skill自行强加，应移除或改回模板结构。
+静态检查不应要求存在固定顶层测试目录。
+如果最终repo同时存在模板测试结构和额外顶层测试目录，skill应检查这是否由模板或deepresearch明确支持；如果只是skill自行强加，应移除或改回模板结构。
 静态检查应确认所有installable dependencies已经写入目标生态的依赖配置。
 静态检查应确认所有reference-only sources已经写入`REFERENCES.md`和`REFERENCES.zh-CN.md`。
 静态检查应确认没有把reference-only source误写成依赖，也没有在模板阶段复制其业务代码。
@@ -173,7 +173,7 @@ README、REFERENCES和harness/test说明文件应优先使用目录名、harness
 **Template-first原则**：项目初始化先通过模板工具、官方initializer或高质量template repository生成真实starter repo，再叠加论文实验目录和说明文件。
 **Scaffold-only原则**：本skill只负责创建项目脚手架；具体论文业务代码、实验流程实现、harness逻辑、测试逻辑、代码风格配置和质量审查留给后续skill。
 **Template-informed原则**：项目结构应由deepresearch调研到的官方初始化方式、高质量模板工具、template repository和公开repo共同决定，不在tips里写死具体语言、框架或源码布局。
-**Updated hybrid layout原则**：`data/`、`output/`、`results/`和`harness/`是论文实验工作流的固定顶层目录；测试结构属于目标语言和模板生态的一部分，应由模板生成结果和deepresearch决定，不固定为`test/`。
+**Updated hybrid layout原则**：`data/`、`output/`、`results/`和`harness/`是论文实验工作流的固定顶层目录；测试结构属于目标语言和模板生态的一部分，应由模板生成结果和deepresearch决定，不固定为某个顶层测试目录。
 **Template-first test layout原则**：测试文件放在哪里、如何分层、如何命名、如何被测试工具发现，都应优先遵守模板生成的项目结构；skill只把`coding plan`中的test目标映射进去，不强行改造测试目录。
 **Experiment scaffold原则**：固定保留`data/`、`output/`、`results/`和`harness/`，让脚手架天然承接论文实验工作流；模板生成结构负责目标生态的标准代码库骨架和测试结构。
 **Scaffold validation原则**：项目初始化完成后，skill应确认“模板生成的基本代码库结构 + 依赖配置 + 固定实验目录 + harness说明 + 模板测试结构中的test说明 + README/REFERENCES文档”都存在且一致；只有文档和空目录不算完成初始化。
