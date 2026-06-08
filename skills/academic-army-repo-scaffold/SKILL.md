@@ -42,24 +42,66 @@ Anti-regression gates from prior artifacts:
 
 - Missing `README.md` `## Installation` or `README.zh-CN.md` `## 安装` is an
   immediate validation failure.
-- Empty dependency declarations are allowed only when README, REFERENCES, and
-  any manifest explicitly say "none selected at scaffold stage" and explain
-  why no installable dependencies were declared.
+- Installation sections that only defer setup until later are validation
+  failures. They must give actionable, repo-root, environment-isolated setup
+  and dependency-install commands for the current scaffold, while saying the
+  skill did not run them.
+- Empty dependency declarations are allowed only when README and REFERENCES
+  explicitly say "none selected at scaffold stage" for the relevant dependency
+  bucket and explain why no dependencies were declared.
+- Empty runtime dependencies do not automatically imply empty development or
+  test dependencies. If the scaffold selects a concrete test ecosystem or uses
+  ecosystem-specific test wording, declare the matching dev/test dependency in
+  the template-native mechanism or remove that wording.
 - A fixed top-level test directory is a failure unless the selected template or
   DeepResearch evidence specifically justifies that singular path. Prefer the
   generated test structure; when none is generated, document the researched
   ecosystem convention before creating any test placeholder path.
+- Coarse test buckets are insufficient. Each coding-plan test capability needs
+  its own explanation location inside the template-selected test structure.
 - `REFERENCES.md` must be category-driven, not narrative-only. It must include
-  installable-dependency, reference-only, harness/benchmark, installation, and
-  rejected-candidate classifications.
-- `SCAFFOLD_MANIFEST.md`, if written, is a validation report. It must not mark
-  validation as passed unless installation sections, dependency/reference
-  consistency, test-layout provenance, and scaffold-only boundaries were
-  actually checked.
+  installable-dependency classification with runtime and development/test
+  buckets, reference-only, harness/benchmark, installation, template
+  comparison, and rejected-candidate classifications.
+- Runtime and development/test dependencies must live in one installable
+  dependency registry in REFERENCES, with clearly separated runtime and
+  development/test subsections. Do not put development/test dependencies in a
+  separate top-level category that can contradict `Installable Dependencies`.
+- Dependency registry validation must compare the actual generated dependency
+  declaration artifact against REFERENCES. A package declared for runtime or
+  development/test use must appear in the unified installable-dependency
+  registry with the same bucket; a dependency must not appear only as a loose
+  source entry with `reuse_decision: installable-dependency`.
+- Risky reference-only sources need explicit license warnings. When license
+  status is unknown, unresolved, custom, restrictive, research-only, or
+  incompatible, `REFERENCES.md` must include the phrase "do not copy, port, or
+  directly reuse code until license and compatibility are verified" or an
+  equally explicit stronger warning, and the Chinese REFERENCES must include an
+  equivalent Chinese warning.
+- Installation commands must not rely on one unqualified interpreter selector
+  as the only valid command. Use a portable placeholder or show platform
+  variants when the ecosystem requires selecting a local interpreter or tool.
+- Do not write `SCAFFOLD_MANIFEST.md` by default. If a user-requested manifest
+  is written, it must not mark validation as passed unless installation
+  sections, dependency/reference consistency, test-layout provenance, and
+  scaffold-only boundaries were actually checked.
 - `REFERENCES.zh-CN.md` must read as Chinese documentation with translated
   field labels and explanations. English keys such as `name`, `url`,
   `used_for`, or `reuse_decision` should not appear as the primary field
   labels in the Chinese file.
+- Chinese docs should be polished Chinese technical documentation. Translate
+  ordinary terms such as starter repository, source planning inputs, workload
+  loader, and dependency bucket; keep English only for stable identifiers,
+  package names, commands, filenames, artifact names, or terms that would lose
+  precision when translated.
+- Remove or replace local initializer metadata such as a developer's personal
+  name or email unless the user explicitly supplied it.
+- Template-selection prose must read as a pre-generation decision made from
+  DeepResearch and candidate comparison. Do not explain the choice as "this was
+  selected because it already generated the scaffold" for a new repository.
+- Avoid emitting `SCAFFOLD_MANIFEST.md` by default. Keep the artifact registry
+  internal and put needed validation/provenance summaries in README or
+  REFERENCES.
 
 ## Required Inputs
 
@@ -93,13 +135,14 @@ Inside repository documents:
 
 - Use repository-relative paths for files inside the generated repository.
 - For planning inputs outside the repository, label them as external task
-  inputs. Prefer the user-supplied workspace-relative convention, or a stable
-  relative path from the repository root such as `../paper_blueprint.md` only
-  when it truly resolves outside the repository. Avoid hardcoded machine
-  absolute paths unless the user supplied only absolute paths and no portable
-  convention exists.
-- Use the same external-input path convention in README, REFERENCES, and any
-  manifest.
+  inputs without making the generated repository depend on the original
+  workspace layout. Prefer a short "source planning inputs" summary, copied
+  provenance snippets, or user-supplied stable identifiers. Avoid parent-relative
+  paths, workspace-specific `cd` paths, and hardcoded machine absolute paths in
+  reusable repo docs unless the user explicitly requested a workspace-bound
+  artifact.
+- Use the same external-input provenance convention in README, REFERENCES, and
+  any user-requested manifest.
 
 If the target path already contains files, classify them before changing
 anything:
@@ -172,12 +215,17 @@ Return scaffold-generation evidence:
 - expected generated output shape for each candidate: source layout,
   dependency declaration, build/test configuration roles, entry points, docs,
   examples
-- generated or conventional test structure, and how coding-plan test categories
+- compact generated-structure comparison across plausible candidates:
+  directory structure, dependency declaration, entry files, test structure,
+  configuration complexity, documentation quality, license, maintenance, and
+  fit for the paper experiment workflow
+- generated or conventional test structure, and how coding-plan test capabilities
   should be mapped into that structure without fighting the ecosystem
 - dependency declaration mechanism, environment isolation approach, and
   repo-local installation workflow used by the target ecosystem
-- installable dependency candidates versus reference-only sources, including
-  license, packaging quality, interface stability, maintenance, and risk notes
+- runtime dependency candidates, development/test dependency candidates, and
+  reference-only sources, including license, packaging quality, interface
+  stability, maintenance, and risk notes
 - license, exact release tag, package version, commit SHA, or dated unpinned
   access snapshot
 - maintenance and complexity notes
@@ -190,13 +238,18 @@ before choosing. It is acceptable to inspect documentation, run a dry generator
 in a disposable location, or clone a template for static inspection. Do not
 evaluate candidates by descriptions alone when generated structure is unclear.
 Record the comparison at the level of generated files and directories, not only
-feature descriptions.
+feature descriptions. The final REFERENCES must preserve a compact comparison
+table or equivalent auditable summary, not only prose rejection reasons.
 
-DeepResearch should classify external sources into two groups:
+DeepResearch should classify external sources into three groups:
 
-- **Installable dependencies:** packaging is clear, license is compatible or
-  acceptable for the project, interfaces are stable enough, and the source is
-  suitable to declare in the target ecosystem's dependency manifest.
+- **Runtime installable dependencies:** packaging is clear, license is
+  compatible or acceptable for the project, interfaces are stable enough, and
+  the source is suitable to declare for direct use by future runtime code.
+- **Development/test installable dependencies:** tools needed for the selected
+  starter ecosystem's development, testing, formatting, documentation, or
+  packaging workflow. Declare them only when the scaffold actually selects that
+  toolchain or uses its conventions.
 - **Reference-only sources:** useful for later implementation, benchmark
   structure, harness ideas, or domain understanding, but unsuitable to install
   directly because of license uncertainty, heavy or unstable dependencies,
@@ -204,10 +257,22 @@ DeepResearch should classify external sources into two groups:
   small idea rather than a reusable library is needed.
 
 Do not install, resolve, lock, download, or import project dependencies during
-this skill. Only declare selected installable dependencies in the generated
-project's dependency configuration. If no installable dependencies are selected
-at scaffold stage, record that explicit decision in README, REFERENCES, and
-the manifest, and leave the dependency manifest empty or template-default.
+this skill. Only declare selected runtime and development/test dependencies in
+the generated project's native dependency configuration. If no dependencies are
+selected for a bucket, record that explicit decision in README and REFERENCES,
+and leave that bucket empty or template-default.
+
+Use the same installable-dependency registry for runtime and development/test
+dependencies. The registry may have subsections, table columns, or labels for
+the buckets, but a dependency declared in the project configuration must not be
+outside the installable-dependency section in REFERENCES.
+
+After dependency edits, inspect the generated dependency declaration artifact
+and compare it against the internal dependency registry by package or tool name,
+bucket, purpose, and declaration location. Resolve mismatches before writing
+the final response; do not rely on narrative claims that a dependency is
+"installable" if the generated project does not declare it in the selected
+ecosystem's mechanism.
 
 ## Template-First Scaffold Design
 
@@ -239,6 +304,10 @@ declarations, test structure, build configuration, minimal entry files, and
 ecosystem conventions unless they are unrelated sample-app residue or ambiguous
 third-party code with unsuitable licensing.
 
+Normalize generated metadata after template creation. Remove, blank, or replace
+personal author names, personal emails, organization secrets, machine-specific
+paths, and local initializer defaults unless the user explicitly supplied them.
+
 Distinguish template starter code from paper business code:
 
 - Starter boilerplate generated by the selected template may remain.
@@ -259,6 +328,13 @@ semantics, keep the fixed top-level Academic Army convention and explain the
 relationship in the README. Do not let template directories replace
 `data/`, `output/`, `results/`, or `harness/`.
 
+Additional top-level directories beyond the template layer and fixed overlay are
+allowed only when directly implied by the planning inputs or selected template.
+Document why each plan-derived overlay directory exists. Avoid redundant
+documentation-only directories, especially directories that duplicate
+`REFERENCES.md` or the README contract, unless they have a clear future artifact
+ownership role.
+
 Testing is template-informed, not a fixed overlay. First inspect the selected
 initializer's generated test structure. If it exists, map the coding-plan test
 categories into that structure with semantic subfolders or explanation files.
@@ -270,11 +346,11 @@ convention justifies it. If both a template test structure and an extra test
 directory would exist, validate and document why both are needed; otherwise use
 the template structure.
 
-Record the test-layout decision in README, REFERENCES, and any manifest:
+Record the test-layout decision in README and REFERENCES:
 
 - whether the initializer generated test files or directories
 - exact generated test paths retained
-- how each coding-plan test category maps into those paths
+- how each coding-plan test capability maps into those paths
 - if no tests were generated, which DeepResearch sources justify the chosen
   path and why a fixed top-level test directory was not imposed
 
@@ -311,7 +387,7 @@ by predeclared file name:
 - generated files removed or adjusted, with scaffold-level reason
 - candidate templates considered and rejected reasons
 - generated or DeepResearch-supported test layout, and how each coding-plan
-  test category maps into it
+  test capability maps into it
 - project metadata artifacts discovered from the template
 - dependency declaration artifacts discovered from the template or target
   ecosystem
@@ -325,19 +401,21 @@ by predeclared file name:
 - repo-local or environment-isolated installation strategy
 - fixed overlay directories
 - harness names, purposes, metrics, inputs, and artifacts
-- test category names, fixtures, pass/fail meaning, and protected areas
+- test capability names, fixtures, pass/fail meaning, and protected areas
 - current scaffold tree
 - static validation checklist and next implementation handoff
 
 Do not include sandbox notes, tool failure logs, dependency-install problems,
-or local workaround details in the manifest or generated repo docs.
+or local workaround details in generated repo docs.
 The project artifact registry is an internal work list. It does not need to be
-written as a separate file. If a manifest is written as a separate file, make it
-a rigorous validation/provenance report rather than a loose duplicate of README
-and REFERENCES. It must check the hardest requirements: template generation,
-dependency/reference consistency, repo-local installation documentation,
-test-layout provenance, fixed overlay directories, harness/test placeholder
-coverage, and scaffold-only boundaries.
+written as a separate file. Prefer not to create `SCAFFOLD_MANIFEST.md`; it
+often repeats README/REFERENCES content and can go stale. If the user explicitly
+asks for a manifest, or if a target workflow requires one, make it a rigorous
+validation/provenance report rather than a loose duplicate of README and
+REFERENCES. It must check the hardest requirements: template generation,
+dependency/reference consistency, actionable repo-local installation
+documentation, test-layout provenance, fixed overlay directories, harness/test
+placeholder coverage, and scaffold-only boundaries.
 
 Do not mark validation items as passed until the corresponding static checks
 have actually been performed. A manifest that repeats the intended design
@@ -351,8 +429,8 @@ skill. Identify dependency declarations, build configuration, source layout, and
 test layout from the selected template and generated repository, then validate
 those discovered artifacts by role.
 
-The manifest, if created, should be short enough to audit and strict enough to
-fail the artifact. Avoid duplicating long README/REFERENCES prose; put
+If a manifest is created, keep it short enough to audit and strict enough to
+fail the artifact. Avoid duplicating README/REFERENCES prose; put only
 validation status, discovered artifact roles, actual dependency state, and
 actual scaffold-only checks there.
 
@@ -374,16 +452,16 @@ Each harness subfolder must contain a short explanation file, normally
 - expected output artifacts
 - implementation placeholder and ownership boundary
 
-Derive test categories from the coding plan's testing structure. Map each
-category into the generated template's test structure. If no test structure was
-generated, create one using DeepResearch-supported ecosystem convention, such
-as the conventional test layout, package-local test area, workspace test module,
-framework-specific test area, or equivalent for the selected runtime.
-Use semantic names such as `data-loading`, `metric-computation`,
-`result-export`, or `cli-smoke`, adapted to the ecosystem's naming convention.
-Do not hardcode any test directory name in the skill.
+Derive a test registry from the coding plan's testing structure. Each
+capability in that registry must have its own explanation location inside the
+generated template's test structure. If no test structure was generated, create
+the smallest test structure supported by DeepResearch evidence for the selected
+ecosystem, such as an ecosystem-native test area, package-local test area,
+workspace test module, or equivalent for the selected runtime. Use semantic
+names adapted to the ecosystem's naming convention. Do not hardcode any test
+directory name in the skill.
 
-Each test subfolder must contain a short explanation file describing:
+Each test capability explanation must describe:
 
 - functional behavior to validate
 - future fixtures or toy inputs
@@ -391,6 +469,10 @@ Each test subfolder must contain a short explanation file describing:
 - pass/fail meaning
 - harness or implementation area protected by the tests
 - implementation placeholder and ownership boundary
+
+Do not collapse multiple coding-plan test capabilities into only broad buckets
+such as unit, functional, integration, or smoke unless each capability still has
+its own file, subfolder, or clearly separated section under that bucket.
 
 Harness/test notes reserve structure only. They must not contain working
 harness logic, test code, fixture data, or claims that validation is already
@@ -418,26 +500,36 @@ file names into the skill.
 
 For each candidate external library or tool:
 
-- classify it as an installable dependency, reference-only source, rejected
-  candidate, or future implementation reference
+- classify it as a runtime installable dependency, development/test
+  installable dependency, reference-only source, rejected candidate, or future
+  implementation reference
 - record license, version or recommended version range, packaging quality,
   interface stability, maintenance state, and direct-use risk
-- declare installable dependencies in the template's native dependency
+- declare runtime dependencies in the template's native runtime dependency
   mechanism only when they are appropriate for direct import/use by future code
+- declare development/test dependencies in the template's native development or
+  test dependency mechanism only when the scaffold selects those tools
 - keep reference-only sources out of dependency manifests and record them in
   REFERENCES instead
 
-It is valid for a scaffold to select no installable runtime dependencies when
-the coding plan is not ready to commit to APIs. In that case:
+It is valid for a scaffold to select no runtime dependencies when the coding
+plan is not ready to commit to APIs. In that case:
 
-- leave the dependency declaration empty or template-default
+- leave the runtime dependency declaration empty or template-default
 - state "none selected at scaffold stage" in README, README.zh-CN,
-  REFERENCES, REFERENCES.zh-CN, and any manifest; Chinese docs may translate
-  the phrase but must preserve the same decision
+  REFERENCES, and REFERENCES.zh-CN; Chinese docs may translate the phrase but
+  must preserve the same decision
 - explain that reference-only sources were recorded for later implementation
   and were not added to project dependencies
 - ensure the dependency manifest, installation instructions, and REFERENCES
   agree exactly about the empty or template-default dependency state
+
+Do not use concrete test-framework language in README, test placeholders, or
+REFERENCES unless that framework is generated by the template, selected from
+DeepResearch evidence, or declared in the development/test dependency bucket.
+If a selected template implies a test tool but does not declare it, either add
+it through the template-native dev/test dependency mechanism or describe the
+test structure generically.
 
 Do not run install commands, dependency resolution, lockfile generation, tests,
 harnesses, or generated code. If the template generated a lockfile before this
@@ -458,13 +550,38 @@ project dependencies into a global environment by default. They must also state
 that this scaffold declares dependencies and installation steps only; the skill
 does not run installation.
 
+Installation sections must be actionable for the current scaffold. They must
+include:
+
+- a command or instruction to work from the repository root, written as a
+  generic repo-root context rather than a workspace-specific path
+- required system prerequisites
+- the template-native command or steps to create/select an isolated project
+  environment when the ecosystem supports one; use portable placeholders or
+  note OS/interpreter variants instead of a single platform-specific
+  executable name
+- the template-native command or steps to install currently declared project
+  dependencies into that isolated environment, even when the runtime dependency
+  bucket is empty
+- an optional non-executing verification step for dependency configuration only
+  when it does not run tests, harnesses, experiments, or paper methods
+- a clear statement that this skill did not execute installation or dependency
+  resolution
+
+If the selected ecosystem requires choosing a local interpreter or runtime,
+write the setup command with a placeholder such as
+`<target-runtime-interpreter>` or list common platform variants. A command that
+only works on one operating system or shell is not sufficient unless the user
+explicitly requested a platform-specific repository.
+
 ## README Contract
 
 Create both `README.md` and `README.zh-CN.md`.
 
 Both READMEs must describe the actual generated scaffold and cover:
 
-- project purpose and external planning inputs
+- project purpose and source planning input provenance without workspace-bound
+  parent-relative paths
 - inferred language/runtime and why it was selected
 - selected initializer/template, generation method, and template source
 - starter-repo structure generated by the template layer
@@ -472,12 +589,14 @@ Both READMEs must describe the actual generated scaffold and cover:
 - repo-local or environment-isolated installation instructions
 - fixed experiment directories and their intended use
 - reserved harness locations
-- generated or researched test structure, and where each test category is
+- generated or researched test structure, and where each test capability is
   reserved inside that structure
 - distinction between top-level `harness/` for paper evaluation scaffolding and
   any package/module namespace reserved for future harness implementation
 - what later implementation skills should fill in
 - scaffold-only boundary
+- why any additional non-fixed overlay directories were created beyond the
+  template layer and fixed experiment overlay
 
 `README.md` must contain an `Installation` section. `README.zh-CN.md` must
 contain a corresponding `安装` section. These sections must:
@@ -486,10 +605,13 @@ contain a corresponding `安装` section. These sections must:
 - list required system prerequisites without claiming the skill installed them
 - use the selected ecosystem's repo-local, project-local,
   environment-isolated, sandboxed, or container workflow when available
-- explain how project dependencies declared by the scaffold should be installed
-  later without polluting the global environment
+- include the concrete template-native setup/install commands or steps for the
+  current scaffold, without using workspace-specific `cd` paths
+- explain how project dependencies declared by the scaffold are installed into
+  the isolated environment without polluting the global environment
 - state whether installable dependencies were selected or none were selected at
-  scaffold stage
+  scaffold stage, separating runtime dependencies from development/test
+  dependencies when either bucket exists
 - state that this skill did not run installation, dependency resolution, tests,
   harnesses, or experiments
 - avoid commands that run paper methods, tests, harnesses, or experiments
@@ -517,10 +639,10 @@ Create both `REFERENCES.md` and `REFERENCES.zh-CN.md`.
 
 They must record DeepResearch provenance and the final template-generation
 decision. Use these exact top-level sections in title case unless a target
-ecosystem has a strong reason to rename one; if renamed, the manifest must map
-the local name back to this contract:
+ecosystem has a strong reason to rename one:
 
 - `Selected Template`
+- `Template Comparison`
 - `Installation Strategy`
 - `Installable Dependencies`
 - `Reference-Only Sources`
@@ -534,10 +656,25 @@ Do not replace this schema with narrative headings such as `Selected Generator`,
 headings are nested under the required categories. `Selected Template` is the
 template-source category; `Installation Strategy` is the package-management and
 repo-local setup category; `Installable Dependencies` must exist even when it
-contains only the explicit none-selected decision.
+contains only the explicit none-selected decision for every bucket.
 
-If no installable dependencies are selected, the `Installable Dependencies`
-section must explicitly say that none were selected at scaffold stage and why.
+`Template Comparison` must include compact generated-structure evidence for the
+shortlisted initializers/templates, including source layout role, dependency
+declaration role, entry/starter files, test structure, configuration
+complexity, license, maintenance, and fit. Do not make it only a narrative list
+of rejected candidates.
+
+`Installable Dependencies` must be the single dependency registry. It must
+separate runtime dependencies from development/test dependencies with
+subsections, table columns, or equivalent labels. If no runtime installable
+dependencies are selected, state that explicitly and explain why. If no
+development/test dependencies are selected, state that explicitly and do not
+name a concrete test ecosystem elsewhere as selected.
+
+Do not split development/test installable dependencies into a separate
+top-level REFERENCES category. If the generated dependency declaration has a
+test, development, docs, lint, or tooling bucket, mirror that bucket inside
+`Installable Dependencies` and record the exact declaration location there.
 
 Each source entry should use explicit fields:
 
@@ -573,12 +710,14 @@ For the selected template or initializer, REFERENCES must state:
 - whether it generated a test structure; if not, which DeepResearch-supported
   ecosystem convention is used for test placeholders
 
-For each installable dependency, REFERENCES must state:
+For each runtime or development/test installable dependency, REFERENCES must
+state:
 
 - project name and source URL
 - license
 - version, recommended version range, or dated dependency decision
-- intended future module, harness, or scaffold purpose
+- dependency bucket: runtime or development/test
+- intended future module, harness, test role, or scaffold purpose
 - why it is suitable for direct installation/use
 - where it was written in the project's dependency declaration
 
@@ -591,6 +730,14 @@ For each reference-only source, REFERENCES must state:
 - explicit instruction not to copy or directly reuse code when license or
   compatibility is unclear
 
+If license status is unknown, unresolved, custom, research-only, or otherwise
+not clearly compatible, the entry must include an explicit warning such as
+"do not copy, port, or directly reuse code until license and compatibility are
+verified." A bare `copied_or_generated_files: none` is not enough.
+Use this warning in addition to, not instead of, explaining why the source is
+reference-only. The Chinese REFERENCES must carry the same warning in natural
+Chinese, not only in English.
+
 If DeepResearch finds useful external implementation code, cite it as a
 reference-only or future implementation reference. Do not copy or port
 implementation code during this scaffold stage.
@@ -602,8 +749,9 @@ modified.
 
 `REFERENCES.zh-CN.md` does not need to be a literal translation, but it must
 cover the same decisions in Chinese: selected template, installable dependency
-classification, reference-only sources, test layout provenance, installation
-strategy, retained/adjusted template files, rejected candidates, and future
+classification with runtime and development/test subsections, reference-only
+sources, test layout provenance, installation strategy, retained/adjusted
+template files, template comparison, rejected candidates, and future
 implementation references.
 
 The Chinese REFERENCES should be readable Chinese documentation, not an English
@@ -612,6 +760,14 @@ access date, used for, selection reason, reuse decision, and generated files
 into Chinese. Keep code identifiers, package names, URLs, license identifiers,
 version strings, and canonical reuse-decision values in their original form
 when translation would reduce precision, but explain their meaning in Chinese.
+Translate ordinary descriptive phrases instead of carrying English phrasing
+through the document.
+
+Chinese README and REFERENCES should translate ordinary workflow terms
+consistently. Prefer Chinese for phrases such as starter repository, source
+planning inputs, workload loader, runner, dependency bucket, reference-only
+source, installable dependency, and scaffold boundary, with English in
+parentheses only when it is a stable technical term or identifier.
 
 For Chinese source entries, prefer labels such as `名称`, `链接`, `许可证`,
 `版本或提交`, `访问日期`, `用途`, `选择理由`, `复用决定`, and
@@ -624,7 +780,7 @@ For Chinese source entries, prefer labels such as `名称`, `链接`, `许可证
 2. Read the paper blueprint, experiment plan, coding plan, and explicit user
    constraints only.
 3. Extract scaffold requirements: ecosystem signals, expected implementation
-   direction, experiment types, harness categories, test categories, input data
+   direction, experiment types, harness categories, test capabilities, input data
    expectations, and output/result artifact families.
 4. Run DeepResearch for official initializers, template tools, template
    repositories, research-code templates, benchmark templates, related repos,
@@ -634,6 +790,11 @@ For Chinese source entries, prefer labels such as `名称`, `链接`, `许可证
 5. Infer and record the language/runtime. Do not leave it undecided when
    creating a new scaffold.
 6. Compare candidate generated structures and choose an initializer/template.
+   Record a research-driven selection rationale before generation for new
+   scaffolds. Do not justify a selected initializer only by saying it already
+   generated the repository. When adapting an existing starter repository, you
+   may preserve the existing initializer only after confirming it still fits the
+   DeepResearch comparison and scaffold requirements.
 7. Generate the base starter repository inside the target path. If the target
    already contains generated documentation-only scaffold residue, generate in
    a disposable location and merge the starter files into the target rather
@@ -641,22 +802,30 @@ For Chinese source entries, prefer labels such as `名称`, `链接`, `许可证
 8. Preserve template-generated starter structure and remove only unrelated
    sample-app residue, unsuitable third-party code, or files that conflict with
    the scaffold boundary.
-9. Inspect the generated dependency declaration mechanism and test structure.
-10. Classify external libraries as installable dependencies or reference-only
-   sources. Write selected installable dependencies into the template's native
-   dependency declaration. If none are selected, record that explicit decision
-   and keep the declaration empty or template-default.
-11. Determine the repo-local or environment-isolated installation strategy from
+9. Normalize local initializer metadata that was not supplied by the user, such
+   as personal author names, emails, local paths, and local organization
+   defaults.
+10. Inspect the generated dependency declaration mechanism and test structure.
+11. Classify external libraries and tools as runtime dependencies,
+   development/test dependencies, reference-only sources, or future
+   implementation references. Write selected dependencies into the template's
+   native dependency declaration. If a bucket has none selected, record that
+   explicit decision and keep the bucket empty or template-default.
+12. Determine the repo-local or environment-isolated installation strategy from
    the template and DeepResearch evidence.
-12. Overlay fixed directories: `data/`, `output/`, `results/`, and `harness/`.
-13. Add semantic harness placeholder folders under `harness/` with explanation
+13. Overlay fixed directories: `data/`, `output/`, `results/`, and `harness/`.
+14. Add only plan-derived extra overlay directories that have clear future
+   artifact ownership, and document why they exist.
+15. Add semantic harness placeholder folders under `harness/` with explanation
    files.
-14. Map coding-plan test categories into the generated or DeepResearch-backed
-   ecosystem test structure and add explanation files there.
-15. Create `README.md`, `README.zh-CN.md`, `REFERENCES.md`, and
-   `REFERENCES.zh-CN.md` from the manifest, including installation,
-   dependency, reference-only, and test-layout provenance.
-16. Run static scaffold validation. If starter generation did not occur or the
+16. Map each coding-plan test capability into the generated or
+   DeepResearch-backed ecosystem test structure and add a capability-specific
+   explanation location there.
+17. Create `README.md`, `README.zh-CN.md`, `REFERENCES.md`, and
+   `REFERENCES.zh-CN.md` from the internal registry, including actionable
+   installation, dependency, reference-only, template comparison, and
+   test-layout provenance.
+18. Run static scaffold validation. If starter generation did not occur or the
    project artifact registry cannot identify substantive template-derived
    project artifacts, fail the task instead of delivering a Markdown-only
    repository.
@@ -697,35 +866,82 @@ Validation must confirm:
 - `README.md`, `README.zh-CN.md`, `REFERENCES.md`, and
   `REFERENCES.zh-CN.md` exist
 - each harness has one semantic subfolder and an explanation file
-- each test category is mapped into the generated or DeepResearch-supported
-  test structure and has an explanation file
+- each coding-plan test capability is mapped into the generated or
+  DeepResearch-supported test structure and has its own explanation location
+  with future inputs/outputs, pass/fail meaning, protected area, and
+  scaffold-only boundary
 - the selected test structure is justified by the template output or by
   DeepResearch evidence when the template generated no tests
 - no fixed top-level test directory exists unless the template or
   DeepResearch-supported ecosystem convention explicitly justifies that actual
   discovered path
-- installable dependencies are declared in the target ecosystem's dependency
-  configuration, or "none selected at scaffold stage" is explicitly recorded
+- concrete test ecosystem wording is consistent with the development/test
+  dependency bucket; selected test tools are declared, and undeclared tools are
+  not described as selected
+- runtime and development/test dependencies are declared in the target
+  ecosystem's dependency configuration, or "none selected at scaffold stage" is
+  explicitly recorded for each empty bucket
+- runtime and development/test dependencies are recorded together in the
+  `Installable Dependencies` registry, with bucket labels or subsections that
+  match the dependency configuration
+- every dependency listed in the generated dependency declaration has a matching
+  installable-dependency registry entry with the same runtime or
+  development/test bucket, and every registry entry marked installable appears
+  in the generated dependency declaration
 - reference-only sources are recorded in `REFERENCES.md` and
   `REFERENCES.zh-CN.md` and are not present in dependency configuration
-- dependency configuration, README installation sections, REFERENCES
-  dependency classification, and any manifest agree
+- every reference-only source with unknown, unresolved, custom, research-only,
+  or incompatible license status includes an explicit no-copy/no-port warning
+- the English warning for risky reference-only sources is explicit enough to
+  forbid copying, porting, or directly reusing code until license and
+  compatibility are verified, and the Chinese REFERENCES contains an equivalent
+  Chinese warning
+- dependency configuration, README installation sections, and REFERENCES
+  dependency classification agree
 - `README.md` contains `Installation`
 - `README.zh-CN.md` contains `安装`
 - `REFERENCES.md` contains the required category headings, including
-  `Installable Dependencies`, even when no dependencies are selected
+  `Template Comparison` and `Installable Dependencies`, even when no
+  dependencies are selected
+- `REFERENCES.md` does not use a separate top-level development/test dependency
+  section that can contradict the installable-dependency registry
 - `REFERENCES.zh-CN.md` contains corresponding Chinese category headings and
   Chinese field labels rather than a mostly English field dump
+- `REFERENCES.zh-CN.md` and `README.zh-CN.md` translate ordinary prose into
+  readable Chinese and reserve English for identifiers, commands, package
+  names, filenames, artifact names, and precision-sensitive terms
+- Chinese README and REFERENCES use consistent Chinese terms for ordinary
+  workflow concepts, keeping English in parentheses only when it is a stable
+  identifier, command, package name, filename, artifact name, or precision term
+- `REFERENCES.md` includes generated-structure comparison evidence for
+  shortlisted template candidates, not only rejected-candidate prose
+- selected-template rationale is based on DeepResearch/template comparison and,
+  for new scaffolds, is not only post-hoc wording such as "already generated"
+- REFERENCES states that the initializer/template was selected from comparison
+  before generation; retrospective language may describe what was generated
+  only after the selection rationale is already clear
+- generated metadata has no personal author/email/local path values unless the
+  user supplied them
 - installation sections do not claim that this skill installed dependencies,
   resolved lockfiles, ran code, ran tests, ran harnesses, or executed
   experiments
 - installation sections distinguish system prerequisites from project
   dependencies and prefer repo-local or environment-isolated setup
+- installation sections are actionable for the current scaffold: repo-root
+  context, isolated environment setup or selection, project dependency install
+  command or steps, and clear non-execution statement
+- installation sections use portable interpreter/tool placeholders or mention
+  variants when a setup command would otherwise be platform-specific
+- installation sections do not use one platform-specific interpreter selector
+  as the only way to create or select the project-local environment
 - README and REFERENCES agree with the selected template source, generation
   method, retained/generated files, dependency decision, installation strategy,
   test layout, fixed overlay directories, and actual tree
-- planning inputs outside the repository are labeled as external task inputs
-  and use a consistent portable path convention
+- planning inputs outside the repository are labeled as external source
+  planning inputs without parent-relative workspace paths or workspace-specific
+  `cd` commands in reusable docs
+- extra overlay directories beyond fixed experiment directories are directly
+  plan-derived or template-derived and justified in README/REFERENCES
 - generated docs do not describe placeholders as implemented functionality
 - source placeholder locations are either template-generated or explicitly
   documented as minimal manual reservations derived from the coding plan
@@ -746,15 +962,55 @@ Treat these as validation failures:
 - README says no template files, code, package metadata, config, or starter
   files were generated
 - README lacks `Installation`, or README.zh-CN lacks `安装`
+- installation sections only defer setup until future dependencies are added, or
+  omit current scaffold setup/install commands
 - REFERENCES lacks the required category-driven structure
+- REFERENCES lacks a compact template comparison based on generated output
+  shape
+- REFERENCES puts development/test dependencies in a separate top-level section
+  instead of the unified `Installable Dependencies` registry, or records a
+  declared dependency outside that registry
+- REFERENCES says a runtime installable-dependency bucket is empty while
+  separately listing development/test packages outside the same unified
+  installable-dependency registry
+- a package is declared in the generated dependency artifact but missing from
+  the installable-dependency registry, or a registry entry marked installable is
+  missing from the generated dependency artifact
+- REFERENCES justifies template selection only by saying the starter was
+  already generated, except when explicitly adapting an existing starter that
+  still passed the comparison
+- REFERENCES presents candidate comparison mainly as a post-hoc explanation of
+  what happened, instead of documenting why the selected generator was chosen
+  before generation
 - REFERENCES.zh-CN is mostly English field labels and does not explain the same
   provenance, dependency, and reference-only decisions in Chinese
+- Chinese README or REFERENCES leave ordinary prose mostly in English when a
+  natural Chinese translation is available
 - installable dependencies appear in dependency configuration but not in
   REFERENCES `Installable Dependencies`
+- selected development/test tools appear in docs or placeholders but not in the
+  development/test dependency declaration and the installable dependency
+  registry
 - reference-only sources appear in dependency configuration
+- unresolved, unknown, custom, research-only, or incompatible-license
+  reference-only sources lack an explicit no-copy/no-port warning
+- risky reference-only warnings only say `copied_or_generated_files: none` or
+  otherwise fail to forbid copying, porting, or direct reuse until license and
+  compatibility are verified
 - no explicit dependency decision is recorded
 - installation instructions default project dependencies into a global
   environment when a project-local option exists
+- installation instructions rely on a single platform-specific interpreter or
+  executable name when a portable placeholder or variants should be used
+- installation instructions use a command like a bare platform-specific runtime
+  selector as the only setup path instead of a placeholder or platform variants
+- README or REFERENCES use parent-relative planning input paths, hardcoded
+  workspace `cd` commands, or local machine paths despite a portable standalone
+  repository convention being available
+- generated metadata preserves local personal author names, personal emails, or
+  organization defaults not supplied by the user
+- test placeholders collapse coding-plan test capabilities into only broad
+  bucket READMEs without capability-specific explanations
 - the scaffold creates a fixed test directory only because the skill hardcoded
   it, rather than because the template or DeepResearch-supported ecosystem
   convention justified that actual discovered path
@@ -772,6 +1028,8 @@ Treat these as validation failures:
 - installation commands were executed, dependencies were resolved/downloaded for
   the project, or a new lockfile was generated by running dependency
   resolution during this scaffold stage
+- redundant documentation-only manifest or local references directory is created
+  without user request, target-template need, or clear future artifact ownership
 - a manifest claims validation passed while omitting installation,
   dependency/reference consistency, installable/reference-only classification,
   or test-layout provenance checks
@@ -785,11 +1043,13 @@ Summarize:
 - template or initializer source, version/commit, license, and why selected
 - starter repo files/directories retained or adjusted
 - dependency declaration mechanism and selected installable dependencies, or
-  the explicit decision that no installable dependencies were selected
+  the explicit runtime and development/test decisions in the unified
+  installable-dependency registry
 - reference-only sources recorded for later implementation
 - repo-local or environment-isolated installation strategy documented in the
   README files
 - fixed experiment directories overlaid
+- any extra plan-derived overlay directories and why they exist
 - harness placeholders reserved under `harness/`
 - test placeholders reserved in the template-generated or DeepResearch-backed
   ecosystem test structure
