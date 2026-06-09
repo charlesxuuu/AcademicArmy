@@ -1,6 +1,6 @@
 {
   "name": "academic-army",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Agent workflows and skills for AcademicArmy.",
   "type": "module",
   "engines": {
@@ -14,7 +14,6 @@
     "lint": "eslint .",
     "format": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --write",
     "format:check": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --check",
-    "cli": "tsx src/cli.ts",
     "developing": "tsx src/cli.ts developing",
     "developing-skill": "tsx src/cli.ts developing-skill",
     "evolve-skill": "tsx src/cli.ts evolve-skill"
