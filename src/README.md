@@ -10,8 +10,8 @@ The CLI entry point is [`cli.ts`](cli.ts). It exposes three pipelines through [`
 
 | Pipeline           | Package script             | What it does                                                                                                                          |
 | ------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `developing`       | `npm run developing`       | Runs the code development loop implemented in `developing/`.                                                                          |
-| `developing-skill` | `npm run developing-skill` | Runs the same development loop with a trajectory optimizer that can revise the coding-style skill from concrete development feedback. |
+| `developing`       | `npm run developing`       | Runs the code development loop implemented in `developing/`; the current task focus comes from `--goal-path`.                         |
+| `developing-skill` | `npm run developing-skill` | Runs the same goal-driven development loop with a trajectory optimizer that can revise the coding-style skill from concrete feedback. |
 | `evolve-skill`     | `npm run evolve-skill`     | Runs the skill self-evolution loop implemented in `evolve-skill/`.                                                                    |
 
 [`pipeline.ts`](pipeline.ts) provides the shared wrapper used by these commands. It parses pipeline-specific arguments, loads one or more YAML config files with `coding-agent-forge`, builds an `AgentTeam` from the configured factories, runs the selected pipeline, and closes the team afterward.
@@ -37,14 +37,16 @@ bash runs/develop.sh
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
+Before each new development task, update `output/goal.md`, which the prepared `developing` and `developing-skill` wrappers pass as `--goal-path`.
+
 ## Directory Guide
 
 | Path                                                         | Purpose                                                                                                                                                                          |
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`cli.ts`](cli.ts)                                           | Selects a pipeline by name and forwards the remaining CLI arguments.                                                                                                             |
 | [`pipeline.ts`](pipeline.ts)                                 | Shared pipeline definition, config loading, agent-team construction, and cleanup.                                                                                                |
-| [`developing/`](developing/)                                 | Reads `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md`, then iteratively implements the target codebase. See [`developing/README.md`](developing/README.md).     |
-| [`developing/pipelineskill.ts`](developing/pipelineskill.ts) | Wraps the development loop with `trajectory-optimizer` hooks for improving the coding-style skill while development runs.                                                        |
+| [`developing/`](developing/)                                 | Reads `paper_blueprint.md`, `experiment_plan.md`, `coding_plan.md`, and the `--goal-path` objective, then iteratively implements the target codebase. See [`developing/README.md`](developing/README.md). |
+| [`developing/pipelineskill.ts`](developing/pipelineskill.ts) | Wraps the same goal-driven development loop with `trajectory-optimizer` hooks for improving the coding-style skill while development runs.                                                        |
 | [`evolve-skill/`](evolve-skill/)                             | Runs a skill on a fixed task, evaluates the artifact against a metaskill, and asks a modifier agent to revise the skill. See [`evolve-skill/README.md`](evolve-skill/README.md). |
 
 ## How The Shared Wrapper Works
@@ -56,6 +58,8 @@ This keeps the config loading, agent-team construction, and cleanup shared acros
 ## Relationship To Shell Scripts
 
 Shell scripts under [`runs/`](../runs/) and the metaskill scripts described in [`metaskills/README.md`](../metaskills/README.md) are convenience wrappers around these TypeScript pipelines.
+
+The prepared development wrappers use `output/goal.md` as the `--goal-path` file. If a new run should not inherit the current temporary task context, delete `output/developing/TODO.md` before rerunning; the pipeline recreates it automatically. This TODO-based memory is temporary and should later be replaced or extended by a more advanced memory mechanism.
 
 | Script                                              | Calls                      |
 | --------------------------------------------------- | -------------------------- |

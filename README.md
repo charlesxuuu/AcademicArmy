@@ -76,13 +76,18 @@ The repo scaffold skill does not implement paper methods, harness logic, tests, 
 
 ### 5. Run the development loop
 
-After the planning artifacts are ready, run:
+After the planning artifacts are ready, write the next high-level development objective into `output/goal.md`, then run:
 
 ```bash
+$EDITOR output/goal.md
 bash runs/develop.sh
 ```
 
-Run [`runs/develop.sh`](runs/develop.sh) to call the TypeScript `developing` pipeline, which reads the three planning artifacts and iteratively writes code under `output/codebase`. See [`src/README.md`](src/README.md) for the TypeScript entry points and [`src/developing/README.md`](src/developing/README.md) for the development loop implementation.
+Run [`runs/develop.sh`](runs/develop.sh) to call the TypeScript `developing` pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `output/codebase`. Each time you want the next new task, update `output/goal.md` before rerunning the wrapper.
+
+The development loop currently uses `output/developing/TODO.md` as a temporary task-memory file. If a new goal starts inheriting old context, manually delete that TODO file before rerunning; the pipeline will recreate it. This TODO-based memory is a temporary solution, and a more advanced memory mechanism should replace or extend it later.
+
+See [`src/README.md`](src/README.md) for the TypeScript entry points and [`src/developing/README.md`](src/developing/README.md) for the development loop implementation.
 
 ## Common Tasks
 
@@ -103,6 +108,8 @@ npm run evolve-skill
 ```
 
 For the shared CLI and pipeline structure, see [`src/README.md`](src/README.md).
+
+For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `output/goal.md`.
 
 ### Call DeepResearch
 

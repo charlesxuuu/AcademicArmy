@@ -76,13 +76,18 @@ repo scaffold skill 不实现论文方法、harness 逻辑、测试、metric、l
 
 ### 5. 运行开发循环
 
-三份规划产物准备好后，运行：
+三份规划产物准备好后，先把下一轮高层开发目标写进 `output/goal.md`，然后运行：
 
 ```bash
+$EDITOR output/goal.md
 bash runs/develop.sh
 ```
 
-运行 [`runs/develop.sh`](runs/develop.sh) 来调用 TypeScript 的 `developing` pipeline，读取三份规划产物，并在 `output/codebase` 下迭代写代码。TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)，开发循环实现见 [`src/developing/README.zh-CN.md`](src/developing/README.zh-CN.md)。
+运行 [`runs/develop.sh`](runs/develop.sh) 来调用 TypeScript 的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `output/codebase` 下迭代写代码。每次想执行下一个新任务时，先更新 `output/goal.md`，再重新运行 wrapper。
+
+开发循环现在使用 `output/developing/TODO.md` 作为临时任务记忆文件。如果新 goal 开始继承旧上下文，可以在重新运行前手动删除这个 TODO 文件；pipeline 会自动重新创建它。这个基于 TODO 的记忆机制是临时方案，之后会实现更高级的记忆机制来替代或扩展它。
+
+TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)，开发循环实现见 [`src/developing/README.zh-CN.md`](src/developing/README.zh-CN.md)。
 
 ## 常见任务
 
@@ -103,6 +108,8 @@ npm run evolve-skill
 ```
 
 TypeScript pipeline 的目录结构和实现说明见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。
+
+对于 `developing` 和 `developing-skill`，每次想切换到新的任务重点时，更新传给 `--goal-path` 的文件即可。预设 wrappers 使用的是 `output/goal.md`。
 
 ### 调用 DeepResearch
 
