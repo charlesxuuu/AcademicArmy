@@ -2,18 +2,53 @@
   "name": "academic-army",
   "version": "0.1.1",
   "description": "Agent workflows and skills for AcademicArmy.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yindaheng98/AcademicArmy"
+  },
   "type": "module",
   "engines": {
     "node": ">=20.19"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/pipeline.d.ts",
+      "import": "./dist/pipeline.js"
+    },
+    "./developing": {
+      "types": "./dist/developing/index.d.ts",
+      "import": "./dist/developing/index.js"
+    },
+    "./evolve-skill": {
+      "types": "./dist/evolve-skill/index.d.ts",
+      "import": "./dist/evolve-skill/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "agent-forge.yaml",
+    "skills",
+    "metaskills",
+    "runs",
+    "mcp-server/__main__.py",
+    "mcp-server/requirements.txt",
+    "mcp-server/deepresearch/*.py",
+    "install_mcp.py",
+    "README.md",
+    "README.zh-CN.md",
+    "LICENSE"
+  ],
   "scripts": {
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "build": "npm run clean && tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "typecheck": "npm run check",
     "lint": "eslint .",
-    "format": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --write",
-    "format:check": "prettier \"src/**/*.ts\" \"*.{js,json}\" \".*.json\" --check",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "dev": "tsx src/cli.ts",
+    "cli": "tsx src/cli.ts",
     "developing": "tsx src/cli.ts developing",
     "developing-skill": "tsx src/cli.ts developing-skill",
     "evolve-skill": "tsx src/cli.ts evolve-skill"
