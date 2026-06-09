@@ -18,11 +18,11 @@ Parts that require fine-grained research should mainly be handled by skills that
 
 First use three planning skills to produce three AI-facing Markdown artifacts:
 
-| Step | Artifact | Role |
-|---|---|---|
-| `academic-army-architect` | `paper_blueprint.md` | The strategic paper blueprint that fixes the paper identity, target venue posture, claims, contribution boundary, candidate method space, evidence needs, and downstream constraints. |
-| `academic-army-experiment-plan` | `experiment_plan.md` | The experiment strategy that maps paper claims to evidence, datasets or workloads, metrics, baselines, ablations, robustness checks, and reviewer-facing validation needs. |
-| `academic-army-coding-plan` | `coding_plan.md` | The implementation contract that turns the blueprint and experiment plan into logical module boundaries, interface and entrypoint semantics, harnesses, testing categories, raw-result artifact schemas, and method-freeze rules. |
+| Step                            | Artifact             | Role                                                                                                                                                                                                                              |
+| ------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `academic-army-architect`       | `paper_blueprint.md` | The strategic paper blueprint that fixes the paper identity, target venue posture, claims, contribution boundary, candidate method space, evidence needs, and downstream constraints.                                             |
+| `academic-army-experiment-plan` | `experiment_plan.md` | The experiment strategy that maps paper claims to evidence, datasets or workloads, metrics, baselines, ablations, robustness checks, and reviewer-facing validation needs.                                                        |
+| `academic-army-coding-plan`     | `coding_plan.md`     | The implementation contract that turns the blueprint and experiment plan into logical module boundaries, interface and entrypoint semantics, harnesses, testing categories, raw-result artifact schemas, and method-freeze rules. |
 
 Each planning skill also writes a Chinese `*.explain.md` companion for human review, but the development runner consumes the three English Markdown files above.
 
@@ -119,16 +119,16 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## Project Structure
 
-| Path | Purpose |
-|---|---|
-| `agent-forge.yaml` | Agent and team wiring. |
-| `install_mcp.py` | Installs the project MCP server into Codex for direct skill runs. |
-| `mcp-server/` | Local stdio MCP implementation that exposes `deepresearch`. |
-| `skills/` | Prepared AcademicArmy skills. |
-| `metaskills/` | Matching metaskill design/evolution files. |
-| `runs/` | Convenience wrappers around TypeScript pipelines. |
-| `src/` | TypeScript pipeline structure and implementation notes. |
-| `output/` | Generated planning artifacts, codebase output, and archives. |
+| Path               | Purpose                                                           |
+| ------------------ | ----------------------------------------------------------------- |
+| `agent-forge.yaml` | Agent and team wiring.                                            |
+| `install_mcp.py`   | Installs the project MCP server into Codex for direct skill runs. |
+| `mcp-server/`      | Local stdio MCP implementation that exposes `deepresearch`.       |
+| `skills/`          | Prepared AcademicArmy skills.                                     |
+| `metaskills/`      | Matching metaskill design/evolution files.                        |
+| `runs/`            | Convenience wrappers around TypeScript pipelines.                 |
+| `src/`             | TypeScript pipeline structure and implementation notes.           |
+| `output/`          | Generated planning artifacts, codebase output, and archives.      |
 
 Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The current TypeScript agents are implemented under [`src/developing/agents`](src/developing/agents) and [`src/evolve-skill/agents`](src/evolve-skill/agents).
 
@@ -136,11 +136,11 @@ Prepared AcademicArmy skills live under [`skills/`](skills/), and their matching
 
 ## Configuration Reference
 
-| File or variable | Required for | Notes |
-|---|---|---|
-| `.env` / `OPENAI_API_KEY` | DeepResearch MCP | Read by the MCP server and by `install_mcp.py`. |
-| `agent-forge.yaml` | Project pipelines | Launches `academic_army_mcp_tools` as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.`. |
-| `secret.yaml` | Prepared shell scripts | Local ignored config overlay used by the prepared wrappers. It may contain passwords, API keys, runtime credentials, or other private values that must not be committed or uploaded to GitHub. |
+| File or variable          | Required for           | Notes                                                                                                                                                                                          |
+| ------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.env` / `OPENAI_API_KEY` | DeepResearch MCP       | Read by the MCP server and by `install_mcp.py`.                                                                                                                                                |
+| `agent-forge.yaml`        | Project pipelines      | Launches `academic_army_mcp_tools` as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.`.                                                                                                  |
+| `secret.yaml`             | Prepared shell scripts | Local ignored config overlay used by the prepared wrappers. It may contain passwords, API keys, runtime credentials, or other private values that must not be committed or uploaded to GitHub. |
 
 To override or add environment variables directly when installing MCP into Codex, repeat `-e/--env NAME=VALUE`:
 
@@ -152,11 +152,11 @@ Running the installer refreshes the Codex `academic_army_mcp_tools` entry, regis
 
 ## Troubleshooting
 
-| Problem | Likely cause | Fix |
-|---|---|---|
-| `OPENAI_API_KEY` is missing | `.env` is not present or was not forwarded to Codex MCP. | Create `.env`; when running skills directly in Codex, rerun `python install_mcp.py`. |
+| Problem                             | Likely cause                                                                                                                    | Fix                                                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `OPENAI_API_KEY` is missing         | `.env` is not present or was not forwarded to Codex MCP.                                                                        | Create `.env`; when running skills directly in Codex, rerun `python install_mcp.py`.                                   |
 | A wrapper cannot find `secret.yaml` | The prepared shell scripts pass a local config overlay for private values such as passwords, API keys, and runtime credentials. | Create local `secret.yaml` or adjust the script to use your config files. Do not commit or upload this file to GitHub. |
-| Development output is drifting | The planning artifacts are not specific enough. | Revise `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` before continuing development. |
+| Development output is drifting      | The planning artifacts are not specific enough.                                                                                 | Revise `paper_blueprint.md`, `experiment_plan.md`, and `coding_plan.md` before continuing development.                 |
 
 ## Development
 

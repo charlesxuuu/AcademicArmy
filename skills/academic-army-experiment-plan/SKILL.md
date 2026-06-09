@@ -328,7 +328,7 @@ objectives.
 ## 2. Claim-to-Evidence Map
 
 | Claim | Reviewer Concern | Evidence Objective | Story Placement | Expected Evidence Output |
-|---|---|---|---|---|
+| ----- | ---------------- | ------------------ | --------------- | ------------------------ |
 
 ## 3. Workload and Dataset Registry
 
@@ -414,7 +414,7 @@ is clearer.
 ## 实时调研如何影响实验取舍
 
 | 来源 | 日期 | venue_status | 影响到的规划决定 |
-|---|---:|---|---|
+| ---- | ---: | ------------ | ---------------- |
 
 ## 实验故事线
 

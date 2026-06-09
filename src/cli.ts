@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { type AgentVariablesByName } from "coding-agent-forge";
 import { type PipelineDefinition, runPipelineCli } from "./pipeline.js";
 import { developingPipeline, developingSkillPipeline } from "./developing/index.js";

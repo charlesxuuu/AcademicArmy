@@ -22,13 +22,13 @@ This is especially useful for the three planning skills used at the start of the
 
 Prepared AcademicArmy skill metaskills:
 
-| Skill | Edit this file | Run this script |
-|---|---|---|
-| `academic-army-architect` | [`academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md) | [`academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh) with `bash` |
+| Skill                           | Edit this file                                                                             | Run this script                                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `academic-army-architect`       | [`academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)             | [`academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh) with `bash`             |
 | `academic-army-experiment-plan` | [`academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md) | [`academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh) with `bash` |
-| `academic-army-coding-plan` | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md) | [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh) with `bash` |
-| `academic-army-repo-scaffold` | [`academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md) | [`academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh) with `bash` |
-| `academic-army-coding-style` | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md) | [`../runs/develop-skill.sh`](../runs/develop-skill.sh) with `bash` |
+| `academic-army-coding-plan`     | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md)         | [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh) with `bash`         |
+| `academic-army-repo-scaffold`   | [`academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md)     | [`academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh) with `bash`     |
+| `academic-army-coding-style`    | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)       | [`../runs/develop-skill.sh`](../runs/develop-skill.sh) with `bash`                                 |
 
 Before calling `evolve-skill` for `academic-army-architect`, create or confirm [`academic-army-architect/ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md). This fixed task is what the runner uses to test the architect skill across evolution rounds.
 
@@ -124,8 +124,8 @@ Copy an existing [`envolve.sh`](academic-army-architect/envolve.sh) and update t
 
 ## Troubleshooting
 
-| Problem | Likely cause | Fix |
-|---|---|---|
+| Problem                                     | Likely cause                                             | Fix                                                                       |
+| ------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------- |
 | The skill output is still not stable enough | The metaskill guidance is still too vague or incomplete. | Add concrete tips about the failure mode and repeat the evolution script. |
-| Different versions are hard to compare | The fixed evolution task is not stable enough. | Rewrite `ENVOLVETASK.md` as a representative fixed task. |
-| The script fails before the loop starts | Dependencies or pipeline config are missing. | Run `npm install` and check the TypeScript entry points and config paths. |
+| Different versions are hard to compare      | The fixed evolution task is not stable enough.           | Rewrite `ENVOLVETASK.md` as a representative fixed task.                  |
+| The script fails before the loop starts     | Dependencies or pipeline config are missing.             | Run `npm install` and check the TypeScript entry points and config paths. |

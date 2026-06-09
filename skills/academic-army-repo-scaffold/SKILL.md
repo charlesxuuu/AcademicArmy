@@ -699,7 +699,7 @@ Treat any of these as validation failures:
 - README, REFERENCES, harness explanations, test notes, or retained docs use
   internal artifact-management wording such as `External Task Inputs`,
   `external inputs`, whole-word `bucket`, vague `consulted`, `operators
-  execute`, or similar process language,
+execute`, or similar process language,
 - REFERENCES includes sources that were only searched or rejected and have no
   dependency, attribution, license, benchmark, harness, or implementation value,
 - retained template files still contain default template project names, template

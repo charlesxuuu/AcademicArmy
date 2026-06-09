@@ -64,22 +64,22 @@ artifact access, or runtime environment.
 Operate at paper-strategy levels 0-2 and route tactical work to downstream
 skills.
 
-| Level | This skill owns |
-|---|---|
-| 0: paper identity | idea, field context, target readers, target venue, paper type |
-| 1: thesis and claims | problem pressure, insight, reader promise, goals, claim hierarchy |
+| Level                    | This skill owns                                                                                                                                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0: paper identity        | idea, field context, target readers, target venue, paper type                                                                                       |
+| 1: thesis and claims     | problem pressure, insight, reader promise, goals, claim hierarchy                                                                                   |
 | 2: strategic constraints | prior-work boundary, contribution roles, high-level design logic, candidate method space, evidence principles, downstream contracts, open variables |
 
 Translate tactical inputs into strategic contracts:
 
-| User input type | Blueprint-level representation |
-|---|---|
-| algorithm, proof, or optimization idea | required method property, selected strategic direction, or candidate method route |
-| module or method combination | candidate route with purpose, evidence needed, demotion condition, and fair-comparison principle |
-| dataset, trace, benchmark, device, or baseline | evidence dimension, fairness obligation, or user-specified evaluation constraint |
-| metric formula | outcome family and claim-evidence requirement |
-| figure or section idea | visual or narrative argument that downstream planning must preserve |
-| implementation detail | inherited capability, deployment boundary, or downstream engineering constraint |
+| User input type                                | Blueprint-level representation                                                                   |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| algorithm, proof, or optimization idea         | required method property, selected strategic direction, or candidate method route                |
+| module or method combination                   | candidate route with purpose, evidence needed, demotion condition, and fair-comparison principle |
+| dataset, trace, benchmark, device, or baseline | evidence dimension, fairness obligation, or user-specified evaluation constraint                 |
+| metric formula                                 | outcome family and claim-evidence requirement                                                    |
+| figure or section idea                         | visual or narrative argument that downstream planning must preserve                              |
+| implementation detail                          | inherited capability, deployment boundary, or downstream engineering constraint                  |
 
 ## Strategy Ledger
 

@@ -22,13 +22,13 @@
 
 当前已准备的 AcademicArmy skill metaskill 如下：
 
-| Skill | 修改这个文件 | 运行这个脚本 |
-|---|---|---|
-| `academic-army-architect` | [`academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md) | 用 `bash` 运行 [`academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh) |
+| Skill                           | 修改这个文件                                                                               | 运行这个脚本                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `academic-army-architect`       | [`academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)             | 用 `bash` 运行 [`academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh)             |
 | `academic-army-experiment-plan` | [`academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md) | 用 `bash` 运行 [`academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh) |
-| `academic-army-coding-plan` | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md) | 用 `bash` 运行 [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh) |
-| `academic-army-repo-scaffold` | [`academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md) | 用 `bash` 运行 [`academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh) |
-| `academic-army-coding-style` | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md) | 用 `bash` 运行 [`../runs/develop-skill.sh`](../runs/develop-skill.sh) |
+| `academic-army-coding-plan`     | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md)         | 用 `bash` 运行 [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh)         |
+| `academic-army-repo-scaffold`   | [`academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md)     | 用 `bash` 运行 [`academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh)     |
+| `academic-army-coding-style`    | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)       | 用 `bash` 运行 [`../runs/develop-skill.sh`](../runs/develop-skill.sh)                                 |
 
 对 `academic-army-architect` 调用 `evolve-skill` 前，先创建或确认 [`academic-army-architect/ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md)（Windows 路径：`metaskills\academic-army-architect\ENVOLVETASK.md`）。这个固定任务是 runner 在 evolution 轮次中测试 architect skill 的输入。
 
@@ -124,8 +124,8 @@ envolve.sh
 
 ## 常见问题
 
-| 问题 | 常见原因 | 解决办法 |
-|---|---|---|
-| Skill 输出仍然不稳定 | Metaskill guidance 仍然太模糊或不完整。 | 继续补充具体 failure mode 和 tips，然后再次运行 evolution 脚本。 |
-| 不同版本难以比较 | 固定 evolution task 不够稳定。 | 把 `ENVOLVETASK.md` 改成更有代表性的固定任务。 |
-| 脚本在 loop 开始前失败 | 依赖或 pipeline config 缺失。 | 运行 `npm install`，并检查 TypeScript 入口和 config 路径。 |
+| 问题                   | 常见原因                                | 解决办法                                                         |
+| ---------------------- | --------------------------------------- | ---------------------------------------------------------------- |
+| Skill 输出仍然不稳定   | Metaskill guidance 仍然太模糊或不完整。 | 继续补充具体 failure mode 和 tips，然后再次运行 evolution 脚本。 |
+| 不同版本难以比较       | 固定 evolution task 不够稳定。          | 把 `ENVOLVETASK.md` 改成更有代表性的固定任务。                   |
+| 脚本在 loop 开始前失败 | 依赖或 pipeline config 缺失。           | 运行 `npm install`，并检查 TypeScript 入口和 config 路径。       |

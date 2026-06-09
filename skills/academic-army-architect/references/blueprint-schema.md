@@ -14,16 +14,27 @@ Use this default structure:
 # Paper Blueprint: <Working Title>
 
 ## Paper Identity
+
 ## Core Thesis and Reader Promise
+
 ## Target Venue Fit
+
 ## Problem Context and Prior-Work Gap
+
 ## Paper Goals
+
 ## Contribution Strategy
+
 ## Claim-Evidence Architecture
+
 ## High-Level Design Logic and Scope
+
 ## Candidate Method Space
+
 ## Evidence Strategy
+
 ## Downstream Planning Constraints
+
 ## Open Strategic Variables
 ```
 
@@ -182,9 +193,11 @@ Add contracts for relevant planning areas:
 ### <Planning Area> Contract
 
 Preserve:
+
 - <strategic invariant>
 
 Delegate:
+
 - <tactical design space>
 ```
 
@@ -243,19 +256,33 @@ Use this default structure:
 # 论文蓝图说明：<Working Title>
 
 ## 当前论文方案概括
+
 ## 用户已经明确的内容
+
 ### 已确认约束
+
 ### 偏好但未锁定
+
 ## 当前工作假设
+
 ## 使用的研究信号
+
 ### 跨论文模式
+
 ### 承重信号
+
 ### 额外背景信号
+
 ## 核心出发点
+
 ## 按蓝图顺序解释论文方案
+
 ## 候选方法空间说明
+
 ## 开放验证项
+
 ## 本轮已收缩的开放项
+
 ## 证据变化时如何校准 Claim
 ```
 

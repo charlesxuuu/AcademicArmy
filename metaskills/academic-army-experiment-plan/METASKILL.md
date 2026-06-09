@@ -44,7 +44,6 @@ experiment plan主要是给AI看的，不是主要给人看的；它只需要客
 experiment plan中不应出现`Assumptions to validate`、`Artifact cautions`、`Do not assume reviewers will run code`这类面向用户的部分。
 如果确实存在不确定信息，应将其表达为实验方案中的开放变量、依赖条件或后续规划需要继承的信息，而不是写成用户提醒。
 
-
 `experiment_plan.md`和`experiment_plan.explain.md`都应为Markdown格式。
 `experiment_plan.md`固定只放experiment plan本身，且使用英文输出。
 `experiment_plan.explain.md`固定只放experiment plan解释和思考流程，且使用中文输出。

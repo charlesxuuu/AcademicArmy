@@ -18,11 +18,11 @@ AcademicArmy 的主体核心可以概括为一句话：按图施工。
 
 先使用三个规划类 skill 交互生成三份面向 AI 执行的 Markdown 产物：
 
-| 步骤 | Artifact | 作用 |
-|---|---|---|
-| `academic-army-architect` | `paper_blueprint.md` | 论文战略蓝图，用来固定论文身份、目标 venue 姿态、核心 claims、贡献边界、候选方法空间、证据需求和下游约束。 |
-| `academic-army-experiment-plan` | `experiment_plan.md` | 实验策略，把论文 claims 映射到证据链、数据集或 workload、指标、baselines、消融、鲁棒性检查和审稿人关心的验证点。 |
-| `academic-army-coding-plan` | `coding_plan.md` | 代码实现契约，把论文蓝图和实验方案转成逻辑模块边界、接口与 entrypoint 语义、实验 harness、测试类别、raw result artifact schema 和 method freeze 规则。 |
+| 步骤                            | Artifact             | 作用                                                                                                                                                   |
+| ------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `academic-army-architect`       | `paper_blueprint.md` | 论文战略蓝图，用来固定论文身份、目标 venue 姿态、核心 claims、贡献边界、候选方法空间、证据需求和下游约束。                                             |
+| `academic-army-experiment-plan` | `experiment_plan.md` | 实验策略，把论文 claims 映射到证据链、数据集或 workload、指标、baselines、消融、鲁棒性检查和审稿人关心的验证点。                                       |
+| `academic-army-coding-plan`     | `coding_plan.md`     | 代码实现契约，把论文蓝图和实验方案转成逻辑模块边界、接口与 entrypoint 语义、实验 harness、测试类别、raw result artifact schema 和 method freeze 规则。 |
 
 每个规划类 skill 还会同时生成一份中文 `*.explain.md` 解释文件，方便用户审阅；但后续开发 runner 读取的是上面三份英文 Markdown。
 
@@ -119,16 +119,16 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## 项目结构
 
-| 路径 | 用途 |
-|---|---|
-| `agent-forge.yaml` | Agent 和团队 wiring。 |
-| `install_mcp.py` | 把项目 MCP server 安装到 Codex，供直接运行 skill 时使用。 |
-| `mcp-server/` | 本地 stdio MCP 实现，暴露 `deepresearch`。 |
-| `skills/` | 已准备的 AcademicArmy skills。 |
-| `metaskills/` | 对应的 metaskill 设计与 evolution 文件。 |
-| `runs/` | TypeScript pipelines 的便捷 wrappers。 |
-| `src/` | TypeScript pipeline 的目录结构和实现说明。 |
-| `output/` | 生成的规划产物、代码库输出和归档。 |
+| 路径               | 用途                                                      |
+| ------------------ | --------------------------------------------------------- |
+| `agent-forge.yaml` | Agent 和团队 wiring。                                     |
+| `install_mcp.py`   | 把项目 MCP server 安装到 Codex，供直接运行 skill 时使用。 |
+| `mcp-server/`      | 本地 stdio MCP 实现，暴露 `deepresearch`。                |
+| `skills/`          | 已准备的 AcademicArmy skills。                            |
+| `metaskills/`      | 对应的 metaskill 设计与 evolution 文件。                  |
+| `runs/`            | TypeScript pipelines 的便捷 wrappers。                    |
+| `src/`             | TypeScript pipeline 的目录结构和实现说明。                |
+| `output/`          | 生成的规划产物、代码库输出和归档。                        |
 
 Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。当前 TypeScript agents 分别实现于 [`src/developing/agents`](src/developing/agents) 和 [`src/evolve-skill/agents`](src/evolve-skill/agents)。
 
@@ -136,11 +136,11 @@ Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。当前 Ty
 
 ## 配置参考
 
-| 文件或变量 | 用于 | 说明 |
-|---|---|---|
-| `.env` / `OPENAI_API_KEY` | DeepResearch MCP | MCP server 和 `install_mcp.py` 会读取。 |
-| `agent-forge.yaml` | 项目 pipelines | 以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`。 |
-| `secret.yaml` | 预设 shell scripts | 预设 wrappers 使用的本地忽略 config overlay。它可以包含密码、API key、runtime 凭据等不能提交或上传到 GitHub 的隐私内容。 |
+| 文件或变量                | 用于               | 说明                                                                                                                     |
+| ------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `.env` / `OPENAI_API_KEY` | DeepResearch MCP   | MCP server 和 `install_mcp.py` 会读取。                                                                                  |
+| `agent-forge.yaml`        | 项目 pipelines     | 以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`。                                                               |
+| `secret.yaml`             | 预设 shell scripts | 预设 wrappers 使用的本地忽略 config overlay。它可以包含密码、API key、runtime 凭据等不能提交或上传到 GitHub 的隐私内容。 |
 
 如果需要覆盖或补充环境变量，可以重复使用 `-e/--env NAME=VALUE`：
 
@@ -152,11 +152,11 @@ python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
 
 ## 常见问题
 
-| 问题 | 常见原因 | 解决办法 |
-|---|---|---|
-| 缺少 `OPENAI_API_KEY` | 没有 `.env`，或没有把变量转发给 Codex MCP。 | 创建 `.env`；如果直接在 Codex 中跑 skill，再执行 `python install_mcp.py`。 |
+| 问题                         | 常见原因                                                                         | 解决办法                                                                                    |
+| ---------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 缺少 `OPENAI_API_KEY`        | 没有 `.env`，或没有把变量转发给 Codex MCP。                                      | 创建 `.env`；如果直接在 Codex 中跑 skill，再执行 `python install_mcp.py`。                  |
 | Wrapper 找不到 `secret.yaml` | 预设脚本传入了本地 config overlay，用来放密码、API key、runtime 凭据等隐私内容。 | 创建本地 `secret.yaml`，或调整脚本使用你的 config 文件。不要把这个文件提交或上传到 GitHub。 |
-| 开发输出偏离规划 | 三份规划产物还不够具体。 | 先修订 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`，再继续开发。 |
+| 开发输出偏离规划             | 三份规划产物还不够具体。                                                         | 先修订 `paper_blueprint.md`、`experiment_plan.md` 和 `coding_plan.md`，再继续开发。         |
 
 ## 开发
 

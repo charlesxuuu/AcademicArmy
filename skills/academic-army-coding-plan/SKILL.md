@@ -45,18 +45,20 @@ For `output/evolve-*` outputs, or whenever artifact-access feedback is active or
 
 Use five-backtick fences for full-file handoffs so embedded command fences remain readable:
 
-````markdown
+``````markdown
 ## output/evolve-.../coding_plan.md
 
-`````markdown
+```markdown
 <full coding_plan.md content>
-`````
+```
+``````
 
 ## output/evolve-.../coding_plan.explain.md
 
-`````markdown
+```markdown
 <full coding_plan.explain.md content>
-`````
+```
+
 ````
 
 When files are long, read each file with a complete read method or bounded chunks before composing the handoff. Paste the read-back contents, not a regenerated approximation. If read-back fails after writing, try another local read mechanism. If read-back remains impossible, report the read-back failure clearly and mark delivery blocked rather than presenting unverified contents.
@@ -489,3 +491,4 @@ After writing and validating the files, summarize:
 - validation performed, including read-back result
 
 For `output/evolve-*` outputs or when artifact-access feedback requests pasted contents, add a `Review Handoff` heading immediately after the concise validation sentence and paste the complete read-back contents of both files using the five-backtick handoff format. A path-only response is incomplete for access-limited review.
+````
