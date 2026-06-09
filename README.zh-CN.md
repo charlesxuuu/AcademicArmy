@@ -20,6 +20,8 @@ AcademicArmy 是一个基于 Codex 的研究工作流，用来把研究想法转
 
 每个规划类 skill 还会同时生成一份中文 `*.explain.md` 解释文件，方便用户审阅；但后续开发 runner 读取的是上面三份英文 Markdown。
 
+如果 `academic-army-architect`、`academic-army-experiment-plan` 或 `academic-army-coding-plan` 直接生成的产物不满意，不建议只手工修产物本身。更好的做法是打开 [`metaskills/`](metaskills/) 下对应的 metaskill，把不满意的地方、希望偏向的写法和失败模式写进去，然后运行对应的 `envolve.sh` 脚本多迭代几轮。这些脚本会调用 TypeScript 的 [`evolve-skill`](src/evolve-skill/README.zh-CN.md) pipeline。`evolve-skill` 不同于直接运行一次 skill，它是一个简单的 multi-agent loop：新的 runner agent 用固定任务测试 skill，evaluator agent 按 metaskill 评价产物，modifier agent 再根据评价修改 skill 本身。通常多跑几轮后，再直接运行该 skill，就能得到更接近预期的结果。
+
 三份规划产物准备好后，`academic-army-repo-scaffold` 可以为代码库初始化一个真实 starter repository。它会使用 DeepResearch 选择合适的 template、官方 initializer 或高质量 template repository，生成 starter repository，然后叠加固定实验目录 `data/`、`output/`、`results/` 和 `harness/`。它会写入依赖声明和 repo-local 安装说明，在 `REFERENCES.md` 和 `REFERENCES.zh-CN.md` 中记录可安装依赖和仅作参考的外部来源，保留模板决定的测试结构，并让 README 聚焦当前仓库结构和用法。
 
 repo scaffold skill 不实现论文方法、harness 逻辑、测试、metric、loader、exporter 或实验 runner；这些属于后续实现工作。

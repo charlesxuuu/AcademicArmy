@@ -31,6 +31,8 @@ AcademicArmy 的 skill 不是一次性写完就固定下来，而是通过一套
 3. 在仓库根目录运行对应的 evolution 脚本；已准备的脚本见下面的链接。
 4. 检查新一轮 artifact；如果还不稳定，就继续补充 tips 并再次运行。
 
+这对 AcademicArmy 开头使用的三个规划类 skill 尤其重要：`academic-army-architect`、`academic-army-experiment-plan` 和 `academic-army-coding-plan`。如果它们直接生成的产物不满意，就把不满意点写进对应 metaskill，再运行几轮 `envolve.sh`。这些脚本调用 TypeScript 的 [`evolve-skill`](../src/evolve-skill/README.zh-CN.md) pipeline；它不同于直接运行一次 skill，而是一个简单的 multi-agent loop：新的 runner agents 在固定任务上生成产物，evaluator agent 按 metaskill 评价这些产物，modifier agent 根据评价修改 skill 本身。这个循环多跑几轮，通常能让下一次直接运行 skill 的输出更接近预期。
+
 当前已准备的 AcademicArmy skill metaskill 如下：
 
 - `academic-army-architect`：修改 [`metaskills/academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)，然后用 `bash` 运行它的脚本 [`metaskills/academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh)。

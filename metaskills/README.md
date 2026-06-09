@@ -31,6 +31,8 @@ If a skill's output is unsatisfactory, improve the matching metaskill first inst
 3. Run the corresponding evolution script from the repository root; the prepared scripts are linked below.
 4. Inspect the new artifact and repeat if the skill is still not stable enough.
 
+This is especially useful for the three planning skills used at the start of the AcademicArmy workflow: `academic-army-architect`, `academic-army-experiment-plan`, and `academic-army-coding-plan`. When their direct outputs are not what you want, write the dissatisfaction into the matching metaskill and run several `envolve.sh` rounds. The scripts call the TypeScript [`evolve-skill`](../src/evolve-skill/README.md) pipeline, which is different from a direct single skill run: it uses fresh runner agents to produce artifacts on fixed tasks, an evaluator agent to judge those artifacts against the metaskill, and a modifier agent to revise the skill itself. Repeating that loop usually improves the next direct output from the skill.
+
 Prepared AcademicArmy skill metaskills:
 
 - `academic-army-architect`: edit [`metaskills/academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md), then run its script [`metaskills/academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh) with `bash`.
