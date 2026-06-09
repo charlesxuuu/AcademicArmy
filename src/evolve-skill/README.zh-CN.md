@@ -2,11 +2,21 @@
 
 [`src/evolve-skill`](.) 实现 [`../../metaskills/README.zh-CN.md`](../../metaskills/README.zh-CN.md) 中说明的 metaskill evolution scripts 所使用的 self-evolution loop。它用于优化已有 skill：反复在固定任务上测试该 skill，评价产出的 artifact，并根据评价进行有针对性的修改。
 
+[English README](README.md)
+
 TypeScript pipeline 的整体用法和入口见 [`src/README.zh-CN.md`](../README.zh-CN.md)。
 
 面向用户的优化流程见 [`../../metaskills/README.zh-CN.md`](../../metaskills/README.zh-CN.md)。
 
-## 直接运行
+## 快速开始
+
+当某个 skill 的输出不理想时，先把具体 tips 加到对应的 metaskill 文件，然后在仓库根目录运行该 skill 的 evolution 脚本。预设脚本和路径对应关系见 [`../../metaskills/README.zh-CN.md`](../../metaskills/README.zh-CN.md)。
+
+```bash
+bash metaskills/academic-army-architect/envolve.sh
+```
+
+## 直接命令
 
 可以在仓库根目录直接运行 pipeline：
 
@@ -19,14 +29,16 @@ npm run evolve-skill -- \
   --task-path metaskills/academic-army-architect/ENVOLVETASK.md
 ```
 
+## 参数参考
+
 必填参数：
 
-```text
---skill-path       要修改的 skill 目录或文件。
---artifact-path    每轮 runner 清空并复用的输出文件夹。
---metaskill-path   evaluator 和 modifier 使用的 metaskill 设计文档。
---task-path        runner 用来测试 skill 的固定任务文件；可重复传入多个固定任务。
-```
+| 参数 | 说明 |
+|---|---|
+| `--skill-path` | 要修改的 skill 目录或文件。 |
+| `--artifact-path` | 每轮 runner 清空并复用的输出文件夹。 |
+| `--metaskill-path` | evaluator 和 modifier 使用的 metaskill 设计文档。 |
+| `--task-path` | runner 用来测试 skill 的固定任务文件；可重复传入多个固定任务。 |
 
 可选参数：
 
@@ -76,14 +88,29 @@ pipeline 通过共享 team 保留两个长生命周期 Codex thread：
 
 这里刻意不引入 LangGraph、状态机、registry 或复杂的 defensive wrapper。关键状态只保留在 evaluator/modifier 两个长期 Codex session、当前 artifact 文件夹，以及被修改的文件里。
 
+## 输入和输出
+
+| 项目 | 路径来源 |
+|---|---|
+| 目标 skill | `--skill-path` |
+| Metaskill | `--metaskill-path` |
+| 固定任务 | `--task-path` |
+| 生成 artifact 文件夹 | `--artifact-path`，每轮清空并复用 |
+
 ## 重要文件
 
-- [`pipeline.ts`](pipeline.ts)：参数解析和轮次编排。
-- [`agents/factory.ts`](agents/factory.ts)：注册 `skill-runner`、`skill-evaluator` 和 `skill-modifier`。
-- [`agents/runner.ts`](agents/runner.ts)：读取每个 `--task-path` 配置的固定任务文件，并要求目标 skill 写出 artifacts。
-- [`agents/evaluator.ts`](agents/evaluator.ts)：读取 `--metaskill-path` 配置的 metaskill 文件，并评价产出的 artifact。
-- [`agents/modifier.ts`](agents/modifier.ts)：读取 metaskill 文件和 evaluator review，然后修改目标 skill。
+| 路径 | 作用 |
+|---|---|
+| [`pipeline.ts`](pipeline.ts) | 参数解析和轮次编排。 |
+| [`agents/factory.ts`](agents/factory.ts) | 注册 `skill-runner`、`skill-evaluator` 和 `skill-modifier`。 |
+| [`agents/runner.ts`](agents/runner.ts) | 读取每个 `--task-path` 配置的固定任务文件，并要求目标 skill 写出 artifacts。 |
+| [`agents/evaluator.ts`](agents/evaluator.ts) | 读取 `--metaskill-path` 配置的 metaskill 文件，并评价产出的 artifact。 |
+| [`agents/modifier.ts`](agents/modifier.ts) | 读取 metaskill 文件和 evaluator review，然后修改目标 skill。 |
 
-## 从 Metaskills 使用
+## 常见问题
 
-当某个 skill 的输出不理想时，先把具体 tips 加到对应的 metaskill 文件，然后在仓库根目录运行该 skill 的 evolution 脚本。预设脚本和路径对应关系见 [`../../metaskills/README.zh-CN.md`](../../metaskills/README.zh-CN.md)。
+| 问题 | 常见原因 | 解决办法 |
+|---|---|---|
+| Artifacts 在轮次之间消失 | `--artifact-path` 每轮都会清空并复用。 | 使用专门的 `output/evolve-*` 文件夹。 |
+| 输出仍然不理想 | Loop 需要具体 metaskill guidance。 | 把具体 tips 加到对应 metaskill 文件，然后再次运行脚本。 |
+| Runner 上下文似乎影响结果 | Runner 应该每轮新建。 | 检查 pipeline config，并归档生成 artifacts 方便比较。 |

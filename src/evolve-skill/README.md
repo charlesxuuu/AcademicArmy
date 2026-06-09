@@ -2,9 +2,19 @@
 
 [`src/evolve-skill`](.) implements the self-evolution loop used by the metaskill evolution scripts described in [`../../metaskills/README.md`](../../metaskills/README.md). It is for improving an existing skill by repeatedly testing it on a fixed task, evaluating the produced artifact, and applying targeted revisions.
 
+[中文说明](README.zh-CN.md)
+
 For the overall TypeScript pipeline usage and entry points, see [`src/README.md`](../README.md).
 
 For the user-facing optimization workflow, see [`../../metaskills/README.md`](../../metaskills/README.md).
+
+## Quick Start
+
+When a skill output is weak, add concrete tips to the matching metaskill file, then run that skill's evolution script from the repository root. See [`../../metaskills/README.md`](../../metaskills/README.md) for the prepared scripts and path mapping.
+
+```bash
+bash metaskills/academic-army-architect/envolve.sh
+```
 
 ## Direct Command
 
@@ -19,14 +29,16 @@ npm run evolve-skill -- \
   --task-path metaskills/academic-army-architect/ENVOLVETASK.md
 ```
 
+## Options Reference
+
 Required arguments:
 
-```text
---skill-path       The skill directory or file to revise.
---artifact-path    The output folder cleared and reused by each runner round.
---metaskill-path   The metaskill design document used by evaluator and modifier.
---task-path        The fixed task used by the runner to test the skill. Repeat this option to run multiple fixed tasks per round.
-```
+| Option | Description |
+|---|---|
+| `--skill-path` | The skill directory or file to revise. |
+| `--artifact-path` | The output folder cleared and reused by each runner round. |
+| `--metaskill-path` | The metaskill design document used by evaluator and modifier. |
+| `--task-path` | The fixed task used by the runner to test the skill. Repeat this option to run multiple fixed tasks per round. |
 
 Optional arguments:
 
@@ -76,14 +88,29 @@ The loop deliberately stays simple:
 
 This avoids LangGraph, state machines, registries, and defensive wrapper code. The important state lives in the long-lived evaluator/modifier Codex sessions, the current artifact folder, and the files being revised.
 
+## Inputs And Outputs
+
+| Item | Path source |
+|---|---|
+| Target skill | `--skill-path` |
+| Metaskill | `--metaskill-path` |
+| Fixed task | `--task-path` |
+| Generated artifact folder | `--artifact-path`, cleared and reused each round |
+
 ## Important Files
 
-- [`pipeline.ts`](pipeline.ts): argument parsing and round orchestration.
-- [`agents/factory.ts`](agents/factory.ts): registers `skill-runner`, `skill-evaluator`, and `skill-modifier`.
-- [`agents/runner.ts`](agents/runner.ts): reads each fixed task file configured by `--task-path` and asks the target skill to write artifacts.
-- [`agents/evaluator.ts`](agents/evaluator.ts): reads the metaskill file configured by `--metaskill-path` and critiques the produced artifact.
-- [`agents/modifier.ts`](agents/modifier.ts): reads the metaskill file and the evaluator review, then revises the target skill.
+| Path | Purpose |
+|---|---|
+| [`pipeline.ts`](pipeline.ts) | Argument parsing and round orchestration. |
+| [`agents/factory.ts`](agents/factory.ts) | Registers `skill-runner`, `skill-evaluator`, and `skill-modifier`. |
+| [`agents/runner.ts`](agents/runner.ts) | Reads each fixed task file configured by `--task-path` and asks the target skill to write artifacts. |
+| [`agents/evaluator.ts`](agents/evaluator.ts) | Reads the metaskill file configured by `--metaskill-path` and critiques the produced artifact. |
+| [`agents/modifier.ts`](agents/modifier.ts) | Reads the metaskill file and the evaluator review, then revises the target skill. |
 
-## How To Use From Metaskills
+## Troubleshooting
 
-When a skill output is weak, add concrete tips to the matching metaskill file, then run that skill's evolution script from the repository root. See [`../../metaskills/README.md`](../../metaskills/README.md) for the prepared scripts and path mapping.
+| Problem | Likely cause | Fix |
+|---|---|---|
+| Artifacts disappear between rounds | `--artifact-path` is cleared and reused each runner round. | Use a dedicated `output/evolve-*` folder. |
+| The output still feels weak | The loop needs concrete metaskill guidance. | Add concrete tips to the matching metaskill file and run the script again. |
+| Runner context seems to influence results | The runner should be fresh each round. | Check the pipeline config and archive the generated artifacts for comparison. |
