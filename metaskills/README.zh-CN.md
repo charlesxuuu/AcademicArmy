@@ -28,10 +28,13 @@
 | `academic-army-experiment-plan` | [`academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md) | 用 `bash` 运行 [`academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh) |
 | `academic-army-coding-plan` | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md) | 用 `bash` 运行 [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh) |
 | `academic-army-repo-scaffold` | [`academic-army-repo-scaffold/METASKILL.md`](academic-army-repo-scaffold/METASKILL.md) | 用 `bash` 运行 [`academic-army-repo-scaffold/envolve.sh`](academic-army-repo-scaffold/envolve.sh) |
+| `academic-army-coding-style` | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md) | 用 `bash` 运行 [`../runs/develop-skill.sh`](../runs/develop-skill.sh) |
 
 对 `academic-army-architect` 调用 `evolve-skill` 前，先创建或确认 [`academic-army-architect/ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md)（Windows 路径：`metaskills\academic-army-architect\ENVOLVETASK.md`）。这个固定任务是 runner 在 evolution 轮次中测试 architect skill 的输入。
 
 `academic-army-repo-scaffold` 这个 metaskill 定义 template-first 的仓库初始化 skill：先用选定 initializer 或 template 生成真实 starter repo，再叠加 `data/`、`output/`、`results/` 和 `harness/`；写出 repo-local 安装说明；配置可安装依赖但不执行安装；记录只能作为参考的外部来源；保留模板决定的测试结构；README 只客观说明当前仓库结构和用法。
+
+`academic-army-coding-style` 这个 metaskill 定义写代码 agent 使用的代码结构和代码风格偏好。任何关于 concise code、module boundaries、dependency choices、review standards、naming 或 repo-local style 的长期偏好，都写进 [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)，然后用 [`runs/develop-skill.sh`](../runs/develop-skill.sh) 根据真实 developing trajectories 更新 [`skills/academic-army-coding-style/SKILL.md`](../skills/academic-army-coding-style/SKILL.md)。
 
 ### 2. 补充具体 tips
 
