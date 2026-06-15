@@ -1,6 +1,6 @@
 # TypeScript Pipelines
 
-`src` 存放 AcademicArmy 的 TypeScript runner，用来把规划产物转成可重复运行的 agent workflow。
+`src` 存放 TypeScript runner，用来把 goal 文件和配置的 skill 转成可重复运行的 agent workflow。
 
 [English README](README.md)
 
@@ -45,7 +45,7 @@ bash metaskills/academic-army-architect/envolve.sh
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`cli.ts`](cli.ts)                                           | 根据名称选择 pipeline，并把剩余 CLI 参数传给对应 pipeline。                                                                                                    |
 | [`pipeline.ts`](pipeline.ts)                                 | 共享的 pipeline 定义、配置加载、agent team 构建和清理逻辑。                                                                                                    |
-| [`developing/`](developing/)                                 | 读取 `paper_blueprint.md`、`experiment_plan.md`、`coding_plan.md` 和 `--goal-path` 中的目标，然后迭代实现目标代码库。详见 [`developing/README.zh-CN.md`](developing/README.zh-CN.md)。 |
+| [`developing/`](developing/)                                 | 读取 `--goal-path` 中的目标和其中提到的 reference context，然后迭代实现目标代码库。详见 [`developing/README.zh-CN.md`](developing/README.zh-CN.md)。 |
 | [`developing/pipelineskill.ts`](developing/pipelineskill.ts) | 给同一个 goal-driven 开发循环叠加 `trajectory-optimizer` hooks，用于在开发过程中优化 coding-style skill。                                                                         |
 | [`evolve-skill/`](evolve-skill/)                             | 在固定任务上运行某个 skill，根据 metaskill 评价产物，并让 modifier agent 修改 skill。详见 [`evolve-skill/README.zh-CN.md`](evolve-skill/README.zh-CN.md)。     |
 

@@ -1,6 +1,6 @@
 # TypeScript Pipelines
 
-`src` contains the TypeScript runners that turn AcademicArmy planning artifacts into repeatable agent workflows.
+`src` contains the TypeScript runners that turn goal files and configured skills into repeatable agent workflows.
 
 [中文说明](README.zh-CN.md)
 
@@ -45,7 +45,7 @@ Before each new development task, update `output/goal.md`, which the prepared `d
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`cli.ts`](cli.ts)                                           | Selects a pipeline by name and forwards the remaining CLI arguments.                                                                                                             |
 | [`pipeline.ts`](pipeline.ts)                                 | Shared pipeline definition, config loading, agent-team construction, and cleanup.                                                                                                |
-| [`developing/`](developing/)                                 | Reads `paper_blueprint.md`, `experiment_plan.md`, `coding_plan.md`, and the `--goal-path` objective, then iteratively implements the target codebase. See [`developing/README.md`](developing/README.md). |
+| [`developing/`](developing/)                                 | Reads the `--goal-path` objective and any reference context named there, then iteratively implements the target codebase. See [`developing/README.md`](developing/README.md). |
 | [`developing/pipelineskill.ts`](developing/pipelineskill.ts) | Wraps the same goal-driven development loop with `trajectory-optimizer` hooks for improving the coding-style skill while development runs.                                                        |
 | [`evolve-skill/`](evolve-skill/)                             | Runs a skill on a fixed task, evaluates the artifact against a metaskill, and asks a modifier agent to revise the skill. See [`evolve-skill/README.md`](evolve-skill/README.md). |
 
