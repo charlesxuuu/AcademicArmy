@@ -34,85 +34,63 @@ runtimes:
           timeout: 3600000
 
 threads:
-  codex-5.5-full-access:
+  skill:
     runtime: codex
     options:
       model: gpt-5.5
       sandboxMode: danger-full-access
       workingDirectory: .
-  codex-5.5-read-only:
-    runtime: codex
-    options:
-      model: gpt-5.5
-      sandboxMode: danger-full-access # read-only
-      workingDirectory: .
-  codex-develop-5.5-full-access:
+  develop:
     runtime: codex
     options:
       model: gpt-5.5
       sandboxMode: danger-full-access
       workingDirectory: &developerWorkspacePath output/codebase
-  codex-develop-5.5-read-only:
+  memory:
     runtime: codex
     options:
       model: gpt-5.5
-      sandboxMode: danger-full-access # read-only
-      workingDirectory: *developerWorkspacePath
-  codex-develop-5.3-full-access:
-    runtime: codex
-    options:
-      model: gpt-5.3-codex-spark
-      workingDirectory: *developerWorkspacePath
       sandboxMode: danger-full-access
-  qwen-develop-full-access:
-    runtime: qwen
-    options:
-      cwd: *developerWorkspacePath
-      permissionMode: yolo
-  qwen-develop-read-only:
-    runtime: qwen
-    options:
-      cwd: *developerWorkspacePath
-      permissionMode: yolo # read-only
+      workingDirectory: &memoryWorkingDir output/developing-memory
 
 agents:
   skill-runner:
-    thread: codex-5.5-full-access
+    thread: skill
   skill-evaluator:
-    thread: codex-5.5-read-only
+    thread: skill
   skill-modifier:
-    thread: codex-5.5-full-access
+    thread: skill
   coding-manager:
-    thread: codex-develop-5.5-full-access
+    thread: develop
     constants:
       workspacePath: *developerWorkspacePath
   developer:
-    thread: codex-develop-5.3-full-access
+    thread: develop
     constants:
       workspacePath: *developerWorkspacePath
   code-reviewer:
-    thread: codex-develop-5.5-read-only
+    thread: develop
     constants:
       workspacePath: *developerWorkspacePath
   trajectory-optimizer:
-    thread: codex-5.5-full-access
+    thread: skill
   memory-reader:
-    thread: codex-5.5-read-only
+    thread: memory
     constants:
-      workingDir: &memoryWorkingDir output/developing-memory
+      workingDir: *memoryWorkingDir
   memory-modify-planner:
-    thread: codex-5.5-full-access
+    thread: memory
     constants:
       workingDir: *memoryWorkingDir
   memory-modifier:
-    thread: codex-5.5-full-access
+    thread: memory
     constants:
       workingDir: *memoryWorkingDir
   memory-create-planner:
-    thread: codex-5.5-full-access
+    thread: memory
     constants:
       workingDir: *memoryWorkingDir
   memory-creator:
-    thread: codex-5.5-full-access
+    thread: memory
     constants:
       workingDir: *memoryWorkingDir
