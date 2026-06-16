@@ -69,6 +69,11 @@ threads:
     options:
       cwd: *developerWorkspacePath
       permissionMode: yolo
+  qwen-develop-read-only:
+    runtime: qwen
+    options:
+      cwd: *developerWorkspacePath
+      permissionMode: yolo # read-only
 
 agents:
   skill-runner:
