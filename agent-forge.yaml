@@ -99,20 +99,20 @@ agents:
   memory-reader:
     thread: codex-5.5-read-only
     constants:
-      memoryDir: .
+      workingDir: &memoryWorkingDir output/developing-memory
   memory-modify-planner:
     thread: codex-5.5-full-access
     constants:
-      memoryDir: .
+      workingDir: *memoryWorkingDir
   memory-modifier:
     thread: codex-5.5-full-access
     constants:
-      memoryDir: .
+      workingDir: *memoryWorkingDir
   memory-create-planner:
     thread: codex-5.5-full-access
     constants:
-      memoryDir: .
+      workingDir: *memoryWorkingDir
   memory-creator:
     thread: codex-5.5-full-access
     constants:
-      memoryDir: .
+      workingDir: *memoryWorkingDir
