@@ -6,8 +6,8 @@ npm run developing-skill -- \
   --config "secret.yaml" \
   --target-path "output/codebase" \
   --achive-dir "output/developing-archives" \
-  --project-progress-memory-path "output/developing/project-progress-memory" \
-  --code-design-memory-path "output/developing/code-design-memory" \
+  --project-progress-memory-path "output/developing-memory/project-progress-memory" \
+  --code-design-memory-path "output/developing-memory/code-design-memory" \
   --coding-style-skill-path "skills/academic-army-coding-style" \
   --metaskill-path "metaskills/academic-army-coding-style/METASKILL.md" \
   --goal-path "output/goal.md" \
