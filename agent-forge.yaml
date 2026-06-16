@@ -46,12 +46,16 @@ threads:
       model: gpt-5.5
       sandboxMode: danger-full-access
       workingDirectory: &developerWorkspacePath output/codebase
-  memory:
-    runtime: codex
+  develop-cheap:
+    runtime: qwen
     options:
-      model: gpt-5.5
-      sandboxMode: danger-full-access
-      workingDirectory: &memoryWorkingDir output/developing-memory
+      cwd: *developerWorkspacePath
+      permissionMode: yolo
+  memory:
+    runtime: qwen
+    options:
+      cwd: &memoryWorkingDir output/developing-memory
+      permissionMode: yolo
 
 agents:
   skill-runner:
@@ -65,7 +69,7 @@ agents:
     constants:
       workspacePath: *developerWorkspacePath
   developer:
-    thread: develop
+    thread: develop-cheap
     constants:
       workspacePath: *developerWorkspacePath
   code-reviewer:
