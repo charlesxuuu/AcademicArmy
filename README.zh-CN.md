@@ -83,11 +83,11 @@ $EDITOR output/goal.md
 bash runs/develop.sh
 ```
 
-运行 [`runs/develop.sh`](runs/develop.sh) 来调用 TypeScript 的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `output/codebase` 下迭代写代码。每次想执行下一个新任务时，先更新 `output/goal.md`，再重新运行 wrapper。
+运行 [`runs/develop.sh`](runs/develop.sh) 来调用 `developing-agent-forge` 提供的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `output/codebase` 下迭代写代码。每次想执行下一个新任务时，先更新 `output/goal.md`，再重新运行 wrapper。
 
-开发循环现在使用 `output/developing/TODO.md` 作为临时任务记忆文件。如果新 goal 开始继承旧上下文，可以在重新运行前手动删除这个 TODO 文件；pipeline 会自动重新创建它。这个基于 TODO 的记忆机制是临时方案，之后会实现更高级的记忆机制来替代或扩展它。
+开发循环会把项目进度记忆放在 `output/developing/project-progress-memory`，把代码设计记忆放在 `output/developing/code-design-memory`。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
 
-TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)，开发循环实现见 [`src/developing/README.zh-CN.md`](src/developing/README.zh-CN.md)。
+本仓库的 TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。开发循环实现来自 `developing-agent-forge` 包。
 
 ## 常见任务
 
@@ -137,7 +137,7 @@ Find the closest papers to this research idea, compare their methods, and return
 | `src/`             | TypeScript pipeline 的目录结构和实现说明。                |
 | `output/`          | 生成的规划产物、代码库输出和归档。                        |
 
-Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。当前 TypeScript agents 分别实现于 [`src/developing/agents`](src/developing/agents) 和 [`src/evolve-skill/agents`](src/evolve-skill/agents)。
+Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。本仓库内的 TypeScript agents 实现于 [`src/evolve-skill/agents`](src/evolve-skill/agents)；developing agents 来自 `developing-agent-forge`。
 
 已准备的 AcademicArmy skills 位于 [`skills/`](skills/)，对应的 metaskill 设计与 evolution 文件位于 [`metaskills/`](metaskills/)。
 

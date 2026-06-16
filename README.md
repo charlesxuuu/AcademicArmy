@@ -83,11 +83,11 @@ $EDITOR output/goal.md
 bash runs/develop.sh
 ```
 
-Run [`runs/develop.sh`](runs/develop.sh) to call the TypeScript `developing` pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `output/codebase`. Each time you want the next new task, update `output/goal.md` before rerunning the wrapper.
+Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `output/codebase`. Each time you want the next new task, update `output/goal.md` before rerunning the wrapper.
 
-The development loop currently uses `output/developing/TODO.md` as a temporary task-memory file. If a new goal starts inheriting old context, manually delete that TODO file before rerunning; the pipeline will recreate it. This TODO-based memory is a temporary solution, and a more advanced memory mechanism should replace or extend it later.
+The development loop stores project progress memory under `output/developing/project-progress-memory` and code design memory under `output/developing/code-design-memory`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
 
-See [`src/README.md`](src/README.md) for the TypeScript entry points and [`src/developing/README.md`](src/developing/README.md) for the development loop implementation.
+See [`src/README.md`](src/README.md) for the local TypeScript entry points. The development loop implementation lives in the `developing-agent-forge` package.
 
 ## Common Tasks
 
@@ -137,7 +137,7 @@ Find the closest papers to this research idea, compare their methods, and return
 | `src/`             | TypeScript pipeline structure and implementation notes.           |
 | `output/`          | Generated planning artifacts, codebase output, and archives.      |
 
-Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The current TypeScript agents are implemented under [`src/developing/agents`](src/developing/agents) and [`src/evolve-skill/agents`](src/evolve-skill/agents).
+Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The local TypeScript agents are implemented under [`src/evolve-skill/agents`](src/evolve-skill/agents); developing agents come from `developing-agent-forge`.
 
 Prepared AcademicArmy skills live under [`skills/`](skills/), and their matching metaskill design/evolution files live under [`metaskills/`](metaskills/).
 

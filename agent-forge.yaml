@@ -91,3 +91,23 @@ agents:
       workspacePath: *developerWorkspacePath
   trajectory-optimizer:
     thread: codex-5.5-full-access
+  memory-reader:
+    thread: codex-5.5-read-only
+    constants:
+      memoryDir: .
+  memory-modify-planner:
+    thread: codex-5.5-full-access
+    constants:
+      memoryDir: .
+  memory-modifier:
+    thread: codex-5.5-full-access
+    constants:
+      memoryDir: .
+  memory-create-planner:
+    thread: codex-5.5-full-access
+    constants:
+      memoryDir: .
+  memory-creator:
+    thread: codex-5.5-full-access
+    constants:
+      memoryDir: .

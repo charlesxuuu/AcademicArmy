@@ -1,20 +1,20 @@
 # TypeScript Pipelines
 
-`src` 存放 TypeScript runner，用来把 goal 文件和配置的 skill 转成可重复运行的 agent workflow。
+`src` 存放 AcademicArmy 本地的 TypeScript skill evolution runner。开发循环 pipeline 从 `developing-agent-forge` 引入。
 
 [English README](README.md)
 
 ## 这层代码负责什么
 
-CLI 入口是 [`cli.ts`](cli.ts)。它通过 [`package.json`](../package.json) scripts 暴露三个 pipeline：
+[`package.json`](../package.json) scripts 暴露下面三个 pipeline 命令。本地 [`cli.ts`](cli.ts) 入口也会注册它们，供 `npm run cli -- <pipeline>` 使用：
 
 | Pipeline           | Package script             | 作用                                                                                       |
 | ------------------ | -------------------------- | ------------------------------------------------------------------------------------------ |
-| `developing`       | `npm run developing`       | 运行 `developing/` 中实现的代码开发循环；当前任务重点来自 `--goal-path`。                  |
-| `developing-skill` | `npm run developing-skill` | 运行同一个 goal-driven 开发循环，并用 `trajectory-optimizer` 根据具体反馈优化 coding-style skill。 |
+| `developing`       | `npm run developing`       | 运行 `developing-agent-forge` 提供的代码开发循环；当前任务重点来自 `--goal-path`。         |
+| `developing-skill` | `npm run developing-skill` | 运行同一个外部开发循环，并用 `trajectory-optimizer` 根据具体反馈优化 coding-style skill。  |
 | `evolve-skill`     | `npm run evolve-skill`     | 运行 `evolve-skill/` 中实现的 skill self-evolution 循环。                                  |
 
-[`pipeline.ts`](pipeline.ts) 是这些命令共用的封装层。它解析各 pipeline 自己的参数，使用 `coding-agent-forge` 加载一个或多个 YAML 配置文件，根据配置好的 factories 创建 `AgentTeam`，运行选中的 pipeline，并在结束后关闭 team。
+[`pipeline.ts`](pipeline.ts) 是本地 `evolve-skill` pipeline 的共享封装层。`developing` 和 `developing-skill` 的实现来自 `developing-agent-forge`。
 
 ## 快速开始
 
@@ -45,13 +45,11 @@ bash metaskills/academic-army-architect/envolve.sh
 | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`cli.ts`](cli.ts)                                           | 根据名称选择 pipeline，并把剩余 CLI 参数传给对应 pipeline。                                                                                                    |
 | [`pipeline.ts`](pipeline.ts)                                 | 共享的 pipeline 定义、配置加载、agent team 构建和清理逻辑。                                                                                                    |
-| [`developing/`](developing/)                                 | 读取 `--goal-path` 中的目标和其中提到的 reference context，然后迭代实现目标代码库。详见 [`developing/README.zh-CN.md`](developing/README.zh-CN.md)。 |
-| [`developing/pipelineskill.ts`](developing/pipelineskill.ts) | 给同一个 goal-driven 开发循环叠加 `trajectory-optimizer` hooks，用于在开发过程中优化 coding-style skill。                                                                         |
 | [`evolve-skill/`](evolve-skill/)                             | 在固定任务上运行某个 skill，根据 metaskill 评价产物，并让 modifier agent 修改 skill。详见 [`evolve-skill/README.zh-CN.md`](evolve-skill/README.zh-CN.md)。     |
 
 ## 共享 Wrapper 如何工作
 
-每个 pipeline 提供自己的参数和配置好的 factories。[`pipeline.ts`](pipeline.ts) 使用 `coding-agent-forge` 加载一个或多个 YAML 配置文件，根据配置好的 factories 创建 `AgentTeam`，运行选中的 pipeline，并在结束后关闭 team。
+本地 pipeline 提供自己的参数和配置好的 factories。[`pipeline.ts`](pipeline.ts) 使用 `coding-agent-forge` 加载一个或多个 YAML 配置文件，根据配置好的 factories 创建 `AgentTeam`，运行选中的 pipeline，并在结束后关闭 team。
 
 这样 TypeScript runners 可以共享配置加载、agent team 构建和清理逻辑。
 
@@ -59,7 +57,7 @@ bash metaskills/academic-army-architect/envolve.sh
 
 [`runs/`](../runs/) 和 [`metaskills/README.zh-CN.md`](../metaskills/README.zh-CN.md) 中说明的 metaskill scripts 是这些 TypeScript pipeline 的便捷包装。
 
-预设开发 wrapper 使用 `output/goal.md` 作为 `--goal-path` 文件。如果新一轮不希望继承当前临时任务上下文，可以在重新运行前删除 `output/developing/TODO.md`；pipeline 会自动重新创建它。这个基于 TODO 的记忆机制是临时方案，之后会实现更高级的记忆机制来替代或扩展它。
+预设开发 wrapper 使用 `output/goal.md` 作为 `--goal-path` 文件。开发记忆分为 `output/developing/project-progress-memory` 和 `output/developing/code-design-memory`；如果新一轮不希望继承旧上下文，可以编辑或删除这些目录里的过期文件。
 
 | Script                                              | 调用                       |
 | --------------------------------------------------- | -------------------------- |
@@ -78,6 +76,6 @@ npm run lint
 
 ## 下一步阅读
 
-- 开发循环细节：[`developing/README.zh-CN.md`](developing/README.zh-CN.md)
+- 开发循环细节：`developing-agent-forge` 包
 - Skill evolution loop 细节：[`evolve-skill/README.zh-CN.md`](evolve-skill/README.zh-CN.md)
 - 面向用户的 skill evolution workflow：[`../metaskills/README.zh-CN.md`](../metaskills/README.zh-CN.md)
