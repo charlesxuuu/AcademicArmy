@@ -13,14 +13,14 @@ runtimes:
             env:
               PYTHONPATH: .
             tool_timeout_sec: 3600
-  qwen:
+  deepseek-reasoner:
     kind: qwen
     options:
       authType: openai
       model: deepseek-reasoner
       env:
         OPENAI_BASE_URL: https://api.deepseek.com
-        OPENAI_MODEL: deepseek-v4-pro
+        OPENAI_MODEL: deepseek-reasoner
         OPENAI_REASONING_EFFORT: high
       mcpServers:
         academic_army_mcp_tools:
@@ -47,12 +47,12 @@ threads:
       sandboxMode: danger-full-access
       workingDirectory: &developerWorkspacePath output/codebase
   develop-cheap:
-    runtime: qwen
+    runtime: deepseek-reasoner
     options:
       cwd: *developerWorkspacePath
       permissionMode: yolo
   memory:
-    runtime: qwen
+    runtime: deepseek-reasoner
     options:
       cwd: &memoryWorkingDir output/developing-memory
       permissionMode: yolo
