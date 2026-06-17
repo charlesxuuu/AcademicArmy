@@ -26,7 +26,7 @@ runtimes:
           ANTHROPIC_DEFAULT_HAIKU_MODEL: deepseek/deepseek-v4-pro
           ANTHROPIC_DEFAULT_SONNET_MODEL: deepseek/deepseek-v4-pro
           ANTHROPIC_DEFAULT_OPUS_MODEL: deepseek/deepseek-v4-pro
-      mcpServers:
+      mcpServers: &academicArmyMcpServers
         academic_army_mcp_tools:
           command: python
           args:
@@ -49,16 +49,7 @@ runtimes:
           ANTHROPIC_DEFAULT_HAIKU_MODEL: zai/glm-5.2
           ANTHROPIC_DEFAULT_SONNET_MODEL: zai/glm-5.2
           ANTHROPIC_DEFAULT_OPUS_MODEL: zai/glm-5.2
-      mcpServers:
-        academic_army_mcp_tools:
-          command: python
-          args:
-            - -m
-            - mcp-server
-          cwd: .
-          env:
-            PYTHONPATH: .
-          timeout: 3600000
+      mcpServers: *academicArmyMcpServers
   kimi-k2.7-code:
     kind: claude
     options:
@@ -71,42 +62,43 @@ runtimes:
           ANTHROPIC_DEFAULT_HAIKU_MODEL: moonshotai/kimi-k2.7-code
           ANTHROPIC_DEFAULT_SONNET_MODEL: moonshotai/kimi-k2.7-code
           ANTHROPIC_DEFAULT_OPUS_MODEL: moonshotai/kimi-k2.7-code
-      mcpServers:
-        academic_army_mcp_tools:
-          command: python
-          args:
-            - -m
-            - mcp-server
-          cwd: .
-          env:
-            PYTHONPATH: .
-          timeout: 3600000
+      mcpServers: *academicArmyMcpServers
 
 threads:
   skill:
     runtime: glm-5.2
     options:
       cwd: .
-      permissionMode: bypassPermissions
-      allowDangerouslySkipPermissions: true
+      permissionMode: dontAsk
+      allowedTools: &cwdReadWriteAllowedTools
+        - Read
+        - Grep
+        - Glob
+        - LS
+        - LSP
+        - WebFetch
+        - WebSearch
+        - Edit(./**)
+        - Write(./**)
+        - NotebookEdit(./**)
   develop:
     runtime: glm-5.2
     options:
       cwd: &developerWorkspacePath output/codebase
-      permissionMode: bypassPermissions
-      allowDangerouslySkipPermissions: true
+      permissionMode: dontAsk
+      allowedTools: *cwdReadWriteAllowedTools
   develop-coding:
     runtime: deepseek-v4-pro
     options:
       cwd: *developerWorkspacePath
-      permissionMode: bypassPermissions
-      allowDangerouslySkipPermissions: true
+      permissionMode: dontAsk
+      allowedTools: *cwdReadWriteAllowedTools
   memory:
     runtime: kimi-k2.7-code
     options:
       cwd: &memoryWorkingDir output/developing-memory
-      permissionMode: bypassPermissions
-      allowDangerouslySkipPermissions: true
+      permissionMode: dontAsk
+      allowedTools: *cwdReadWriteAllowedTools
 
 agents:
   skill-runner:
@@ -129,23 +121,11 @@ agents:
       workspacePath: *developerWorkspacePath
   trajectory-optimizer:
     thread: skill
-  memory-reader:
+  memory-reader: &memoryAgentConfig
     thread: memory
     constants:
       workingDir: *memoryWorkingDir
-  memory-modify-planner:
-    thread: memory
-    constants:
-      workingDir: *memoryWorkingDir
-  memory-modifier:
-    thread: memory
-    constants:
-      workingDir: *memoryWorkingDir
-  memory-create-planner:
-    thread: memory
-    constants:
-      workingDir: *memoryWorkingDir
-  memory-creator:
-    thread: memory
-    constants:
-      workingDir: *memoryWorkingDir
+  memory-modify-planner: *memoryAgentConfig
+  memory-modifier: *memoryAgentConfig
+  memory-create-planner: *memoryAgentConfig
+  memory-creator: *memoryAgentConfig
