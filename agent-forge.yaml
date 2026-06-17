@@ -14,13 +14,18 @@ runtimes:
               PYTHONPATH: .
             tool_timeout_sec: 3600
   deepseek-v4-pro:
-    kind: qwen
+    kind: claude
     options:
-      authType: openai
       model: deepseek/deepseek-v4-pro
-      env:
-        OPENAI_BASE_URL: https://openrouter.ai/api/v1
-        OPENAI_MODEL: deepseek/deepseek-v4-pro
+      effort: xhigh
+      settings:
+        env:
+          ANTHROPIC_BASE_URL: https://ai-gateway.vercel.sh
+          ANTHROPIC_API_KEY: ""
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: deepseek/deepseek-v4-pro
+          ANTHROPIC_DEFAULT_SONNET_MODEL: deepseek/deepseek-v4-pro
+          ANTHROPIC_DEFAULT_OPUS_MODEL: deepseek/deepseek-v4-pro
       mcpServers:
         academic_army_mcp_tools:
           command: python
@@ -32,13 +37,18 @@ runtimes:
             PYTHONPATH: .
           timeout: 3600000
   glm-5.2:
-    kind: qwen
+    kind: claude
     options:
-      authType: openai
-      model: z-ai/glm-5.2
-      env:
-        OPENAI_BASE_URL: https://openrouter.ai/api/v1
-        OPENAI_MODEL: z-ai/glm-5.2
+      model: zai/glm-5.2
+      effort: xhigh
+      settings:
+        env:
+          ANTHROPIC_BASE_URL: https://ai-gateway.vercel.sh
+          ANTHROPIC_API_KEY: ""
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: zai/glm-5.2
+          ANTHROPIC_DEFAULT_SONNET_MODEL: zai/glm-5.2
+          ANTHROPIC_DEFAULT_OPUS_MODEL: zai/glm-5.2
       mcpServers:
         academic_army_mcp_tools:
           command: python
@@ -50,13 +60,17 @@ runtimes:
             PYTHONPATH: .
           timeout: 3600000
   kimi-k2.7-code:
-    kind: qwen
+    kind: claude
     options:
-      authType: openai
       model: moonshotai/kimi-k2.7-code
-      env:
-        OPENAI_BASE_URL: https://openrouter.ai/api/v1
-        OPENAI_MODEL: moonshotai/kimi-k2.7-code
+      settings:
+        env:
+          ANTHROPIC_BASE_URL: https://ai-gateway.vercel.sh
+          ANTHROPIC_API_KEY: ""
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: moonshotai/kimi-k2.7-code
+          ANTHROPIC_DEFAULT_SONNET_MODEL: moonshotai/kimi-k2.7-code
+          ANTHROPIC_DEFAULT_OPUS_MODEL: moonshotai/kimi-k2.7-code
       mcpServers:
         academic_army_mcp_tools:
           command: python
@@ -73,22 +87,26 @@ threads:
     runtime: glm-5.2
     options:
       cwd: .
-      permissionMode: yolo
+      permissionMode: bypassPermissions
+      allowDangerouslySkipPermissions: true
   develop:
     runtime: glm-5.2
     options:
       cwd: &developerWorkspacePath output/codebase
-      permissionMode: yolo
+      permissionMode: bypassPermissions
+      allowDangerouslySkipPermissions: true
   develop-coding:
     runtime: deepseek-v4-pro
     options:
       cwd: *developerWorkspacePath
-      permissionMode: yolo
+      permissionMode: bypassPermissions
+      allowDangerouslySkipPermissions: true
   memory:
     runtime: kimi-k2.7-code
     options:
       cwd: &memoryWorkingDir output/developing-memory
-      permissionMode: yolo
+      permissionMode: bypassPermissions
+      allowDangerouslySkipPermissions: true
 
 agents:
   skill-runner:
