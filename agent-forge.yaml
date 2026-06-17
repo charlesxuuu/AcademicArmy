@@ -81,6 +81,7 @@ threads:
         - Edit(./**)
         - Write(./**)
         - NotebookEdit(./**)
+        - Bash
   develop-manager:
     runtime: glm-5.2
     options:
