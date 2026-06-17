@@ -49,6 +49,24 @@ runtimes:
           env:
             PYTHONPATH: .
           timeout: 3600000
+  kimi-k2.7-code:
+    kind: qwen
+    options:
+      authType: openai
+      model: moonshotai/kimi-k2.7-code
+      env:
+        OPENAI_BASE_URL: https://openrouter.ai/api/v1
+        OPENAI_MODEL: moonshotai/kimi-k2.7-code
+      mcpServers:
+        academic_army_mcp_tools:
+          command: python
+          args:
+            - -m
+            - mcp-server
+          cwd: .
+          env:
+            PYTHONPATH: .
+          timeout: 3600000
 
 threads:
   skill:
@@ -61,13 +79,13 @@ threads:
     options:
       cwd: &developerWorkspacePath output/codebase
       permissionMode: yolo
-  develop-cheap:
+  develop-coding:
     runtime: deepseek-reasoner
     options:
       cwd: *developerWorkspacePath
       permissionMode: yolo
   memory:
-    runtime: deepseek-reasoner
+    runtime: kimi-k2.7-code
     options:
       cwd: &memoryWorkingDir output/developing-memory
       permissionMode: yolo
@@ -84,7 +102,7 @@ agents:
     constants:
       workspacePath: *developerWorkspacePath
   developer:
-    thread: develop-cheap
+    thread: develop-coding
     constants:
       workspacePath: *developerWorkspacePath
   code-reviewer:
