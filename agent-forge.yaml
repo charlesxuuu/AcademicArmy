@@ -13,14 +13,14 @@ runtimes:
             env:
               PYTHONPATH: .
             tool_timeout_sec: 3600
-  deepseek-reasoner:
+  deepseek-v4-pro:
     kind: qwen
     options:
       authType: openai
-      model: deepseek/deepseek-r1
+      model: deepseek-v4-pro
       env:
         OPENAI_BASE_URL: https://openrouter.ai/api/v1
-        OPENAI_MODEL: deepseek/deepseek-r1
+        OPENAI_MODEL: deepseek-v4-pro
       mcpServers:
         academic_army_mcp_tools:
           command: python
@@ -80,7 +80,7 @@ threads:
       cwd: &developerWorkspacePath output/codebase
       permissionMode: yolo
   develop-coding:
-    runtime: deepseek-reasoner
+    runtime: deepseek-v4-pro
     options:
       cwd: *developerWorkspacePath
       permissionMode: yolo
