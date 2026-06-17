@@ -17,10 +17,10 @@ runtimes:
     kind: qwen
     options:
       authType: openai
-      model: deepseek-v4-pro
+      model: deepseek/deepseek-v4-pro
       env:
         OPENAI_BASE_URL: https://openrouter.ai/api/v1
-        OPENAI_MODEL: deepseek-v4-pro
+        OPENAI_MODEL: deepseek/deepseek-v4-pro
       mcpServers:
         academic_army_mcp_tools:
           command: python
