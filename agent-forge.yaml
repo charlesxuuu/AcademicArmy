@@ -36,6 +36,19 @@ runtimes:
           env:
             PYTHONPATH: .
           timeout: 3600000
+  deepseek-v4-flash:
+    kind: claude
+    options:
+      model: deepseek/deepseek-v4-flash
+      settings:
+        env:
+          ANTHROPIC_BASE_URL: https://ai-gateway.vercel.sh
+          ANTHROPIC_API_KEY: ""
+          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
+          ANTHROPIC_DEFAULT_HAIKU_MODEL: deepseek/deepseek-v4-flash
+          ANTHROPIC_DEFAULT_SONNET_MODEL: deepseek/deepseek-v4-flash
+          ANTHROPIC_DEFAULT_OPUS_MODEL: deepseek/deepseek-v4-flash
+      mcpServers: *academicArmyMcpServers
   glm-5.2:
     kind: claude
     options:
@@ -50,27 +63,14 @@ runtimes:
           ANTHROPIC_DEFAULT_SONNET_MODEL: zai/glm-5.2
           ANTHROPIC_DEFAULT_OPUS_MODEL: zai/glm-5.2
       mcpServers: *academicArmyMcpServers
-  kimi-k2.7-code:
-    kind: claude
-    options:
-      model: moonshotai/kimi-k2.7-code
-      settings:
-        env:
-          ANTHROPIC_BASE_URL: https://ai-gateway.vercel.sh
-          ANTHROPIC_API_KEY: ""
-          CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: "1"
-          ANTHROPIC_DEFAULT_HAIKU_MODEL: moonshotai/kimi-k2.7-code
-          ANTHROPIC_DEFAULT_SONNET_MODEL: moonshotai/kimi-k2.7-code
-          ANTHROPIC_DEFAULT_OPUS_MODEL: moonshotai/kimi-k2.7-code
-      mcpServers: *academicArmyMcpServers
 
 threads:
   skill:
-    runtime: glm-5.2
+    runtime: deepseek-v4-pro
     options:
       cwd: .
       permissionMode: dontAsk
-      allowedTools: &cwdReadWriteAllowedTools
+      allowedTools: &cwdReadWriteBashAllowedTools
         - Read
         - Grep
         - Glob
@@ -87,19 +87,29 @@ threads:
     options:
       cwd: &developerWorkspacePath output/codebase
       permissionMode: dontAsk
-      allowedTools: *cwdReadWriteAllowedTools
+      allowedTools: *cwdReadWriteBashAllowedTools
   develop-coding:
     runtime: deepseek-v4-pro
     options:
       cwd: *developerWorkspacePath
       permissionMode: dontAsk
-      allowedTools: *cwdReadWriteAllowedTools
+      allowedTools: *cwdReadWriteBashAllowedTools
   memory:
-    runtime: deepseek-v4-pro
+    runtime: deepseek-v4-flash
     options:
       cwd: &memoryWorkingDir output/developing-memory
       permissionMode: dontAsk
-      allowedTools: *cwdReadWriteAllowedTools
+      allowedTools:
+        - Read
+        - Grep
+        - Glob
+        - LS
+        - LSP
+        - WebFetch
+        - WebSearch
+        - Edit(./**)
+        - Write(./**)
+        - NotebookEdit(./**)
 
 agents:
   skill-runner:
