@@ -81,7 +81,7 @@ threads:
         - Edit(./**)
         - Write(./**)
         - NotebookEdit(./**)
-  develop:
+  develop-manager:
     runtime: glm-5.2
     options:
       cwd: &developerWorkspacePath output/codebase
@@ -94,7 +94,7 @@ threads:
       permissionMode: dontAsk
       allowedTools: *cwdReadWriteAllowedTools
   memory:
-    runtime: kimi-k2.7-code
+    runtime: deepseek-v4-pro
     options:
       cwd: &memoryWorkingDir output/developing-memory
       permissionMode: dontAsk
@@ -108,7 +108,7 @@ agents:
   skill-modifier:
     thread: skill
   coding-manager:
-    thread: develop
+    thread: develop-manager
     constants:
       workspacePath: *developerWorkspacePath
   developer:
@@ -116,7 +116,7 @@ agents:
     constants:
       workspacePath: *developerWorkspacePath
   code-reviewer:
-    thread: develop
+    thread: develop-coding
     constants:
       workspacePath: *developerWorkspacePath
   trajectory-optimizer:
