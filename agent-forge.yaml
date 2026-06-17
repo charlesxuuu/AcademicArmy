@@ -17,11 +17,28 @@ runtimes:
     kind: qwen
     options:
       authType: openai
-      model: deepseek-reasoner
+      model: deepseek/deepseek-r1
       env:
-        OPENAI_BASE_URL: https://api.deepseek.com
-        OPENAI_MODEL: deepseek-reasoner
-        OPENAI_REASONING_EFFORT: high
+        OPENAI_BASE_URL: https://openrouter.ai/api/v1
+        OPENAI_MODEL: deepseek/deepseek-r1
+      mcpServers:
+        academic_army_mcp_tools:
+          command: python
+          args:
+            - -m
+            - mcp-server
+          cwd: .
+          env:
+            PYTHONPATH: .
+          timeout: 3600000
+  glm-5.2:
+    kind: qwen
+    options:
+      authType: openai
+      model: z-ai/glm-5.2
+      env:
+        OPENAI_BASE_URL: https://openrouter.ai/api/v1
+        OPENAI_MODEL: z-ai/glm-5.2
       mcpServers:
         academic_army_mcp_tools:
           command: python
@@ -35,17 +52,15 @@ runtimes:
 
 threads:
   skill:
-    runtime: codex
+    runtime: glm-5.2
     options:
-      model: gpt-5.5
-      sandboxMode: danger-full-access
-      workingDirectory: .
+      cwd: .
+      permissionMode: yolo
   develop:
-    runtime: codex
+    runtime: glm-5.2
     options:
-      model: gpt-5.5
-      sandboxMode: danger-full-access
-      workingDirectory: &developerWorkspacePath output/codebase
+      cwd: &developerWorkspacePath output/codebase
+      permissionMode: yolo
   develop-cheap:
     runtime: deepseek-reasoner
     options:
