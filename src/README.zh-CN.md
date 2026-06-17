@@ -57,7 +57,7 @@ bash metaskills/academic-army-architect/envolve.sh
 
 [`runs/`](../runs/) 和 [`metaskills/README.zh-CN.md`](../metaskills/README.zh-CN.md) 中说明的 metaskill scripts 是这些 TypeScript pipeline 的便捷包装。
 
-预设开发 wrapper 使用 `output/goal.md` 作为 `--goal-path` 文件。开发记忆分为 `output/developing/project-progress-memory` 和 `output/developing/code-design-memory`；如果新一轮不希望继承旧上下文，可以编辑或删除这些目录里的过期文件。
+预设开发 wrapper 使用 `output/goal.md` 作为 `--goal-path` 文件。开发记忆分为 `output/developing-memory/project-progress-memory` 和 `output/developing-memory/code-design-memory`；如果新一轮不希望继承旧上下文，可以编辑或删除这些目录里的过期文件。
 
 | Script                                              | 调用                       |
 | --------------------------------------------------- | -------------------------- |

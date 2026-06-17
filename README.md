@@ -85,7 +85,7 @@ bash runs/develop.sh
 
 Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `output/codebase`. Each time you want the next new task, update `output/goal.md` before rerunning the wrapper.
 
-The development loop stores project progress memory under `output/developing/project-progress-memory` and code design memory under `output/developing/code-design-memory`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
+The development loop stores project progress memory under `output/developing-memory/project-progress-memory` and code design memory under `output/developing-memory/code-design-memory`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
 
 See [`src/README.md`](src/README.md) for the local TypeScript entry points. The development loop implementation lives in the `developing-agent-forge` package.
 

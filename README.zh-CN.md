@@ -85,7 +85,7 @@ bash runs/develop.sh
 
 运行 [`runs/develop.sh`](runs/develop.sh) 来调用 `developing-agent-forge` 提供的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `output/codebase` 下迭代写代码。每次想执行下一个新任务时，先更新 `output/goal.md`，再重新运行 wrapper。
 
-开发循环会把项目进度记忆放在 `output/developing/project-progress-memory`，把代码设计记忆放在 `output/developing/code-design-memory`。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
+开发循环会把项目进度记忆放在 `output/developing-memory/project-progress-memory`，把代码设计记忆放在 `output/developing-memory/code-design-memory`。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
 
 本仓库的 TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。开发循环实现来自 `developing-agent-forge` 包。
 

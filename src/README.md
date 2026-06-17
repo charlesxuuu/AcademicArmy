@@ -57,7 +57,7 @@ This keeps the config loading, agent-team construction, and cleanup shared acros
 
 Shell scripts under [`runs/`](../runs/) and the metaskill scripts described in [`metaskills/README.md`](../metaskills/README.md) are convenience wrappers around these TypeScript pipelines.
 
-The prepared development wrappers use `output/goal.md` as the `--goal-path` file. Development memory is split between `output/developing/project-progress-memory` and `output/developing/code-design-memory`; edit or delete stale files there when a new goal should not inherit old context.
+The prepared development wrappers use `output/goal.md` as the `--goal-path` file. Development memory is split between `output/developing-memory/project-progress-memory` and `output/developing-memory/code-design-memory`; edit or delete stale files there when a new goal should not inherit old context.
 
 | Script                                              | Calls                      |
 | --------------------------------------------------- | -------------------------- |
