@@ -1,6 +1,6 @@
 # AcademicArmy
 
-AcademicArmy 是一个基于 Codex 的研究工作流，用来把研究想法转成结构化论文规划产物和可持续开发的实现代码库。当前核心由一组规划类 skills、一个仓库 scaffold skill，以及驱动开发和 skill evolution agents 的 TypeScript pipelines 组成。
+AcademicArmy 是一个基于 Codex 的研究工作流，用来把研究想法转成结构化论文规划产物和可持续开发的实现代码库。当前核心由一组规划类 skills，以及驱动开发和 skill evolution agents 的 TypeScript pipelines 组成。
 
 > 当前状态：实验性工作流基础设施。生成的项目和运行产物位于 `output/`，该目录被 git 忽略。
 
@@ -66,15 +66,9 @@ python install_mcp.py
 
 使用 `academic-army-architect` 把这个想法整理成 `paper_blueprint.md`，也就是后续执行用的核心“施工图”。由于最初的想法通常还不够收敛，这一步可以通过多轮澄清和修改，把论文蓝图逐步调整到足够支撑下游工作的状态。
 
-当你对论文蓝图满意后，继续使用后续规划类 skills 生成 `experiment_plan.md` 和 `coding_plan.md`。这三份规划产物共同构成 AcademicArmy 的施工图，成为仓库初始化和迭代代码开发的项目起点。
+当你对论文蓝图满意后，继续使用后续规划类 skills 生成 `experiment_plan.md` 和 `coding_plan.md`。这三份规划产物共同构成 AcademicArmy 的施工图，成为迭代代码开发的项目起点。
 
-### 4. 初始化代码库 Scaffold
-
-三份规划产物准备好后，使用 `academic-army-repo-scaffold` 为代码库初始化一个真实 starter repository。它会使用 DeepResearch 选择合适的 template、官方 initializer 或高质量 template repository，生成 starter repository，然后叠加固定实验目录 `data/`、`output/`、`results/` 和 `harness/`。它会写入依赖声明和 repo-local 安装说明，在 `REFERENCES.md` 和 `REFERENCES.zh-CN.md` 中记录可安装依赖和仅作参考的外部来源，保留模板决定的测试结构，并让 README 聚焦当前仓库结构和用法。
-
-repo scaffold skill 不实现论文方法、harness 逻辑、测试、metric、loader、exporter 或实验 runner；这些属于后续实现工作。
-
-### 5. 运行开发循环
+### 4. 运行开发循环
 
 三份规划产物准备好后，先把下一轮高层开发目标写进 `output/goal.md`，然后运行：
 

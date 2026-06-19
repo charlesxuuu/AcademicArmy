@@ -1,6 +1,6 @@
 # AcademicArmy
 
-AcademicArmy is a Codex-based workflow for turning research ideas into structured paper-planning artifacts and an implementation codebase. Its current core is a sequence of planning skills, a repository scaffold skill, and TypeScript pipelines that run development and skill-evolution agents from those artifacts.
+AcademicArmy is a Codex-based workflow for turning research ideas into structured paper-planning artifacts and an implementation codebase. Its current core is a sequence of planning skills and TypeScript pipelines that run development and skill-evolution agents from those artifacts.
 
 > Status: experimental workflow infrastructure. The generated project lives under `output/`, which is ignored by git.
 
@@ -66,15 +66,9 @@ Start with an idea. The idea can be rough or detailed; it does not need to be a 
 
 Use `academic-army-architect` to turn the idea into `paper_blueprint.md`. Because an early idea is usually underspecified, this step may involve multiple rounds of clarification and revision before the blueprint is specific enough to guide downstream work.
 
-Once you are satisfied with the paper blueprint, continue with the next planning skills to derive `experiment_plan.md` and `coding_plan.md`. Those three artifacts become the project starting point for repository scaffolding and iterative code development.
+Once you are satisfied with the paper blueprint, continue with the next planning skills to derive `experiment_plan.md` and `coding_plan.md`. Those three artifacts become the project starting point for iterative code development.
 
-### 4. Initialize the codebase scaffold
-
-After the three planning artifacts are ready, use `academic-army-repo-scaffold` to initialize a real starter repository for the codebase. It uses DeepResearch to choose a template, official initializer, or high-quality template repository, generates the starter repository, then adds the fixed experiment directories `data/`, `output/`, `results/`, and `harness/`. It writes dependency declarations and repo-local installation instructions, records installable dependencies and reference-only sources in `REFERENCES.md` and `REFERENCES.zh-CN.md`, preserves the template's test layout, and keeps README text focused on the current repository structure and usage.
-
-The repo scaffold skill does not implement paper methods, harness logic, tests, metrics, loaders, exporters, or experiment runners. Those belong to later implementation work.
-
-### 5. Run the development loop
+### 4. Run the development loop
 
 After the planning artifacts are ready, write the next high-level development objective into `output/goal.md`, then run:
 
