@@ -1,0 +1,11 @@
+interface:
+  display_name: "Academic Army Literate LaTeX Writing"
+  short_description: "Literate Markdown LaTeX writing workflow"
+  default_prompt: "Use $academic-army-literate-latex-writing to draft or revise this paper section in .lit.md, keep sentence explanations synchronized, and regenerate clean LaTeX."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "academic_army_mcp_tools"
+      description: "Provides academic_army_mcp_tools.writing_master for high-end academic writing, polishing, rewriting, and review."
+      transport: "stdio"

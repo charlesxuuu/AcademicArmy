@@ -44,7 +44,7 @@ Install MCP server dependencies from [`mcp-server/requirements.txt`](mcp-server/
 python -m pip install -r ./mcp-server/requirements.txt
 ```
 
-### 2. Configure DeepResearch MCP
+### 2. Configure AcademicArmy MCP
 
 Create `.env` in the repository root:
 
@@ -54,7 +54,7 @@ OPENAI_API_KEY=your_api_key_here
 
 For project pipeline runs, use the `academic_army_mcp_tools` server through [`agent-forge.yaml`](agent-forge.yaml). That config launches the server as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.` from the repository root, so the evolve/developing runners do not need a separate Codex MCP installation step.
 
-When running AcademicArmy skills directly in Codex, use [`install_mcp.py`](install_mcp.py) to install the same MCP server into Codex so the skill can call `academic_army_mcp_tools.deepresearch` outside the project pipeline:
+When running AcademicArmy skills directly in Codex, use [`install_mcp.py`](install_mcp.py) to install the same MCP server into Codex so the skills can call `academic_army_mcp_tools.deepresearch` and `academic_army_mcp_tools.writing_master` outside the project pipeline:
 
 ```bash
 python install_mcp.py
@@ -105,13 +105,14 @@ For the shared CLI and pipeline structure, see [`src/README.md`](src/README.md).
 
 For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `output/goal.md`.
 
-### Call DeepResearch
+### Call MCP Tools
 
-AcademicArmy includes a local stdio MCP implementation in the [`mcp-server`](mcp-server) directory. It exposes one tool:
+AcademicArmy includes a local stdio MCP implementation in the [`mcp-server`](mcp-server) directory. It exposes these tools:
 
 - `deepresearch(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5`, high reasoning, web search, background mode, and source inclusion.
+- `writing_master(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5-pro`, high reasoning, web search, background mode, and source inclusion for high-end academic writing review.
 
-Agents should call the `deepresearch` tool with a single self-contained prompt. For example:
+Agents should call these tools with a single self-contained prompt. For example:
 
 ```text
 Use deepresearch with prompt:
@@ -124,7 +125,7 @@ Find the closest papers to this research idea, compare their methods, and return
 | ------------------ | ----------------------------------------------------------------- |
 | `agent-forge.yaml` | Agent and team wiring.                                            |
 | `install_mcp.py`   | Installs the project MCP server into Codex for direct skill runs. |
-| `mcp-server/`      | Local stdio MCP implementation that exposes `deepresearch`.       |
+| `mcp-server/`      | Local stdio MCP implementation that exposes `deepresearch` and `writing_master`. |
 | `skills/`          | Prepared AcademicArmy skills.                                     |
 | `metaskills/`      | Matching metaskill design/evolution files.                        |
 | `runs/`            | Convenience wrappers around TypeScript pipelines.                 |
@@ -139,7 +140,7 @@ Prepared AcademicArmy skills live under [`skills/`](skills/), and their matching
 
 | File or variable          | Required for           | Notes                                                                                                                                                                                          |
 | ------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.env` / `OPENAI_API_KEY` | DeepResearch MCP       | Read by the MCP server and by `install_mcp.py`.                                                                                                                                                |
+| `.env` / `OPENAI_API_KEY` | AcademicArmy MCP      | Read by the MCP server and by `install_mcp.py`.                                                                                                                                                |
 | `agent-forge.yaml`        | Project pipelines      | Launches `academic_army_mcp_tools` as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.`.                                                                                                  |
 | `secret.yaml`             | Prepared shell scripts | Local ignored config overlay used by the prepared wrappers. It may contain passwords, API keys, runtime credentials, or other private values that must not be committed or uploaded to GitHub. |
 

@@ -1,6 +1,6 @@
 ---
 name: academic-army-literate-latex-writing
-description: Write and revise academic LaTeX through `.lit.md` literate Markdown. Use when drafting paper prose, updating sentence explanations, tangling with `python -m tanglemd2tex`, or preparing writing MCP review.
+description: Write and revise academic LaTeX through `.lit.md` literate Markdown. Use when drafting paper prose, updating sentence explanations, tangling with `python -m tanglemd2tex`, or preparing `writing_master` MCP review.
 ---
 
 # Academic Army Literate LaTeX Writing
@@ -44,7 +44,7 @@ python -m tanglemd2tex
 Compile afterward when the project has a compile command.
 
 ## MCP Review
-Call the writing MCP when the user asks for stronger review, rewriting, polishing, or logic review.
+Call `mcp__academic_army_mcp_tools__writing_master` when the user asks for stronger review, rewriting, polishing, or logic review.
 
 Send `.lit.md` fragments, not generated `.tex`. Send a self-contained packet: user request, paper goal, section goal, local passage goal, preceding context, target `.lit.md` fragment, following context, relevant cross-section context, constraints, and desired output.
 
