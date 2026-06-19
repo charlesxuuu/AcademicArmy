@@ -4,7 +4,7 @@ import time
 from openai import OpenAI
 
 
-def writing_consultation(prompt: str) -> dict:
+def writing_master(prompt: str) -> dict:
     client = OpenAI()
     response = client.responses.create(
         model="gpt-5.5-pro",
@@ -26,8 +26,8 @@ def writing_consultation(prompt: str) -> dict:
     return response.model_dump(mode="json")
 
 
-def register_writing_consultation(mcp) -> None:
+def register_writing_master(mcp) -> None:
     if not os.environ.get("OPENAI_API_KEY"):
-        raise RuntimeError("WritingConsultation MCP startup validation failed: OPENAI_API_KEY is not set in the environment or current .env")
+        raise RuntimeError("WritingMaster MCP startup validation failed: OPENAI_API_KEY is not set in the environment or current .env")
     OpenAI()
-    mcp.tool()(writing_consultation)
+    mcp.tool()(writing_master)

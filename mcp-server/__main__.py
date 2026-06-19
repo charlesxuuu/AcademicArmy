@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
 from .deepresearch import register_deepresearch
-from .writing_consultation import register_writing_consultation
+from .writing_master import register_writing_master
 
 
 mcp = FastMCP(
@@ -31,5 +31,5 @@ if __name__ == "__main__":
         os.environ[name] = value
 
     register_deepresearch(mcp)
-    register_writing_consultation(mcp)
+    register_writing_master(mcp)
     mcp.run(transport="stdio")
