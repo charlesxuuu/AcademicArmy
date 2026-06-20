@@ -1,6 +1,6 @@
 {
   "name": "academic-army",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Agent workflows and skills for AcademicArmy.",
   "license": "MIT",
   "repository": {
@@ -49,7 +49,7 @@
   "dependencies": {
     "@openai/codex-sdk": "^0.134.0",
     "coding-agent-forge": "^1.3.2",
-    "developing-agent-forge": "^2.3.0"
+    "developing-agent-forge": "^2.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
