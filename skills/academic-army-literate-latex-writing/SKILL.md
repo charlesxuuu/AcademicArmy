@@ -50,6 +50,8 @@ Send `.lit.md` fragments, not generated `.tex`. Send a self-contained packet: us
 
 Ask for revised `.lit.md` blocks or concrete replacement suggestions.
 
+When applying `writing_master` output locally, respect its wording. For manuscript body text inside `latex` blocks, use the `writing_master` sentences exactly as written, without changing even one character. For explanations outside `latex` blocks, adaptation is allowed, but do not drop any information from the `writing_master` explanation.
+
 Apply accepted feedback to `.lit.md`, update explanations, then run `python -m tanglemd2tex`.
 
 ## Report
