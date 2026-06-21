@@ -103,7 +103,7 @@ npm run evolve-skill
 
 For the shared CLI and pipeline structure, see [`src/README.md`](src/README.md).
 
-For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `output/goal.md`.
+For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `output/goal.md`. The base development loop comes from `developing-agent-forge`; this repository provides the `developing-skill` trajectory optimizer locally.
 
 ### Call MCP Tools
 
@@ -121,16 +121,16 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## Project Structure
 
-| Path               | Purpose                                                           |
-| ------------------ | ----------------------------------------------------------------- |
-| `agent-forge.yaml` | Agent and team wiring.                                            |
-| `install_mcp.py`   | Installs the project MCP server into Codex for direct skill runs. |
+| Path               | Purpose                                                                          |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `agent-forge.yaml` | Agent and team wiring.                                                           |
+| `install_mcp.py`   | Installs the project MCP server into Codex for direct skill runs.                |
 | `mcp-server/`      | Local stdio MCP implementation that exposes `deepresearch` and `writing_master`. |
-| `skills/`          | Prepared AcademicArmy skills.                                     |
-| `metaskills/`      | Matching metaskill design/evolution files.                        |
-| `runs/`            | Convenience wrappers around TypeScript pipelines.                 |
-| `src/`             | TypeScript pipeline structure and implementation notes.           |
-| `output/`          | Generated planning artifacts, codebase output, and archives.      |
+| `skills/`          | Prepared AcademicArmy skills.                                                    |
+| `metaskills/`      | Matching metaskill design/evolution files.                                       |
+| `runs/`            | Convenience wrappers around TypeScript pipelines.                                |
+| `src/`             | TypeScript pipeline structure and implementation notes.                          |
+| `output/`          | Generated planning artifacts, codebase output, and archives.                     |
 
 Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The local TypeScript agents are implemented under [`src/evolve-skill/agents`](src/evolve-skill/agents); developing agents come from `developing-agent-forge`.
 
@@ -140,7 +140,7 @@ Prepared AcademicArmy skills live under [`skills/`](skills/), and their matching
 
 | File or variable          | Required for           | Notes                                                                                                                                                                                          |
 | ------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.env` / `OPENAI_API_KEY` | AcademicArmy MCP      | Read by the MCP server and by `install_mcp.py`.                                                                                                                                                |
+| `.env` / `OPENAI_API_KEY` | AcademicArmy MCP       | Read by the MCP server and by `install_mcp.py`.                                                                                                                                                |
 | `agent-forge.yaml`        | Project pipelines      | Launches `academic_army_mcp_tools` as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.`.                                                                                                  |
 | `secret.yaml`             | Prepared shell scripts | Local ignored config overlay used by the prepared wrappers. It may contain passwords, API keys, runtime credentials, or other private values that must not be committed or uploaded to GitHub. |
 

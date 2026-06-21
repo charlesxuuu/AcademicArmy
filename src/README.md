@@ -8,13 +8,13 @@
 
 [`package.json`](../package.json) exposes these pipeline commands. The local [`cli.ts`](cli.ts) entry point also registers them for `npm run cli -- <pipeline>`:
 
-| Pipeline           | Package script             | What it does                                                                                                                          |
-| ------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `developing`       | `npm run developing`       | Runs the code development loop provided by `developing-agent-forge`; the current task focus comes from `--goal-path`.                  |
-| `developing-skill` | `npm run developing-skill` | Runs the same imported development loop with a trajectory optimizer that can revise the coding-style skill from concrete feedback.    |
-| `evolve-skill`     | `npm run evolve-skill`     | Runs the skill self-evolution loop implemented in `evolve-skill/`.                                                                    |
+| Pipeline           | Package script             | What it does                                                                                                                         |
+| ------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `developing`       | `npm run developing`       | Runs the code development loop provided by `developing-agent-forge`; the current task focus comes from `--goal-path`.                |
+| `developing-skill` | `npm run developing-skill` | Runs the development loop and a local trajectory optimizer that revises the configured coding-style skill after each completed task. |
+| `evolve-skill`     | `npm run evolve-skill`     | Runs the skill self-evolution loop implemented in `evolve-skill/`.                                                                   |
 
-[`pipeline.ts`](pipeline.ts) provides the shared wrapper for the local `evolve-skill` pipeline. The `developing` and `developing-skill` implementations come from `developing-agent-forge`.
+[`pipeline.ts`](pipeline.ts) provides the shared wrapper for the local `evolve-skill` pipeline. The `developing` implementation comes from `developing-agent-forge`; `developing-skill/` restores the trajectory optimizer locally on top of the upgraded package callbacks.
 
 ## Quick Start
 
@@ -41,11 +41,12 @@ Before each new development task, update `output/goal.md`, which the prepared `d
 
 ## Directory Guide
 
-| Path                                                         | Purpose                                                                                                                                                                          |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`cli.ts`](cli.ts)                                           | Selects a pipeline by name and forwards the remaining CLI arguments.                                                                                                             |
-| [`pipeline.ts`](pipeline.ts)                                 | Shared pipeline definition, config loading, agent-team construction, and cleanup.                                                                                                |
-| [`evolve-skill/`](evolve-skill/)                             | Runs a skill on a fixed task, evaluates the artifact against a metaskill, and asks a modifier agent to revise the skill. See [`evolve-skill/README.md`](evolve-skill/README.md). |
+| Path                                     | Purpose                                                                                                                                                                          |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`cli.ts`](cli.ts)                       | Selects a pipeline by name and forwards the remaining CLI arguments.                                                                                                             |
+| [`pipeline.ts`](pipeline.ts)             | Shared pipeline definition, config loading, agent-team construction, and cleanup.                                                                                                |
+| [`developing-skill/`](developing-skill/) | Runs the upgraded development loop with a local trajectory optimizer that revises the configured coding-style skill.                                                             |
+| [`evolve-skill/`](evolve-skill/)         | Runs a skill on a fixed task, evaluates the artifact against a metaskill, and asks a modifier agent to revise the skill. See [`evolve-skill/README.md`](evolve-skill/README.md). |
 
 ## How The Shared Wrapper Works
 

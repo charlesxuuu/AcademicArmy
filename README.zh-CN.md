@@ -103,7 +103,7 @@ npm run evolve-skill
 
 TypeScript pipeline 的目录结构和实现说明见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。
 
-对于 `developing` 和 `developing-skill`，每次想切换到新的任务重点时，更新传给 `--goal-path` 的文件即可。预设 wrappers 使用的是 `output/goal.md`。
+对于 `developing` 和 `developing-skill`，每次想切换到新的任务重点时，更新传给 `--goal-path` 的文件即可。预设 wrappers 使用的是 `output/goal.md`。基础开发循环来自 `developing-agent-forge`；本仓库在本地提供 `developing-skill` trajectory optimizer。
 
 ### 调用 MCP 工具
 
@@ -121,16 +121,16 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## 项目结构
 
-| 路径               | 用途                                                      |
-| ------------------ | --------------------------------------------------------- |
-| `agent-forge.yaml` | Agent 和团队 wiring。                                     |
-| `install_mcp.py`   | 把项目 MCP server 安装到 Codex，供直接运行 skill 时使用。 |
+| 路径               | 用途                                                           |
+| ------------------ | -------------------------------------------------------------- |
+| `agent-forge.yaml` | Agent 和团队 wiring。                                          |
+| `install_mcp.py`   | 把项目 MCP server 安装到 Codex，供直接运行 skill 时使用。      |
 | `mcp-server/`      | 本地 stdio MCP 实现，暴露 `deepresearch` 和 `writing_master`。 |
-| `skills/`          | 已准备的 AcademicArmy skills。                            |
-| `metaskills/`      | 对应的 metaskill 设计与 evolution 文件。                  |
-| `runs/`            | TypeScript pipelines 的便捷 wrappers。                    |
-| `src/`             | TypeScript pipeline 的目录结构和实现说明。                |
-| `output/`          | 生成的规划产物、代码库输出和归档。                        |
+| `skills/`          | 已准备的 AcademicArmy skills。                                 |
+| `metaskills/`      | 对应的 metaskill 设计与 evolution 文件。                       |
+| `runs/`            | TypeScript pipelines 的便捷 wrappers。                         |
+| `src/`             | TypeScript pipeline 的目录结构和实现说明。                     |
+| `output/`          | 生成的规划产物、代码库输出和归档。                             |
 
 Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。本仓库内的 TypeScript agents 实现于 [`src/evolve-skill/agents`](src/evolve-skill/agents)；developing agents 来自 `developing-agent-forge`。
 
