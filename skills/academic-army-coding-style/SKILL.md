@@ -46,6 +46,79 @@ Keep these experiment directories when they already exist:
 Do not force a fixed test directory. Tests follow the repository's existing
 layout, project configuration, initialization docs, or adjacent test style.
 
+### Task Claims vs. Worktree Reality
+
+**Treat the task's stated current-state as a claim to verify, not as ground truth.**
+Before acting, check each factual premise against the worktree: the paths,
+importability, or artifacts the task asserts as present or absent. When the
+worktree contradicts the task, surface the contradiction first and re-scope the
+remaining work to the real gap. Do not proceed on a stale premise to manufacture
+work the worktree already satisfies.
+
+This is the most important guardrail in the skill. A task brief may be written
+against stale memory, an earlier snapshot, or a plan that was since executed.
+Trust the worktree; memory files and task narratives are secondary.
+
+#### Already-Complete-on-Disk Sequence
+
+When the worktree already satisfies the task's stated objective, the task is an
+**already-complete-on-disk** case — it was executed in a prior session but the
+memory/trajectory layer was never advanced. The correct sequence is
+verification, not re-implementation:
+
+1. **Inspect** target files, directories, and shims to confirm on-disk state
+   matches the task objective.
+2. **Run scoped verification** the task requests (test suite, import smoke,
+   whitespace check). Record exact pass/fail counts that are **from this
+   session's rerun**, not copied from a prior slice entry or task narrative.
+   Each slice entry in memory must carry re-verified counts.
+3. **Update all lagging memory/trajectory files** to record the verified
+   state — flip phase status, record exact test counts, shim identities,
+   import findings, and advance the stale selection pointer. This is the
+   primary deliverable in already-complete-on-disk cases. When memory-file
+   paths referenced by the task do not exist on disk, create the directory
+   chain and the files — an absent directory is a missing scaffold, not a
+   blocker.
+4. Do not re-execute structural work just because memory says it was never
+   done. Memory is the stale surface; the worktree is the source of truth.
+
+#### Multi-File Memory Quorum
+
+When a project tracks the same counter or phase in multiple independent memory
+files (e.g. a design-memory file, a status file, and a validation file), and
+some are already correct while others lag, the **correct file is the quorum
+anchor**, not the task brief alone. The pattern:
+
+- **Identify the split**: one file may already show "N completed, M remaining"
+  while others still read "N-1 completed, M+1 remaining" and lack the latest
+  slice entry. The task brief may even document this drift explicitly.
+- **Verify against the worktree**: the on-disk state (clean `git status`,
+  absent shim, passing suite) confirms which files are correct. The worktree
+  is always the final arbiter.
+- **Update the lagging files**: bring them to the same counter, add the
+  missing slice entry with this-session rerun counts, and remove the completed
+  subject from every "remaining"/"next"/tier list they contain. Do not treat
+  the lagging files as evidence that work is unfinished — they are the stale
+  surface; the worktree plus the correct memory file form the quorum.
+- **After updating, all memory files must agree** on the counter, the
+  completed-slice list, and what the next real gap is. Any file that still
+  lists a completed subject as "remaining" will cause the next agent to
+  re-execute already-done work.
+
+#### Bytecode and Order-Dependent Checks
+
+Before running the import smoke in an already-complete-on-disk case, **clear
+`__pycache__`** directories that may hold bytecode from a prior session.
+Stale `.pyc` files can make an import smoke silently resolve against old paths,
+masking a real resolution failure. Use the language's normal bytecode-cache
+clearing mechanism (e.g. `find . -type d -name __pycache__ -exec rm -rf {} +`).
+
+**Order-dependent test results**: a test suite that passes when modules load in
+one order (e.g. alphabetical) may fail in another (e.g. entrypoint-first).
+After a move that creates or repoints shims, always probe the entrypoint
+import order in addition to the test suite. Isolated import probes catch
+order-dependent partial-init failures that the test runner may dodge.
+
 ## Runtime Binding
 
 Keep the skill project-agnostic. Bind names, paths, classes, functions,
@@ -78,6 +151,22 @@ Before editing, establish a small task-relevant inventory:
   `from <package>.<module> import`, `from <package> import <module>`, and any
   indirect imports through package `__init__.py` — so the full consumer set is
   known before the first edit;
+- **monkeypatch surface**: when a module will be moved and replaced by a shim,
+  search all test files for `monkeypatch.setattr(<module>, "name", ...)` and
+  `from <module> import _<name>` — any underscore-prefixed name that a test
+  imports or monkeypatches must appear in the shim's re-export list or the
+  test will fail with `AttributeError`. Also audit **module-object attribute
+  access**: when a test does `from <pkg> import <module>` and then accesses
+  `<module>.<attr>`, the shim must expose `<attr>` (stdlib singletons like
+  `subprocess`, `os` are common targets — re-export them from the canonical
+  module even if no consumer does `from <module> import <attr>`);
+- **relative-import depth**: when a file moves from a flat package into a
+  subpackage, count the new depth. From `<pkg>.sub1.sub2`, one dot is
+  `<pkg>.sub1.sub2`, two dots is `<pkg>.sub1`, three dots is `<pkg>`. Read
+  every `from .X import` / `from ..X import` line in the file being moved and
+  adjust each dot-count to reach the same target from the new location. A file
+  with only stdlib imports needs zero changes. A file with sibling imports to
+  other root-level modules needs one extra dot per subpackage level;
 - accepted constructor fields, identity fields, validation owner, provenance
   fields, and export surfaces for record-backed helpers;
 - accepted callable signatures, default values, aggregation or identity keys,
@@ -86,46 +175,15 @@ Before editing, establish a small task-relevant inventory:
 - task-stated current-state claims — what the task says already exists, is
   missing, is on or off a path, or has or has not run — reconciled against the
   actual worktree before acting, with contradictions surfaced as the first
-  finding.
+  finding. **Verify every claimed gap, not just the headline objective** — a
+  task brief may assert N things are missing but the worktree may show M of
+  them already done. Surface the exact subset that is complete vs. the subset
+  that is genuinely missing rather than proceeding on all N as if they were
+  equally stale.
 
 Treat a suddenly empty or partially missing tree as an integrity blocker. Do not
 reconstruct missing code from memory, plans, reports, or old outputs unless the
 user asks for restoration from a trusted source.
-
-Treat the task's stated current-state as a claim to verify, not as ground truth.
-Before acting, check each factual premise against the worktree: the paths,
-importability, or artifacts the task asserts as present or absent. When the
-worktree contradicts the task — artifacts the task calls absent already exist, a
-module the task calls off-path is importable, a run the task says never happened
-already produced outputs — surface the contradiction first and re-scope the
-remaining work to the real gap. Do not proceed on a stale premise to manufacture
-work the worktree already satisfies, and do not overwrite or ignore existing
-artifacts to match the task's description. Accepted work is what the real gap
-requires, not what the task's narrative implies.
-
-When the worktree already satisfies the task's stated objective (the target
-package exists, the files are in place, the shims are written, the structure
-matches the refactor plan), the task is an **already-complete-on-disk** case.
-The correct operational sequence is verification, not re-implementation:
-
-1. Run the scoped verification the task requests (test suite, import check,
-   whitespace check).
-2. When verification passes, the primary deliverable is updating memory and
-   trajectory files to record the verified state — flipping the phase status,
-   recording exact test counts, shim identities, and import findings, and
-   advancing the stale selection pointer.
-3. Do not re-execute the structural work (re-create files, re-split modules,
-   re-write shims) just because memory says it was never done. Memory is the
-   stale surface; the worktree is the source of truth.
-4. After updating memory, the next-slice pointer should move past this phase
-   to the next real gap. List candidate next phases without selecting one
-   unless the task or active workflow explicitly selects it.
-
-This pattern is common in phased refactors where work was done in a prior
-session but memory was never updated. The no-op guard in memory files (e.g.
-"N consecutive no-op rounds") exists precisely to detect and break this cycle:
-when memory says "not started" but the worktree says "done," verify and record,
-do not re-execute.
 
 If the request names an exact allowed-file set, edit only those files. Do not
 touch package entrypoints, export tests, docs, registries, harnesses, artifact
@@ -198,6 +256,15 @@ Classify the task before editing:
   those behaviors.
 - **Refactor or cleanup**: move, split, merge, rename, or delete code only to
   improve locality, readability, or testability for the current change.
+- **Shim deletion (cleanup slice)**: migrate every consumer of a re-export shim
+  to the canonical path, then delete the shim file from disk and git.
+  This is the closing phase of staged package migration — the shim was a
+  temporary bridge; now it is removed. Assess complexity before starting: count
+  re-exported names, count consumers, check for monkeypatch bindings to the
+  shim's module object, and check whether any root-level shim transitively
+  imports through the target shim. A monkeypatch-free shim with few names and
+  few consumers is the simplest case; monkeypatch bindings or transitive root-shim
+  imports require additional care but do not block deletion.
 - **Harness work**: keep harness code under the relevant `harness/` area; make
   objective, inputs, metrics, raw artifacts, and run loop explicit.
 - **Test work**: place tests in the existing test system's natural location and
@@ -401,7 +468,9 @@ A proper shim:
   them — but when in doubt, re-export the full surface to be safe;
 - has no logic, no side effects, and no new imports beyond the re-export line;
 - lives as a temporary bridge; the shim is deleted once all consumers have
-  migrated to the canonical path.
+  migrated to the canonical path. See the **Shim Deletion** section below for
+  the full deletion protocol: consumer inventory, migration ordering,
+  verification checklist, and root-shim transitive handling.
 
 Before writing a shim, inventory the full import surface of the module being
 moved: search for `from <package>.<module> import`, `from .<module> import`,
@@ -433,7 +502,7 @@ module look up the function through the shim at call time (e.g. `import
 bare-name import. This keeps the monkeypatch-able namespace as the single
 point of indirection without changing any logic.
 
-This pattern applies when the monkeypatch target is a **refabr-internal
+This pattern applies when the monkeypatch target is a **repo-internal
 function binding** — a function defined inside the repository that the
 canonical module imports via `from <module> import <func>`. A different
 mechanism applies when the monkeypatch target is a **shared stdlib singleton**
@@ -448,7 +517,7 @@ the stdlib module binding (e.g. `from <canonical> import importlib`) so that
 `<shim>.<stdlib_module>` resolves. Before applying either fix, determine
 which mechanism is in play: test `import sys; <canonical>.<module> is
 sys.modules['<module>']`. If true, it's shared-singleton propagation and needs
-only shim re-export. If false, it's a refabr function binding and needs the
+only shim re-export. If false, it's a repo-internal function binding and needs the
 module-level-alias fix.
 
 Also verify **transitive import direction** — not just what the new module
@@ -497,6 +566,287 @@ Document the deferred `__init__.py` re-export as a known gap for a future
 dedicated decoupling pass. Do not reorder imports, add lazy imports, or
 restructure sibling dependencies to force the `__init__.py` re-export — those
 are behavior-sensitive changes that belong to a later phase.
+
+**Dependency-group ordering across sub-phases**: when moving a set of related
+modules into a shared subpackage, move the modules with no intra-group
+dependencies first (the ones that import only domain, ports, stdlib, or
+third-party code). Move modules that import other members of the same group
+only after their dependencies are co-located in the subpackage. Example: if
+`<b>.py` does `from .<a> import <name>` and both are intended for
+`adapters/<group>/`, move `<a>.py` first. In the next sub-phase, `<b>.py` can
+follow with a clean sibling `.` import. Moving `<b>` before `<a>` creates a
+mixed-state `..<a>` reference to the still-flat root file, which resolves
+differently under test collection and violates the co-location contract. Audit
+intra-group imports before selecting the first module in any new subpackage,
+and name the dependency chain in the task brief so later sub-phases have clear
+ordering.
+
+### Shim Deletion
+
+When all consumers of a re-export shim have been migrated (or the task is to
+migrate them as part of the deletion), the shim can be removed. This closes the
+staged-package-migration lifecycle.
+
+**Complexity assessment.** Before editing, inventory:
+
+- **Re-exported names**: what the shim exports. Note the distinction between
+  names the shim re-exports (often the full canonical surface — dozens of names)
+  and names consumers actually import (typically a small subset). Only the
+  consumer-imported names matter for migration; the canonical location already
+  owns the full surface and remains available at the canonical path.
+- **Consumer set**: every import site that references the shim's module path, in
+  both source and test trees. Search all import forms: `from <shim_path> import`
+  (absolute), `from .<shim> import` (1 dot), `from ..<shim> import` (2 dots),
+  `from ...<shim> import` (3 dots), and beyond for deeper nesting. Also check
+  indirect imports through package `__init__.py`. Count **sites, not files** —
+  a single consumer file may have multiple import sites (e.g. a top-level import
+  plus a deferred import inside a function body), and every site must be
+  migrated. A consumer nested 3+ levels deep needs the corresponding dot count —
+  stopping at 2 dots misses it. Note which specific names each consumer imports —
+  this is the verification target, not the full shim re-export list.
+- **Monkeypatch bindings**: search tests for `monkeypatch.setattr(<shim_module>, ...)`
+  and `setattr(<shim_module>, ...)`. Zero hits = simplest case; no shim-module
+  binding needed after deletion. Positive hits = complex case; the monkeypatch
+  surface requires a shim-module binding to survive. **Memory tier labels are
+  claims, not facts** — re-verify monkeypatch counts against the worktree every
+  slice, even when memory files classify a shim as "easy-tier no monkeypatch."
+  A memory file written in a prior session may predate the discovery of
+  monkeypatch bindings; the worktree grep is the truth.
+- **Deferred-shim consumers**: when a consumer of the current shim is itself a
+  deferred root shim (its own deletion belongs to a future slice), its import
+  line must still be redirected to prevent `ImportError` when the current shim
+  is deleted. Redirect only the import line — do not delete or rewrite the
+  deferred shim. Its own deletion is a separate future slice.
+- **Root-shim transitives**: check whether any root-level re-export shim imports
+  names from the target shim's module path. If a root shim does `from .<target_shim>
+  import <name>`, trace whether it already gets those names through a canonical
+  path transitively — the root shim may import from `<intermediate_module>` which
+  itself imports from the target shim. If the root shim's import chain survives
+  after migration (root → intermediate → canonical), the root shim needs no edit.
+- **`__init__.py` gate**: check whether any package `__init__.py` imports from
+  the shim. If `<pkg>/__init__.py` does `from .<shim> import (...)`, the redirect
+  is a **blocking gate** — the shim cannot be deleted until `__init__.py` is
+  retargeted to the canonical path. This redirect is order-sensitive:
+  `__init__.py` runs first in any `import <pkg>`, so it must resolve first.
+  Verify `import <pkg>` succeeds before deleting the shim. After the redirect,
+  `__init__.py` must re-export the same names verbatim from the canonical path.
+- **`_`-prefixed private names**: the shim may re-export underscore-prefixed
+  private names that the canonical module's own public consumers don't use.
+  Before deletion, grep test files for imports of any `_`-prefixed name from
+  the shim path. If found, those names are part of the test contract and must
+  be included in the canonical import verification. If none found (typical),
+  note the result and proceed.
+
+**Migration order.** Migrate every consumer before deleting the shim:
+
+0. **`__init__.py` gate first** (if applicable): when any package `__init__.py`
+   imports from the shim, redirect it to the canonical path before any consumer
+   migration. This is order-sensitive — `__init__.py` runs first in `import <pkg>`.
+   Preserve all imported names verbatim. Verify with `import <pkg>` before
+   proceeding. The shim stays on disk until all consumers (including `__init__.py`)
+   resolve to canonical.
+
+1. Calculate the correct import depth for each consumer:
+   - Files **inside the same subpackage** as the canonical module use a sibling
+     import: `from .<canonical> import <name>` (one dot).
+   - Files **outside that subpackage** import from the parent level:
+     `from ..<canonical_pkg>.<canonical> import <name>` (count dots to reach the
+     common ancestor, then down to the canonical module).
+   - **Root-module consumers**: a root-level module in the same package as the
+     shim that imports the shim by one dot (`from .<shim> import`) is still a
+     consumer. After migration: `from .<subpackage>.<canonical> import` — the dot
+     count stays 1, reaching into the canonical's subpackage. Root-module consumers
+     are easy to miss because they aren't nested in a subdirectory; inventory them
+     explicitly when the shim lives at the package root.
+   - **Multi-file canonical targets**: when the shim re-exports names from
+     multiple separate canonical files (e.g. one class per file under a shared
+     subpackage), apply the depth rule to each file individually. The shared
+     subpackage prefix sets the depth; only the filename differs per import.
+   - **`as` aliases**: when a consumer imports a name with an `as` alias
+     (`from <shim> import <Name> as <Alias>`), migrate the alias verbatim:
+     `from <canonical> import <Name> as <Alias>`. Dropping or altering an alias
+     creates a silent name mismatch — the import succeeds but downstream code
+     that uses the alias name fails with `AttributeError`. Grep consumers for
+     `as` clauses before editing.
+   - **`import <module> as <alias>`**: when a consumer imports the entire shim
+     module as an object (`import <shim> as <alias>`), the redirect is
+     `from <canonical_pkg> import <canonical> as <alias>`. Preserve the alias
+     verbatim — downstream code that does `<alias>.<func>(...)` must resolve to
+     the same module object after migration. This pattern often co-occurs with
+     `monkeypatch.setattr(<alias>, ...)` — the alias name is the continuity
+     binding.
+2. Edit every consumer's import line to resolve to the canonical path. Migrate
+   source consumers first (if any), then test consumers. A shim with zero source
+   consumers and only test consumers is valid — proceed directly to the test
+   imports. Order within each group does not matter when the shim is still on
+   disk during migration. For multi-file targets, edit
+   only the names each consumer actually imports — do not expand a partial
+   consumer to import all names just because the shim re-exports all of them.
+
+   **Surgical migration**: when a consumer file has adjacent import blocks that
+   reference different root shims (e.g. `from ..<current_shim> import (...)`
+   on one line and `from ..<deferred_shim> import (...)` on the next), migrate
+   only the block that references the current shim. Leave the adjacent
+   deferred-shim block untouched — its migration belongs to its own future slice.
+
+   **Bulk path-only migration**: when the slice is path-only (no aliases to
+   preserve, no monkeypatch bindings, no continuity redirects — only the
+   module path changes), a depth-ordered regex sweep replaces every consumer
+   in a single pass. Order the sweeps by depth: 3-dot consumers first (the
+   deepest), then 2-dot, then 1-dot root modules, then absolute imports.
+   This prevents an earlier sweep from rewriting a deeper import into an
+   incorrect intermediate form. The only exceptions are `__init__.py`
+   (handled first, step 0) and `import … as <alias>` lines (continuity
+   bindings requiring hand-edit). After the sweep, verify every rewritten
+   import line resolves to the correct depth and preserves the same names.
+3. After all consumers are migrated, delete the shim: `git rm <path_to_shim>`.
+   Leave no comment-only stub, empty placeholder, or `.bak` rename.
+
+**Verification checklist.** After deletion, run in order:
+
+1. **Shim-gone check**: `python -c "import <shim_path>"` must fail with
+   `ModuleNotFoundError`. Confirm the file does not exist on disk.
+2. **Canonical-import check**: `python -c "from <canonical_path> import <exported_names>"` must succeed for every name that any consumer imports. Verify only the consumer-imported subset — the canonical location owns the full surface; checking every name the shim re-exports is unnecessary when the canonical location was not modified. **Byte-identity**: confirm the canonical file was not modified by the migration — `git diff -- <canonical_subpackage>/` must be empty. (For a single-file canonical target, `git diff -- <path_to_canonical_file>` is sufficient.) The slice only rewrites consumer import lines; the canonical source is the immutable source of truth.
+3. **Scoped test suite**: run the test files that were edited plus any test files
+   that exercise the deleted shim's exports. Expected count should match
+   pre-migration baseline — no new failures. **When monkeypatch bindings exist**,
+   this step is the continuity smoke: the scoped run must include the test file
+   with the `monkeypatch.setattr(<alias>, ...)` calls, and all must pass.
+   A pass here (not just import resolution) proves that the test patches the
+   same module object that the canonical code calls.
+4. **Full test suite**: run the repository's full test command. The pass/fail count
+   must match the pre-migration baseline exactly. Any new failure is a migration
+   defect.
+5. **Entrypoint-order import smoke**: import modules in the order that exercises
+   the package's initialization dependencies. This catches order-dependent
+   partial-init failures that alphabetical test collection can mask. When the
+   deleted shim was imported through an eager package `__init__.py` chain
+   (e.g. `<pkg>.__init__` → `<subpkg>.__init__` → `<consumer>` → shim), the
+   smoke must exercise that exact chain with the shim deleted. **Construction
+   formula**: build a single import command that imports every outermost
+   package entrypoint of the migrated consumers (the closest `__init__.py`
+   ancestor for each consumer subpackage) plus the canonical module itself,
+   ordered from the lowest-layer package upward. For example, if consumers live
+   in `<pkg>.experiments`, `<pkg>.evidence.summarizers`, and the root
+   `<pkg>`, the smoke imports `<pkg>.experiments`, `<pkg>.evidence.summarizers`,
+   and `<pkg>.<canonical_subpackage>.<canonical>`. A pass means every module
+   resolves without `ImportError`.
+6. **Absence grep**: search the source and test trees for any remaining import
+   of the deleted shim's module path. Use a catch-all regex that matches all
+   depth forms and absolute forms at once: `from.*<shim_name> import` across
+   `src/` and `tests/`. Then filter out the canonical module's own sibling
+   self-import (e.g. `from .<canonical> import` inside the canonical file
+   itself). Every remaining hit must be a canonical-path import — any hit that
+   resolves to the old shim path is a blocking leftover. Do not rely on
+   listing specific depth forms (1-dot, 2-dot, 3-dot) individually; a
+   catch-all regex catches every depth at once. (Documentation references to
+   the old path are not code defects — they are documentation staleness,
+   tracked separately.)
+7. **Root-shim transitives**: verify any root shim that previously resolved names
+   through the deleted shim still imports them correctly through the new canonical
+   chain. An `import <root_shim>` smoke test is sufficient when the root shim's
+   own import chain was not edited.
+8. **Whitespace check**: `git diff --check` from the repository root. Report
+   findings in files the task did not touch as pre-existing; note them but do not
+   fix them.
+
+Treat a new test failure, a broken import smoke, or a leftover import of the
+deleted shim path as a blocking defect. A pre-existing test failure that is
+unchanged from baseline is not a defect.
+
+**Stale bytecode.** After deleting the shim, clear the language's bytecode
+cache under the source tree (e.g. `find <src_root> -type d -name __pycache__ -exec rm -rf {} +`).
+A `.pyc` file from a prior session can make `import <shim_path>` silently
+resolve against the deleted source, masking a real resolution failure. Run
+the shim-gone check after clearing, not before.
+
+**Multi-file canonical targets**: when the shim re-exports names from many
+separate files (e.g. one class per file), the byte-identity check (step 2)
+still applies per file. Verify each canonical file individually — the shared
+subpackage prefix may mask a single-file modification when checking the whole
+directory at once.
+
+**Do not** migrate other shims in the same slice unless the task explicitly
+scopes them. One shim per cleanup slice keeps review simple and defects local.
+Root shims that transitively chain through the deleted shim survive without
+edits when their import chain resolves through the canonical location —
+verify this, do not assume it.
+
+**Canonical importing through not-yet-deleted root shims.** In phased refactors,
+a canonical module may itself import through root shims that are still on disk
+(e.g. `from ..<upstream_shim> import (...)` inside `<canonical_subpackage>/<canonical>.py`).
+These are the canonical module's own upstream dependencies — they were not
+migrated when the canonical module was moved, and they belong to their own
+future shim-deletion slices. During the current shim's deletion, the canonical
+module's root-shim imports are a **frozen surface**: they must be left
+untouched, and the byte-identity check (`git diff -- <canonical_subpackage>/`)
+proves they were preserved. The only edits in the current slice are consumer
+import lines; the canonical module's internal imports are out of scope.
+
+Shims typically re-export every name the canonical location exposes — often
+dozens of names — even when only a handful have active consumers. This is
+expected: the shim was a wholesale bridge, not a curated export list. When
+deleting, focus inventory and verification on the consumer-imported subset.
+The full canonical surface remains available at the canonical path for any
+future consumer that needs it.
+
+### Move-Only Refactor Verification Checklist
+
+When a task is a pure move-only refactor (files relocated, shims left behind,
+no logic changes), the verification surface is specific and mechanical. After
+creating the canonical files and root shims, run this checklist in order:
+
+1. **Import smoke**: import every moved module through both the shim path and
+   the canonical path in a single smoke command. For Python, use
+   `python -B -c "import <shim_path>, <shim_path2>, <canonical_path>, <canonical_path2>"`.
+   An `ImportError` or `ModuleNotFoundError` at this stage catches depth errors
+   before the test suite runs.
+
+2. **Scoped test suite**: run the exact test files the task brief names. Record
+   the pass/fail count. The pre-existing failure count (if any) should match the
+   task brief's documented baseline — no new failures introduced.
+
+3. **Byte-identical verification**: diff each moved canonical file against the
+   git-HEAD original. The only permitted difference is the import-depth line(s)
+   that changed because the file moved one or more package levels deeper. No
+   logic, signature, docstring, or whitespace changes. If the file has no
+   relative repo-internal imports, it must be byte-identical.
+
+4. **Whitespace check**: run `git diff --check` from the repo root. Whitespace
+   findings in files the task did not touch are pre-existing and should be noted
+   as such, not fixed.
+
+5. **Import direction scan**: verify the new canonical module does not import
+   back through the root shim. Grep the canonical file for any import that
+   resolves to the old shim path. For Python, search for `from <shim_relative_path> import`
+   patterns that would create a circular chain.
+
+6. **Downstream `__init__.py` circular-import check**: when a flat module is
+   moved and its old location becomes a shim, any package `__init__.py` that
+   eagerly imports through the shim can create a circular chain that did not
+   exist when the old location was a flat file. For each package `__init__.py`
+   in the repository, trace whether an eager module-level import reaches the
+   shim and whether the shim's canonical target imports back into that package.
+   If found, classify as pre-existing (the `__init__.py` re-export and the
+   shim both predate this slice) or task-induced (the current move created the
+   chain). Task-induced circular imports are blocking defects. Pre-existing ones
+   are recording targets — but if they block test collection in the scoped
+   suite, narrow the test command to the collectable subset, record the excluded
+   file and the circular chain in the verification report, and file the
+   pre-existing violation as a deferred decoupling gap in memory. Do not
+   silently omit uncollectable tests from the command without noting them.
+
+7. **Root-init check**: confirm `__init__.py` of the package root has zero diff
+   (not widened). Only the new subpackage's own `__init__.py` is new.
+
+8. **Memory update**: after all checks pass, update the memory/trajectory files
+   the task brief names with the verified state, exact test counts, shim
+   identities, and the fact that the phase is now complete. Create the memory
+   file directory if it does not yet exist.
+
+This checklist is the minimum acceptance gate for every move-only refactor
+slice. Skipping any step risks silent import failures, circular dependencies,
+or stale memory that causes future rounds to re-execute completed work.
 
 ### Domain-Local Extraction vs. Cross-Module Dedup
 
@@ -827,95 +1177,28 @@ caveat or candidate, not as a selected handoff.
 
 ## Trajectory And TODO Maintenance
 
-Trajectory files should record accepted facts, exact validation commands and
-results, cache cleanup or no-cache findings, and explicit exclusions that
-preserve scope.
+Trajectory files record accepted facts: exact validation commands and results,
+cache findings, and explicit exclusions that preserve scope.
 
-For docs-only or TODO-only accepted work, record the readback and targeted
-search checks that replaced test execution, and state that tests were skipped
-because no executable code or test files changed.
-For a no-op docs sync, record the targeted searches and requested-surface
-readback that proved the docs were already current, plus a changed-file check
-showing no requested docs were modified.
+**Do not invent the next task.** Select a next task only when the user,
+workflow, or active trajectory explicitly selects one. Otherwise leave a
+neutral waiting state.
 
-For scoped docs-only or TODO-only work, also record a changed-file check or
-equivalent scope check showing that edits stayed inside the allowed file set.
-If an executable, test, dependency, export, harness, generated artifact, or
-paper-result file changed accidentally, treat the run as no longer docs-only
-and validate or repair according to the user's scope.
+Listing **candidate next phases** ("Next slice options: <phase_a> or <phase_b>")
+documents real gaps without selecting one. A memory file that ends with a
+candidate list and no explicit selection is in a neutral waiting state. When
+updating memory after completing a phase, advance the stale pointer past the
+completed phase and list remaining real gaps as candidates.
 
-Do not use TODO or handoff files to invent the next source, harness, docs, or
-experiment task. Select a next task only when the user has explicitly selected
-it, the current workflow instruction names that handoff, or an existing active
-trajectory already contains that selected task. Otherwise leave a neutral
-waiting state such as "no next developer task is selected."
+**Excluded surfaces stay excluded.** If the current task explicitly excluded
+docs, exports, harnesses, or a capability category, preserve that exclusion in
+trajectory files. A later TODO-only pass may record accepted work but must not
+select excluded surfaces as follow-up work without explicit task selection.
 
-Listing **candidate next phases** (e.g. "Next slice options: <phase_a> or
-<phase_b>") is not the same as selecting a next task. Candidates document
-the real gaps visible after the current phase completes — they inform a future
-selection decision but do not make one. A memory file that ends with a
-candidate list and no explicit selection is in a neutral waiting state, not a
-selected handoff. When updating memory after completing a phase, advance the
-stale pointer past the completed phase and list the remaining real gaps as
-candidates; do not promote any candidate to "selected next task" unless the
-user, workflow, or active trajectory explicitly selects it.
-
-When the accepted source/test task explicitly excluded docs, TODO, exports,
-harnesses, experiments, or generated outputs, preserve that exclusion in the
-trajectory. A later TODO-only pass may record accepted work and verified stale
-surfaces, but it must not turn excluded surfaces into selected follow-up work
-without explicit task selection.
-Verified stale docs, exports, harnesses, or artifacts are evidence for a future
-task-selection pass, not a selected next task by themselves. A repository habit,
-recent sequence, or reasonable maintenance preference is not explicit selection
-when the just-finished task excluded that surface. Require selection language
-from the user, a workflow instruction, or an already-active backlog item before
-writing "next developer task: sync docs" or any equivalent handoff after a
-source/test task that excluded docs.
-Explicit exclusions in the current task are not backlog seeds. If the user says
-not to add a capability, parser family, registry, export, adapter, harness,
-CLI, artifact, experiment, or paper output, a TODO-only pass may record that
-the exclusion was preserved, but must not select that excluded capability as
-the next task unless a later explicit task-selection input asks for it.
-
-After an accepted docs-only or TODO-only update, treat any next implementation
-task as a separate task-selection decision, not as a consequence of making docs
-current. If a next source/test task is recorded, tie it to an explicit upstream
-selector, accepted backlog item, or already-scanned stale implementation gap;
-otherwise leave the trajectory neutral.
-Do not use a docs-only sync that merely documented an accepted helper as the
-reason to select an adjacent implementation task. Newly visible omissions in
-the docs may be recorded as candidates for later selection, but the next
-developer task stays neutral unless the user or active workflow explicitly
-selects that implementation work.
-
-If a docs-only sync is explicitly selected, name the exact stale current
-surfaces found in a read-only scan and make clear that it is a separate future
-pass, not part of a source/test task that excluded docs. If no live stale
-surface was verified, do not create a generic documentation task.
-
-When a handoff selects a docs-only follow-up, include a short stale-surface map:
-the document files and surface types to update, such as helper/API lists,
-emitted names, package or module summaries, layout rows, test summaries, or
-absence clauses. A generic "sync docs for <accepted change>" task is not enough
-unless those concrete stale surfaces are also named. Keep the handoff small:
-name stable contracts and stale surface types, not every fixture ID,
-selected-object list, or assertion from the tests.
-
-If accepted review tightened a discriminator, rejection reason, metadata value,
-or mutation target that docs must preserve, carry that exact detail into the
-handoff scope. Do not copy unrelated fixture lists merely because they were
-accepted in tests.
-
-When review corrections changed wording, hierarchy, or absence scope, record
-the final accepted correction as the current contract. Do not preserve rejected
-draft wording as a new TODO item unless the reviewer or user explicitly asks
-for a follow-up.
-
-After validation-only work, record only the command, result, no-fix status, and
-cache cleanup/no-cache finding. A green validation run confirms current
-contracts; it does not create new feature, docs, export, harness, or experiment
-work.
+**Record exact validation results.** For each run, record the command, exact
+pass/fail counts, pre-existing failures documented separately from new
+failures, and cache cleanup findings. A green validation run confirms current
+contracts; it does not create new feature, docs, or experiment work.
 
 ## Naming, State, And References
 
@@ -1444,33 +1727,17 @@ repositories.
 
 ## Final Response
 
-Keep the final response concise:
+Keep the final response concise: changed paths, behavior or contract covered,
+validation performed, and caveats that affect the user's next action.
 
-- changed paths;
-- behavior or contract covered;
-- validation performed, using readback/search checks for docs-only work;
-- caveats that affect the user's next action.
+A round's real delta includes verification runs, memory-record flips, and
+docs/config syncs, not only source/test edits. Report the real delta verified
+against prior on-disk state, not against memory or a task narrative. A
+verification run plus a status/memory flip IS a deliverable — not "no work."
 
-A round's real delta is not only source/test edits: a verification or smoke run
-that wrote on-disk artifacts, a status or memory-record flip, and a docs/config
-sync all count. Do not open a report with "no changes needed", "no work
-required", or "already complete and verified on disk" when any such delta
-exists; "no source/behavior changes" is the precise, sanctioned phrasing when
-only non-source surfaces moved, and those edits must still be listed as this
-round's work. Do not sustain a no-op framing by attributing this round's delta
-to a prior round (for example labeling this round's status flip as "updated
-previous turn"), and do not list state already on disk before this round as
-this round's work — mis-attribution in either direction is the same honesty
-defect. Report only the real delta, verified against the prior on-disk state,
-not against memory or a task narrative; a verification run plus a status/memory
-flip is a deliverable, not "no work".
-
-A pure verification pass — where the task asks to confirm that prior work is
-intact and the developer inspects state, runs tests, and finds no new edits are
-needed — is the exception. In that case the report should describe the checks
-performed and their results, and may state "no new changes made" or "prior work
-confirmed intact on disk." Do not use this exception to relabel an
-implementation pass where work was silently skipped.
+For a pure verification pass where no new edits are needed, describe the checks
+performed and their results, and state "no new changes made" or "prior work
+confirmed intact on disk."
 
 Do not explain skill internals, tool mechanics, or style theory unless the user
 asked for a skill optimizer report.
