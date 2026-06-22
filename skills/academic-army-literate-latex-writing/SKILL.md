@@ -27,6 +27,11 @@ For normal prose, use one `latex` block per manuscript sentence.
 
 After each block, explain why the sentence is here, how it connects to nearby context, what it prepares next, and any useful cross-section connection by content.
 
+## Preserve Reasoning
+When modifying explanations, notes, or other local records of thinking in `.lit.md`, do not lose information. Respect the existing content and preserve already-understood reasoning.
+
+Prefer adding new logical points and updating outdated parts of existing points. Do not directly delete prior reasoning unless it is truly wrong or obsolete; when removing or replacing it, carry forward any still-useful information into the updated text.
+
 ## Workflow
 Draft, revise, move, and delete text in `.lit.md`.
 
