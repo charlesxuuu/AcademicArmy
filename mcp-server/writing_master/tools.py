@@ -9,6 +9,7 @@ def writing_master(prompt: str) -> dict:
     response = client.responses.create(
         model="gpt-5.5-pro",
         reasoning={"effort": "high"},
+        temperature=1.0,
         tools=[{"type": "web_search"}],
         tool_choice="auto",
         include=["web_search_call.action.sources"],
