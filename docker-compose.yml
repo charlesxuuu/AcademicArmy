@@ -1,0 +1,31 @@
+services:
+  developing:
+    build:
+      context: .
+      args:
+        USER: ${USER:?USER is required}
+        UID: ${UID:?UID is required}
+        GID: ${GID:?GID is required}
+        HOME: ${HOME:?HOME is required}
+        PROJECT: ${PWD:?PWD is required}
+    working_dir: ${PWD:?PWD is required}
+    user: "${UID:?UID is required}:${GID:?GID is required}"
+    volumes:
+      - type: bind
+        source: ${HOME:?HOME is required}
+        target: ${HOME:?HOME is required}
+        read_only: true
+      - type: bind
+        source: .
+        target: ${PWD:?PWD is required}
+        read_only: true
+      - type: bind
+        source: ./.venv
+        target: ${PWD:?PWD is required}/.venv
+      - type: bind
+        source: ./output
+        target: ${PWD:?PWD is required}/output
+      - type: bind
+        source: ./skills
+        target: ${PWD:?PWD is required}/skills
+    command: ["bash", "runs/develop-skill.sh"]
