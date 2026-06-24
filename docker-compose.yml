@@ -32,7 +32,8 @@ services:
       - type: bind
         source: ./skills
         target: ${PWD:?PWD is required}/skills
-    command: ["bash", "runs/develop-skill.sh"]
+    entrypoint: [ "/bin/bash", "-lc", "source ${PWD:?PWD is required}/.venv/bin/activate && exec \"$@\"", "--" ]
+    command: [ "bash", "runs/develop-skill.sh" ]
     deploy:
       resources:
         reservations:
