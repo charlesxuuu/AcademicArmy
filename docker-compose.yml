@@ -1,3 +1,5 @@
+# Docker is used here only for permission control around host bind mounts.
+# Runtime dependencies are expected to come from the mounted host environment.
 services:
   developing:
     image: ubuntu:24.04
@@ -30,6 +32,7 @@ services:
       - type: bind
         source: ./skills
         target: ${PWD:?PWD is required}/skills
+    command: ["bash", "runs/develop-skill.sh"]
     deploy:
       resources:
         reservations:
