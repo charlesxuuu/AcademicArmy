@@ -32,7 +32,16 @@ services:
       - type: bind
         source: ./skills
         target: ${PWD:?PWD is required}/skills
-    entrypoint: [ "/bin/bash", "-lc", "source ${PWD:?PWD is required}/.venv/bin/activate && exec \"$@\"", "--" ]
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        if [ -s "/home/${SUDO_USER:-${USER:-USER is required}}/.nvm/nvm.sh" ]; then
+          source "/home/${SUDO_USER:-${USER:-USER is required}}/.nvm/nvm.sh"
+        fi
+        source "${PWD:?PWD is required}/.venv/bin/activate"
+        exec "$@"
+      - --
     command: [ "bash", "runs/develop-skill.sh" ]
     deploy:
       resources:
