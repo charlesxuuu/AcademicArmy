@@ -2,7 +2,7 @@
 
 AcademicArmy is a Codex-based workflow for turning research ideas into structured paper-planning artifacts and an implementation codebase. Its current core is a sequence of planning skills and TypeScript pipelines that run development and skill-evolution agents from those artifacts.
 
-> Status: experimental workflow infrastructure. The generated project lives under `output/`, which is ignored by git.
+> Status: experimental workflow infrastructure. The generated project lives under `workspace/`, which is ignored by git.
 
 [中文说明](README.zh-CN.md)
 
@@ -70,16 +70,16 @@ Once you are satisfied with the paper blueprint, continue with the next planning
 
 ### 4. Run the development loop
 
-After the planning artifacts are ready, write the next high-level development objective into `output/goal.md`, then run:
+After the planning artifacts are ready, write the next high-level development objective into `workspace/goal.md`, then run:
 
 ```bash
-$EDITOR output/goal.md
+$EDITOR workspace/goal.md
 bash runs/develop.sh
 ```
 
-Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `output/codebase`. Each time you want the next new task, update `output/goal.md` before rerunning the wrapper.
+Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `workspace/codebase`. Each time you want the next new task, update `workspace/goal.md` before rerunning the wrapper.
 
-The development loop stores project progress memory under `output/developing-memory/project-progress-memory` and code design memory under `output/developing-memory/code-design-memory`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
+The development loop stores project progress memory under `workspace/developing-memory/project-progress-memory` and code design memory under `workspace/developing-memory/code-design-memory`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
 
 See [`src/README.md`](src/README.md) for the local TypeScript entry points. The development loop implementation lives in the `developing-agent-forge` package.
 
@@ -103,7 +103,7 @@ npm run evolve-skill
 
 For the shared CLI and pipeline structure, see [`src/README.md`](src/README.md).
 
-For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `output/goal.md`. The base development loop comes from `developing-agent-forge`; this repository provides the `developing-skill` trajectory optimizer locally.
+For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `workspace/goal.md`. The base development loop comes from `developing-agent-forge`; this repository provides the `developing-skill` trajectory optimizer locally.
 
 ### Call MCP Tools
 
@@ -130,7 +130,7 @@ Find the closest papers to this research idea, compare their methods, and return
 | `metaskills/`      | Matching metaskill design/evolution files.                                       |
 | `runs/`            | Convenience wrappers around TypeScript pipelines.                                |
 | `src/`             | TypeScript pipeline structure and implementation notes.                          |
-| `output/`          | Generated planning artifacts, codebase output, and archives.                     |
+| `workspace/`       | Generated planning artifacts, codebase workspace, memory, and archives.          |
 
 Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The local TypeScript agents are implemented under [`src/evolve-skill/agents`](src/evolve-skill/agents); developing agents come from `developing-agent-forge`.
 

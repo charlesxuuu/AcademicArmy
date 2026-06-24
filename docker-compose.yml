@@ -27,8 +27,8 @@ services:
         source: ./.venv
         target: ${PWD:?PWD is required}/.venv
       - type: bind
-        source: ./output
-        target: ${PWD:?PWD is required}/output
+        source: ./workspace
+        target: ${PWD:?PWD is required}/workspace
       - type: bind
         source: ./skills
         target: ${PWD:?PWD is required}/skills

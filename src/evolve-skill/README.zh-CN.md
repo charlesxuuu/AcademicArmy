@@ -24,7 +24,7 @@ bash metaskills/academic-army-architect/envolve.sh
 npm run evolve-skill -- \
   --config agent-forge.yaml \
   --skill-path skills/academic-army-architect \
-  --artifact-path output/evolve-academic-army-architect \
+  --artifact-path workspace/evolve-academic-army-architect \
   --metaskill-path metaskills/academic-army-architect/METASKILL.md \
   --task-path metaskills/academic-army-architect/ENVOLVETASK.md
 ```
@@ -111,6 +111,6 @@ pipeline 通过共享 team 保留两个长生命周期 Codex thread：
 
 | 问题                      | 常见原因                               | 解决办法                                                |
 | ------------------------- | -------------------------------------- | ------------------------------------------------------- |
-| Artifacts 在轮次之间消失  | `--artifact-path` 每轮都会清空并复用。 | 使用专门的 `output/evolve-*` 文件夹。                   |
+| Artifacts 在轮次之间消失  | `--artifact-path` 每轮都会清空并复用。 | 使用专门的 `workspace/evolve-*` 文件夹。                |
 | 输出仍然不理想            | Loop 需要具体 metaskill guidance。     | 把具体 tips 加到对应 metaskill 文件，然后再次运行脚本。 |
 | Runner 上下文似乎影响结果 | Runner 应该每轮新建。                  | 检查 pipeline config，并归档生成 artifacts 方便比较。   |

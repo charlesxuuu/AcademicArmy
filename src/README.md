@@ -37,7 +37,7 @@ bash runs/develop.sh
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
-Before each new development task, update `output/goal.md`, which the prepared `developing` and `developing-skill` wrappers pass as `--goal-path`.
+Before each new development task, update `workspace/goal.md`, which the prepared `developing` and `developing-skill` wrappers pass as `--goal-path`.
 
 ## Directory Guide
 
@@ -58,7 +58,7 @@ This keeps the config loading, agent-team construction, and cleanup shared acros
 
 Shell scripts under [`runs/`](../runs/) and the metaskill scripts described in [`metaskills/README.md`](../metaskills/README.md) are convenience wrappers around these TypeScript pipelines.
 
-The prepared development wrappers use `output/goal.md` as the `--goal-path` file. Development memory is split between `output/developing-memory/project-progress-memory` and `output/developing-memory/code-design-memory`; edit or delete stale files there when a new goal should not inherit old context.
+The prepared development wrappers use `workspace/goal.md` as the `--goal-path` file. Development memory is split between `workspace/developing-memory/project-progress-memory` and `workspace/developing-memory/code-design-memory`; edit or delete stale files there when a new goal should not inherit old context.
 
 | Script                                              | Calls                      |
 | --------------------------------------------------- | -------------------------- |

@@ -85,7 +85,7 @@ threads:
   develop-manager:
     runtime: glm-5.2
     options:
-      cwd: &developerWorkspacePath output/codebase
+      cwd: &developerWorkspacePath workspace/codebase
       permissionMode: dontAsk
       allowedTools: *cwdReadWriteBashAllowedTools
   develop-coding:
@@ -97,7 +97,7 @@ threads:
   memory:
     runtime: deepseek-v4-flash
     options:
-      cwd: &memoryWorkingDir output/developing-memory
+      cwd: &memoryWorkingDir workspace/developing-memory
       permissionMode: dontAsk
       allowedTools:
         - Read

@@ -24,7 +24,7 @@ Run the pipeline directly from the repository root:
 npm run evolve-skill -- \
   --config agent-forge.yaml \
   --skill-path skills/academic-army-architect \
-  --artifact-path output/evolve-academic-army-architect \
+  --artifact-path workspace/evolve-academic-army-architect \
   --metaskill-path metaskills/academic-army-architect/METASKILL.md \
   --task-path metaskills/academic-army-architect/ENVOLVETASK.md
 ```
@@ -111,6 +111,6 @@ This avoids LangGraph, state machines, registries, and defensive wrapper code. T
 
 | Problem                                   | Likely cause                                               | Fix                                                                           |
 | ----------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Artifacts disappear between rounds        | `--artifact-path` is cleared and reused each runner round. | Use a dedicated `output/evolve-*` folder.                                     |
+| Artifacts disappear between rounds        | `--artifact-path` is cleared and reused each runner round. | Use a dedicated `workspace/evolve-*` folder.                                  |
 | The output still feels weak               | The loop needs concrete metaskill guidance.                | Add concrete tips to the matching metaskill file and run the script again.    |
 | Runner context seems to influence results | The runner should be fresh each round.                     | Check the pipeline config and archive the generated artifacts for comparison. |

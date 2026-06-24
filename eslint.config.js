@@ -7,7 +7,7 @@ import tseslint from "typescript-eslint";
 const tsconfigRootDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(
-  globalIgnores(["dist/**", "node_modules/**", "coverage/**", "output/**"]),
+  globalIgnores(["dist/**", "node_modules/**", "coverage/**", "workspace/**"]),
   {
     files: ["src/**/*.ts"],
     extends: [

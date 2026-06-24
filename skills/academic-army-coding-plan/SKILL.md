@@ -36,7 +36,7 @@ When the only feedback is access feedback, do not invent content critiques, redu
 
 Write both files to the requested output directory and read them back before responding.
 
-For `output/evolve-*` outputs, or whenever artifact-access feedback is active or sticky in the thread, the final response must be directly reviewable without local filesystem access:
+For `workspace/evolve-*` outputs, or whenever artifact-access feedback is active or sticky in the thread, the final response must be directly reviewable without local filesystem access:
 
 1. Start with one concise validation sentence.
 2. Add `Review Handoff` immediately after that sentence.
@@ -46,14 +46,14 @@ For `output/evolve-*` outputs, or whenever artifact-access feedback is active or
 Use five-backtick fences for full-file handoffs so embedded command fences remain readable:
 
 ``````markdown
-## output/evolve-.../coding_plan.md
+## workspace/evolve-.../coding_plan.md
 
 ```markdown
 <full coding_plan.md content>
 ```
 ``````
 
-## output/evolve-.../coding_plan.explain.md
+## workspace/evolve-.../coding_plan.explain.md
 
 ```markdown
 <full coding_plan.explain.md content>
@@ -65,7 +65,7 @@ When files are long, read each file with a complete read method or bounded chunk
 
 When a reviewer reports repeated sandbox, PowerShell, Node REPL, connector, mounted-path, browser-open, or `file://` failures, keep the final response concise before `Review Handoff`; do not ask the reviewer to retry local access as the main remedy after producing the artifacts.
 
-If the generated artifact is too long for a comfortable final response, still prefer the complete read-back handoff for `output/evolve-*` or active access-feedback tasks. If a platform limit prevents pasting both files, paste as much as possible, clearly mark the truncation point, and state that review is blocked until the remaining read-back content can be provided.
+If the generated artifact is too long for a comfortable final response, still prefer the complete read-back handoff for `workspace/evolve-*` or active access-feedback tasks. If a platform limit prevents pasting both files, paste as much as possible, clearly mark the truncation point, and state that review is blocked until the remaining read-back content can be provided.
 
 ## Output Style
 
@@ -478,7 +478,7 @@ Before the final response, confirm:
 - Every test capability has a semantic name, small fixture or mock input, expected behavior, pass/fail criteria, and debug-output behavior separated from paper results.
 - Paper outputs can be derived from raw and metric artifacts without rerunning experiments.
 - The readability and path hygiene pass succeeds.
-- For `output/evolve-*` outputs or artifact-access feedback, the final response includes a `Review Handoff` section with both complete read-back files under relative path headings.
+- For `workspace/evolve-*` outputs or artifact-access feedback, the final response includes a `Review Handoff` section with both complete read-back files under relative path headings.
 - For repeated artifact-access feedback, the handoff is self-contained enough for a reviewer to evaluate language, content boundaries, path hygiene, harness/testing separation, result artifact schema quality, redundancy, and defensive wording without opening local files.
 
 ## Final Response
@@ -490,5 +490,5 @@ After writing and validating the files, summarize:
 - high-blocking open questions
 - validation performed, including read-back result
 
-For `output/evolve-*` outputs or when artifact-access feedback requests pasted contents, add a `Review Handoff` heading immediately after the concise validation sentence and paste the complete read-back contents of both files using the five-backtick handoff format. A path-only response is incomplete for access-limited review.
+For `workspace/evolve-*` outputs or when artifact-access feedback requests pasted contents, add a `Review Handoff` heading immediately after the concise validation sentence and paste the complete read-back contents of both files using the five-backtick handoff format. A path-only response is incomplete for access-limited review.
 ````

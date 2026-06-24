@@ -1,1 +1,1 @@
-Create an experiment plan based on the paper blueprint in output/paper_blueprint.md.
+Create an experiment plan based on the paper blueprint in workspace/paper_blueprint.md.
