@@ -3,10 +3,6 @@ services:
     build:
       context: .
       args:
-        USER: ${USER:?USER is required}
-        UID: ${UID:?UID is required}
-        GID: ${GID:?GID is required}
-        HOME: ${HOME:?HOME is required}
         PROJECT: ${PWD:?PWD is required}
     working_dir: ${PWD:?PWD is required}
     user: "${UID:?UID is required}:${GID:?GID is required}"
@@ -28,4 +24,3 @@ services:
       - type: bind
         source: ./skills
         target: ${PWD:?PWD is required}/skills
-    command: ["bash", "runs/develop-skill.sh"]
