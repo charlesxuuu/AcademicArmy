@@ -3,6 +3,13 @@
 services:
   developing:
     image: ubuntu:24.04
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     network_mode: host
     working_dir: ${PWD:?PWD is required}
     user: "${SUDO_UID:-${UID:-UID is required}}:${SUDO_GID:-${GID:-GID is required}}"
@@ -51,10 +58,3 @@ services:
         exec "$@"
       - --
     command: [ "bash", "runs/develop-skill.sh" ]
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu ]
