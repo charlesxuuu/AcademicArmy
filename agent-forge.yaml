@@ -110,6 +110,12 @@ threads:
         - Edit(./**)
         - Write(./**)
         - NotebookEdit(./**)
+  memory-cleaner:
+    runtime: deepseek-v4-pro
+    options:
+      cwd: *memoryWorkingDir
+      permissionMode: dontAsk
+      allowedTools: *cwdReadWriteBashAllowedTools
 
 agents:
   skill-runner:
@@ -140,4 +146,7 @@ agents:
   memory-modifier: *memoryAgentConfig
   memory-create-planner: *memoryAgentConfig
   memory-creator: *memoryAgentConfig
-  memory-cleaner: *memoryAgentConfig
+  memory-cleaner:
+    thread: memory-cleaner
+    constants:
+      workingDir: *memoryWorkingDir
