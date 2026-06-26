@@ -140,3 +140,4 @@ agents:
   memory-modifier: *memoryAgentConfig
   memory-create-planner: *memoryAgentConfig
   memory-creator: *memoryAgentConfig
+  memory-cleaner: *memoryAgentConfig
