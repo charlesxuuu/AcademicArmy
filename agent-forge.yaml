@@ -8,10 +8,8 @@ runtimes:
             command: python
             args:
               - -m
-              - mcp-server
+              - academic_army_mcp_tools
             cwd: .
-            env:
-              PYTHONPATH: .
             tool_timeout_sec: 3600
   deepseek-v4-pro:
     kind: claude
@@ -31,10 +29,8 @@ runtimes:
           command: python
           args:
             - -m
-            - mcp-server
+            - academic_army_mcp_tools
           cwd: .
-          env:
-            PYTHONPATH: .
           timeout: 3600000
   deepseek-v4-flash:
     kind: claude
