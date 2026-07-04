@@ -1,6 +1,6 @@
 {
   "name": "academic-army",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Agent workflows and skills for AcademicArmy.",
   "license": "MIT",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=20.19"
+    "node": ">=22.13"
   },
   "exports": {
     "./evolve-skill": {

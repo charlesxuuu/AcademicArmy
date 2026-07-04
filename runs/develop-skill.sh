@@ -5,7 +5,7 @@ npm run developing-skill -- \
   --config "agent-forge.yaml" \
   --config "secret.yaml" \
   --target-path "workspace/codebase" \
-  --achive-dir "workspace/archives" \
+  --archive-root "workspace/archives" \
   --project-progress-memory-path "workspace/memory/project-progress" \
   --code-design-memory-path "workspace/memory/code-design" \
   --coding-style-skill-path "skills/academic-army-coding-style" \
@@ -16,4 +16,5 @@ npm run developing-skill -- \
   --goal-path "workspace/plan/goal.md" \
   --max-iterations "100" \
   --max-task-devloop-iterations "10" \
-  --max-memory-rounds "3"
+  --max-memory-rounds "3" \
+  --memory-clean-interval "0"
