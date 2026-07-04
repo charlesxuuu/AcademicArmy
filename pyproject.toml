@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "academic-army-mcp-tools"
+version = "0.0.1"
+description = "MCP tools for AcademicArmy workflows."
+requires-python = ">=3.11"
+dependencies = [
+  "mcp[cli]>=1.27.1",
+  "openai>=2.38.0",
+  "python-dotenv>=1.2.2",
+  "tomlkit>=0.13.3",
+]
+
+[project.scripts]
+academic-army-mcp-tools = "academic_army_mcp_tools.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["academic_army_mcp_tools*"]

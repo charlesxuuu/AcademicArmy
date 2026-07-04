@@ -1,0 +1,1 @@
+"""AcademicArmy MCP server package."""
