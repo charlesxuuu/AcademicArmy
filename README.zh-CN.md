@@ -38,10 +38,10 @@ AcademicArmy 的主体核心可以概括为一句话：按图施工。
 npm install
 ```
 
-如有需要，从 [`mcp-server/requirements.txt`](mcp-server/requirements.txt) 安装 MCP server 依赖：
+把 MCP server 安装到本地虚拟环境：
 
 ```bash
-python -m pip install -r ./mcp-server/requirements.txt
+.venv/bin/python -m pip install -e .
 ```
 
 ### 2. 配置 AcademicArmy MCP
@@ -52,7 +52,7 @@ python -m pip install -r ./mcp-server/requirements.txt
 OPENAI_API_KEY=your_api_key_here
 ```
 
-运行项目 pipeline 时，通过 [`agent-forge.yaml`](agent-forge.yaml) 使用 `academic_army_mcp_tools`。该配置会在仓库根目录以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`，因此 evolve/developing runner 不需要额外执行 Codex MCP 安装步骤。
+运行项目 pipeline 时，通过 [`agent-forge.yaml`](agent-forge.yaml) 使用 `academic_army_mcp_tools`。该配置会用 `.venv/bin/python -m academic_army_mcp_tools` 启动已安装的包，不受各个 agent thread 工作目录影响。
 
 如果直接在 Codex 中运行 AcademicArmy skills，需要用 [`install_mcp.py`](install_mcp.py) 把同一个 MCP server 安装到 Codex 里，这样 skill 才能在项目 pipeline 之外调用 `academic_army_mcp_tools.deepresearch` 和 `academic_army_mcp_tools.writing_master`：
 
@@ -107,7 +107,7 @@ TypeScript pipeline 的目录结构和实现说明见 [`src/README.zh-CN.md`](sr
 
 ### 调用 MCP 工具
 
-AcademicArmy 在 [`mcp-server`](mcp-server) 目录下提供了本地 stdio MCP 实现。它暴露这些工具：
+AcademicArmy 在 [`academic_army_mcp_tools`](academic_army_mcp_tools) 包中提供了可安装的 stdio MCP 实现。它暴露这些工具：
 
 - `deepresearch(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行。
 - `writing_master(prompt: str)`：把 prompt 交给 OpenAI Responses，以 `gpt-5.5-pro`、high reasoning、web search、background mode 和 source inclusion 的固定配置运行，用于高阶学术写作咨询。
@@ -121,16 +121,16 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## 项目结构
 
-| 路径               | 用途                                                           |
-| ------------------ | -------------------------------------------------------------- |
-| `agent-forge.yaml` | Agent 和团队 wiring。                                          |
-| `install_mcp.py`   | 把项目 MCP server 安装到 Codex，供直接运行 skill 时使用。      |
-| `mcp-server/`      | 本地 stdio MCP 实现，暴露 `deepresearch` 和 `writing_master`。 |
-| `skills/`          | 已准备的 AcademicArmy skills。                                 |
-| `metaskills/`      | 对应的 metaskill 设计与 evolution 文件。                       |
-| `runs/`            | TypeScript pipelines 的便捷 wrappers。                         |
-| `src/`             | TypeScript pipeline 的目录结构和实现说明。                     |
-| `workspace/`       | 生成的规划产物、代码库工作区、记忆和归档。                     |
+| 路径                       | 用途                                                               |
+| -------------------------- | ------------------------------------------------------------------ |
+| `agent-forge.yaml`         | Agent 和团队 wiring。                                              |
+| `install_mcp.py`           | 把项目 MCP server 安装到 Codex，供直接运行 skill 时使用。          |
+| `academic_army_mcp_tools/` | 可安装的 stdio MCP 实现，暴露 `deepresearch` 和 `writing_master`。 |
+| `skills/`                  | 已准备的 AcademicArmy skills。                                     |
+| `metaskills/`              | 对应的 metaskill 设计与 evolution 文件。                           |
+| `runs/`                    | TypeScript pipelines 的便捷 wrappers。                             |
+| `src/`                     | TypeScript pipeline 的目录结构和实现说明。                         |
+| `workspace/`               | 生成的规划产物、代码库工作区、记忆和归档。                         |
 
 Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。本仓库内的 TypeScript agents 实现于 [`src/evolve-skill/agents`](src/evolve-skill/agents)；developing agents 来自 `developing-agent-forge`。
 
@@ -141,7 +141,7 @@ Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。本仓库
 | 文件或变量                | 用于               | 说明                                                                                                                     |
 | ------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------ |
 | `.env` / `OPENAI_API_KEY` | AcademicArmy MCP   | MCP server 和 `install_mcp.py` 会读取。                                                                                  |
-| `agent-forge.yaml`        | 项目 pipelines     | 以 `PYTHONPATH=.` 和 `cwd=.` 运行 `python -m mcp-server`。                                                               |
+| `agent-forge.yaml`        | 项目 pipelines     | 启动 `.venv` 中已安装的 `academic_army_mcp_tools` 包；修改 MCP 包代码后运行 `.venv/bin/python -m pip install -e .`。     |
 | `secret.yaml`             | 预设 shell scripts | 预设 wrappers 使用的本地忽略 config overlay。它可以包含密码、API key、runtime 凭据等不能提交或上传到 GitHub 的隐私内容。 |
 
 如果需要覆盖或补充环境变量，可以重复使用 `-e/--env NAME=VALUE`：
@@ -150,7 +150,7 @@ Agent 和团队 wiring 位于 [`agent-forge.yaml`](agent-forge.yaml)。本仓库
 python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
 ```
 
-运行安装脚本时，会刷新 Codex 中的 `academic_army_mcp_tools` 配置项，注册当前 Python 可执行文件和 `-m mcp-server`，把仓库根目录设置为 MCP 工作目录，读取 `.env`，并把这些环境变量传给 MCP server。
+运行安装脚本时，会刷新 Codex 中的 `academic_army_mcp_tools` 配置项，注册当前 Python 可执行文件和 `-m academic_army_mcp_tools`，把仓库根目录设置为 MCP 工作目录，读取 `.env`，并把这些环境变量传给 MCP server。
 
 ## 常见问题
 

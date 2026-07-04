@@ -38,10 +38,10 @@ Install package dependencies once:
 npm install
 ```
 
-Install MCP server dependencies from [`mcp-server/requirements.txt`](mcp-server/requirements.txt) if needed:
+Install the MCP server into the local virtual environment:
 
 ```bash
-python -m pip install -r ./mcp-server/requirements.txt
+.venv/bin/python -m pip install -e .
 ```
 
 ### 2. Configure AcademicArmy MCP
@@ -52,7 +52,7 @@ Create `.env` in the repository root:
 OPENAI_API_KEY=your_api_key_here
 ```
 
-For project pipeline runs, use the `academic_army_mcp_tools` server through [`agent-forge.yaml`](agent-forge.yaml). That config launches the server as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.` from the repository root, so the evolve/developing runners do not need a separate Codex MCP installation step.
+For project pipeline runs, use the `academic_army_mcp_tools` server through [`agent-forge.yaml`](agent-forge.yaml). That config launches the installed package with `.venv/bin/python -m academic_army_mcp_tools`, independent of each agent thread's working directory.
 
 When running AcademicArmy skills directly in Codex, use [`install_mcp.py`](install_mcp.py) to install the same MCP server into Codex so the skills can call `academic_army_mcp_tools.deepresearch` and `academic_army_mcp_tools.writing_master` outside the project pipeline:
 
@@ -107,7 +107,7 @@ For `developing` and `developing-skill`, update the file passed to `--goal-path`
 
 ### Call MCP Tools
 
-AcademicArmy includes a local stdio MCP implementation in the [`mcp-server`](mcp-server) directory. It exposes these tools:
+AcademicArmy includes an installable stdio MCP package in [`academic_army_mcp_tools`](academic_army_mcp_tools). It exposes these tools:
 
 - `deepresearch(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5`, high reasoning, web search, background mode, and source inclusion.
 - `writing_master(prompt: str)`: runs the prompt with OpenAI Responses using `gpt-5.5-pro`, high reasoning, web search, background mode, and source inclusion for high-end academic writing review.
@@ -121,16 +121,16 @@ Find the closest papers to this research idea, compare their methods, and return
 
 ## Project Structure
 
-| Path               | Purpose                                                                          |
-| ------------------ | -------------------------------------------------------------------------------- |
-| `agent-forge.yaml` | Agent and team wiring.                                                           |
-| `install_mcp.py`   | Installs the project MCP server into Codex for direct skill runs.                |
-| `mcp-server/`      | Local stdio MCP implementation that exposes `deepresearch` and `writing_master`. |
-| `skills/`          | Prepared AcademicArmy skills.                                                    |
-| `metaskills/`      | Matching metaskill design/evolution files.                                       |
-| `runs/`            | Convenience wrappers around TypeScript pipelines.                                |
-| `src/`             | TypeScript pipeline structure and implementation notes.                          |
-| `workspace/`       | Generated planning artifacts, codebase workspace, memory, and archives.          |
+| Path                       | Purpose                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| `agent-forge.yaml`         | Agent and team wiring.                                                                 |
+| `install_mcp.py`           | Installs the project MCP server into Codex for direct skill runs.                      |
+| `academic_army_mcp_tools/` | Installable stdio MCP implementation that exposes `deepresearch` and `writing_master`. |
+| `skills/`                  | Prepared AcademicArmy skills.                                                          |
+| `metaskills/`              | Matching metaskill design/evolution files.                                             |
+| `runs/`                    | Convenience wrappers around TypeScript pipelines.                                      |
+| `src/`                     | TypeScript pipeline structure and implementation notes.                                |
+| `workspace/`               | Generated planning artifacts, codebase workspace, memory, and archives.                |
 
 Agent and team wiring lives in [`agent-forge.yaml`](agent-forge.yaml). The local TypeScript agents are implemented under [`src/evolve-skill/agents`](src/evolve-skill/agents); developing agents come from `developing-agent-forge`.
 
@@ -141,7 +141,7 @@ Prepared AcademicArmy skills live under [`skills/`](skills/), and their matching
 | File or variable          | Required for           | Notes                                                                                                                                                                                          |
 | ------------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `.env` / `OPENAI_API_KEY` | AcademicArmy MCP       | Read by the MCP server and by `install_mcp.py`.                                                                                                                                                |
-| `agent-forge.yaml`        | Project pipelines      | Launches `academic_army_mcp_tools` as `python -m mcp-server` with `PYTHONPATH=.` and `cwd=.`.                                                                                                  |
+| `agent-forge.yaml`        | Project pipelines      | Launches installed `.venv` package `academic_army_mcp_tools`; run `.venv/bin/python -m pip install -e .` after changing MCP package code.                                                      |
 | `secret.yaml`             | Prepared shell scripts | Local ignored config overlay used by the prepared wrappers. It may contain passwords, API keys, runtime credentials, or other private values that must not be committed or uploaded to GitHub. |
 
 To override or add environment variables directly when installing MCP into Codex, repeat `-e/--env NAME=VALUE`:
@@ -150,7 +150,7 @@ To override or add environment variables directly when installing MCP into Codex
 python install_mcp.py -e OPENAI_API_KEY=your_api_key_here
 ```
 
-Running the installer refreshes the Codex `academic_army_mcp_tools` entry, registers the current Python executable with `-m mcp-server`, sets the repository root as the MCP working directory, reads `.env`, and forwards those values to the MCP server.
+Running the installer refreshes the Codex `academic_army_mcp_tools` entry, registers the current Python executable with `-m academic_army_mcp_tools`, sets the repository root as the MCP working directory, reads `.env`, and forwards those values to the MCP server.
 
 ## Troubleshooting
 

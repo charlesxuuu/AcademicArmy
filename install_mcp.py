@@ -44,8 +44,6 @@ for item in args.env:
     name, value = item.split("=", 1)
     env_items[name] = value
 
-env_items.setdefault("PYTHONPATH", str(repo))
-
 codex = shutil.which("codex")
 if not codex:
     raise SystemExit("Could not find the codex command line tool in PATH.")
@@ -59,7 +57,7 @@ subprocess.run(
 command = [codex, "mcp", "add"]
 for name, value in env_items.items():
     command += ["--env", f"{name}={value}"]
-command += [SERVER_NAME, "--", str(Path(sys.executable).resolve()), "-m", "mcp-server"]
+command += [SERVER_NAME, "--", str(Path(sys.executable).resolve()), "-m", SERVER_NAME]
 
 subprocess.run(command, check=True)
 
@@ -79,7 +77,6 @@ codex_config.write_text(tomlkit.dumps(config), encoding="utf-8")
 print(f"Installed {SERVER_NAME} with {codex}")
 print(f"Python: {Path(sys.executable).resolve()}")
 print(f"Working directory: {repo}")
-print(f"PYTHONPATH: {repo}")
 print(f"Codex config: {codex_config}")
 print(f"Environment variables registered with codex --env: {len(env_items)}")
 print(f"tool_timeout_sec: {args.timeout}")

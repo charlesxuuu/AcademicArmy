@@ -1,6 +1,6 @@
 {
   "name": "academic-army",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Agent workflows and skills for AcademicArmy.",
   "license": "MIT",
   "repository": {
@@ -23,10 +23,8 @@
     "skills",
     "metaskills",
     "runs",
-    "mcp-server/__main__.py",
-    "mcp-server/requirements.txt",
-    "mcp-server/deepresearch/*.py",
-    "mcp-server/writing_master/*.py",
+    "academic_army_mcp_tools/**/*.py",
+    "pyproject.toml",
     "install_mcp.py",
     "README.md",
     "README.zh-CN.md",
