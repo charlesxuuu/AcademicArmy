@@ -30,13 +30,16 @@ ${quoteBlock(variables.taskRoundSummary)}
 Metaskill (design goals and tips for this skill):
 ${quoteBlock(variables.metaskill)}
 
+Consider these design goals and tips when revising.
+
 Evaluate whether the skill produced a good modification trajectory, then revise the skill directly.
 
-Focus on:
+Useful angles include:
 - missing guidance
 - misleading guidance
 - redundant guidance
 - effects on task selection, coding, or review
+- other relevant trajectory issues...
 `;
   }
 }
