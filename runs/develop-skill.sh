@@ -10,6 +10,9 @@ npm run developing-skill -- \
   --code-design-memory-path "workspace/developing-memory/code-design-memory" \
   --coding-style-skill-path "skills/academic-army-coding-style" \
   --metaskill-path "metaskills/academic-army-coding-style/METASKILL.md" \
+  --goal-path "workspace/paper_blueprint.md" \
+  --goal-path "workspace/experiment_plan.md" \
+  --goal-path "workspace/coding_plan.md" \
   --goal-path "workspace/goal.md" \
   --max-iterations "100" \
   --max-task-devloop-iterations "10" \
