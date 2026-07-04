@@ -1,6 +1,8 @@
 import { Agent } from "coding-agent-forge/agent";
 import type { DevelopingAgentVariables } from "developing-agent-forge/agents";
 
+import { quoteBlock } from "./prompts.js";
+
 export type TrajectoryOptimizerVariables = DevelopingAgentVariables & {
   codingStyleSkillPath: string;
   taskBrief: string;
@@ -11,28 +13,30 @@ export type TrajectoryOptimizerVariables = DevelopingAgentVariables & {
 export class TrajectoryOptimizerAgent extends Agent<TrajectoryOptimizerVariables> {
   protected buildPrompt(variables: Readonly<TrajectoryOptimizerVariables>): string {
     return `
-Revise the skill at ${variables.codingStyleSkillPath} so it produces better development trajectories.
+Evaluate and revise the skill so it produces better development trajectories.
 
-The metaskill below contains the design goals and tips of this skill:
+Skill path: ${variables.codingStyleSkillPath}
+Project root: ${variables.targetPath}/.
 
-${variables.metaskill}
+Current goal:
+${quoteBlock(variables.goal)}
 
-The sections below describe the task this skill just executed and what happened during that round.
+Task brief:
+${quoteBlock(variables.taskBrief)}
 
-Target repository at ${variables.targetPath}/.
+Round summary:
+${quoteBlock(variables.taskRoundSummary)}
 
-Goal:
-${variables.goal}
+Metaskill (design goals and tips for this skill):
+${quoteBlock(variables.metaskill)}
 
-Task Brief:
-${variables.taskBrief}
+Evaluate whether the skill produced a good modification trajectory, then revise the skill directly.
 
-Reality-aware task round summary:
-${variables.taskRoundSummary}
-
-Evaluate whether the skill produced a good modification trajectory, then edit the skill directly. Focus on missing, misleading, or redundant guidance that affected task selection, coding, or review.
-
-Output a concise optimizer report with the main skill changes.
+Focus on:
+- missing guidance
+- misleading guidance
+- redundant guidance
+- effects on task selection, coding, or review
 `;
   }
 }
