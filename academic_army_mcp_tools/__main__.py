@@ -8,16 +8,7 @@ from .deepresearch import register_deepresearch
 from .writing_master import register_writing_master
 
 
-mcp = FastMCP(
-    "academic-army",
-    instructions=(
-        "AcademicArmy MCP server. It exposes project-level tools for research, "
-        "blueprint orchestration, and future AcademicArmy workflow functions."
-    ),
-)
-
-
-if __name__ == "__main__":
+def main() -> None:
     load_dotenv(".env")
 
     parser = argparse.ArgumentParser()
@@ -30,6 +21,17 @@ if __name__ == "__main__":
             parser.error("-e/--env must be NAME=VALUE")
         os.environ[name] = value
 
+    mcp = FastMCP(
+        "academic-army",
+        instructions=(
+            "AcademicArmy MCP server. It exposes project-level tools for research, "
+            "blueprint orchestration, and future AcademicArmy workflow functions."
+        ),
+    )
     register_deepresearch(mcp)
     register_writing_master(mcp)
     mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()
