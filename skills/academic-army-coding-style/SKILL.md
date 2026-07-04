@@ -130,7 +130,7 @@ and silent acceptance of stale evidence.
 3. **Document consultation**: If the task's Boundaries or Context list documents to read (blueprints, plans, specs, reference docs, status files), read ALL of them before proceeding. The task's document list is a scope fence, not a suggestion.
 
    **Path resolution from Context.** When the task references files by relative paths
-   (e.g., `current_status.md`, `developing-memory/...`, `experiment_plan.md`), resolve
+   (e.g., `current_status.md`, `memory/...`, `experiment_plan.md`), resolve
    their concrete location using the Context's own document-path conventions.  If the
    Context places planning documents at an absolute workspace-level path
    (e.g., `~/<workspace>/`), then status, memory, and tracking files the task

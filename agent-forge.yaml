@@ -97,7 +97,7 @@ threads:
   memory:
     runtime: deepseek-v4-flash
     options:
-      cwd: &memoryWorkingDir workspace/developing-memory
+      cwd: &memoryWorkingDir workspace/memory
       permissionMode: dontAsk
       allowedTools:
         - Read

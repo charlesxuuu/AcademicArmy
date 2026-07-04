@@ -70,16 +70,16 @@ python install_mcp.py
 
 ### 4. 运行开发循环
 
-三份规划产物准备好后，先把下一轮高层开发目标写进 `workspace/goal.md`，然后运行：
+三份规划产物准备好后，先把下一轮高层开发目标写进 `workspace/plan/goal.md`，然后运行：
 
 ```bash
-$EDITOR workspace/goal.md
+$EDITOR workspace/plan/goal.md
 bash runs/develop.sh
 ```
 
-运行 [`runs/develop.sh`](runs/develop.sh) 来调用 `developing-agent-forge` 提供的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `workspace/codebase` 下迭代写代码。每次想执行下一个新任务时，先更新 `workspace/goal.md`，再重新运行 wrapper。
+运行 [`runs/develop.sh`](runs/develop.sh) 来调用 `developing-agent-forge` 提供的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `workspace/codebase` 下迭代写代码。每次想执行下一个新任务时，先更新 `workspace/plan/goal.md`，再重新运行 wrapper。
 
-开发循环会把项目进度记忆放在 `workspace/developing-memory/project-progress-memory`，把代码设计记忆放在 `workspace/developing-memory/code-design-memory`。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
+开发循环会把项目进度记忆放在 `workspace/memory/project-progress`，把代码设计记忆放在 `workspace/memory/code-design`。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
 
 本仓库的 TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。开发循环实现来自 `developing-agent-forge` 包。
 
@@ -103,7 +103,7 @@ npm run evolve-skill
 
 TypeScript pipeline 的目录结构和实现说明见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。
 
-对于 `developing` 和 `developing-skill`，每次想切换到新的任务重点时，更新传给 `--goal-path` 的文件即可。预设 wrappers 使用的是 `workspace/goal.md`。基础开发循环来自 `developing-agent-forge`；本仓库在本地提供 `developing-skill` trajectory optimizer。
+对于 `developing` 和 `developing-skill`，每次想切换到新的任务重点时，更新传给 `--goal-path` 的文件即可。预设 wrappers 使用的是 `workspace/plan/goal.md`。基础开发循环来自 `developing-agent-forge`；本仓库在本地提供 `developing-skill` trajectory optimizer。
 
 ### 调用 MCP 工具
 

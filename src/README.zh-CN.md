@@ -37,7 +37,7 @@ bash runs/develop.sh
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
-每次开始新的开发任务前，先更新 `workspace/goal.md`；预设的 `developing` 和 `developing-skill` wrapper 会把它作为 `--goal-path` 传入。
+每次开始新的开发任务前，先更新 `workspace/plan/goal.md`；预设的 `developing` 和 `developing-skill` wrapper 会把它作为 `--goal-path` 传入。
 
 ## 目录说明
 
@@ -58,7 +58,7 @@ bash metaskills/academic-army-architect/envolve.sh
 
 [`runs/`](../runs/) 和 [`metaskills/README.zh-CN.md`](../metaskills/README.zh-CN.md) 中说明的 metaskill scripts 是这些 TypeScript pipeline 的便捷包装。
 
-预设开发 wrapper 使用 `workspace/goal.md` 作为 `--goal-path` 文件。开发记忆分为 `workspace/developing-memory/project-progress-memory` 和 `workspace/developing-memory/code-design-memory`；如果新一轮不希望继承旧上下文，可以编辑或删除这些目录里的过期文件。
+预设开发 wrapper 使用 `workspace/plan/goal.md` 作为 `--goal-path` 文件。开发记忆分为 `workspace/memory/project-progress` 和 `workspace/memory/code-design`；如果新一轮不希望继承旧上下文，可以编辑或删除这些目录里的过期文件。
 
 | Script                                              | 调用                       |
 | --------------------------------------------------- | -------------------------- |
