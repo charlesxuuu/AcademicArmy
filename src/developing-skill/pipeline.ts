@@ -11,6 +11,7 @@ import {
   type ProjectDevLoopAgentVariablesByName,
   type ProjectDevLoopCallbacks,
 } from "developing-agent-forge";
+import { readMetaskill } from "../metaskill.js";
 import { agentFactories } from "./agents/index.js";
 import type { TrajectoryOptimizerVariables } from "./agents/index.js";
 
@@ -25,7 +26,7 @@ export const developingSkillArgsOptions = {
   },
   "metaskill-path": {
     type: "string",
-    description: "Metaskill design document used by the trajectory optimizer",
+    description: "Metaskill design document path or HTTP(S) URL used by the trajectory optimizer",
   },
   ...developingArgsOptions,
 } as const satisfies PipelineArgsOptions;
@@ -41,6 +42,7 @@ export async function developingSkill(
   if (codingStyleSkillPath === undefined || metaskillPath === undefined) {
     throw new Error("--coding-style-skill-path and --metaskill-path are required");
   }
+  const metaskill = await readMetaskill(metaskillPath);
 
   const logRecord: RecordCallback = (thread, record) => {
     console.log(thread.recordToPrettyString(record));
@@ -56,7 +58,7 @@ export async function developingSkill(
             codingStyleSkillPath,
             taskBrief,
             taskRoundSummary: taskResult.taskRoundSummary,
-            metaskillPath,
+            metaskill,
           },
           logRecord,
         )

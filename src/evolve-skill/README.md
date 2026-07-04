@@ -37,7 +37,7 @@ Required arguments:
 | ------------------ | -------------------------------------------------------------------------------------------------------------- |
 | `--skill-path`     | The skill directory or file to revise.                                                                         |
 | `--artifact-path`  | The output folder cleared and reused by each runner round.                                                     |
-| `--metaskill-path` | The metaskill design document used by evaluator and modifier.                                                  |
+| `--metaskill-path` | The local path or HTTP(S) URL for the metaskill design document used by evaluator and modifier.                |
 | `--task-path`      | The fixed task used by the runner to test the skill. Repeat this option to run multiple fixed tasks per round. |
 
 Optional arguments:
@@ -55,7 +55,7 @@ Optional arguments:
 
 - `--skill-path`: the skill directory or file to revise.
 - `--artifact-path`: the output directory cleared and reused each round.
-- `--metaskill-path`: the design document and tips used to judge and revise the skill.
+- `--metaskill-path`: the local path or HTTP(S) URL for the design document and tips used to judge and revise the skill.
 - `--task-path`: one or more fixed tasks used to test the skill.
 - `--rounds`: the number of self-evolve rounds, defaulting to `3`.
 
@@ -63,7 +63,7 @@ Each round does the following:
 
 1. Clear and recreate `--artifact-path`.
 2. For each configured `--task-path`, create a fresh `skill-runner` agent to run the target skill on that fixed task and write artifacts.
-3. Use `skill-evaluator` to evaluate the artifact against the current metaskill guidance file.
+3. Use `skill-evaluator` to evaluate the artifact against the current metaskill guidance.
 4. Pass the evaluator review to `skill-modifier`, which revises the target skill using the same metaskill guidance.
 
 The fresh runner keeps each artifact independent from earlier runner context. The evaluator and modifier are invoked through the shared `AgentTeam` so their configured agent behavior is centralized in the pipeline config.
@@ -93,7 +93,7 @@ This avoids LangGraph, state machines, registries, and defensive wrapper code. T
 | Item                      | Path source                                      |
 | ------------------------- | ------------------------------------------------ |
 | Target skill              | `--skill-path`                                   |
-| Metaskill                 | `--metaskill-path`                               |
+| Metaskill                 | `--metaskill-path` path or URL                   |
 | Fixed task                | `--task-path`                                    |
 | Generated artifact folder | `--artifact-path`, cleared and reused each round |
 
@@ -104,8 +104,8 @@ This avoids LangGraph, state machines, registries, and defensive wrapper code. T
 | [`pipeline.ts`](pipeline.ts)                 | Argument parsing and round orchestration.                                                            |
 | [`agents/factory.ts`](agents/factory.ts)     | Registers `skill-runner`, `skill-evaluator`, and `skill-modifier`.                                   |
 | [`agents/runner.ts`](agents/runner.ts)       | Reads each fixed task file configured by `--task-path` and asks the target skill to write artifacts. |
-| [`agents/evaluator.ts`](agents/evaluator.ts) | Reads the metaskill file configured by `--metaskill-path` and critiques the produced artifact.       |
-| [`agents/modifier.ts`](agents/modifier.ts)   | Reads the metaskill file and the evaluator review, then revises the target skill.                    |
+| [`agents/evaluator.ts`](agents/evaluator.ts) | Uses the loaded metaskill content and critiques the produced artifact.                               |
+| [`agents/modifier.ts`](agents/modifier.ts)   | Uses the loaded metaskill content and the evaluator review, then revises the target skill.           |
 
 ## Troubleshooting
 

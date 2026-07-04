@@ -6,6 +6,7 @@ import {
   type RecordCallback,
 } from "coding-agent-forge";
 import { mkdir, readFile, rm } from "node:fs/promises";
+import { readMetaskill } from "../metaskill.js";
 import { agentFactories } from "./agents/index.js";
 import type {
   SkillEvaluatorVariables,
@@ -42,6 +43,7 @@ export async function evolveSkill(
       }),
     )
   ).join("\n\n");
+  const metaskill = await readMetaskill(options.metaskillPath);
 
   for (let round = 1; round <= options.rounds; round++) {
     await rm(options.artifactPath, { recursive: true, force: true });
@@ -64,7 +66,7 @@ export async function evolveSkill(
         "skill-evaluator",
         {
           artifactPath: options.artifactPath,
-          metaskillPath: options.metaskillPath,
+          metaskill,
           taskDescriptions,
         },
         logRecord,
@@ -77,7 +79,7 @@ export async function evolveSkill(
       "skill-modifier",
       {
         skillPath: options.skillPath,
-        metaskillPath: options.metaskillPath,
+        metaskill,
         review,
       },
       logRecord,
@@ -98,7 +100,7 @@ export const evolveSkillArgsOptions = {
   },
   "metaskill-path": {
     type: "string",
-    description: "Metaskill design document used by the evaluator and modifier",
+    description: "Metaskill design document path or HTTP(S) URL used by the evaluator and modifier",
   },
   "task-path": {
     type: "string",

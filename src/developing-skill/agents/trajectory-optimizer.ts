@@ -1,23 +1,21 @@
 import { Agent } from "coding-agent-forge/agent";
 import type { DevelopingAgentVariables } from "developing-agent-forge/agents";
-import { readFileSync } from "node:fs";
 
 export type TrajectoryOptimizerVariables = DevelopingAgentVariables & {
   codingStyleSkillPath: string;
   taskBrief: string;
   taskRoundSummary: string;
-  metaskillPath: string;
+  metaskill: string;
 };
 
 export class TrajectoryOptimizerAgent extends Agent<TrajectoryOptimizerVariables> {
   protected buildPrompt(variables: Readonly<TrajectoryOptimizerVariables>): string {
-    const metaskill = readFileSync(variables.metaskillPath, "utf8");
     return `
 Revise the skill at ${variables.codingStyleSkillPath} so it produces better development trajectories.
 
 The metaskill below contains the design goals and tips of this skill:
 
-${metaskill}
+${variables.metaskill}
 
 The sections below describe the task this skill just executed and what happened during that round.
 
