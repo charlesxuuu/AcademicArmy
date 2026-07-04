@@ -1,5 +1,7 @@
 import { Agent } from "coding-agent-forge/agent";
 
+import { quoteBlock } from "./prompts.js";
+
 export type SkillEvaluatorVariables = {
   artifactPath: string;
   metaskill: string;
@@ -9,18 +11,25 @@ export type SkillEvaluatorVariables = {
 export class SkillEvaluatorAgent extends Agent<SkillEvaluatorVariables> {
   protected buildPrompt(variables: Readonly<SkillEvaluatorVariables>): string {
     return `
-Evaluate the artifact at ${variables.artifactPath}. It was produced by a skill.
+Evaluate the artifact produced by this skill.
 
-The artifacts were created based on the following task descriptions:
+Artifact path: ${variables.artifactPath}
 
-${variables.taskDescriptions}
+Task descriptions:
+${quoteBlock(variables.taskDescriptions)}
 
-The metaskill below contains the design goals and tips of this skill:
+Metaskill (design goals and tips for this skill):
+${quoteBlock(variables.metaskill)}
 
-${variables.metaskill}
+Review the artifact against the metaskill.
 
-Based on these goals and tips, are there any problems in the artifact produced by this skill? Are there any redundant parts?
-Carefully inspect both the language and the content, and use that analysis to explain how this skill can be optimized.
+Useful angles include:
+- problems in content or language
+- missing or misleading guidance
+- redundant parts
+- other relevant issues...
+
+Return a concise report that explains how this skill can be optimized.
 `;
   }
 }
