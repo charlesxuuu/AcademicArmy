@@ -61,6 +61,12 @@ runtimes:
 
 threads:
   skill:
+    runtime: codex
+    options:
+      model: gpt-5.5
+      workingDirectory: .
+      sandboxMode: danger-full-access
+  trajectory-optimizer:
     runtime: deepseek-v4-pro
     options:
       cwd: .
@@ -132,7 +138,7 @@ agents:
     constants:
       workspacePath: *developerWorkspacePath
   trajectory-optimizer:
-    thread: skill
+    thread: trajectory-optimizer
   memory-reader: &memoryAgentConfig
     thread: memory
     constants:
