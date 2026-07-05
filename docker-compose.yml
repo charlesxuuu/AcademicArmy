@@ -2,7 +2,11 @@
 # Runtime dependencies are expected to come from the mounted host environment.
 services:
   dev:
-    image: ubuntu:24.04
+    build:
+      context: .
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
     deploy:
       resources:
         reservations:
