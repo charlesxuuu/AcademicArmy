@@ -1,7 +1,7 @@
 # Docker is used here only for permission control around host bind mounts.
 # Runtime dependencies are expected to come from the mounted host environment.
 services:
-  developing:
+  dev:
     image: ubuntu:24.04
     deploy:
       resources:
