@@ -5,12 +5,11 @@ runtimes:
       config:
         mcp_servers:
           academic_army_mcp_tools:
-            command: python
-            args:
-              - -m
-              - academic_army_mcp_tools
-            cwd: .
+            command: bash
             tool_timeout_sec: 3600
+            args: &academicArmyMcpToolArgs
+              - -lc
+              - cd "$VENV" && exec .venv/bin/python -m academic_army_mcp_tools
   deepseek-v4-pro:
     kind: claude
     options:
@@ -26,12 +25,9 @@ runtimes:
           ANTHROPIC_DEFAULT_OPUS_MODEL: deepseek/deepseek-v4-pro
       mcpServers: &academicArmyMcpServers
         academic_army_mcp_tools:
-          command: python
-          args:
-            - -m
-            - academic_army_mcp_tools
-          cwd: .
+          command: bash
           timeout: 3600000
+          args: *academicArmyMcpToolArgs
   deepseek-v4-flash:
     kind: claude
     options:
