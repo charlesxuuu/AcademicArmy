@@ -22,7 +22,7 @@ export type DevelopingSkillAgentVariables = ProjectDevLoopAgentVariablesByName &
 export const developingSkillArgsOptions = {
   "metaskill-path": {
     type: "string",
-    description: "Coding-style guidance path or HTTP(S) URL used by the memory injector",
+    description: "Code guidance path or HTTP(S) URL used by the trajectory final checker",
   },
   ...developingArgsOptions,
 } as const satisfies PipelineArgsOptions;
@@ -68,7 +68,7 @@ export async function developingSkill(
         )
       ).trim();
 
-      console.log(`\n# Trajectory memory optimizer report\n${optimizerReport}\n`);
+      console.log(`\n# Trajectory final-check report\n${optimizerReport}\n`);
     },
   } as const satisfies ProjectDevLoopCallbacks;
 
@@ -81,7 +81,7 @@ export async function developingSkill(
 
 export const developingSkillPipeline = definePipeline({
   name: "developing-skill",
-  description: "Run the development loop and directly optimize its development memories.",
+  description: "Run development, apply a final source check, and update its memories.",
   argsOptions: developingSkillArgsOptions,
   agentFactories,
   async run(team: AgentTeam<DevelopingSkillAgentVariables>, options: DevelopingSkillOptions) {
