@@ -8,7 +8,6 @@ npm run developing-skill -- \
   --archive-root "workspace/archives" \
   --project-progress-memory-path "workspace/memory/project-progress" \
   --code-design-memory-path "workspace/memory/code-design" \
-  --coding-style-skill-path "skills/academic-army-coding-style" \
   --metaskill-path "metaskills/academic-army-coding-style/METASKILL.md" \
   --goal-path "workspace/plan/paper_blueprint.md" \
   --goal-path "workspace/plan/experiment_plan.md" \
