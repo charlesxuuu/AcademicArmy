@@ -20,13 +20,9 @@ export type DevelopingSkillAgentVariables = ProjectDevLoopAgentVariablesByName &
 };
 
 export const developingSkillArgsOptions = {
-  "coding-style-skill-path": {
-    type: "string",
-    description: "Coding-style skill directory or file revised by the optimizer",
-  },
   "metaskill-path": {
     type: "string",
-    description: "Metaskill design document path or HTTP(S) URL used by the trajectory optimizer",
+    description: "Coding-style guidance path or HTTP(S) URL used by the memory injector",
   },
   ...developingArgsOptions,
 } as const satisfies PipelineArgsOptions;
@@ -37,10 +33,17 @@ export async function developingSkill(
   team: AgentTeam<DevelopingSkillAgentVariables>,
   options: DevelopingSkillOptions,
 ): Promise<void> {
-  const codingStyleSkillPath = options["coding-style-skill-path"];
   const metaskillPath = options["metaskill-path"];
-  if (codingStyleSkillPath === undefined || metaskillPath === undefined) {
-    throw new Error("--coding-style-skill-path and --metaskill-path are required");
+  const projectProgressMemoryPath = options["project-progress-memory-path"];
+  const codeDesignMemoryPath = options["code-design-memory-path"];
+  if (
+    metaskillPath === undefined ||
+    projectProgressMemoryPath === undefined ||
+    codeDesignMemoryPath === undefined
+  ) {
+    throw new Error(
+      "--metaskill-path, --project-progress-memory-path and --code-design-memory-path are required",
+    );
   }
   const metaskill = await readMetaskill(metaskillPath);
 
@@ -55,7 +58,8 @@ export async function developingSkill(
         await trajectoryOptimizer.runStreamed(
           {
             ...agentVariables,
-            codingStyleSkillPath,
+            projectProgressMemoryPath,
+            codeDesignMemoryPath,
             taskBrief,
             taskRoundSummary: taskResult.taskRoundSummary,
             metaskill,
@@ -64,7 +68,7 @@ export async function developingSkill(
         )
       ).trim();
 
-      console.log(`\n# Skill trajectory optimizer report\n${optimizerReport}\n`);
+      console.log(`\n# Trajectory memory optimizer report\n${optimizerReport}\n`);
     },
   } as const satisfies ProjectDevLoopCallbacks;
 
@@ -77,7 +81,7 @@ export async function developingSkill(
 
 export const developingSkillPipeline = definePipeline({
   name: "developing-skill",
-  description: "Run the code development loop and evolve its skill.",
+  description: "Run the development loop and directly optimize its development memories.",
   argsOptions: developingSkillArgsOptions,
   agentFactories,
   async run(team: AgentTeam<DevelopingSkillAgentVariables>, options: DevelopingSkillOptions) {

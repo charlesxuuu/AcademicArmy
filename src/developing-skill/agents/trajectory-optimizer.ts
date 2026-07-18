@@ -4,7 +4,8 @@ import type { DevelopingAgentVariables } from "developing-agent-forge/agents";
 import { quoteBlock } from "./prompts.js";
 
 export type TrajectoryOptimizerVariables = DevelopingAgentVariables & {
-  codingStyleSkillPath: string;
+  projectProgressMemoryPath: string;
+  codeDesignMemoryPath: string;
   taskBrief: string;
   taskRoundSummary: string;
   metaskill: string;
