@@ -79,7 +79,7 @@ bash runs/develop.sh
 
 运行 [`runs/develop.sh`](runs/develop.sh) 来调用 `developing-agent-forge` 提供的 `developing` pipeline，读取三份规划产物和当前 `--goal-path` 文件，并在 `workspace/codebase` 下迭代写代码。它的 developer 与 code reviewer 会通过 [`agent-forge.yaml`](agent-forge.yaml) 同时获得 Ponytail 和本地 [`academic-army-coding-style`](metaskills/academic-army-coding-style/METASKILL.md) 指引。每次想执行下一个新任务时，先更新 `workspace/plan/goal.md`，再重新运行 wrapper。
 
-开发循环会把项目进度记忆放在 `workspace/memory/project-progress`，把代码设计记忆放在 `workspace/memory/code-design`。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
+开发循环会把项目进度记忆放在 `workspace/memory/project-progress`，把代码设计记忆放在 `workspace/memory/code-design`。Memory agents 会从代码库工作目录运行，并把 `workspace/memory` 作为额外目录挂载，因此它们可以读取实现上下文，同时把持久化写入限制在 memory 树下。如果新 goal 开始继承旧上下文，可以在重新运行前编辑或删除这些目录里的过期 memory 文件。
 
 本仓库的 TypeScript 入口和目录结构见 [`src/README.zh-CN.md`](src/README.zh-CN.md)。开发循环实现来自 `developing-agent-forge` 包。
 

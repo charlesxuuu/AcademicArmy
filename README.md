@@ -79,7 +79,7 @@ bash runs/develop.sh
 
 Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `workspace/codebase`. Its developer and code reviewer receive Ponytail plus the local [`academic-army-coding-style`](metaskills/academic-army-coding-style/METASKILL.md) guidance from [`agent-forge.yaml`](agent-forge.yaml). Each time you want the next new task, update `workspace/plan/goal.md` before rerunning the wrapper.
 
-The development loop stores project progress memory under `workspace/memory/project-progress` and code design memory under `workspace/memory/code-design`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
+The development loop stores project progress memory under `workspace/memory/project-progress` and code design memory under `workspace/memory/code-design`. Memory agents run from the codebase working directory with `workspace/memory` mounted as an additional directory, so they can read implementation context while keeping persistent writes scoped to the memory tree. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
 
 See [`src/README.md`](src/README.md) for the local TypeScript entry points. The development loop implementation lives in the `developing-agent-forge` package.
 

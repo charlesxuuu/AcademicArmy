@@ -71,46 +71,55 @@ threads:
     options:
       cwd: &developerWorkspacePath workspace/codebase
       permissionMode: dontAsk
-      allowedTools: &cwdReadWriteBashAllowedTools
+      tools: &cwdReadWriteBashTools
         - Read
         - Grep
         - Glob
-        - LS
-        - LSP
         - WebFetch
         - WebSearch
-        - Edit(./**)
-        - Write(./**)
-        - NotebookEdit(./**)
+        - Edit
+        - Write
+        - NotebookEdit
         - Bash
+      allowedTools: *cwdReadWriteBashTools
   develop-coding:
     runtime: deepseek-v4-pro
     options:
       cwd: *developerWorkspacePath
       permissionMode: dontAsk
-      allowedTools: *cwdReadWriteBashAllowedTools
+      tools: *cwdReadWriteBashTools
+      allowedTools: *cwdReadWriteBashTools
   memory:
     runtime: deepseek-v4-flash
     options:
-      cwd: &memoryWorkingDir workspace/memory
+      cwd: *developerWorkspacePath
+      additionalDirectories: &memoryAdditionalDirectories
+        - ../memory
       permissionMode: dontAsk
-      allowedTools:
+      tools: &memoryReadWriteTools
         - Read
         - Grep
         - Glob
-        - LS
-        - LSP
         - WebFetch
         - WebSearch
-        - Edit(./**)
-        - Write(./**)
-        - NotebookEdit(./**)
+        - Edit
+        - Write
+        - NotebookEdit
+      allowedTools: &memoryReadWriteAllowedTools
+        - Read
+        - Grep
+        - Glob
+        - WebFetch
+        - WebSearch
+        - Edit(../memory/**)
   memory-cleaner:
     runtime: deepseek-v4-pro
     options:
-      cwd: *memoryWorkingDir
+      cwd: *developerWorkspacePath
+      additionalDirectories: *memoryAdditionalDirectories
       permissionMode: dontAsk
-      allowedTools: *cwdReadWriteBashAllowedTools
+      tools: *memoryReadWriteTools
+      allowedTools: *memoryReadWriteAllowedTools
 
 agents:
   skill-runner:
@@ -140,7 +149,7 @@ agents:
   memory-reader: &memoryAgentConfig
     thread: memory
     constants:
-      workingDir: *memoryWorkingDir
+      workingDir: *developerWorkspacePath
   memory-modify-planner: *memoryAgentConfig
   memory-modifier: *memoryAgentConfig
   memory-create-planner: *memoryAgentConfig
@@ -148,4 +157,4 @@ agents:
   memory-cleaner:
     thread: memory-cleaner
     constants:
-      workingDir: *memoryWorkingDir
+      workingDir: *developerWorkspacePath
