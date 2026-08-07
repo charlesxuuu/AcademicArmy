@@ -27,11 +27,11 @@
 | `academic-army-architect`       | [`academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)             | 用 `bash` 运行 [`academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh)             |
 | `academic-army-experiment-plan` | [`academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md) | 用 `bash` 运行 [`academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh) |
 | `academic-army-coding-plan`     | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md)         | 用 `bash` 运行 [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh)         |
-| `academic-army-coding-style`    | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)       | 用 `bash` 运行 [`../runs/develop-skill.sh`](../runs/develop-skill.sh)                                 |
+| `academic-army-coding-style`    | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)       | 用 `bash` 运行 [`../runs/develop.sh`](../runs/develop.sh)                                             |
 
 对 `academic-army-architect` 调用 `evolve-skill` 前，先创建或确认 [`academic-army-architect/ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md)（Windows 路径：`metaskills\academic-army-architect\ENVOLVETASK.md`）。这个固定任务是 runner 在 evolution 轮次中测试 architect skill 的输入。
 
-`academic-army-coding-style` 这个 metaskill 定义写代码 agent 使用的代码结构和代码风格偏好。任何关于 concise code、module boundaries、dependency choices、review standards、naming 或 repo-local style 的长期偏好，都写进 [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)，然后用 [`runs/develop-skill.sh`](../runs/develop-skill.sh) 根据真实 developing trajectories 更新 [`skills/academic-army-coding-style/SKILL.md`](../skills/academic-army-coding-style/SKILL.md)。
+`academic-army-coding-style` 这个 metaskill 定义写代码 agent 使用的代码结构和代码风格偏好。任何关于 concise code、module boundaries、dependency choices、review standards、naming 或 repo-local style 的长期偏好，都写进 [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)。[`agent-forge.yaml`](../agent-forge.yaml) 会在每次运行 [`runs/develop.sh`](../runs/develop.sh) 时，把它同时加载给 developer 和 code reviewer。
 
 ### 2. 补充具体 tips
 

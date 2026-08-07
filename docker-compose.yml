@@ -63,7 +63,7 @@ services:
         source "${PWD:?PWD is required}/.venv/bin/activate"
         exec "$@"
       - --
+    # command: [ "bash", "metaskills/academic-army-architect/envolve.sh" ]
     # command: [ "bash", "metaskills/academic-army-experiment-plan/envolve.sh" ]
     # command: [ "bash", "metaskills/academic-army-coding-plan/envolve.sh" ]
-    # command: [ "bash", "metaskills/academic-army-architect/envolve.sh" ]
-    command: [ "bash", "runs/develop-skill.sh" ]
+    command: [ "bash", "runs/develop.sh" ]

@@ -66,10 +66,10 @@ threads:
       model: gpt-5.5
       workingDirectory: .
       sandboxMode: danger-full-access
-  trajectory-optimizer:
-    runtime: deepseek-v4-pro
+  develop-manager:
+    runtime: glm-5.2
     options:
-      cwd: .
+      cwd: &developerWorkspacePath workspace/codebase
       permissionMode: dontAsk
       allowedTools: &cwdReadWriteBashAllowedTools
         - Read
@@ -83,12 +83,6 @@ threads:
         - Write(./**)
         - NotebookEdit(./**)
         - Bash
-  develop-manager:
-    runtime: glm-5.2
-    options:
-      cwd: &developerWorkspacePath workspace/codebase
-      permissionMode: dontAsk
-      allowedTools: *cwdReadWriteBashAllowedTools
   develop-coding:
     runtime: deepseek-v4-pro
     options:
@@ -133,12 +127,16 @@ agents:
     thread: develop-coding
     constants:
       workspacePath: *developerWorkspacePath
+      prompts:
+        - url: https://raw.githubusercontent.com/DietrichGebert/ponytail/HEAD/skills/ponytail/SKILL.md
+        - path: metaskills/academic-army-coding-style/METASKILL.md
   code-reviewer:
     thread: develop-coding
     constants:
       workspacePath: *developerWorkspacePath
-  trajectory-optimizer:
-    thread: trajectory-optimizer
+      prompts:
+        - url: https://raw.githubusercontent.com/DietrichGebert/ponytail/HEAD/skills/ponytail-review/SKILL.md
+        - path: metaskills/academic-army-coding-style/METASKILL.md
   memory-reader: &memoryAgentConfig
     thread: memory
     constants:

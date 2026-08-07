@@ -1,20 +1,19 @@
 # TypeScript Pipelines
 
-`src` contains the local TypeScript runner for AcademicArmy skill evolution. Development-loop pipelines are imported from `developing-agent-forge`.
+`src` contains the local TypeScript runner for AcademicArmy pipelines. The development loop is imported from `developing-agent-forge`; the skill evolution loop is implemented locally.
 
 [中文说明](README.zh-CN.md)
 
 ## What This Code Owns
 
-[`package.json`](../package.json) exposes these pipeline commands. The local [`cli.ts`](cli.ts) entry point also registers them for `npm run cli -- <pipeline>`:
+[`package.json`](../package.json) exposes these pipeline commands. The local [`cli.ts`](cli.ts) entry point also dispatches them for `npm run cli -- <pipeline>`:
 
-| Pipeline           | Package script             | What it does                                                                                                                         |
-| ------------------ | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `developing`       | `npm run developing`       | Runs the code development loop provided by `developing-agent-forge`; the current task focus comes from `--goal-path`.                |
-| `developing-skill` | `npm run developing-skill` | Runs the development loop and a local trajectory optimizer that revises the configured coding-style skill after each completed task. |
-| `evolve-skill`     | `npm run evolve-skill`     | Runs the skill self-evolution loop implemented in `evolve-skill/`.                                                                   |
+| Pipeline       | Package script         | What it does                                                                                                          |
+| -------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `developing`   | `npm run developing`   | Runs the code development loop provided by `developing-agent-forge`; the current task focus comes from `--goal-path`. |
+| `evolve-skill` | `npm run evolve-skill` | Runs the skill self-evolution loop implemented in `evolve-skill/`.                                                    |
 
-[`pipeline.ts`](pipeline.ts) provides the shared wrapper for the local `evolve-skill` pipeline. The `developing` implementation comes from `developing-agent-forge`; `developing-skill/` restores the trajectory optimizer locally on top of the upgraded package callbacks.
+The `developing` implementation and agents come from `developing-agent-forge`. [`agent-forge.yaml`](../agent-forge.yaml) supplies Ponytail and the local coding-style metaskill to its developer and code reviewer. [`evolve-skill/pipeline.ts`](evolve-skill/pipeline.ts) implements the local skill evolution pipeline.
 
 ## Quick Start
 
@@ -37,22 +36,18 @@ bash runs/develop.sh
 bash metaskills/academic-army-architect/envolve.sh
 ```
 
-Before each new development task, update `workspace/plan/goal.md`, which the prepared `developing` and `developing-skill` wrappers pass as `--goal-path`.
+Before each new development task, update `workspace/plan/goal.md`, which the prepared `developing` wrapper passes as `--goal-path`.
 
 ## Directory Guide
 
-| Path                                     | Purpose                                                                                                                                                                          |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`cli.ts`](cli.ts)                       | Selects a pipeline by name and forwards the remaining CLI arguments.                                                                                                             |
-| [`pipeline.ts`](pipeline.ts)             | Shared pipeline definition, config loading, agent-team construction, and cleanup.                                                                                                |
-| [`developing-skill/`](developing-skill/) | Runs the upgraded development loop with a local trajectory optimizer that revises the configured coding-style skill.                                                             |
-| [`evolve-skill/`](evolve-skill/)         | Runs a skill on a fixed task, evaluates the artifact against a metaskill, and asks a modifier agent to revise the skill. See [`evolve-skill/README.md`](evolve-skill/README.md). |
+| Path                             | Purpose                                                                                                                                                                          |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`cli.ts`](cli.ts)               | Selects a pipeline by name and forwards the remaining CLI arguments.                                                                                                             |
+| [`evolve-skill/`](evolve-skill/) | Runs a skill on a fixed task, evaluates the artifact against a metaskill, and asks a modifier agent to revise the skill. See [`evolve-skill/README.md`](evolve-skill/README.md). |
 
-## How The Shared Wrapper Works
+## How The CLI Works
 
-Each local pipeline provides pipeline-specific arguments and configured factories. [`pipeline.ts`](pipeline.ts) loads one or more YAML config files with `coding-agent-forge`, builds an `AgentTeam` from the configured factories, runs the selected pipeline, and closes the team afterward.
-
-This keeps the config loading, agent-team construction, and cleanup shared across the TypeScript runners.
+[`cli.ts`](cli.ts) dispatches each pipeline through `coding-agent-forge`, which loads one or more YAML config files, builds an `AgentTeam` from the selected pipeline's factories, runs it, and closes the team afterward.
 
 ## Relationship To Shell Scripts
 
@@ -60,11 +55,10 @@ Shell scripts under [`runs/`](../runs/) and the metaskill scripts described in [
 
 The prepared development wrappers use `workspace/plan/goal.md` as the `--goal-path` file. Development memory is split between `workspace/memory/project-progress` and `workspace/memory/code-design`; edit or delete stale files there when a new goal should not inherit old context.
 
-| Script                                              | Calls                      |
-| --------------------------------------------------- | -------------------------- |
-| [`runs/develop.sh`](../runs/develop.sh)             | `npm run developing`       |
-| [`runs/develop-skill.sh`](../runs/develop-skill.sh) | `npm run developing-skill` |
-| `metaskills/*/envolve.sh`                           | `npm run evolve-skill`     |
+| Script                                  | Calls                  |
+| --------------------------------------- | ---------------------- |
+| [`runs/develop.sh`](../runs/develop.sh) | `npm run developing`   |
+| `metaskills/*/envolve.sh`               | `npm run evolve-skill` |
 
 ## Development Checks
 
