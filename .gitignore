@@ -2,6 +2,7 @@ workspace
 secret.yaml
 .claude/
 .overlay-work/
+.academicarmy/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
