@@ -27,11 +27,11 @@ Prepared AcademicArmy skill metaskills:
 | `academic-army-architect`       | [`academic-army-architect/METASKILL.md`](academic-army-architect/METASKILL.md)             | [`academic-army-architect/envolve.sh`](academic-army-architect/envolve.sh) with `bash`             |
 | `academic-army-experiment-plan` | [`academic-army-experiment-plan/METASKILL.md`](academic-army-experiment-plan/METASKILL.md) | [`academic-army-experiment-plan/envolve.sh`](academic-army-experiment-plan/envolve.sh) with `bash` |
 | `academic-army-coding-plan`     | [`academic-army-coding-plan/METASKILL.md`](academic-army-coding-plan/METASKILL.md)         | [`academic-army-coding-plan/envolve.sh`](academic-army-coding-plan/envolve.sh) with `bash`         |
-| `academic-army-coding-style`    | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)       | [`../runs/develop-skill.sh`](../runs/develop-skill.sh) with `bash`                                 |
+| `academic-army-coding-style`    | [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md)       | [`../runs/develop.sh`](../runs/develop.sh) with `bash`                                             |
 
 Before calling `evolve-skill` for `academic-army-architect`, create or confirm [`academic-army-architect/ENVOLVETASK.md`](academic-army-architect/ENVOLVETASK.md). This fixed task is what the runner uses to test the architect skill across evolution rounds.
 
-The `academic-army-coding-style` metaskill defines the code structure and style preferences used by code-writing agents. Add any durable preference about concise code, module boundaries, dependency choices, review standards, naming, or repository-local style to [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md), then use [`runs/develop-skill.sh`](../runs/develop-skill.sh) to update [`skills/academic-army-coding-style/SKILL.md`](../skills/academic-army-coding-style/SKILL.md) from real developing trajectories.
+The `academic-army-coding-style` metaskill defines the code structure and style preferences used by code-writing agents. Add any durable preference about concise code, module boundaries, dependency choices, review standards, naming, or repository-local style to [`academic-army-coding-style/METASKILL.md`](academic-army-coding-style/METASKILL.md). [`agent-forge.yaml`](../agent-forge.yaml) loads it for both the developer and code reviewer on every [`runs/develop.sh`](../runs/develop.sh) run.
 
 ### 2. Add concrete tips
 

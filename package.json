@@ -1,6 +1,6 @@
 {
   "name": "academic-army",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Agent workflows and skills for AcademicArmy.",
   "license": "MIT",
   "repository": {
@@ -41,12 +41,11 @@
     "dev": "tsx src/cli.ts",
     "cli": "tsx src/cli.ts",
     "developing": "tsx src/cli.ts developing",
-    "developing-skill": "tsx src/cli.ts developing-skill",
     "evolve-skill": "tsx src/cli.ts evolve-skill"
   },
   "dependencies": {
-    "coding-agent-forge": ">=1.5.0",
-    "developing-agent-forge": ">=2.10.0"
+    "coding-agent-forge": ">=1.5.4",
+    "developing-agent-forge": ">=2.10.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -77,9 +77,9 @@ $EDITOR workspace/plan/goal.md
 bash runs/develop.sh
 ```
 
-Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `workspace/codebase`. Each time you want the next new task, update `workspace/plan/goal.md` before rerunning the wrapper.
+Run [`runs/develop.sh`](runs/develop.sh) to call the `developing-agent-forge` development pipeline, which reads the three planning artifacts plus the current `--goal-path` file and iteratively writes code under `workspace/codebase`. Its developer and code reviewer receive Ponytail plus the local [`academic-army-coding-style`](metaskills/academic-army-coding-style/METASKILL.md) guidance from [`agent-forge.yaml`](agent-forge.yaml). Each time you want the next new task, update `workspace/plan/goal.md` before rerunning the wrapper.
 
-The development loop stores project progress memory under `workspace/memory/project-progress` and code design memory under `workspace/memory/code-design`. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
+The development loop stores project progress memory under `workspace/memory/project-progress` and code design memory under `workspace/memory/code-design`. Memory agents run from the codebase working directory with `workspace/memory` mounted as an additional directory, so they can read implementation context while keeping persistent writes scoped to the memory tree. If a new goal starts inheriting old context, edit or delete stale memory files in those directories before rerunning.
 
 See [`src/README.md`](src/README.md) for the local TypeScript entry points. The development loop implementation lives in the `developing-agent-forge` package.
 
@@ -97,13 +97,12 @@ Use the shell scripts as convenience wrappers around these TypeScript pipelines:
 
 ```bash
 npm run developing
-npm run developing-skill
 npm run evolve-skill
 ```
 
 For the shared CLI and pipeline structure, see [`src/README.md`](src/README.md).
 
-For `developing` and `developing-skill`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrappers use `workspace/plan/goal.md`. The base development loop comes from `developing-agent-forge`; this repository provides the `developing-skill` trajectory optimizer locally.
+For `developing`, update the file passed to `--goal-path` when you want to run a new task focus. The prepared wrapper uses `workspace/plan/goal.md`. The development loop and its agents come from `developing-agent-forge`; repository-specific coding guidance is injected through `agent-forge.yaml`.
 
 ### Call MCP Tools
 
